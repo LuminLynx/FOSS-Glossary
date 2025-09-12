@@ -37,4 +37,4 @@ Every term is scored out of 100 points:
   explanation: "Tracks changes in source code during software development"
   humor: "A tool that makes you feel like a time traveler, until you try to resolve a merge conflict and realize you're actually in hell"
   tags: ["vcs", "tools"]
-  see_also: ["GitHub", "GitLab"]
+  see_also: ["GitHub", "GitLab"]# Test change
