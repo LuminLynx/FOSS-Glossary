@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "FOSS Glossary Terms",
+  "type": "object",
+  "properties": {
+    "terms": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["term", "definition"],
+        "properties": {
+          "term": {
+            "type": "string",
+            "description": "The FOSS term being defined"
+          },
+          "definition": {
+            "type": "string",
+            "description": "Short, clear definition"
+          },
+          "explanation": {
+            "type": "string",
+            "description": "Longer explanation if needed"
+          },
+          "humor": {
+            "type": "string",
+            "description": "Sarcastic or humorous take"
+          },
+          "see_also": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Related terms"
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Categories"
+          },
+          "controversy_level": {
+            "type": "string",
+            "enum": ["low", "medium", "high"],
+            "description": "How controversial is this term?"
+          }
+        }
+      }
+    }
+  }
+}

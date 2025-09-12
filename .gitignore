@@ -1,2 +1,11 @@
 # Node Modules
 node_modules/
+
+# Logs
+*.log
+
+# Mac System Files
+.DS_Store
+
+# Build Output
+temp/

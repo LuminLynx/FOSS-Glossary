@@ -1,0 +1,20 @@
+terms:
+  - term: "RTFM"
+    definition: "Read The F***ing Manual"
+    explanation: "A gentle reminder to check the documentation before asking questions"
+    humor: "The four most powerful letters in tech support, capable of solving 90% of problems and hurting 100% of feelings"
+    tags: ["acronym", "documentation", "support"]
+    see_also: ["LMGTFY", "PEBKAC"]
+    
+  - term: "Yak Shaving"
+    definition: "Doing a series of seemingly unrelated tasks before you can do what you actually intended"
+    explanation: "You start trying to fix a bug, and somehow end up updating your entire OS"
+    humor: "I came here to write code, and somehow I'm now learning about Tibetan yak grooming techniques"
+    tags: ["productivity", "procrastination"]
+    
+  - term: "FOSS"
+    definition: "Free and Open Source Software"
+    explanation: "Software that's free as in freedom AND free as in beer"
+    humor: "Where programmers work for free to make software that companies will use to make millions"
+    tags: ["acronym", "philosophy", "licensing"]
+    see_also: ["GPL", "MIT License", "Copyleft"]
