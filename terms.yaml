@@ -18,3 +18,10 @@ terms:
     humor: "Where programmers work for free to make software that companies will use to make millions"
     tags: ["acronym", "philosophy", "licensing"]
     see_also: ["GPL", "MIT License", "Copyleft"]
+
+  - term: "Impostor Syndrome"
+    definition: "Feeling like you do not belong in tech"
+    explanation: "The persistent feeling that you are not as competent as others perceive you to be"
+    humor: "That feeling when you google how to center a div for the 100th time while having Senior Developer in your title"
+    tags: ["culture", "psychology"]
+    see_also: ["Dunning-Kruger Effect"]
