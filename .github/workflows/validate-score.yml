@@ -1,3 +1,4 @@
+# .github/workflows/validate-score.yml
 name: Validate & Score Terms
 
 on:
@@ -8,6 +9,12 @@ on:
     branches: [main]
     paths:
       - 'terms.yaml'
+
+# ADD THIS PERMISSIONS BLOCK - This fixes the error!
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
 
 jobs:
   validate-and-score:
@@ -74,6 +81,9 @@ jobs:
     if: github.event_name == 'push'
     steps:
       - uses: actions/checkout@v3
+        with:
+          # This is important for pushing back
+          token: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Setup Node
         uses: actions/setup-node@v3
@@ -84,10 +94,10 @@ jobs:
       - name: Update README
         run: node scripts/updateReadmeStats.js
       
-      - name: Commit changes
+      - name: Commit and push changes
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
           git add README.md
-          git diff --staged --quiet || git commit -m "📊 Update stats"
+          git diff --staged --quiet || git commit -m "📊 Update stats [skip ci]"
           git push
