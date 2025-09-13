@@ -40,3 +40,11 @@ terms:
     humor: "I came here to write a simple function, and somehow I'm now reading documentation about Tibetan yak grooming techniques and compiling a kernel module. This is fine."
     tags: ["productivity", "procrastination", "scope-creep"]
     see_also: ["Bikeshedding", "Feature Creep"]
+
+  - term: "Dependency Hell"
+    definition: "A situation where software dependencies become so tangled, outdated, or incompatible that progress grinds to a halt"
+    explanation: "You try to install a package, but it needs a newer version of another package, which conflicts with a third package, which depends on a deprecated library that only works on an older OS you no longer have. Every fix breaks something else."
+    humor: "Like a soap opera for code: everyone’s connected, nobody’s happy, and you’re stuck watching the drama unfold while your build fails."
+    tags: ["package-management", "frustration", "software-maintenance"]
+    see_also: ["Version Pinning", "DLL Hell", "Semantic Versioning"]
+    controversy_level: "medium"
