@@ -26,3 +26,17 @@ terms:
     tags: ["project-management", "risk", "metrics", "dark-humor"]
     see_also: ["Single Point of Failure", "Documentation", "Knowledge Silo"]
     controversy_level: "low"
+
+  - term: "Rubber Duck Debugging"
+    definition: "Explaining your code to an inanimate object to find bugs"
+    explanation: "The act of debugging by explaining your code line-by-line to a rubber duck (or any object). Often, the act of explaining reveals the problem."
+    humor: "The rubber duck is the only team member who never judges your code, never asks for a raise, and somehow gives better advice than most Stack Overflow answers. Senior ducks command higher salaries."
+    tags: ["debugging", "programming", "psychology"]
+    see_also: ["PEBKAC", "Cardboard Programmer"]
+
+  - term: "Yak Shaving"
+    definition: "Doing a series of increasingly unrelated tasks before you can do what you actually intended"
+    explanation: "You start trying to fix a simple bug, but first you need to update a dependency, but first you need to upgrade Node, but first you need to fix your package manager..."
+    humor: "I came here to write a simple function, and somehow I'm now reading documentation about Tibetan yak grooming techniques and compiling a kernel module. This is fine."
+    tags: ["productivity", "procrastination", "scope-creep"]
+    see_also: ["Bikeshedding", "Feature Creep"]
