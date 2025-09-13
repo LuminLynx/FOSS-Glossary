@@ -5,12 +5,13 @@ A community-driven glossary of FOSS terms with humor, sarcasm, and honest truths
 
 
 
+
 <!-- STATS-START -->
 ## 📊 Glossary Stats
 
-**Total Terms:** 4 | **Terms with Humor:** 4 (100%)
+**Total Terms:** 5 | **Terms with Humor:** 5 (100%)
 
-**Recent additions:** `Bus Factor`, `FOSS`, `Yak Shaving`
+**Recent additions:** `Dependency Hell`, `Bus Factor`, `FOSS`
 <!-- STATS-END -->
 
 ## 🎮 How to Contribute
