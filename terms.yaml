@@ -18,3 +18,11 @@ terms:
     humor: "Where programmers work for free to make software that companies will use to make millions"
     tags: ["acronym", "philosophy", "licensing"]
     see_also: ["GPL", "MIT License", "Copyleft"]
+
+  - term: "Bus Factor"
+    definition: "The number of team members that can be hit by a bus before a project fails"
+    explanation: "A metric that measures how many developers need to suddenly disappear before a project can no longer continue. A bus factor of 1 means the project relies on a single person - extremely risky!"
+    humor: "Also known as the 'lottery factor' for optimists who prefer their team members winning millions over getting flattened. Some companies have tried improving their bus factor by banning employees from traveling together, which rather misses the point."
+    tags: ["project-management", "risk", "metrics", "dark-humor"]
+    see_also: ["Single Point of Failure", "Documentation", "Knowledge Silo"]
+    controversy_level: "low"
