@@ -3,12 +3,13 @@
 A community-driven glossary of FOSS terms with humor, sarcasm, and honest truths about open source culture.
 
 
+
 <!-- STATS-START -->
 ## 📊 Glossary Stats
 
-**Total Terms:** 3 | **Terms with Humor:** 3 (100%)
+**Total Terms:** 4 | **Terms with Humor:** 4 (100%)
 
-**Recent additions:** `FOSS`, `Yak Shaving`, `RTFM`
+**Recent additions:** `Bus Factor`, `FOSS`, `Yak Shaving`
 <!-- STATS-END -->
 
 ## 🎮 How to Contribute
