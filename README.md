@@ -4,6 +4,7 @@ A community-driven glossary of FOSS terms with humor, sarcasm, and honest truths
 
 
 
+
 <!-- STATS-START -->
 ## 📊 Glossary Stats
 
