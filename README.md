@@ -43,3 +43,8 @@ Every term is scored out of 100 points:
   humor: "A tool that makes you feel like a time traveler, until you try to resolve a merge conflict and realize you're actually in hell"
   tags: ["vcs", "tools"]
   see_also: ["GitHub", "GitLab"]# Test change
+
+## 🌐 [Visit our Documentation](https://luminlynx.github.io/FOSS-Glossary/)
+
+ Check out our beautiful docs site with scoring explanation and examples!
+ 
