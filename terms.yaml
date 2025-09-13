@@ -6,7 +6,7 @@ terms:
     tags: ["acronym", "documentation", "support"]
     see_also: ["LMGTFY", "PEBKAC"]
     
-  - term: "Yak Shaving
+  - term: "Yak Shaving"
     definition: "Doing a series of seemingly unrelated tasks before you can do what you actually intended"
     explanation: "You start trying to fix a bug, and somehow end up updating your entire OS"
     humor: "I came here to write code, and somehow I'm now learning about Tibetan yak grooming techniques"
