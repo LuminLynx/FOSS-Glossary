@@ -6,7 +6,7 @@ terms:
     tags: ["acronym", "documentation", "support"]
     see_also: ["LMGTFY", "PEBKAC"]
     
-  - term: "Yak Shaving"
+  - term: "Yak Shaving
     definition: "Doing a series of seemingly unrelated tasks before you can do what you actually intended"
     explanation: "You start trying to fix a bug, and somehow end up updating your entire OS"
     humor: "I came here to write code, and somehow I'm now learning about Tibetan yak grooming techniques"
@@ -26,3 +26,11 @@ terms:
     tags: ["project-management", "risk", "metrics", "dark-humor"]
     see_also: ["Single Point of Failure", "Documentation", "Knowledge Silo"]
     controversy_level: "low"
+
+  - term: "Bikeshedding"
+  definition: "Spending excessive time on trivial details while more important matters are ignored"
+  explanation: "A team meeting about a new distributed build system derails into a heated 45‑minute debate over whether the README should use tabs or spaces, or if the logo should be #00AACC or #00AACE."
+  humor: "We could have solved world hunger by now, but instead we’re arguing about the shade of blue for the project’s favicon. Truly, history will remember us."
+  tags: ["productivity", "decision-making", "scope-creep"]
+  see_also: ["Yak Shaving", "Parkinson's Law of Triviality"]
+  controversy_level: "medium"
