@@ -6,12 +6,13 @@ A community-driven glossary of FOSS terms with humor, sarcasm, and honest truths
 
 
 
+
 <!-- STATS-START -->
 ## 📊 Glossary Stats
 
-**Total Terms:** 5 | **Terms with Humor:** 5 (100%)
+**Total Terms:** 6 | **Terms with Humor:** 6 (100%)
 
-**Recent additions:** `Dependency Hell`, `Bus Factor`, `FOSS`
+**Recent additions:** `License Proliferation`, `Dependency Hell`, `Bus Factor`
 <!-- STATS-END -->
 
 ## 🎮 How to Contribute
