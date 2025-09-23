@@ -114,6 +114,27 @@
             margin: 1rem 0;
             border-radius: 5px;
         }
+        .code-block {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            white-space: pre;
+            margin: 1rem 0;
+        }
+        .code-block .key {
+            color: #e06c75;
+        }
+        .code-block .string {
+            color: #98c379;
+        }
+        .code-block .array-item {
+            color: #d19a66;
+        }
         .badges {
             display: flex;
             gap: 1rem;
@@ -126,6 +147,22 @@
             padding: 0.5rem 1rem;
             border-radius: 20px;
             font-size: 0.9rem;
+        }
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            .card {
+                padding: 2rem;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            .code-block {
+                font-size: 0.8rem;
+                padding: 1rem;
+            }
         }
     </style>
 </head>
@@ -195,14 +232,12 @@
             </div>
 
             <h2>📝 Example Term</h2>
-            <div class="example">
-                <pre>/- term: "Yak Shaving"
-  definition: "Doing seemingly unrelated tasks before the actual task"
-  explanation: "You start trying to fix a bug, and somehow end up updating your entire OS"
-  humor: "I came here to write code, and somehow I'm now learning about Tibetan yak grooming"
-  tags: ["productivity", "procrastination"]
-  see_also: ["Bikeshedding", "Scope Creep"]</pre>
-            </div>
+            <div class="code-block"><span class="key">- term:</span> <span class="string">"Yak Shaving"</span>
+  <span class="key">definition:</span> <span class="string">"Doing seemingly unrelated tasks before the actual task"</span>
+  <span class="key">explanation:</span> <span class="string">"You start trying to fix a bug, and somehow end up updating your entire OS"</span>
+  <span class="key">humor:</span> <span class="string">"I came here to write code, and somehow I'm now learning about Tibetan yak grooming"</span>
+  <span class="key">tags:</span> [<span class="array-item">"productivity"</span>, <span class="array-item">"procrastination"</span>]
+  <span class="key">see_also:</span> [<span class="array-item">"Bikeshedding"</span>, <span class="array-item">"Scope Creep"</span>]</div>
 
             <div class="cta">
                 <a href="https://github.com/LuminLynx/FOSS-Glossary" class="button">
