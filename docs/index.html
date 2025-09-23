@@ -33,9 +33,21 @@
         h1 {
             font-size: 3rem;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-clip: text;
             -webkit-background-clip: text;
+            -moz-background-clip: text;
             -webkit-text-fill-color: transparent;
+            -moz-text-fill-color: transparent;
             margin-bottom: 1rem;
+            display: inline-block;
+            width: 100%;
+        }
+        /* Fallback for browsers that don't support text-fill-color */
+        @supports not (-webkit-background-clip: text) {
+            h1 {
+                background: none;
+                color: #667eea;
+            }
         }
         .tagline {
             font-size: 1.2rem;
@@ -114,25 +126,31 @@
             margin: 1rem 0;
             border-radius: 5px;
         }
-        .code-block {
+        .yaml-code {
             background: #282c34;
             color: #abb2bf;
             padding: 1.5rem;
             border-radius: 8px;
             overflow-x: auto;
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-family: 'Courier New', monospace;
             font-size: 0.9rem;
             line-height: 1.5;
-            white-space: pre;
             margin: 1rem 0;
+            display: block;
+            max-width: 100%;
         }
-        .code-block .key {
+        .yaml-code pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .yaml-key {
             color: #e06c75;
         }
-        .code-block .string {
+        .yaml-string {
             color: #98c379;
         }
-        .code-block .array-item {
+        .yaml-array {
             color: #d19a66;
         }
         .badges {
@@ -154,14 +172,20 @@
                 padding: 1rem;
             }
             .card {
-                padding: 2rem;
+                padding: 1.5rem;
             }
             h1 {
                 font-size: 2rem;
             }
-            .code-block {
-                font-size: 0.8rem;
+            .yaml-code {
+                font-size: 0.75rem;
                 padding: 1rem;
+            }
+            .stat-card {
+                padding: 1rem;
+            }
+            .feature-icon {
+                font-size: 2.5rem;
             }
         }
     </style>
@@ -232,12 +256,14 @@
             </div>
 
             <h2>📝 Example Term</h2>
-            <div class="code-block"><span class="key">- term:</span> <span class="string">"Yak Shaving"</span>
-  <span class="key">definition:</span> <span class="string">"Doing seemingly unrelated tasks before the actual task"</span>
-  <span class="key">explanation:</span> <span class="string">"You start trying to fix a bug, and somehow end up updating your entire OS"</span>
-  <span class="key">humor:</span> <span class="string">"I came here to write code, and somehow I'm now learning about Tibetan yak grooming"</span>
-  <span class="key">tags:</span> [<span class="array-item">"productivity"</span>, <span class="array-item">"procrastination"</span>]
-  <span class="key">see_also:</span> [<span class="array-item">"Bikeshedding"</span>, <span class="array-item">"Scope Creep"</span>]</div>
+            <div class="yaml-code">
+<pre><span class="yaml-key">- term:</span> <span class="yaml-string">"Yak Shaving"</span>
+  <span class="yaml-key">definition:</span> <span class="yaml-string">"Doing seemingly unrelated tasks before the actual task"</span>
+  <span class="yaml-key">explanation:</span> <span class="yaml-string">"You start trying to fix a bug, and somehow end up updating your entire OS"</span>
+  <span class="yaml-key">humor:</span> <span class="yaml-string">"I came here to write code, and somehow I'm now learning about Tibetan yak grooming"</span>
+  <span class="yaml-key">tags:</span> [<span class="yaml-array">"productivity"</span>, <span class="yaml-array">"procrastination"</span>]
+  <span class="yaml-key">see_also:</span> [<span class="yaml-array">"Bikeshedding"</span>, <span class="yaml-array">"Scope Creep"</span>]</pre>
+            </div>
 
             <div class="cta">
                 <a href="https://github.com/LuminLynx/FOSS-Glossary" class="button">
