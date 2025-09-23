@@ -66,6 +66,14 @@ terms:
     tags: ["community", "sustainability", "mental-health", "open-source"]
     see_also: ["Bus Factor", "Abandonware", "Forking"]
     controversy_level: "high"
+ 
+  - term: "Linus's Law"
+    definition: "The idea that 'given enough eyeballs, all bugs are shallow' — meaning open collaboration makes problems easier to find and fix."
+    explanation: "When many developers review and use the same code, issues are more likely to be spotted quickly."
+    humor: "Like having a hundred proofreaders for your essay — someone will catch that typo."
+    tags: ["open-source", "collaboration", "quality"]
+    see_also: ["Many Eyes Principle", "Peer Review", "Transparency"]
+    controversy_level: "low"
 
 
 
