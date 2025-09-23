@@ -75,6 +75,15 @@ terms:
     see_also: ["Many Eyes Principle", "Peer Review", "Transparency"]
     controversy_level: "low"
 
+  - term: "Not Invented Here Syndrome"
+    definition: "A reluctance to adopt existing external solutions, leading teams to reimplement functionality themselves—even when mature, well-tested options already exist."
+    explanation: "Instead of using a popular open source library that solves the problem, a team decides to build their own version from scratch. The result is often duplicated effort, more bugs, and wasted time maintaining something that already had a community solution."
+    humor: "Like refusing to buy bread because you’re convinced you can grow the wheat, mill the flour, and bake a better loaf in your spare time."
+    tags: ["reinvention", "ego", "duplication", "engineering-culture"]
+    see_also: ["Reinventing the Wheel", "Overengineering", "Code Hoarding"]
+    controversy_level: "medium"
+
+
 
 
 
