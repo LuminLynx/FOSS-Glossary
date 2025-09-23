@@ -43,3 +43,12 @@ terms:
     see_also: ["GPL", "MIT License", "Copyleft", "License Compatibility"]
     controversy_level: "high"
 
+  - term: "Code Hoarding"
+    definition: "The tendency to accumulate large amounts of code, libraries, or tools—often unused—under the belief they might be useful someday."
+    explanation: "You clone dozens of GitHub repos, bookmark obscure CLI tools, and write half-finished scripts for problems you haven’t encountered yet. Your project folder resembles a digital attic more than a workspace."
+    humor: "Like stocking up on canned beans for a zombie apocalypse that never comes—except the beans are Python scripts and the zombies are edge cases."
+    tags: ["developer-habits", "tooling", "overengineering", "FOMO"]
+    see_also: ["Overengineering", "Not Invented Here", "Premature Optimization"]
+    controversy_level: "low"
+
+
