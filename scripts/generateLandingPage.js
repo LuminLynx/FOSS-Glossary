@@ -1,10 +1,76 @@
-<!DOCTYPE html>
+#!/usr/bin/env node
+const fs = require('fs');
+const yaml = require('js-yaml');
+
+// Load terms
+const termsData = yaml.load(fs.readFileSync('terms.yaml', 'utf8'));
+const terms = termsData.terms || [];
+
+// Calculate statistics
+const stats = {
+  totalTerms: terms.length,
+  termsWithHumor: terms.filter(t => t.humor).length,
+  termsWithExplanation: terms.filter(t => t.explanation).length,
+  totalTags: new Set(terms.flatMap(t => t.tags || [])).size,
+  recentTerms: terms.slice(-3).reverse().map(t => t.term),
+  topScorers: [] // We'll calculate this when we have contributor data
+};
+
+// Generate term cards HTML
+function generateTermCards(count = 6) {
+  const displayTerms = terms.slice(-count).reverse();
+  
+  return displayTerms.map(term => {
+    const score = calculateTermScore(term);
+    const scoreColor = score >= 80 ? '#00ff00' : score >= 60 ? '#ffa500' : '#ffff00';
+    
+    return `
+    <div class="term-card">
+      <div class="term-header">
+        <h3>${term.term}</h3>
+        <span class="term-score" style="color: ${scoreColor}">${score}/100</span>
+      </div>
+      <p class="term-definition">${term.definition}</p>
+      ${term.humor ? `<p class="term-humor">😂 "${term.humor}"</p>` : ''}
+      ${term.tags ? `<div class="term-tags">${term.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>` : ''}
+    </div>`;
+  }).join('\n');
+}
+
+// Calculate term score (matching your scoring logic)
+function calculateTermScore(term) {
+  let score = 0;
+  
+  // Base: term and definition (20 points)
+  if (term.term && term.definition) score += 20;
+  
+  // Humor (up to 30 points)
+  if (term.humor) {
+    score += Math.min(30, Math.floor(term.humor.length / 10) * 5);
+  }
+  
+  // Explanation (20 points)
+  if (term.explanation) score += 20;
+  
+  // Cross-references (up to 20 points)
+  if (term.see_also && term.see_also.length > 0) {
+    score += Math.min(20, term.see_also.length * 10);
+  }
+  
+  // Tags (10 points)
+  if (term.tags && term.tags.length > 0) score += 10;
+  
+  return score;
+}
+
+// Generate the full HTML
+const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FOSS Glossary - 10 Terms and Growing!</title>
-    <meta name="description" content="A gamified glossary of FOSS terms with humor. 10 terms defined by the community!">
+    <title>FOSS Glossary - ${stats.totalTerms} Terms and Growing!</title>
+    <meta name="description" content="A gamified glossary of FOSS terms with humor. ${stats.totalTerms} terms defined by the community!">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -174,19 +240,19 @@
             <!-- LIVE STATISTICS -->
             <div class="live-stats">
                 <div class="stat-card">
-                    <span class="stat-number">10</span>
+                    <span class="stat-number">${stats.totalTerms}</span>
                     <span class="stat-label">Total Terms</span>
                 </div>
                 <div class="stat-card">
-                    <span class="stat-number">10</span>
+                    <span class="stat-number">${stats.termsWithHumor}</span>
                     <span class="stat-label">Funny Terms</span>
                 </div>
                 <div class="stat-card">
-                    <span class="stat-number">100%</span>
+                    <span class="stat-number">${Math.round((stats.termsWithHumor / stats.totalTerms) * 100)}%</span>
                     <span class="stat-label">Humor Rate</span>
                 </div>
                 <div class="stat-card">
-                    <span class="stat-number">29</span>
+                    <span class="stat-number">${stats.totalTags}</span>
                     <span class="stat-label">Categories</span>
                 </div>
             </div>
@@ -194,72 +260,13 @@
             <!-- RECENT ADDITIONS -->
             <div class="recent-terms">
                 <h2>🆕 Latest Additions</h2>
-                <p>Just added: <strong>Linus's Law, Maintainer Burnout, Zombie Dependencies</strong></p>
+                <p>Just added: <strong>${stats.recentTerms.join(', ')}</strong></p>
             </div>
 
             <!-- SAMPLE TERMS -->
             <h2>📖 Recent Terms</h2>
             <div class="term-grid">
-                
-    <div class="term-card">
-      <div class="term-header">
-        <h3>Linus's Law</h3>
-        <span class="term-score" style="color: #00ff00">100/100</span>
-      </div>
-      <p class="term-definition">The idea that 'given enough eyeballs, all bugs are shallow' — meaning open collaboration makes problems easier to find and fix.</p>
-      <p class="term-humor">😂 "Like having a hundred proofreaders for your essay — someone will catch that typo."</p>
-      <div class="term-tags"><span class="tag">open-source</span><span class="tag">collaboration</span><span class="tag">quality</span></div>
-    </div>
-
-    <div class="term-card">
-      <div class="term-header">
-        <h3>Maintainer Burnout</h3>
-        <span class="term-score" style="color: #00ff00">100/100</span>
-      </div>
-      <p class="term-definition">The exhaustion and disengagement experienced by open source maintainers who face constant demands, limited support, and little recognition.</p>
-      <p class="term-humor">😂 "Like being the only bartender at a never-ending party where everyone wants a custom cocktail, but nobody tips."</p>
-      <div class="term-tags"><span class="tag">community</span><span class="tag">sustainability</span><span class="tag">mental-health</span><span class="tag">open-source</span></div>
-    </div>
-
-    <div class="term-card">
-      <div class="term-header">
-        <h3>Zombie Dependencies</h3>
-        <span class="term-score" style="color: #00ff00">100/100</span>
-      </div>
-      <p class="term-definition">Outdated or abandoned libraries that are still widely used, often without active maintenance or clear alternatives.</p>
-      <p class="term-humor">😂 "Like relying on a haunted vending machine — it still dispenses snacks, but nobody knows how or why it’s still running."</p>
-      <div class="term-tags"><span class="tag">dependencies</span><span class="tag">maintenance</span><span class="tag">technical-debt</span><span class="tag">risk</span></div>
-    </div>
-
-    <div class="term-card">
-      <div class="term-header">
-        <h3>Code Hoarding</h3>
-        <span class="term-score" style="color: #00ff00">100/100</span>
-      </div>
-      <p class="term-definition">The tendency to accumulate large amounts of code, libraries, or tools—often unused—under the belief they might be useful someday.</p>
-      <p class="term-humor">😂 "Like stocking up on canned beans for a zombie apocalypse that never comes—except the beans are Python scripts and the zombies are edge cases."</p>
-      <div class="term-tags"><span class="tag">developer-habits</span><span class="tag">tooling</span><span class="tag">overengineering</span><span class="tag">FOMO</span></div>
-    </div>
-
-    <div class="term-card">
-      <div class="term-header">
-        <h3>License Proliferation</h3>
-        <span class="term-score" style="color: #00ff00">100/100</span>
-      </div>
-      <p class="term-definition">The overabundance of open source licenses, often with subtle but significant differences, making it difficult to combine or reuse code across projects.</p>
-      <p class="term-humor">😂 "Like trying to host a potluck where everyone insists on bringing food—but only if you agree to eat it under their very specific house rules."</p>
-      <div class="term-tags"><span class="tag">open-source</span><span class="tag">legal</span><span class="tag">compatibility</span><span class="tag">community</span></div>
-    </div>
-
-    <div class="term-card">
-      <div class="term-header">
-        <h3>Dependency Hell</h3>
-        <span class="term-score" style="color: #00ff00">100/100</span>
-      </div>
-      <p class="term-definition">A situation where software dependencies become so tangled, outdated, or incompatible that progress grinds to a halt</p>
-      <p class="term-humor">😂 "Like a soap opera for code: everyone’s connected, nobody’s happy, and you’re stuck watching the drama unfold while your build fails."</p>
-      <div class="term-tags"><span class="tag">package-management</span><span class="tag">frustration</span><span class="tag">software-maintenance</span></div>
-    </div>
+                ${generateTermCards()}
             </div>
 
             <!-- SCORING SYSTEM -->
@@ -281,16 +288,25 @@
                     🎮 Contribute on GitHub
                 </a>
                 <a href="https://github.com/LuminLynx/FOSS-Glossary/blob/main/terms.yaml" class="button button-secondary">
-                    📝 View All 10 Terms
+                    📝 View All ${stats.totalTerms} Terms
                 </a>
             </div>
 
             <p class="last-updated">
-                Last updated: Sep 23, 2025, 8:42 PM | 
-                10 terms and growing! | 
+                Last updated: ${new Date().toLocaleString('en-US', { 
+                    dateStyle: 'medium', 
+                    timeStyle: 'short' 
+                })} | 
+                ${stats.totalTerms} terms and growing! | 
                 Made with 💜 by the FOSS community
             </p>
         </div>
     </div>
 </body>
-</html>
+</html>`;
+
+// Write the file
+fs.writeFileSync('docs/index.html', html);
+console.log(`✅ Generated landing page with ${stats.totalTerms} terms!`);
+console.log(`📊 Stats: ${stats.termsWithHumor}/${stats.totalTerms} terms have humor (${Math.round((stats.termsWithHumor/stats.totalTerms)*100)}%)`);
+console.log(`🆕 Recent: ${stats.recentTerms.join(', ')}`);
