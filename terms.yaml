@@ -51,4 +51,22 @@ terms:
     see_also: ["Overengineering", "Not Invented Here", "Premature Optimization"]
     controversy_level: "low"
 
+  - term: "Zombie Dependencies"
+    definition: "Outdated or abandoned libraries that are still widely used, often without active maintenance or clear alternatives."
+    explanation: "You build your app on a popular framework, only to discover one of its core dependencies hasn’t been updated in five years. The maintainer is unreachable, the issues pile up, and you're left wondering whether to fork it or flee."
+    humor: "Like relying on a haunted vending machine — it still dispenses snacks, but nobody knows how or why it’s still running."
+    tags: ["dependencies", "maintenance", "technical-debt", "risk"]
+    see_also: ["Dependency Hell", "Forking", "Maintainer Burnout"]
+    controversy_level: "medium"
+
+  - term: "Maintainer Burnout"
+    definition: "The exhaustion and disengagement experienced by open source maintainers who face constant demands, limited support, and little recognition."
+    explanation: "A project gains popularity, issues and pull requests flood in, and suddenly the maintainer is expected to provide free tech support, security patches, and feature development around the clock. Without backup or funding, enthusiasm turns into fatigue."
+    humor: "Like being the only bartender at a never-ending party where everyone wants a custom cocktail, but nobody tips."
+    tags: ["community", "sustainability", "mental-health", "open-source"]
+    see_also: ["Bus Factor", "Abandonware", "Forking"]
+    controversy_level: "high"
+
+
+
 
