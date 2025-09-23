@@ -1,68 +1,118 @@
+#!/usr/bin/env node
 const fs = require('fs');
 const yaml = require('js-yaml');
-const { execSync } = require('child_process');
 
 function scoreTerm(term) {
   let score = 0;
-  let earnedBadge = '';
+  let badges = [];
   
   // Base score for having required fields (20 points)
   if (term.term && term.definition) {
     score += 20;
   }
   
-  // Bonus for humor (up to 30 points)
+  // Humor (up to 30 points)
   if (term.humor) {
-    score += Math.min(30, 10 + Math.floor(term.humor.length / 5));
-    if (term.humor.length > 100) {
-      earnedBadge = '😂 Comedy Gold - Master of FOSS Humor!';
+    const humorLength = term.humor.length;
+    const humorPoints = Math.min(30, Math.floor(humorLength / 5));
+    score += humorPoints;
+    
+    if (humorLength > 100) {
+      badges.push('😂 Comedy Gold');
     }
   }
   
-  // Bonus for explanation (20 points)
-  if (term.explanation) {
+  // Explanation (20 points)
+  if (term.explanation && term.explanation.length > 20) {
     score += 20;
   }
   
-  // Bonus for references/see_also (20 points)
-  if (term.see_also && term.see_also.length > 0) {
+  // Tags (10 points)
+  if (term.tags && Array.isArray(term.tags) && term.tags.length > 0) {
+    score += Math.min(10, term.tags.length * 3);
+  }
+  
+  // See also / cross-references (up to 20 points)
+  if (term.see_also && Array.isArray(term.see_also)) {
     score += Math.min(20, term.see_also.length * 5);
   }
   
-  // Bonus for tags (10 points)
-  if (term.tags && term.tags.length > 0) {
-    score += 10;
-  }
-  
-  // Special badges
-  if (!earnedBadge) {
-    if (score >= 90) {
-      earnedBadge = '💯 Perfectionist - Nearly perfect term!';
-    } else if (term.controversy_level === 'high') {
-      earnedBadge = '�� Flame Warrior - Documented the controversial!';
+  // Controversy bonus
+  if (term.controversy_level) {
+    if (term.controversy_level === 'high') {
+      badges.push('🔥 Flame Warrior');
+    } else if (term.controversy_level === 'medium') {
+      badges.push('🌶️ Spicy Take');
     }
   }
   
-  return { score, badge: earnedBadge };
+  // Achievement badges based on score
+  if (score >= 90) {
+    badges.push('💯 Perfectionist');
+  } else if (score >= 80) {
+    badges.push('⭐ Star Contributor');
+  } else if (score >= 70) {
+    badges.push('💪 Strong Entry');
+  }
+  
+  return { score: Math.min(100, score), badges };
 }
 
-try {
-  const termsContent = fs.readFileSync('terms.yaml', 'utf8');
-  const termsData = yaml.load(termsContent);
-  const terms = termsData.terms || [];
-  const latestTerm = terms[terms.length - 1];
-  
-  if (latestTerm) {
-    const result = scoreTerm(latestTerm);
-    console.log(`SCORE:${result.score}`);
-    if (result.badge) {
-      console.log(`BADGE:${result.badge}`);
+function main() {
+  try {
+    // Read the terms file
+    const termsData = yaml.load(fs.readFileSync('terms.yaml', 'utf8'));
+    
+    if (!termsData || !termsData.terms || !Array.isArray(termsData.terms)) {
+      console.error('Error: Invalid terms.yaml structure');
+      process.exit(1);
     }
-    console.log('\n--- Score Breakdown ---');
-    console.log(`Term: "${latestTerm.term}"`);
-    console.log(`Total Score: ${result.score}/100`);
+    
+    // Get the latest term (assuming it's the last one added)
+    const latestTerm = termsData.terms[termsData.terms.length - 1];
+    
+    if (!latestTerm) {
+      console.error('Error: No terms found');
+      process.exit(1);
+    }
+    
+    // Score the term
+    const { score, badges } = scoreTerm(latestTerm);
+    
+    // Output for GitHub Actions
+    console.log(`\n📊 Scoring Results for "${latestTerm.term}":\n`);
+    console.log(`SCORE:${score}`);
+    
+    if (badges.length > 0) {
+      console.log(`BADGE:${badges.join(', ')}`);
+    }
+    
+    // Detailed breakdown
+    console.log('\n📋 Score Breakdown:');
+    console.log(`- Base definition: ${latestTerm.term && latestTerm.definition ? '20/20' : '0/20'}`);
+    console.log(`- Humor: ${latestTerm.humor ? Math.min(30, Math.floor(latestTerm.humor.length / 5)) : '0'}/30`);
+    console.log(`- Explanation: ${latestTerm.explanation ? '20/20' : '0/20'}`);
+    console.log(`- Tags: ${latestTerm.tags ? Math.min(10, latestTerm.tags.length * 3) : '0'}/10`);
+    console.log(`- Cross-references: ${latestTerm.see_also ? Math.min(20, latestTerm.see_also.length * 5) : '0'}/20`);
+    
+    console.log(`\nTotal: ${score}/100`);
+    
+    if (score >= 90) {
+      console.log('\n🎉 OUTSTANDING! This is a legendary contribution!');
+    } else if (score >= 80) {
+      console.log('\n🔥 Excellent work! This is a high-quality term!');
+    } else if (score >= 70) {
+      console.log('\n💪 Great job! Solid contribution to the glossary!');
+    } else if (score >= 60) {
+      console.log('\n👍 Good work! Consider adding humor or references for more points!');
+    } else {
+      console.log('\n🌱 Thanks for contributing! Add more details to boost your score!');
+    }
+    
+  } catch (error) {
+    console.error('Error processing terms:', error.message);
+    process.exit(1);
   }
-} catch (error) {
-  console.error('Error:', error.message);
-  console.log('SCORE:0');
 }
+
+main();
