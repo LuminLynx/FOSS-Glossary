@@ -1,0 +1,43 @@
+name: Update Landing Page
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'terms.yaml'
+      - 'scripts/generateLandingPage.js'
+  workflow_dispatch: # Allow manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  update-landing-page:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        run: npm install js-yaml
+      
+      - name: Generate landing page
+        run: node scripts/generateLandingPage.js
+      
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add docs/index.html
+          if git diff --staged --quiet; then
+            echo "No changes to landing page"
+          else
+            git commit -m "🌐 Update landing page with latest terms [skip ci]"
+            git push
+          fi
