@@ -34,3 +34,12 @@ terms:
     tags: ["package-management", "frustration", "software-maintenance"]
     see_also: ["Version Pinning", "DLL Hell", "Semantic Versioning"]
     controversy_level: "medium"
+
+  - term: "License Proliferation"
+    definition: "The overabundance of open source licenses, often with subtle but significant differences, making it difficult to combine or reuse code across projects."
+    explanation: "You find a great library under GPL, another under Apache, and a third under MPL. Each has slightly different requirements about attribution, distribution, or linking. Suddenly, your 'simple' project feels like you need a law degree just to ship a prototype."
+    humor: "Like trying to host a potluck where everyone insists on bringing food—but only if you agree to eat it under their very specific house rules."
+    tags: ["open-source", "legal", "compatibility", "community"]
+    see_also: ["GPL", "MIT License", "Copyleft", "License Compatibility"]
+    controversy_level: "high"
+
