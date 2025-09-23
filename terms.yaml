@@ -59,5 +59,14 @@ terms:
     see_also: ["Dependency Hell", "Forking", "Maintainer Burnout"]
     controversy_level: "medium"
 
+  - term: "Maintainer Burnout"
+    definition: "The exhaustion and disengagement experienced by open source maintainers who face constant demands, limited support, and little recognition."
+    explanation: "A project gains popularity, issues and pull requests flood in, and suddenly the maintainer is expected to provide free tech support, security patches, and feature development around the clock. Without backup or funding, enthusiasm turns into fatigue."
+    humor: "Like being the only bartender at a never-ending party where everyone wants a custom cocktail, but nobody tips."
+    tags: ["community", "sustainability", "mental-health", "open-source"]
+    see_also: ["Bus Factor", "Abandonware", "Forking"]
+    controversy_level: "high"
+
+
 
 
