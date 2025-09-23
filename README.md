@@ -10,11 +10,11 @@ A community-driven glossary of FOSS terms with humor, sarcasm, and honest truths
 <!-- STATS-START -->
 ## 📊 Glossary Stats
 
-**Total Terms:** 7 | **Contributors:** 2 | **Terms with Humor:** 7 (100%)
+**Total Terms:** 9 | **Contributors:** 2 | **Terms with Humor:** 9 (100%)
 
 **🏆 Current Champion:** `License Proliferation` with ~98/100 points!
 
-**Recent additions:** `Code Hoarding`, `License Proliferation`, `Dependency Hell`
+**Recent additions:** `Maintainer Burnout`, `Zombie Dependencies`, `Code Hoarding`
 
 ### 🎮 Top Contributors
 🥇 Joao Portela | 🥈 Joe Port
