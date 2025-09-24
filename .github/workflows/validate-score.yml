@@ -9,12 +9,15 @@ on:
     paths:
       - 'terms.yaml'
 
+# Prevent multiple instances
+concurrency:
+  group: "validate-${{ github.ref }}"
+  cancel-in-progress: false
+
 permissions:
   contents: write
   pull-requests: write
   issues: write
-  actions: read
-  checks: write
 
 jobs:
   validate-and-score:
@@ -26,7 +29,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: '20'  # ← CHANGED TO 20
+          node-version: '18'
       
       - name: Install dependencies
         run: npm install js-yaml
@@ -46,113 +49,70 @@ jobs:
       - name: Score term (only if valid)
         id: score
         if: steps.validate.outputs.valid == '0'
-        continue-on-error: true  # ← ADDED THIS
         run: |
-          node scripts/quickScore.js > output.txt 2>&1 || true
+          node scripts/quickScore.js > output.txt
           cat output.txt
-          echo "score=$(grep 'SCORE:' output.txt | cut -d: -f2 || echo '0')" >> $GITHUB_OUTPUT
-          echo "badge=$(grep 'BADGE:' output.txt | cut -d: -f2- || echo '')" >> $GITHUB_OUTPUT
+          echo "score=$(grep 'SCORE:' output.txt | cut -d: -f2)" >> $GITHUB_OUTPUT
+          echo "badge=$(grep 'BADGE:' output.txt | cut -d: -f2-)" >> $GITHUB_OUTPUT
       
       - name: Comment on PR
-        if: github.event_name == 'pull_request'  # ← ADDED CHECK
         uses: actions/github-script@v6
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}  # ← EXPLICIT TOKEN
           script: |
-            try {
-              const isValid = '${{ steps.validate.outputs.valid }}' === '0';
-              const validationOutput = `${{ steps.validate.outputs.validation_output }}`;
-              const score = '${{ steps.score.outputs.score }}' || '0';
-              const badge = '${{ steps.score.outputs.badge }}' || '';
+            const isValid = '${{ steps.validate.outputs.valid }}' === '0';
+            const validationOutput = `${{ steps.validate.outputs.validation_output }}`;
+            const score = '${{ steps.score.outputs.score }}' || '0';
+            const badge = '${{ steps.score.outputs.badge }}' || '';
+            
+            let body = '## 🎮 Term Review\n\n';
+            
+            if (!isValid) {
+              body += '### ❌ Validation FAILED!\n\n';
+              body += 'Your submission has errors that need to be fixed:\n\n';
+              body += '```\n';
+              body += validationOutput.replace(/✅.*\n/g, '').trim();
+              body += '\n```\n\n';
+            } else {
+              body += '### ✅ Validation Passed!\n\n';
+              body += `### 📊 Quality Score: ${score}/100\n\n`;
               
-              let body = '## 🎮 Term Review\n\n';
-              
-              if (!isValid) {
-                body += '### ❌ Validation FAILED!\n\n';
-                body += 'Your submission has errors that need to be fixed:\n\n';
-                body += '```\n';
-                body += validationOutput.replace(/✅.*\n/g, '').trim();
-                body += '\n```\n\n';
-                body += '### 📝 How to Fix\n\n';
-                body += '1. Check that your YAML syntax is correct (proper indentation, colons, etc.)\n';
-                body += '2. Ensure each term has both `term` and `definition` fields\n';
-                body += '3. Make sure text fields are strings (use quotes if needed)\n';
-                body += '4. Arrays like `tags` and `see_also` should use proper YAML list syntax\n\n';
-                body += '### ✨ Valid Term Example\n\n';
-                body += '```yaml\n';
-                body += '- term: "Example"\n';
-                body += '  definition: "A sample to demonstrate correct format"\n';
-                body += '  explanation: "Optional longer explanation"\n';
-                body += '  humor: "Optional funny take"\n';
-                body += '  tags: ["example", "demo"]\n';
-                body += '  see_also: ["Sample", "Demo"]\n';
-                body += '```\n';
-              } else {
-                body += '### ✅ Validation Passed!\n\n';
-                body += `### 📊 Quality Score: ${score}/100\n\n`;
-                
-                if (parseInt(score) >= 90) {
-                  body += '# 🏆 LEGENDARY! \n';
-                  body += 'This is absolutely perfect! You are a FOSS Glossary champion! 🎉\n';
-                } else if (parseInt(score) >= 80) {
-                  body += '## 🔥 AMAZING! \n';
-                  body += 'This is top-tier content! Outstanding contribution! 🌟\n';
-                } else if (parseInt(score) >= 70) {
-                  body += '### 💪 Great job! \n';
-                  body += 'This is a solid contribution! Well done! 👏\n';
-                } else if (parseInt(score) >= 60) {
-                  body += '### 👍 Good work! \n';
-                  body += 'Nice contribution! Consider adding humor or references for bonus points! 📈\n';
-                } else {
-                  body += '### 🌱 Thanks for contributing! \n';
-                  body += 'Every term helps! Here\'s how to score higher:\n';
-                  body += '- **Humor**: Add a funny take (up to 30 points)\n';
-                  body += '- **Explanation**: Add context (20 points)\n';
-                  body += '- **Cross-references**: Link related terms (20 points)\n';
-                  body += '- **Tags**: Categorize your term (10 points)\n';
-                }
-                
-                if (badge) {
-                  body += `\n### 🏆 Achievements Unlocked!\n`;
-                  const badges = badge.split(',').map(b => b.trim());
-                  badges.forEach(b => {
-                    body += `- ${b}\n`;
-                  });
-                }
-                
-                body += '\n---\n';
-                body += '*💡 Pro tip: The best terms combine accuracy with humor. Make us laugh while we learn!*';
+              if (score >= 90) {
+                body += '# 🏆 LEGENDARY! \n';
+              } else if (score >= 80) {
+                body += '## 🔥 AMAZING! \n';
+              } else if (score >= 60) {
+                body += '### 👍 Good work! \n';
               }
               
-              // Check if we already commented
-              const { data: comments } = await github.rest.issues.listComments({
+              if (badge) {
+                body += `\n### 🏆 Achievements Unlocked!\n${badge}\n`;
+              }
+            }
+            
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            
+            const botComment = comments.find(comment => 
+              comment.user.type === 'Bot' && comment.body.includes('🎮 Term Review')
+            );
+            
+            if (botComment) {
+              await github.rest.issues.updateComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: context.issue.number,
+                comment_id: botComment.id,
+                body: body
               });
-              
-              const botComment = comments.find(comment => 
-                comment.user.type === 'Bot' && comment.body.includes('🎮 Term Review')
-              );
-              
-              if (botComment) {
-                await github.rest.issues.updateComment({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  comment_id: botComment.id,
-                  body: body
-                });
-              } else {
-                await github.rest.issues.createComment({
-                  issue_number: context.issue.number,
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  body: body
-                });
-              }
-            } catch (error) {
-              console.error('Error posting comment:', error);
-              // Don't fail the workflow if commenting fails
+            } else {
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: body
+              });
             }
 
   update-stats:
@@ -162,27 +122,29 @@ jobs:
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          fetch-depth: 0  # Need full history for contributor stats
       
       - name: Setup Node
         uses: actions/setup-node@v3
-        with:
-          node-version: '20'
       
       - name: Install dependencies
         run: npm install js-yaml
       
-      - name: Validate before updating stats
+      - name: Validate before updating
         run: |
           node scripts/validateTerms.js
           if [ $? -ne 0 ]; then
-            echo "❌ Terms validation failed on main branch!"
+            echo "❌ Terms validation failed!"
             exit 1
           fi
       
       - name: Update README stats
+        run: node scripts/updateReadmeStats.js
+      
+      # Add delay to prevent race condition
+      - name: Wait before committing
         run: |
-          node scripts/updateReadmeStats.js
+          echo "Waiting to avoid race condition..."
+          sleep 10
       
       - name: Commit and push changes
         run: |
@@ -192,6 +154,6 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "📊 Update stats after merge [skip ci]"
+            git commit -m "📊 Update stats [skip ci]"
             git push
           fi
