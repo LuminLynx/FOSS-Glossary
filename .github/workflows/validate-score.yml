@@ -9,17 +9,20 @@ on:
     paths:
       - 'terms.yaml'
 
-# Prevent multiple instances
-concurrency:
-  group: "validate-${{ github.ref }}"
-  cancel-in-progress: false
-
+# Add ALL permissions for PR commenting
 permissions:
+  actions: write
   contents: write
   pull-requests: write
   issues: write
-  id-token: write  # ADD THIS LINE
-  pages: write     # ADD THIS LINE TOO
+  id-token: write
+  pages: write
+  statuses: write
+  checks: write
+
+concurrency:
+  group: "validate-${{ github.ref }}"
+  cancel-in-progress: false
 
 jobs:
   validate-and-score:
@@ -57,65 +60,24 @@ jobs:
           echo "score=$(grep 'SCORE:' output.txt | cut -d: -f2)" >> $GITHUB_OUTPUT
           echo "badge=$(grep 'BADGE:' output.txt | cut -d: -f2-)" >> $GITHUB_OUTPUT
       
-      - name: Comment on PR
-        uses: actions/github-script@v6
+      # FIXED: Using peter-evans action for better PR comment handling
+      - name: Comment PR Results
+        if: github.event_name == 'pull_request'
+        continue-on-error: true  # Don't fail workflow if commenting doesn't work
+        uses: peter-evans/create-or-update-comment@v3
         with:
-          script: |
-            const isValid = '${{ steps.validate.outputs.valid }}' === '0';
-            const validationOutput = `${{ steps.validate.outputs.validation_output }}`;
-            const score = '${{ steps.score.outputs.score }}' || '0';
-            const badge = '${{ steps.score.outputs.badge }}' || '';
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ## 🎮 Term Review
             
-            let body = '## 🎮 Term Review\n\n';
+            ${{ steps.validate.outputs.valid == '0' && '### ✅ Validation Passed!' || '### ❌ Validation Failed!' }}
             
-            if (!isValid) {
-              body += '### ❌ Validation FAILED!\n\n';
-              body += 'Your submission has errors that need to be fixed:\n\n';
-              body += '```\n';
-              body += validationOutput.replace(/✅.*\n/g, '').trim();
-              body += '\n```\n\n';
-            } else {
-              body += '### ✅ Validation Passed!\n\n';
-              body += `### 📊 Quality Score: ${score}/100\n\n`;
-              
-              if (score >= 90) {
-                body += '# 🏆 LEGENDARY! \n';
-              } else if (score >= 80) {
-                body += '## 🔥 AMAZING! \n';
-              } else if (score >= 60) {
-                body += '### 👍 Good work! \n';
-              }
-              
-              if (badge) {
-                body += `\n### 🏆 Achievements Unlocked!\n${badge}\n`;
-              }
-            }
+            ${{ steps.score.outputs.score && format('**Score: {0}/100**', steps.score.outputs.score) || '' }}
             
-            const { data: comments } = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-            });
+            ${{ steps.score.outputs.badge || '' }}
             
-            const botComment = comments.find(comment => 
-              comment.user.type === 'Bot' && comment.body.includes('🎮 Term Review')
-            );
-            
-            if (botComment) {
-              await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: botComment.id,
-                body: body
-              });
-            } else {
-              await github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: body
-              });
-            }
+            ---
+            *Automated review by FOSS Glossary Bot*
 
   update-stats:
     runs-on: ubuntu-latest
@@ -142,11 +104,8 @@ jobs:
       - name: Update README stats
         run: node scripts/updateReadmeStats.js
       
-      # Add delay to prevent race condition
       - name: Wait before committing
-        run: |
-          echo "Waiting to avoid race condition..."
-          sleep 10
+        run: sleep 10
       
       - name: Commit and push changes
         run: |
