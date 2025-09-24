@@ -10,11 +10,11 @@ A community-driven glossary of FOSS terms with humor, sarcasm, and honest truths
 <!-- STATS-START -->
 ## 📊 Glossary Stats
 
-**Total Terms:** 13 | **Contributors:** 1 | **Terms with Humor:** 13 (100%)
+**Total Terms:** 14 | **Contributors:** 1 | **Terms with Humor:** 14 (100%)
 
 **🏆 Current Champion:** `License Proliferation` with ~98/100 points!
 
-**Recent additions:** `Copyleft`, `Code Rot`, `Not Invented Here Syndrome`
+**Recent additions:** `Ship It`, `Copyleft`, `Code Rot`
 
 ### 🎮 Top Contributors
 🥇 John Portley
