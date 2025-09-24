@@ -83,4 +83,12 @@ terms:
     see_also: ["Reinventing the Wheel", "Overengineering", "Code Hoarding"]
     controversy_level: "medium"
 
+  - term: "Code Rot"
+    definition: "The gradual decline in a codebase’s quality and maintainability over time, even without active changes."
+    explanation: "As dependencies evolve, environments shift, and original authors move on, code that once worked perfectly can become brittle, outdated, or incompatible. Left unchecked, code rot makes systems harder to maintain, more bug-prone, and resistant to new features."
+    humor: "Like leaving a sandwich in the fridge for six months—technically it’s still there, but you probably don’t want to touch it."
+    tags: [" maintenance", "technical-debt", "software-aging", "fragility"]
+    see_also: ["Bit Rot", "Technical Debt", "Legacy Code"]
+    controversy_level: "low"
+
 
