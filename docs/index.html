@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FOSS Glossary - Gamified Open Source Terms</title>
-    <meta name="description" content="A gamified glossary of FOSS terms with humor, sarcasm, and honest truths. Contribute and earn points!">
+    <title>FOSS Glossary - 13 Terms and Growing!</title>
+    <meta name="description" content="A gamified glossary of FOSS terms with humor. 13 terms defined by the community!">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -19,7 +19,7 @@
             margin: 0 auto;
             padding: 2rem;
         }
-        .hero-card {
+        .card {
             background: white;
             padding: 3rem;
             border-radius: 15px;
@@ -39,11 +39,6 @@
             background-clip: text;
             margin-bottom: 1rem;
         }
-        .tagline {
-            font-size: 1.2rem;
-            color: #666;
-            margin-bottom: 2rem;
-        }
         .live-stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -56,11 +51,6 @@
             padding: 1.5rem;
             border-radius: 10px;
             text-align: center;
-            transform: scale(1);
-            transition: transform 0.2s;
-        }
-        .stat-card:hover {
-            transform: scale(1.05);
         }
         .stat-number {
             font-size: 2.5rem;
@@ -135,19 +125,6 @@
             border-radius: 15px;
             font-size: 0.8rem;
         }
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin: 2rem 0;
-        }
-        .feature {
-            text-align: center;
-        }
-        .feature-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
         .cta {
             text-align: center;
             margin: 3rem 0;
@@ -174,45 +151,6 @@
             color: #667eea;
             border: 2px solid #667eea;
         }
-        .scoring-box {
-            background: #f8f9fa;
-            padding: 1.5rem;
-            border-radius: 10px;
-            margin: 2rem 0;
-        }
-        .badges {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin: 2rem 0;
-        }
-        .badge {
-            background: rgba(102, 126, 234, 0.1);
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.9rem;
-        }
-        code {
-            background: #f4f4f4;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-family: 'Courier New', monospace;
-        }
-        .example-term {
-            background: #282c34;
-            color: #abb2bf;
-            padding: 1.5rem;
-            border-radius: 8px;
-            overflow-x: auto;
-            font-family: 'Monaco', 'Menlo', monospace;
-            font-size: 0.9rem;
-            line-height: 1.5;
-            margin: 1rem 0;
-        }
-        .yaml-key { color: #e06c75; }
-        .yaml-string { color: #98c379; }
-        .yaml-array { color: #d19a66; }
         .last-updated {
             text-align: center;
             color: #6c757d;
@@ -222,139 +160,119 @@
         @media (max-width: 768px) {
             h1 { font-size: 2rem; }
             .container { padding: 1rem; }
-            .hero-card { padding: 1.5rem; }
+            .card { padding: 1.5rem; }
             .term-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="hero-card">
+        <div class="card">
             <h1>🚀 FOSS Glossary</h1>
             <p class="tagline">A gamified glossary of Free and Open Source Software terms, with humor, sarcasm, and honest truths.</p>
             
             <!-- LIVE STATISTICS -->
             <div class="live-stats">
                 <div class="stat-card">
-                    <span class="stat-number">5+</span>
+                    <span class="stat-number">13</span>
                     <span class="stat-label">Total Terms</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">13</span>
+                    <span class="stat-label">Funny Terms</span>
                 </div>
                 <div class="stat-card">
                     <span class="stat-number">100%</span>
                     <span class="stat-label">Humor Rate</span>
                 </div>
                 <div class="stat-card">
-                    <span class="stat-number">🎮</span>
-                    <span class="stat-label">Gamified</span>
-                </div>
-                <div class="stat-card">
-                    <span class="stat-number">🏆</span>
-                    <span class="stat-label">Earn Badges</span>
-                </div>
-            </div>
-
-            <!-- HOW IT WORKS -->
-            <h2>✨ How It Works</h2>
-            <div class="feature-grid">
-                <div class="feature">
-                    <div class="feature-icon">📝</div>
-                    <h3>1. Add a Term</h3>
-                    <p>Fork the repo and add your FOSS term to <code>terms.yaml</code></p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">🎯</div>
-                    <h3>2. Get Scored</h3>
-                    <p>Receive instant quality score out of 100 points</p>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">🎉</div>
-                    <h3>3. Earn Glory</h3>
-                    <p>Unlock achievements and see your contribution celebrated!</p>
+                    <span class="stat-number">39</span>
+                    <span class="stat-label">Categories</span>
                 </div>
             </div>
 
             <!-- RECENT ADDITIONS -->
             <div class="recent-terms">
-                <h2>🆕 Latest Terms</h2>
-                <p>Recently added: <strong>Dependency Hell, Bus Factor, FOSS, Yak Shaving, RTFM</strong></p>
+                <h2>🆕 Latest Additions</h2>
+                <p>Just added: <strong>Copyleft, Code Rot, Not Invented Here Syndrome</strong></p>
             </div>
 
             <!-- SAMPLE TERMS -->
-            <h2>📖 Featured Terms</h2>
+            <h2>📖 Recent Terms</h2>
             <div class="term-grid">
-                <div class="term-card">
-                    <div class="term-header">
-                        <h3>Dependency Hell</h3>
-                        <span class="term-score" style="color: #00ff00">100/100</span>
-                    </div>
-                    <p class="term-definition">A situation where software dependencies become so tangled that progress grinds to a halt</p>
-                    <p class="term-humor">😂 "Like a soap opera for code: everyone's connected, nobody's happy, and you're stuck watching the drama unfold while your build fails."</p>
-                    <div class="term-tags">
-                        <span class="tag">package-management</span>
-                        <span class="tag">frustration</span>
-                    </div>
-                </div>
+                
+    <div class="term-card">
+      <div class="term-header">
+        <h3>Copyleft</h3>
+        <span class="term-score" style="color: #00ff00">100/100</span>
+      </div>
+      <p class="term-definition">A licensing principle that requires derivative works to be distributed under the same license as the original.</p>
+      <p class="term-humor">😂 "Think of it as copyright’s rebellious cousin who insists on sharing the family recipes with everyone at the potluck."</p>
+      <div class="term-tags"><span class="tag">licensing</span><span class="tag">FOSS</span><span class="tag">GPL</span><span class="tag">freedom</span></div>
+    </div>
 
-                <div class="term-card">
-                    <div class="term-header">
-                        <h3>Bus Factor</h3>
-                        <span class="term-score" style="color: #00ff00">100/100</span>
-                    </div>
-                    <p class="term-definition">The number of team members that can be hit by a bus before a project fails</p>
-                    <p class="term-humor">😂 "Also known as the 'lottery factor' for optimists who prefer their team members winning millions over getting flattened."</p>
-                    <div class="term-tags">
-                        <span class="tag">project-management</span>
-                        <span class="tag">risk</span>
-                        <span class="tag">dark-humor</span>
-                    </div>
-                </div>
+    <div class="term-card">
+      <div class="term-header">
+        <h3>Code Rot</h3>
+        <span class="term-score" style="color: #00ff00">100/100</span>
+      </div>
+      <p class="term-definition">The gradual decline in a codebase’s quality and maintainability over time, even without active changes.</p>
+      <p class="term-humor">😂 "Like leaving a sandwich in the fridge for six months—technically it’s still there, but you probably don’t want to touch it."</p>
+      <div class="term-tags"><span class="tag"> maintenance</span><span class="tag">technical-debt</span><span class="tag">software-aging</span><span class="tag">fragility</span></div>
+    </div>
 
-                <div class="term-card">
-                    <div class="term-header">
-                        <h3>Yak Shaving</h3>
-                        <span class="term-score" style="color: #ffa500">70/100</span>
-                    </div>
-                    <p class="term-definition">Doing seemingly unrelated tasks before the actual task</p>
-                    <p class="term-humor">😂 "I came here to write code, and somehow I'm now learning about Tibetan yak grooming techniques"</p>
-                    <div class="term-tags">
-                        <span class="tag">productivity</span>
-                        <span class="tag">procrastination</span>
-                    </div>
-                </div>
+    <div class="term-card">
+      <div class="term-header">
+        <h3>Not Invented Here Syndrome</h3>
+        <span class="term-score" style="color: #00ff00">100/100</span>
+      </div>
+      <p class="term-definition">A reluctance to adopt existing external solutions, leading teams to reimplement functionality themselves—even when mature, well-tested options already exist.</p>
+      <p class="term-humor">😂 "Like refusing to buy bread because you’re convinced you can grow the wheat, mill the flour, and bake a better loaf in your spare time."</p>
+      <div class="term-tags"><span class="tag">reinvention</span><span class="tag">ego</span><span class="tag">duplication</span><span class="tag">engineering-culture</span></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-header">
+        <h3>Linus's Law</h3>
+        <span class="term-score" style="color: #00ff00">100/100</span>
+      </div>
+      <p class="term-definition">The idea that 'given enough eyeballs, all bugs are shallow' — meaning open collaboration makes problems easier to find and fix.</p>
+      <p class="term-humor">😂 "Like having a hundred proofreaders for your essay — someone will catch that typo."</p>
+      <div class="term-tags"><span class="tag">open-source</span><span class="tag">collaboration</span><span class="tag">quality</span></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-header">
+        <h3>Maintainer Burnout</h3>
+        <span class="term-score" style="color: #00ff00">100/100</span>
+      </div>
+      <p class="term-definition">The exhaustion and disengagement experienced by open source maintainers who face constant demands, limited support, and little recognition.</p>
+      <p class="term-humor">😂 "Like being the only bartender at a never-ending party where everyone wants a custom cocktail, but nobody tips."</p>
+      <div class="term-tags"><span class="tag">community</span><span class="tag">sustainability</span><span class="tag">mental-health</span><span class="tag">open-source</span></div>
+    </div>
+
+    <div class="term-card">
+      <div class="term-header">
+        <h3>Zombie Dependencies</h3>
+        <span class="term-score" style="color: #00ff00">100/100</span>
+      </div>
+      <p class="term-definition">Outdated or abandoned libraries that are still widely used, often without active maintenance or clear alternatives.</p>
+      <p class="term-humor">😂 "Like relying on a haunted vending machine — it still dispenses snacks, but nobody knows how or why it’s still running."</p>
+      <div class="term-tags"><span class="tag">dependencies</span><span class="tag">maintenance</span><span class="tag">technical-debt</span><span class="tag">risk</span></div>
+    </div>
             </div>
 
             <!-- SCORING SYSTEM -->
-            <h2>📊 Scoring System</h2>
-            <div class="scoring-box">
+            <h2>📊 How Scoring Works</h2>
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 10px; margin: 2rem 0;">
                 <ul style="list-style: none; padding: 0;">
-                    <li>✅ <strong>Base Definition</strong> - 20 points for the essentials</li>
-                    <li>😂 <strong>Humor</strong> - Up to 30 points for making us laugh!</li>
-                    <li>📝 <strong>Explanation</strong> - 20 points for context</li>
-                    <li>🔗 <strong>Cross-references</strong> - Up to 20 points for connections</li>
-                    <li>🏷️ <strong>Tags</strong> - 10 points for categorization</li>
+                    <li>✅ <strong>Base Definition</strong> - 20 points</li>
+                    <li>😂 <strong>Humor</strong> - Up to 30 points (be funny!)</li>
+                    <li>📝 <strong>Explanation</strong> - 20 points</li>
+                    <li>🔗 <strong>Cross-references</strong> - Up to 20 points</li>
+                    <li>🏷️ <strong>Tags</strong> - 10 points</li>
                 </ul>
                 <p style="margin-top: 1rem; font-weight: bold;">💯 Score 90+ to become a legend!</p>
-            </div>
-
-            <!-- ACHIEVEMENTS -->
-            <h2>🏆 Achievements</h2>
-            <div class="badges">
-                <span class="badge">😂 Comedy Gold</span>
-                <span class="badge">💯 Perfectionist</span>
-                <span class="badge">🔥 Flame Warrior</span>
-                <span class="badge">📜 Historian</span>
-                <span class="badge">🌱 First PR</span>
-            </div>
-
-            <!-- EXAMPLE -->
-            <h2>📝 Example Term</h2>
-            <div class="example-term">
-                <pre><span class="yaml-key">- term:</span> <span class="yaml-string">"Your Term Here"</span>
-  <span class="yaml-key">definition:</span> <span class="yaml-string">"Clear, concise definition"</span>
-  <span class="yaml-key">explanation:</span> <span class="yaml-string">"Longer context and details"</span>
-  <span class="yaml-key">humor:</span> <span class="yaml-string">"Make us laugh for bonus points!"</span>
-  <span class="yaml-key">tags:</span> [<span class="yaml-array">"relevant"</span>, <span class="yaml-array">"categories"</span>]
-  <span class="yaml-key">see_also:</span> [<span class="yaml-array">"Related Term"</span>, <span class="yaml-array">"Another Term"</span>]</pre>
             </div>
 
             <!-- CALL TO ACTION -->
@@ -363,13 +281,14 @@
                     🎮 Contribute on GitHub
                 </a>
                 <a href="https://github.com/LuminLynx/FOSS-Glossary/blob/main/terms.yaml" class="button button-secondary">
-                    📝 View All Terms
+                    📝 View All 13 Terms
                 </a>
             </div>
 
             <p class="last-updated">
-                Made with 💜 by the FOSS community | 
-                <a href="https://github.com/LuminLynx/FOSS-Glossary" style="color: #667eea;">Star us on GitHub</a>
+                Last updated: Sep 24, 2025, 8:43 PM | 
+                13 terms and growing! | 
+                Made with 💜 by the FOSS community
             </p>
         </div>
     </div>
