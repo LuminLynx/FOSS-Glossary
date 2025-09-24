@@ -98,3 +98,8 @@ terms:
     tags: ["licensing", "FOSS", "GPL", "freedom"]
     see_also: ["Permissive License", "GNU General Public License", "Free Software"]
     controversy_level: "high"
+
+  - term: "Ship It"
+    definition: "Deploy to production and hope for the best"
+    humor: "What you say at 4:59 PM on a Friday"
+    tags: ["deployment", "courage"]
