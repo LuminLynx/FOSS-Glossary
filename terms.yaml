@@ -90,5 +90,11 @@ terms:
     tags: [" maintenance", "technical-debt", "software-aging", "fragility"]
     see_also: ["Bit Rot", "Technical Debt", "Legacy Code"]
     controversy_level: "low"
-
-
+    
+  - term: "Copyleft"
+    definition: "A licensing principle that requires derivative works to be distributed under the same license as the original."
+    explanation: "Coined by Richard Stallman, 'copyleft' flips the idea of copyright on its head. Instead of restricting sharing, it ensures that freedoms to use, modify, and redistribute software are preserved in all future versions. The GNU General Public License (GPL) is the most famous example of a copyleft license. This principle is central to many FOSS projects because it guarantees that improvements remain free and open for the community."
+    humor: "Think of it as copyright’s rebellious cousin who insists on sharing the family recipes with everyone at the potluck."
+    tags: ["licensing", "FOSS", "GPL", "freedom"]
+    see_also: ["Permissive License", "GNU General Public License", "Free Software"]
+    controversy_level: "high"
