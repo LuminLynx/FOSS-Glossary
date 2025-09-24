@@ -3,8 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< Updated upstream
     <title>FOSS Glossary - 10 Terms and Growing!</title>
     <meta name="description" content="A gamified glossary of FOSS terms with humor. 10 terms defined by the community!">
+=======
+    <title>FOSS Glossary - Gamified Open Source Terms</title>
+>>>>>>> Stashed changes
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -15,7 +19,11 @@
             min-height: 100vh;
         }
         .container {
+<<<<<<< Updated upstream
             max-width: 1200px;
+=======
+            max-width: 900px;
+>>>>>>> Stashed changes
             margin: 0 auto;
             padding: 2rem;
         }
@@ -36,10 +44,21 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+<<<<<<< Updated upstream
             background-clip: text;
             margin-bottom: 1rem;
         }
         .live-stats {
+=======
+            margin-bottom: 1rem;
+        }
+        .tagline {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+        .stats {
+>>>>>>> Stashed changes
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 1rem;
@@ -51,16 +70,29 @@
             padding: 1.5rem;
             border-radius: 10px;
             text-align: center;
+<<<<<<< Updated upstream
         }
         .stat-number {
             font-size: 2.5rem;
             font-weight: bold;
             display: block;
+=======
+            transform: scale(1);
+            transition: transform 0.2s;
+        }
+        .stat-card:hover {
+            transform: scale(1.05);
+        }
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+>>>>>>> Stashed changes
         }
         .stat-label {
             font-size: 0.9rem;
             opacity: 0.9;
         }
+<<<<<<< Updated upstream
         .recent-terms {
             background: #f8f9fa;
             padding: 1.5rem;
@@ -124,6 +156,20 @@
             padding: 0.2rem 0.6rem;
             border-radius: 15px;
             font-size: 0.8rem;
+=======
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        .feature {
+            text-align: center;
+        }
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+>>>>>>> Stashed changes
         }
         .cta {
             text-align: center;
@@ -140,12 +186,16 @@
             font-size: 1.1rem;
             transition: all 0.3s;
             box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+<<<<<<< Updated upstream
             margin: 0.5rem;
+=======
+>>>>>>> Stashed changes
         }
         .button:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
         }
+<<<<<<< Updated upstream
         .button-secondary {
             background: white;
             color: #667eea;
@@ -162,6 +212,33 @@
             .container { padding: 1rem; }
             .card { padding: 1.5rem; }
             .term-grid { grid-template-columns: 1fr; }
+=======
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        .example {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 5px;
+        }
+        .badges {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+        .badge {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+>>>>>>> Stashed changes
         }
     </style>
 </head>
@@ -171,6 +248,7 @@
             <h1>🚀 FOSS Glossary</h1>
             <p class="tagline">A gamified glossary of Free and Open Source Software terms, with humor, sarcasm, and honest truths.</p>
             
+<<<<<<< Updated upstream
             <!-- LIVE STATISTICS -->
             <div class="live-stats">
                 <div class="stat-card">
@@ -288,6 +366,84 @@
             <p class="last-updated">
                 Last updated: Sep 23, 2025, 8:42 PM | 
                 10 terms and growing! | 
+=======
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-icon">📖</div>
+                    <div class="stat-label">Growing Dictionary</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🎮</div>
+                    <div class="stat-label">Gamified</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">😂</div>
+                    <div class="stat-label">Humor Welcome</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🏆</div>
+                    <div class="stat-label">Earn Badges</div>
+                </div>
+            </div>
+
+            <h2>✨ How It Works</h2>
+            <div class="feature-grid">
+                <div class="feature">
+                    <div class="feature-icon">📝</div>
+                    <h3>1. Add a Term</h3>
+                    <p>Fork the repo and add your FOSS term to <code>terms.yaml</code></p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🎯</div>
+                    <h3>2. Get Scored</h3>
+                    <p>Receive instant quality score out of 100 points</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🎉</div>
+                    <h3>3. Earn Glory</h3>
+                    <p>Unlock achievements and see your contribution celebrated!</p>
+                </div>
+            </div>
+
+            <h2>📊 Scoring System</h2>
+            <div class="example">
+                <strong>Every term is scored on:</strong><br>
+                • <strong>Base Definition</strong> - 20 points for the essentials<br>
+                • <strong>Humor</strong> - Up to 30 points for making us laugh!<br>
+                • <strong>Explanation</strong> - 20 points for context<br>
+                • <strong>Cross-references</strong> - Up to 20 points for connections<br>
+                • <strong>Tags</strong> - 10 points for categorization<br>
+                <br>
+                💯 Score 90+ to become a legend!
+            </div>
+
+            <h2>🏆 Achievements</h2>
+            <div class="badges">
+                <span class="badge">😂 Comedy Gold</span>
+                <span class="badge">💯 Perfectionist</span>
+                <span class="badge">🔥 Flame Warrior</span>
+                <span class="badge">📜 Historian</span>
+                <span class="badge">🌱 First PR</span>
+            </div>
+
+            <h2>📝 Example Term</h2>
+            <div class="example">
+                <pre>- term: "Yak Shaving"
+  definition: "Doing seemingly unrelated tasks before the actual task"
+  explanation: "You start trying to fix a bug, and somehow end up updating your entire OS"
+  humor: "I came here to write code, and somehow I'm now learning about Tibetan yak grooming"
+  tags: ["productivity", "procrastination"]
+  see_also: ["Bikeshedding", "Scope Creep"]</pre>
+            </div>
+
+            <div class="cta">
+                <a href="https://github.com/LuminLynx/FOSS-Glossary" class="button">
+                    🎮 Start Contributing on GitHub
+                </a>
+            </div>
+
+            <p style="text-align: center; color: #666; margin-top: 3rem;">
+>>>>>>> Stashed changes
                 Made with 💜 by the FOSS community
             </p>
         </div>
