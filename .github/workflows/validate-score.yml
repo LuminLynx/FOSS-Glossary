@@ -9,16 +9,12 @@ on:
     paths:
       - 'terms.yaml'
 
-# Add ALL permissions for PR commenting
 permissions:
-  actions: write
   contents: write
   pull-requests: write
   issues: write
   id-token: write
   pages: write
-  statuses: write
-  checks: write
 
 concurrency:
   group: "validate-${{ github.ref }}"
@@ -51,33 +47,47 @@ jobs:
             echo EOF
           } >> $GITHUB_OUTPUT
       
-      - name: Score term (only if valid)
-        id: score
-        if: steps.validate.outputs.valid == '0'
+      - name: Generate validation report
         run: |
-          node scripts/quickScore.js > output.txt
-          cat output.txt
-          echo "score=$(grep 'SCORE:' output.txt | cut -d: -f2)" >> $GITHUB_OUTPUT
-          echo "badge=$(grep 'BADGE:' output.txt | cut -d: -f2-)" >> $GITHUB_OUTPUT
+          echo "# 🎮 FOSS Glossary Term Review" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.validate.outputs.valid }}" == "0" ]; then
+            echo "## ✅ Validation Passed!" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Your term has been validated successfully." >> $GITHUB_STEP_SUMMARY
+            
+            # Try to score if quickScore.js exists
+            if [ -f "scripts/quickScore.js" ]; then
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "### 📊 Quality Score" >> $GITHUB_STEP_SUMMARY
+              node scripts/quickScore.js >> $GITHUB_STEP_SUMMARY 2>/dev/null || echo "Scoring not available" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "## ❌ Validation Failed" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Please fix the following errors:" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat validation-output.txt >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### 📝 Example of a valid term:" >> $GITHUB_STEP_SUMMARY
+            echo '```yaml' >> $GITHUB_STEP_SUMMARY
+            echo '- term: "Example"' >> $GITHUB_STEP_SUMMARY
+            echo '  definition: "A sample to demonstrate format"' >> $GITHUB_STEP_SUMMARY
+            echo '  explanation: "Optional detailed explanation"' >> $GITHUB_STEP_SUMMARY
+            echo '  humor: "Optional funny take"' >> $GITHUB_STEP_SUMMARY
+            echo '  tags: ["example", "demo"]' >> $GITHUB_STEP_SUMMARY
+            echo '  see_also: ["Related Term"]' >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          fi
       
-      # FIXED: Using peter-evans action for better PR comment handling
-      - name: Comment PR Results
-        if: github.event_name == 'pull_request'
-        continue-on-error: true  # Don't fail workflow if commenting doesn't work
-        uses: peter-evans/create-or-update-comment@v3
-        with:
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            ## 🎮 Term Review
-            
-            ${{ steps.validate.outputs.valid == '0' && '### ✅ Validation Passed!' || '### ❌ Validation Failed!' }}
-            
-            ${{ steps.score.outputs.score && format('**Score: {0}/100**', steps.score.outputs.score) || '' }}
-            
-            ${{ steps.score.outputs.badge || '' }}
-            
-            ---
-            *Automated review by FOSS Glossary Bot*
+      # Fail the job if validation failed
+      - name: Check validation result
+        if: steps.validate.outputs.valid != '0'
+        run: |
+          echo "Validation failed. Please check the summary for details."
+          exit 1
 
   update-stats:
     runs-on: ubuntu-latest
@@ -102,7 +112,12 @@ jobs:
           fi
       
       - name: Update README stats
-        run: node scripts/updateReadmeStats.js
+        run: |
+          if [ -f "scripts/updateReadmeStats.js" ]; then
+            node scripts/updateReadmeStats.js
+          else
+            echo "Stats updater not found, skipping"
+          fi
       
       - name: Wait before committing
         run: sleep 10
