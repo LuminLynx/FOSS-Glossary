@@ -18,6 +18,8 @@ permissions:
   contents: write
   pull-requests: write
   issues: write
+  id-token: write  # ADD THIS LINE
+  pages: write     # ADD THIS LINE TOO
 
 jobs:
   validate-and-score:
