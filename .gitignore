@@ -12,3 +12,9 @@ temp/
 
 # Vim Swap Files
 *.swp
+
+# Backup Files
+*.save
+
+# Backup Files with extensions
+*.save.*

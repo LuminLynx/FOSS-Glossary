@@ -6,7 +6,12 @@ on:
     paths:
       - 'terms.yaml'
       - 'scripts/generateLandingPage.js'
-  workflow_dispatch: # Allow manual trigger
+  workflow_dispatch:
+
+# Prevent multiple instances running at once
+concurrency:
+  group: "update-landing"
+  cancel-in-progress: false  # Let current one finish
 
 permissions:
   contents: write
@@ -30,6 +35,12 @@ jobs:
       - name: Generate landing page
         run: node scripts/generateLandingPage.js
       
+      # IMPORTANT: Add delay before committing
+      - name: Wait for any running Pages deployments
+        run: |
+          echo "Waiting for other workflows to settle..."
+          sleep 15
+      
       - name: Commit and push changes
         run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -38,6 +49,7 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to landing page"
           else
-            git commit -m "🌐 Update landing page with latest terms [skip ci]"
+            # The [skip ci] prevents triggering other workflows
+            git commit -m "🌐 Update landing page [skip ci]"
             git push
           fi
