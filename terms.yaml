@@ -103,3 +103,7 @@ terms:
     definition: "Deploy to production and hope for the best"
     humor: "What you say at 4:59 PM on a Friday"
     tags: ["deployment", "courage"]
+  - term: "YOLO Deploy"
+    definition: "Deploying directly to production without testing"
+    humor: "Your Ops team Loves Organization... just kidding"
+    tags: ["deployment", "chaos"]
