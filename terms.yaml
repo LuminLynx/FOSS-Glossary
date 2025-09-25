@@ -107,3 +107,9 @@ terms:
     definition: "Deploying directly to production without testing"
     humor: "Your Ops team Loves Organization... just kidding"
     tags: ["deployment", "chaos"]
+
+  - term: "YOLO Deploy"
+    definition: "Deploying directly to production without testing"
+    humor: "Your Ops team Loves Organization... just kidding, they're crying"
+    tags: ["deployment", "chaos", "courage"]
+    see_also: ["Ship It", "Cowboy Coding"]
