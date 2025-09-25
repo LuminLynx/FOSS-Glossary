@@ -37,10 +37,7 @@ jobs:
       
       - name: Install dependencies
         run: npm install js-yaml
-      
-      - name: Generate landing page
-        run: node scripts/generateLandingPage.js
-      
+
       # IMPORTANT: Add delay before committing
       - name: Wait for any running Pages deployments
         run: |
@@ -53,6 +50,8 @@ jobs:
           git config --local user.name "github-actions[bot]"
           # Ensure we're up to date
           git pull --rebase
+          # NOW generate the landing page (AFTER pulling)
+          node scripts/generateLandingPage.js 
           git add docs/index.html
           if git diff --staged --quiet; then
             echo "No changes to landing page"
