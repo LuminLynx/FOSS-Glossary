@@ -114,3 +114,8 @@ terms:
     humor: "Your Ops team Loves Organization... just kidding, they're crying"
     tags: ["deployment", "chaos", "courage"]
     see_also: ["Ship It", "Cowboy Coding"]
+
+  - term: "Works on My Machine"
+    definition: "The developer's eternal defense when code fails in production"
+    humor: "Certification program coming soon: WOMM Certified Developer™"
+    tags: ["debugging", "classic", "excuse"]
