@@ -7,6 +7,10 @@ on:
       - 'terms.yaml'
       - 'scripts/generateLandingPage.js'
   workflow_dispatch:
+  workflow_run:       # ADD THIS - runs after other workflows
+    workflows: ["Validate & Score Terms"]
+    types: [completed]
+    branches: [main]
 
 # Prevent multiple instances running at once
 concurrency:
