@@ -119,3 +119,10 @@ terms:
     definition: "The developer's eternal defense when code fails in production"
     humor: "Certification program coming soon: WOMM Certified Developer™"
     tags: ["debugging", "classic", "excuse"]
+
+  - term: "Fork"
+    definition: "When developers copy an open-source project’s codebase to start their own version — sometimes to innovate, sometimes to escape endless mailing list debates"
+    humor: "Warning: excessive forking may lead to family drama in the GitHub tree"
+    tags: ["FOSS", "open-source", "git", "community"]
+
+    
