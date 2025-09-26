@@ -1,0 +1,278 @@
+# .github/workflows/pr-complete.yml
+# This REPLACES both validate-score.yml and pr-enhancer.yml with a single unified workflow
+name: PR Review System
+
+on:
+  pull_request:
+    paths:
+      - 'terms.yaml'
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  # Job 1: Welcome message (only on PR open)
+  welcome:
+    runs-on: ubuntu-latest
+    if: github.event.action == 'opened'
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Post welcome message
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const messages = [
+              '🎮 Welcome challenger! Let\'s see what you\'ve got!',
+              '🚀 New term incoming! Preparing the scoring system...',
+              '📖 Another brave soul enters the glossary arena!',
+              '✨ Ooh, fresh content! Time to earn some points!'
+            ];
+            
+            const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+            
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## ${randomMsg}\n\n🤖 **Validation starting in 3... 2... 1...**`
+            });
+
+  # Job 2: Validate and Score (always runs)
+  validate-and-score:
+    runs-on: ubuntu-latest
+    needs: [welcome]  # Wait for welcome if it's running
+    if: always()      # Run even if welcome was skipped
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Need full history for diff
+      
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        run: npm install js-yaml
+      
+      # Step 1: Validate the YAML
+      - name: Validate terms
+        id: validate
+        continue-on-error: true
+        run: |
+          node scripts/validateTerms.js 2>&1 | tee validation-output.txt
+          echo "valid=$?" >> $GITHUB_OUTPUT
+          {
+            echo 'validation_output<<EOF'
+            cat validation-output.txt
+            echo EOF
+          } >> $GITHUB_OUTPUT
+      
+      # Step 2: Score if valid
+      - name: Score terms
+        id: score
+        if: steps.validate.outputs.valid == '0'
+        run: |
+          node scripts/quickScore.js > score-output.txt
+          cat score-output.txt
+          echo "score=$(grep 'SCORE:' score-output.txt | cut -d: -f2)" >> $GITHUB_OUTPUT
+          echo "badge=$(grep 'BADGE:' score-output.txt | cut -d: -f2-)" >> $GITHUB_OUTPUT
+      
+      # Step 3: Get PR statistics
+      - name: Get glossary stats
+        id: stats
+        if: always()
+        run: |
+          node -e "
+          const fs = require('fs');
+          const yaml = require('js-yaml');
+          
+          try {
+            const data = yaml.load(fs.readFileSync('terms.yaml', 'utf8'));
+            const terms = data.terms || [];
+            
+            // Count and analyze
+            console.log('total_terms=' + terms.length);
+            
+            // Find high score
+            let highScore = 0;
+            let topScorer = '';
+            terms.forEach(term => {
+              let score = 0;
+              if (term.term && term.definition) score += 20;
+              if (term.humor) score += Math.min(30, Math.floor(term.humor.length / 10) * 5);
+              if (term.explanation) score += 20;
+              if (term.see_also && term.see_also.length > 0) score += Math.min(20, term.see_also.length * 10);
+              if (term.tags && term.tags.length > 0) score += 10;
+              if (score > highScore) {
+                highScore = score;
+                topScorer = term.term;
+              }
+            });
+            
+            console.log('high_score=' + highScore);
+            console.log('top_scorer=' + topScorer);
+            
+            // Get the diff to find new terms
+            const { execSync } = require('child_process');
+            try {
+              const diff = execSync('git diff origin/main...HEAD -- terms.yaml', { encoding: 'utf8' });
+              const newTermMatch = diff.match(/\+\s*- term: \"([^\"]+)\"/);
+              if (newTermMatch) {
+                console.log('new_term=' + newTermMatch[1]);
+              }
+            } catch (e) {
+              console.log('new_term=Unknown');
+            }
+          } catch (error) {
+            console.log('total_terms=0');
+            console.log('high_score=0');
+            console.log('top_scorer=None');
+            console.log('new_term=Unknown');
+          }
+          " >> $GITHUB_OUTPUT
+      
+      # Step 4: Comment with results (combines all information)
+      - name: Comment PR results
+        uses: actions/github-script@v6
+        if: always()
+        with:
+          script: |
+            // Get all our data
+            const isValid = '${{ steps.validate.outputs.valid }}' === '0';
+            const validationOutput = `${{ steps.validate.outputs.validation_output }}`;
+            const score = '${{ steps.score.outputs.score }}' || '0';
+            const badge = '${{ steps.score.outputs.badge }}' || '';
+            const totalTerms = '${{ steps.stats.outputs.total_terms }}' || '0';
+            const highScore = '${{ steps.stats.outputs.high_score }}' || '0';
+            const topScorer = '${{ steps.stats.outputs.top_scorer }}' || 'None';
+            const newTerm = '${{ steps.stats.outputs.new_term }}' || 'Unknown';
+            
+            let comment = '';
+            
+            // Title based on whether it's first comment or update
+            const isFirstRun = context.payload.action === 'opened';
+            
+            if (!isValid) {
+              // VALIDATION FAILED
+              comment = `## ❌ Validation Failed!\n\n`;
+              comment += `### The Issue:\n`;
+              comment += '```\n' + validationOutput.replace(/✅.*\n/g, '').trim() + '\n```\n\n';
+              
+              comment += `### 🔧 How to Fix:\n`;
+              comment += `1. Check your YAML indentation (use 2 spaces, not tabs)\n`;
+              comment += `2. Make sure you have both \`term\` and \`definition\` fields\n`;
+              comment += `3. Put quotes around values with special characters\n`;
+              comment += `4. Check for typos in field names\n\n`;
+              
+              comment += `### 📝 Valid Example:\n`;
+              comment += '```yaml\n';
+              comment += '- term: "Example"\n';
+              comment += '  definition: "A sample definition"\n';
+              comment += '  humor: "Something funny"\n';
+              comment += '  tags: ["example", "test"]\n';
+              comment += '```\n\n';
+              
+              comment += `*Fix these issues and push again. I'll re-check automatically!* 🤖`;
+              
+            } else {
+              // VALIDATION PASSED - Show score
+              comment = `## ✅ Validation Passed!\n\n`;
+              
+              if (newTerm !== 'Unknown') {
+                comment += `### 📝 New Term: "${newTerm}"\n\n`;
+              }
+              
+              comment += `### 📊 Your Score: ${score}/100\n\n`;
+              
+              // Score tier message
+              if (score >= 90) {
+                comment += `# 🏆 LEGENDARY CONTRIBUTION!\n`;
+                comment += `You've achieved excellence! This is Hall of Fame material! 🌟\n\n`;
+              } else if (score >= 80) {
+                comment += `## 🔥 AMAZING!\n`;
+                comment += `Outstanding work! You're in the top tier! 💪\n\n`;
+              } else if (score >= 70) {
+                comment += `### 💪 Great Job!\n`;
+                comment += `Solid contribution! Well above average! 👏\n\n`;
+              } else if (score >= 60) {
+                comment += `### 👍 Good Work!\n`;
+                comment += `Nice contribution! Consider adding more details for bonus points!\n\n`;
+              } else {
+                comment += `### 🌱 Good Start!\n`;
+                comment += `Thanks for contributing! Here's how to boost your score:\n\n`;
+              }
+              
+              // Achievements
+              if (badge) {
+                comment += `### 🏅 Achievements Unlocked:\n`;
+                badge.split(',').forEach(b => {
+                  const trimmed = b.trim();
+                  if (trimmed) comment += `- ${trimmed}\n`;
+                });
+                comment += '\n';
+              }
+              
+              // Improvement tips for lower scores
+              if (score < 80) {
+                comment += `### 💡 Quick Tips to Improve:\n`;
+                if (!badge.includes('Comedy Gold')) {
+                  comment += `- Add more humor (current max: 30 points)\n`;
+                }
+                comment += `- Add an \`explanation\` field (+20 points)\n`;
+                comment += `- Include \`see_also\` references (+20 points)\n`;
+                comment += `- Add relevant \`tags\` (+10 points)\n\n`;
+              }
+              
+              // Leaderboard section
+              comment += `### 🏆 Current Leaderboard\n`;
+              comment += `- **Your Score:** ${score}/100\n`;
+              comment += `- **High Score:** ${highScore}/100 (${topScorer})\n`;
+              comment += `- **Total Terms:** ${totalTerms}\n\n`;
+              
+              // Comparison
+              if (parseInt(score) >= parseInt(highScore)) {
+                comment += `**🎊 NEW HIGH SCORE! You're the champion!** 🎊\n\n`;
+              } else {
+                const diff = parseInt(highScore) - parseInt(score);
+                comment += `You're ${diff} points away from the high score! ${diff <= 10 ? 'So close! 🔥' : 'Keep pushing! 💪'}\n\n`;
+              }
+              
+              comment += `---\n`;
+              comment += `*Ready for merge after maintainer review!* ✨`;
+            }
+            
+            // Check if we already commented
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            
+            // Look for our validation comment (not the welcome message)
+            const validationComment = comments.find(comment => 
+              comment.user.type === 'Bot' && 
+              (comment.body.includes('✅ Validation Passed') || comment.body.includes('❌ Validation Failed'))
+            );
+            
+            if (validationComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: validationComment.id,
+                body: comment
+              });
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            }
