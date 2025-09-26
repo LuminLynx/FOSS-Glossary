@@ -55,6 +55,23 @@ jobs:
           git add docs/index.html
           if git diff --staged --quiet; then
             echo "No changes to landing page"
+            # DEBUG: What files are modified?
+            echo "=== Git Status Before Pull ==="
+            git status
+            echo "=== Git Diff ==="
+            git diff
+            echo "======================="
+
+            # Ensure we're up to date
+            git pull --rebase  
+            
+            # NOW generate the landing page (AFTER pulling)
+            node scripts/generateLandingPage.js 
+
+            git add docs/index.html
+            if git diff --staged --quiet; then
+            echo "No changes to landing page"
+
           else
             # The [skip ci] prevents triggering other workflows
             git commit -m "🌐 Update landing page [skip ci]"
