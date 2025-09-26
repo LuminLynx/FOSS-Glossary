@@ -125,8 +125,6 @@ terms:
     humor: "Warning: excessive forking may lead to family drama in the GitHub tree"
     tags: ["FOSS", "open-source", "git", "community"]
 
-    
-
   - term: "Test Term"
     definition: "Testing the workflows"
     tags: ["test"]
