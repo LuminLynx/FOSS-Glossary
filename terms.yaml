@@ -126,3 +126,7 @@ terms:
     tags: ["FOSS", "open-source", "git", "community"]
 
     
+
+  - term: "Test Term"
+    definition: "Testing the workflows"
+    tags: ["test"]
