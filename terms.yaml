@@ -122,3 +122,10 @@ terms:
   - term: "Test Term"
     definition: "Testing the workflows"
     tags: ["test"]
+
+  - term: "Linux"
+    definition: "An open-source operating system kernel"
+    explanation: "Forms the foundation of countless operating systems, powering everything from servers and smartphones to IoT devices"
+    humor: "The only kernel that makes you feel powerful—until you realize you’ve spent three hours compiling drivers just to get your Wi-Fi working"
+    tags: ["os", "kernel", "foss"]
+    see_also: ["GNU", "Ubuntu", "Debian"]
