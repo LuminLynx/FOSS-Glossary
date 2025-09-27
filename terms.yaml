@@ -136,3 +136,10 @@ terms:
     humor: "The polite way of saying: 'Yes, that’s a problem. No, I’m not fixing it for you.'"
     tags: ["FOSS", "contribution", "community", "development"]
     see_also: ["RTFS", "WONTFIX", "scratch-your-own-itch"]
+
+  - term: "WONTFIX"
+    definition: "Will Not Fix"
+    explanation: "A resolution tag in issue trackers indicating that a reported bug or feature request will not be addressed, often due to philosophy, scope, or maintainability concerns."
+    humor: "The open‑source equivalent of 'working as intended' — even when it clearly isn’t."
+    tags: ["FOSS", "issue-tracking", "development", "community"]
+    see_also: ["PTW", "RTFS", "scratch-your-own-itch"]
