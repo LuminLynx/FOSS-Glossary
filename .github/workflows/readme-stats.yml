@@ -1,6 +1,7 @@
 name: Update README Stats
 
 on:
+  workflow_dispatch: {}
   push:
     branches: [main]
     paths:
@@ -40,3 +41,30 @@ jobs:
           else
             echo "No README changes to commit."
           fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
