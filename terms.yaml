@@ -129,3 +129,10 @@ terms:
     humor: "The only kernel that makes you feel powerful—until you realize you’ve spent three hours compiling drivers just to get your Wi-Fi working"
     tags: ["os", "kernel", "foss"]
     see_also: ["GNU", "Ubuntu", "Debian"]
+
+  - term: "PTW"
+    definition: "Patches Welcome"
+    explanation: "A common open‑source response meaning: if you want a feature or fix, contribute the code yourself."
+    humor: "The polite way of saying: 'Yes, that’s a problem. No, I’m not fixing it for you.'"
+    tags: ["FOSS", "contribution", "community", "development"]
+    see_also: ["RTFS", "WONTFIX", "scratch-your-own-itch"]
