@@ -10,14 +10,14 @@ A community-driven glossary of FOSS terms with humor, sarcasm, and honest truths
 <!-- STATS-START -->
 ## 📊 Glossary Stats
 
-**Total Terms:** 18 | **Contributors:** 1 | **Terms with Humor:** 17 (94%)
+**Total Terms:** 21 | **Contributors:** 3 | **Terms with Humor:** 20 (95%)
 
 **🏆 Current Champion:** `License Proliferation` with ~98/100 points!
 
-**Recent additions:** `Test Term`, `Fork`, `Works on My Machine`
+**Recent additions:** `WONTFIX`, `PTW`, `Linux`
 
 ### 🎮 Top Contributors
-🥇 John Portley
+🥇 Joao Portela | 🥈 John Portley | 🥉 Joe Port
 <!-- STATS-END -->
 
 ## 🎮 How to Contribute
