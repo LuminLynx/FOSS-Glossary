@@ -1,0 +1,63 @@
+name: PR Welcome
+
+on:
+  pull_request_target:
+    paths:
+      - 'terms.yaml'
+    types: [opened, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  welcome:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post welcome message
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            const messages = [
+              '🎮 Welcome challenger! Let\'s see what you\'ve got!',
+              '🚀 New term incoming! Preparing the scoring system...',
+              '📖 Another brave soul enters the glossary arena!',
+              '✨ Ooh, fresh content! Time to earn some points!'
+            ];
+            const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## ${randomMsg}\n\n🤖 **Validation starting in 3... 2... 1...**`
+            });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
