@@ -55,4 +55,4 @@ Every term is scored out of 100 points:
 
 ## 🌐 [Visit our Documentation](https://luminlynx.github.io/FOSS-Glossary/)
 
- Check out our beautiful docs site with scoring explanation and examples!!
+ Check out our beautiful docs site with scoring explanation and examples!
