@@ -6,8 +6,9 @@ This template appears automatically when someone creates a PR
 ## 🎮 New Term Submission
 
 ### The Term I'm Adding:
-**Term:** <!-- Your term here -->
-**Score Goal:** <!-- What score are you aiming for? -->
+**Term:** (type your term here)
+
+**Score Goal:** (e.g., 70–100)
 
 ### Checklist:
 - [ ] I've added my term to `terms.yaml`
@@ -17,10 +18,10 @@ This template appears automatically when someone creates a PR
 - [ ] I'm ready to get roasted... I mean, scored!
 
 ### Why This Term Matters:
-<!-- Tell us why this term deserves to be in the glossary -->
+(Write 1–3 sentences explaining why this term should be included.)
 
 ### My Humor Attempt:
-<!-- Preview your humor field - make us laugh! -->
+(Write your humor/joke line here.)
 
 ---
 *Automation will score this PR in ~30 seconds. Good luck! 🎲*
