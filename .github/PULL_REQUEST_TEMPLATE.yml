@@ -1,0 +1,55 @@
+name: New Term Submission
+description: Submit a new term to the FOSS Glossary
+title: "New term: "
+body:
+  - type: input
+    id: term
+    attributes:
+      label: Term
+      description: The term you are adding
+      placeholder: Type your term here
+    validations:
+      required: true
+
+  - type: input
+    id: score_goal
+    attributes:
+      label: Score Goal
+      description: Desired score (e.g., 70–100)
+      placeholder: "e.g., 70–100"
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I've added my term to terms.yaml
+          required: true
+        - label: I've included a definition
+          required: true
+        - label: I've added humor (going for those 30 bonus points!)
+          required: false
+        - label: I've checked my YAML syntax
+          required: true
+        - label: I'm ready to get roasted... I mean, scored!
+          required: false
+
+  - type: textarea
+    id: why
+    attributes:
+      label: Why This Term Matters
+      description: 1–3 sentences explaining why this term should be included.
+      placeholder: Write your reasoning here.
+    validations:
+      required: true
+
+  - type: textarea
+    id: humor
+    attributes:
+      label: My Humor Attempt
+      description: Add a light joke or witty line related to the term.
+      placeholder: Write your humor/joke line here.
+    validations:
+      required: false
