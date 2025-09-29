@@ -143,3 +143,10 @@ terms:
     humor: "The open‑source equivalent of 'working as intended' — even when it clearly isn’t."
     tags: ["FOSS", "issue-tracking", "development", "community"]
     see_also: ["PTW", "RTFS", "scratch-your-own-itch"]
+
+  - term: "Dependency Drift"
+    definition: "The gradual divergence of a project's dependencies from their intended stable versions"
+    explanation: "Happens when libraries and packages update faster than the project’s maintenance cycle, creating hidden technical debt and potential security gaps"
+    humor: "Like waking up to find your roommates have all moved out and been replaced by strangers who insist they live there now"
+    tags: ["foss", "maintenance", "technical-debt"]
+    see_also: ["Version Pinning", "Semantic Versioning", "Supply Chain Security"]
