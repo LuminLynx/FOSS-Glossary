@@ -18,7 +18,18 @@ const stats = {
 
 // Generate term cards HTML
 function generateTermCards(count = 6) {
-  const displayTerms = terms.slice(-count).reverse();
+  // Filter out invalid terms before displaying
+  const validTerms = terms.filter(term => 
+    term && 
+    term.term && 
+    typeof term.term === 'string' && 
+    term.term.trim() !== '' &&
+    term.definition && 
+    typeof term.definition === 'string' && 
+    term.definition.trim() !== ''
+  );
+  
+  const displayTerms = validTerms.slice(-count).reverse();
   
   return displayTerms.map(term => {
     const score = calculateTermScore(term);
@@ -139,7 +150,7 @@ const html = `<!DOCTYPE html>
             gap: 1.5rem;
             margin: 2rem 0;
         }
-        .term-card {
+        .ter        m-card {
             background: white;
             border: 2px solid #e9ecef;
             padding: 1.5rem;
@@ -267,7 +278,7 @@ const html = `<!DOCTYPE html>
             <h2>📖 Recent Terms</h2>
             <div class="term-grid">
                 ${generateTermCards()}
-            </div>
+            </div>grid">
 
             <!-- SCORING SYSTEM -->
             <h2>📊 How Scoring Works</h2>
