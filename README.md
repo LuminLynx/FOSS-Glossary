@@ -10,7 +10,7 @@ A community-driven glossary of FOSS terms with humor, sarcasm, and honest truths
 <!-- STATS-START -->
 ## 📊 Glossary Stats
 
-**Total Terms:** 22 | **Contributors:** 3 | **Terms with Humor:** 21 (95%)
+**Total Terms:** 21 | **Contributors:** 3 | **Terms with Humor:** 21 (100%)
 
 **🏆 Current Champion:** `License Proliferation` with ~98/100 points!
 
