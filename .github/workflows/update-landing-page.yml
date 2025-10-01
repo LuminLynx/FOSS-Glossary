@@ -14,8 +14,8 @@ on:
 
 # Prevent multiple instances running at once
 concurrency:
-  group: "update-landing"
-  cancel-in-progress: false  # Let current one finish
+    group: "docs-updates"  # Changed from "update-landing"
+    cancel-in-progress: false  # Let current one finish
 
 permissions:
   contents: write
