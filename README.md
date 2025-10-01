@@ -10,11 +10,11 @@ A community-driven glossary of FOSS terms with humor, sarcasm, and honest truths
 <!-- STATS-START -->
 ## 📊 Glossary Stats
 
-**Total Terms:** 23 | **Contributors:** 3 | **Terms with Humor:** 21 (91%)
+**Total Terms:** 22 | **Contributors:** 3 | **Terms with Humor:** 21 (95%)
 
 **🏆 Current Champion:** `License Proliferation` with ~98/100 points!
 
-**Recent additions:** `null`, `Dependency Drift`, `WONTFIX`
+**Recent additions:** `Dependency Drift`, `WONTFIX`, `PTW`
 
 ### 🎮 Top Contributors
 🥇 John Portley | 🥈 Joao Portela | 🥉 Joe Port
