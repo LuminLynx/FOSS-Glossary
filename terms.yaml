@@ -119,10 +119,6 @@ terms:
     humor: "Warning: excessive forking may lead to family drama in the GitHub tree"
     tags: ["FOSS", "open-source", "git", "community"]
 
-  - term: "Test Term"
-    definition: "Testing the workflows"
-    tags: ["test"]
-
   - term: "Linux"
     definition: "An open-source operating system kernel"
     explanation: "Forms the foundation of countless operating systems, powering everything from servers and smartphones to IoT devices"

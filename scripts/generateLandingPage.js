@@ -278,7 +278,7 @@ const html = `<!DOCTYPE html>
             <h2>📖 Recent Terms</h2>
             <div class="term-grid">
                 ${generateTermCards()}
-            </div>grid">
+            </div>
 
             <!-- SCORING SYSTEM -->
             <h2>📊 How Scoring Works</h2>
