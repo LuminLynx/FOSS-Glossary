@@ -1,7 +1,6 @@
 # Contributing to FOSS Glossary
 
 First off, **thank you!** 🎉 We're excited to have you contribute to making FOSS terminology more accessible and fun.
-# Contributing to FOSS Glossary
 
 ## 🌟 Hall of Fame
 
