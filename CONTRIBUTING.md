@@ -1,6 +1,15 @@
 # Contributing to FOSS Glossary
 
 First off, **thank you!** 🎉 We're excited to have you contribute to making FOSS terminology more accessible and fun.
+# Contributing to FOSS Glossary
+
+## 🌟 Hall of Fame
+
+### First Contributors
+- **@Axestein** - Pioneer! Added [It's a Feature, LGTM] - Our very first community contribution! 🎉
+
+First off, **thank you!** 🎉 We're excited to have you contribute...
+
 
 ## 🎮 How It Works
 
