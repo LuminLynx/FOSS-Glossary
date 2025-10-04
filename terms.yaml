@@ -161,3 +161,11 @@ terms:
     humor: "Not a bug, it's a surprise mechanic for enhanced user engagement"
     tags: ["classic", "excuse", "documentation", "meme","FOSS"]
     see_also: ["LGTM", "Fork"]
+
+  - term: "Forkprint"
+    definition: "The unique trail of decisions, patches, and governance quirks that a forked project leaves behind"
+    explanation: "Acts like a fingerprint, encoded in commit history, issue labels, and repo conventions"
+    humor: "Proof that every fork thinks it's the chosen one, until you diff the forkprint and see the chaos"
+    tags: ["governance", "identity", "traceability"]
+    see_also: ["Git", "Fork", "Merge"]
+
