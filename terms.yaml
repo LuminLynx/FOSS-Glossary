@@ -176,3 +176,11 @@ terms:
     tags: ["merge", "conflict", "workflow"]
     see_also: ["Rebase", "Forkprint", "Hotfix"]
 
+  - term: "Commitfog"
+    definition: "The haze of unclear commit messages that obscures project history"
+    explanation: "Occurs when developers push changes with vague or cryptic messages, making audits and rollbacks painful"
+    humor: "Like trying to navigate with a map drawn in crayon during a blackout"
+    tags: ["commits", "history", "anti-pattern"]  
+    see_also: ["Changelog", "Forkprint", "Mergequake"]
+
+
