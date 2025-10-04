@@ -169,3 +169,10 @@ terms:
     tags: ["governance", "identity", "traceability"]
     see_also: ["Git", "Fork", "Merge"]
 
+  - term: "Mergequake"
+    definition: "The sudden cascade of conflicts triggered when multiple long-lived branches are merged at once"
+    explanation: "Happens when parallel work streams collide, shaking the repo like tectonic plates under stress"
+    humor: "One minute you're merging, the next you're an amateur seismologist mapping aftershocks in rebase hell"
+    tags: ["merge", "conflict", "workflow"]
+    see_also: ["Rebase", "Forkprint", "Hotfix"]
+
