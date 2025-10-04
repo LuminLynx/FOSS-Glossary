@@ -3,7 +3,7 @@
 name: PR Review System
 
 on:
-  pull_request:
+  pull_request_target:
     paths:
       - 'terms.yaml'
     types: [opened, synchronize, reopened]
@@ -34,16 +34,18 @@ jobs:
       # Step 1: Validate the YAML
       - name: Validate terms
         id: validate
-        continue-on-error: true
+        #continue-on-error: true
         run: |
           node scripts/validateTerms.js 2>&1 | tee validation-output.txt
-          echo "valid=$?" >> $GITHUB_OUTPUT
+          VALIDATION_EXIT_CODE=${PIPESTATUS[0]}
+          echo "valid=$VALIDATION_EXIT_CODE" >> $GITHUB_OUTPUT
           {
             echo 'validation_output<<EOF'
             cat validation-output.txt
             echo EOF
           } >> $GITHUB_OUTPUT
-      
+          exit $VALIDATION_EXIT_CODE
+
       # Step 2: Score if valid
       - name: Score terms
         id: score

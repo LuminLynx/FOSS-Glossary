@@ -1,3 +1,4 @@
+# FOSS Glossary - Community-driven definitions
 terms:
   - term: "RTFM"
     definition: "Read The F***ing Manual"
@@ -119,10 +120,6 @@ terms:
     humor: "Warning: excessive forking may lead to family drama in the GitHub tree"
     tags: ["FOSS", "open-source", "git", "community"]
 
-  - term: "Test Term"
-    definition: "Testing the workflows"
-    tags: ["test"]
-
   - term: "Linux"
     definition: "An open-source operating system kernel"
     explanation: "Forms the foundation of countless operating systems, powering everything from servers and smartphones to IoT devices"
@@ -150,3 +147,17 @@ terms:
     humor: "Like waking up to find your roommates have all moved out and been replaced by strangers who insist they live there now"
     tags: ["foss", "maintenance", "technical-debt"]
     see_also: ["Version Pinning", "Semantic Versioning", "Supply Chain Security"]
+
+  - term: "LGTM"
+    definition: "Looks Good To Me"
+    explanation: "The standard approval comment in code reviews, indicating the reviewer has no major objections to the changes"
+    humor: "Translation: I skimmed this for 30 seconds and didn't see anything on fire. Ship it!"
+    tags: ["code-review", "approval", "acronym", "FOSS"]
+    see_also: ["It's a Feature", "Works On My Machine"]
+    
+  - term: "It's a Feature"
+    definition: "The art of rebranding a bug so profound and inexplicable that fixing it would break the universe"
+    explanation: "When a bug becomes so deeply integrated into user workflows that fixing it would cause more problems than it solves, so it gets documented as intentional behavior"
+    humor: "Not a bug, it's a surprise mechanic for enhanced user engagement"
+    tags: ["classic", "excuse", "documentation", "meme","FOSS"]
+    see_also: ["LGTM", "Fork"]

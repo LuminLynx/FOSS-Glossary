@@ -10,6 +10,11 @@ on:
 permissions:
   contents: write
 
+# Add this concurrency block
+concurrency:
+  group: "docs-updates"
+  cancel-in-progress: false
+
 jobs:
   update-readme:
     runs-on: ubuntu-latest
