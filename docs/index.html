@@ -3,294 +3,341 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FOSS Glossary - 26 Terms and Growing!</title>
-    <meta name="description" content="A gamified glossary of FOSS terms with humor. 26 terms defined by the community!">
+    <title>FOSS Glossary - Gamified Open Source Terms</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
             line-height: 1.6;
-            color: #333;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #f5f5f0;
+            background: #1a3a52;
             min-height: 100vh;
         }
         .container {
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 0 auto;
             padding: 2rem;
         }
-        .card {
-            background: white;
-            padding: 3rem;
-            border-radius: 15px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            margin-bottom: 2rem;
-            animation: slideUp 0.5s ease-out;
-        }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        h1 {
-            font-size: 3rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 1rem;
-        }
-        .live-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-            margin: 2rem 0;
-        }
-        .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 1.5rem;
-            border-radius: 10px;
+        
+        /* Header with logo */
+        .header {
             text-align: center;
+            padding: 3rem 0;
         }
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: bold;
-            display: block;
+        
+        .logo-container {
+            margin-bottom: 2rem;
         }
-        .stat-label {
-            font-size: 0.9rem;
+        
+        .logo {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto;
+            border-radius: 50%;
+            box-shadow: 0 10px 40px rgba(0, 212, 228, 0.3);
+            overflow: hidden;
+        }
+        
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            color: #00d4e4;
+            margin-bottom: 1rem;
+            font-weight: 900;
+        }
+        
+        .tagline {
+            font-size: 1.3rem;
+            color: #f5f5f0;
+            margin-bottom: 2rem;
             opacity: 0.9;
         }
-        .recent-terms {
-            background: #f8f9fa;
-            padding: 1.5rem;
-            border-radius: 10px;
-            margin: 2rem 0;
+        
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 3rem;
+            border-radius: 15px;
+            border: 1px solid rgba(0, 212, 228, 0.2);
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
         }
-        .term-grid {
+        
+        .stats {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1.5rem;
-            margin: 2rem 0;
+            margin: 3rem 0;
         }
-        .ter        m-card {
-            background: white;
-            border: 2px solid #e9ecef;
-            padding: 1.5rem;
-            border-radius: 10px;
+        
+        .stat-card {
+            background: rgba(0, 212, 228, 0.1);
+            border: 2px solid #00d4e4;
+            color: #f5f5f0;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
             transition: all 0.3s;
         }
-        .term-card:hover {
-            border-color: #667eea;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 212, 228, 0.4);
+            background: rgba(0, 212, 228, 0.2);
         }
-        .term-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        
+        .stat-icon {
+            font-size: 3rem;
             margin-bottom: 0.5rem;
         }
-        .term-header h3 {
-            color: #667eea;
-            margin: 0;
+        
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-weight: 600;
         }
-        .term-score {
-            font-weight: bold;
-            font-size: 1.2rem;
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
         }
-        .term-definition {
-            color: #495057;
+        
+        .feature {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2rem;
+            border-radius: 12px;
+            border-left: 4px solid #00d4e4;
+            transition: all 0.3s;
+        }
+        
+        .feature:hover {
+            background: rgba(0, 212, 228, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .feature h3 {
+            color: #00d4e4;
             margin-bottom: 0.5rem;
         }
-        .term-humor {
-            color: #6c757d;
-            font-style: italic;
-            font-size: 0.9rem;
-            padding: 0.5rem;
-            background: #f8f9fa;
-            border-left: 3px solid #ffc107;
-            margin: 0.5rem 0;
+        
+        h2 {
+            color: #00d4e4;
+            font-size: 2rem;
+            margin: 2rem 0 1rem 0;
         }
-        .term-tags {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            margin-top: 0.5rem;
-        }
-        .tag {
-            background: rgba(102, 126, 234, 0.1);
-            color: #667eea;
-            padding: 0.2rem 0.6rem;
-            border-radius: 15px;
-            font-size: 0.8rem;
-        }
+        
         .cta {
             text-align: center;
             margin: 3rem 0;
         }
+        
         .button {
             display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 1rem 2.5rem;
+            background: #00d4e4;
+            color: #1a3a52;
+            padding: 1.2rem 3rem;
             text-decoration: none;
             border-radius: 50px;
             font-weight: bold;
             font-size: 1.1rem;
             transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 5px 20px rgba(0, 212, 228, 0.4);
             margin: 0.5rem;
         }
+        
         .button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 212, 228, 0.6);
+            background: #00f0ff;
         }
+        
         .button-secondary {
-            background: white;
-            color: #667eea;
-            border: 2px solid #667eea;
+            background: transparent;
+            border: 2px solid #00d4e4;
+            color: #00d4e4;
         }
-        .last-updated {
-            text-align: center;
-            color: #6c757d;
+        
+        .button-secondary:hover {
+            background: rgba(0, 212, 228, 0.1);
+        }
+        
+        code {
+            background: rgba(0, 212, 228, 0.2);
+            color: #00d4e4;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .example {
+            background: rgba(0, 0, 0, 0.3);
+            border-left: 4px solid #00d4e4;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+        }
+        
+        .yaml-code {
+            background: #0d1f2d;
+            color: #f5f5f0;
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
             font-size: 0.9rem;
-            margin-top: 2rem;
+            line-height: 1.6;
+            border: 1px solid rgba(0, 212, 228, 0.3);
         }
+        
+        .yaml-key { color: #ff6b9d; }
+        .yaml-string { color: #00d4e4; }
+        .yaml-array { color: #ffd93d; }
+        
+        .badges {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+        
+        .badge {
+            background: rgba(0, 212, 228, 0.2);
+            border: 1px solid #00d4e4;
+            color: #00d4e4;
+            padding: 0.6rem 1.2rem;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .badge:hover {
+            background: rgba(0, 212, 228, 0.3);
+            transform: scale(1.05);
+        }
+        
+        footer {
+            text-align: center;
+            color: #f5f5f0;
+            opacity: 0.7;
+            margin-top: 3rem;
+            padding: 2rem 0;
+        }
+        
         @media (max-width: 768px) {
-            h1 { font-size: 2rem; }
+            h1 { font-size: 2.5rem; }
             .container { padding: 1rem; }
             .card { padding: 1.5rem; }
-            .term-grid { grid-template-columns: 1fr; }
+            .stats { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <div class="header">
+            <div class="logo-container">
+                <div class="logo">
+                    <img src="https://raw.githubusercontent.com/LuminLynx/FOSS-Glossary/main/assets/logo.png" alt="FOSS Glossary Logo" />
+                </div>
+            </div>
+            <h1>FOSS Glossary</h1>
+            <p class="tagline">Where documentation becomes a competitive sport</p>
+        </div>
+
         <div class="card">
-            <h1>🚀 FOSS Glossary</h1>
-            <p class="tagline">A gamified glossary of Free and Open Source Software terms, with humor, sarcasm, and honest truths.</p>
-            
-            <!-- LIVE STATISTICS -->
-            <div class="live-stats">
+            <div class="stats">
                 <div class="stat-card">
-                    <span class="stat-number">26</span>
-                    <span class="stat-label">Total Terms</span>
+                    <div class="stat-icon">📖</div>
+                    <div class="stat-label">Growing Dictionary</div>
                 </div>
                 <div class="stat-card">
-                    <span class="stat-number">26</span>
-                    <span class="stat-label">Funny Terms</span>
+                    <div class="stat-icon">🎮</div>
+                    <div class="stat-label">Gamified Scoring</div>
                 </div>
                 <div class="stat-card">
-                    <span class="stat-number">100%</span>
-                    <span class="stat-label">Humor Rate</span>
+                    <div class="stat-icon">😂</div>
+                    <div class="stat-label">Humor Rewarded</div>
                 </div>
                 <div class="stat-card">
-                    <span class="stat-number">64</span>
-                    <span class="stat-label">Categories</span>
+                    <div class="stat-icon">🏆</div>
+                    <div class="stat-label">Earn Achievements</div>
                 </div>
             </div>
 
-            <!-- RECENT ADDITIONS -->
-            <div class="recent-terms">
-                <h2>🆕 Latest Additions</h2>
-                <p>Just added: <strong>Commitfog, Mergequake, Forkprint</strong></p>
+            <h2>✨ How It Works</h2>
+            <div class="feature-grid">
+                <div class="feature">
+                    <div class="feature-icon">📝</div>
+                    <h3>1. Add a Term</h3>
+                    <p>Fork the repo and add your FOSS term to <code>terms.yaml</code></p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🎯</div>
+                    <h3>2. Get Scored</h3>
+                    <p>Receive instant quality score out of 100 points</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🎉</div>
+                    <h3>3. Earn Glory</h3>
+                    <p>Unlock achievements and climb the leaderboard!</p>
+                </div>
             </div>
 
-            <!-- SAMPLE TERMS -->
-            <h2>📖 Recent Terms</h2>
-            <div class="term-grid">
-                
-    <div class="term-card">
-      <div class="term-header">
-        <h3>Commitfog</h3>
-        <span class="term-score" style="color: #00ff00">100/100</span>
-      </div>
-      <p class="term-definition">The haze of unclear commit messages that obscures project history</p>
-      <p class="term-humor">😂 "Like trying to navigate with a map drawn in crayon during a blackout"</p>
-      <div class="term-tags"><span class="tag">commits</span><span class="tag">history</span><span class="tag">anti-pattern</span></div>
-    </div>
-
-    <div class="term-card">
-      <div class="term-header">
-        <h3>Mergequake</h3>
-        <span class="term-score" style="color: #00ff00">100/100</span>
-      </div>
-      <p class="term-definition">The sudden cascade of conflicts triggered when multiple long-lived branches are merged at once</p>
-      <p class="term-humor">😂 "One minute you're merging, the next you're an amateur seismologist mapping aftershocks in rebase hell"</p>
-      <div class="term-tags"><span class="tag">merge</span><span class="tag">conflict</span><span class="tag">workflow</span></div>
-    </div>
-
-    <div class="term-card">
-      <div class="term-header">
-        <h3>Forkprint</h3>
-        <span class="term-score" style="color: #00ff00">100/100</span>
-      </div>
-      <p class="term-definition">The unique trail of decisions, patches, and governance quirks that a forked project leaves behind</p>
-      <p class="term-humor">😂 "Proof that every fork thinks it's the chosen one, until you diff the forkprint and see the chaos"</p>
-      <div class="term-tags"><span class="tag">governance</span><span class="tag">identity</span><span class="tag">traceability</span></div>
-    </div>
-
-    <div class="term-card">
-      <div class="term-header">
-        <h3>It's a Feature</h3>
-        <span class="term-score" style="color: #00ff00">100/100</span>
-      </div>
-      <p class="term-definition">The art of rebranding a bug so profound and inexplicable that fixing it would break the universe</p>
-      <p class="term-humor">😂 "Not a bug, it's a surprise mechanic for enhanced user engagement"</p>
-      <div class="term-tags"><span class="tag">classic</span><span class="tag">excuse</span><span class="tag">documentation</span><span class="tag">meme</span><span class="tag">FOSS</span></div>
-    </div>
-
-    <div class="term-card">
-      <div class="term-header">
-        <h3>LGTM</h3>
-        <span class="term-score" style="color: #00ff00">100/100</span>
-      </div>
-      <p class="term-definition">Looks Good To Me</p>
-      <p class="term-humor">😂 "Translation: I skimmed this for 30 seconds and didn't see anything on fire. Ship it!"</p>
-      <div class="term-tags"><span class="tag">code-review</span><span class="tag">approval</span><span class="tag">acronym</span><span class="tag">FOSS</span></div>
-    </div>
-
-    <div class="term-card">
-      <div class="term-header">
-        <h3>Dependency Drift</h3>
-        <span class="term-score" style="color: #00ff00">100/100</span>
-      </div>
-      <p class="term-definition">The gradual divergence of a project's dependencies from their intended stable versions</p>
-      <p class="term-humor">😂 "Like waking up to find your roommates have all moved out and been replaced by strangers who insist they live there now"</p>
-      <div class="term-tags"><span class="tag">foss</span><span class="tag">maintenance</span><span class="tag">technical-debt</span></div>
-    </div>
+            <h2>📊 Scoring System</h2>
+            <div class="example">
+                <strong>Every term is scored on:</strong><br>
+                • <strong>Base Definition</strong> - 20 points for the essentials<br>
+                • <strong>Humor</strong> - Up to 30 points for making us laugh!<br>
+                • <strong>Explanation</strong> - 20 points for context<br>
+                • <strong>Cross-references</strong> - Up to 20 points for connections<br>
+                • <strong>Tags</strong> - 10 points for categorization<br>
+                <br>
+                💯 Score 90+ to become a legend!
             </div>
 
-            <!-- SCORING SYSTEM -->
-            <h2>📊 How Scoring Works</h2>
-            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 10px; margin: 2rem 0;">
-                <ul style="list-style: none; padding: 0;">
-                    <li>✅ <strong>Base Definition</strong> - 20 points</li>
-                    <li>😂 <strong>Humor</strong> - Up to 30 points (be funny!)</li>
-                    <li>📝 <strong>Explanation</strong> - 20 points</li>
-                    <li>🔗 <strong>Cross-references</strong> - Up to 20 points</li>
-                    <li>🏷️ <strong>Tags</strong> - 10 points</li>
-                </ul>
-                <p style="margin-top: 1rem; font-weight: bold;">💯 Score 90+ to become a legend!</p>
+            <h2>🏆 Achievements</h2>
+            <div class="badges">
+                <span class="badge">😂 Comedy Gold</span>
+                <span class="badge">💯 Perfectionist</span>
+                <span class="badge">🔥 Flame Warrior</span>
+                <span class="badge">📜 Historian</span>
+                <span class="badge">🌱 First PR</span>
             </div>
 
-            <!-- CALL TO ACTION -->
+            <h2>📝 Example Term</h2>
+            <div class="yaml-code"><span class="yaml-key">- term:</span> <span class="yaml-string">"Yak Shaving"</span>
+  <span class="yaml-key">definition:</span> <span class="yaml-string">"Doing seemingly unrelated tasks before the actual task"</span>
+  <span class="yaml-key">explanation:</span> <span class="yaml-string">"You start trying to fix a bug, end up updating your entire OS"</span>
+  <span class="yaml-key">humor:</span> <span class="yaml-string">"I came here to code, now I'm learning Tibetan yak grooming"</span>
+  <span class="yaml-key">tags:</span> [<span class="yaml-array">"productivity"</span>, <span class="yaml-array">"procrastination"</span>]
+  <span class="yaml-key">see_also:</span> [<span class="yaml-array">"Bikeshedding"</span>, <span class="yaml-array">"Scope Creep"</span>]</div>
+
             <div class="cta">
                 <a href="https://github.com/LuminLynx/FOSS-Glossary" class="button">
-                    🎮 Contribute on GitHub
+                    🚀 Start Contributing on GitHub
                 </a>
                 <a href="https://github.com/LuminLynx/FOSS-Glossary/blob/main/terms.yaml" class="button button-secondary">
-                    📝 View All 26 Terms
+                    📖 View All Terms
                 </a>
             </div>
-
-            <p class="last-updated">
-                Last updated: Oct 4, 2025, 7:04 PM | 
-                26 terms and growing! | 
-                Made with 💜 by the FOSS community
-            </p>
         </div>
+
+        <footer>
+            Made with 💙 by the FOSS community
+        </footer>
     </div>
 </body>
 </html>
