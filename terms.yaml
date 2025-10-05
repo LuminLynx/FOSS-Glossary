@@ -161,3 +161,26 @@ terms:
     humor: "Not a bug, it's a surprise mechanic for enhanced user engagement"
     tags: ["classic", "excuse", "documentation", "meme","FOSS"]
     see_also: ["LGTM", "Fork"]
+
+  - term: "Forkprint"
+    definition: "The unique trail of decisions, patches, and governance quirks that a forked project leaves behind"
+    explanation: "Acts like a fingerprint, encoded in commit history, issue labels, and repo conventions"
+    humor: "Proof that every fork thinks it's the chosen one, until you diff the forkprint and see the chaos"
+    tags: ["governance", "identity", "traceability"]
+    see_also: ["Git", "Fork", "Merge"]
+
+  - term: "Mergequake"
+    definition: "The sudden cascade of conflicts triggered when multiple long-lived branches are merged at once"
+    explanation: "Happens when parallel work streams collide, shaking the repo like tectonic plates under stress"
+    humor: "One minute you're merging, the next you're an amateur seismologist mapping aftershocks in rebase hell"
+    tags: ["merge", "conflict", "workflow"]
+    see_also: ["Rebase", "Forkprint", "Hotfix"]
+
+  - term: "Commitfog"
+    definition: "The haze of unclear commit messages that obscures project history"
+    explanation: "Occurs when developers push changes with vague or cryptic messages, making audits and rollbacks painful"
+    humor: "Like trying to navigate with a map drawn in crayon during a blackout"
+    tags: ["commits", "history", "anti-pattern"]  
+    see_also: ["Changelog", "Forkprint", "Mergequake"]
+
+
