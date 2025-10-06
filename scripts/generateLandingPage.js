@@ -122,10 +122,10 @@ const html = `<!DOCTYPE html>
             width: 150px;
             height: 150px;
             margin: 0 auto 1rem;
-            border-radius: 50%;
+            border-radius: 20%;
             box-shadow: 0 10px 40px rgba(0, 212, 228, 0.5);
             overflow: hidden;
-            border: 0px solid rgba(0, 212, 228, 0.2);
+            border: none;
         }
         
         .logo img {
