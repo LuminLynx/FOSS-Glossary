@@ -84,6 +84,8 @@ const html = `<!DOCTYPE html>
     <meta name="description" content="A gamified glossary of FOSS terms with humor. ${stats.totalTerms} terms defined by the community!">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        /* DARK THEME (Default) */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
             line-height: 1.6;
@@ -123,7 +125,7 @@ const html = `<!DOCTYPE html>
             border-radius: 50%;
             box-shadow: 0 10px 40px rgba(0, 212, 228, 0.5);
             overflow: hidden;
-            border: 2px solid rgba(0, 212, 228, 0.3);
+            border: 0px solid rgba(0, 212, 228, 0.2);
         }
         
         .logo img {
@@ -137,6 +139,10 @@ const html = `<!DOCTYPE html>
             font-size: 3rem;
             color: #00d4e4;
             margin-bottom: 1rem;
+        }
+        h2 {
+            color: #00d4e4;
+            margin: 2rem 0 1rem 0;
         }
         .live-stats {
             display: grid;
@@ -260,10 +266,80 @@ const html = `<!DOCTYPE html>
             margin-top: 2rem;
             opacity: 0.7;
         }
-        h2 {
-            color: #00d4e4;
-            margin: 2rem 0 1rem 0;
+        
+        /* LIGHT THEME - Auto-detects when user has light mode enabled */
+        @media (prefers-color-scheme: light) {
+            body {
+                color: #1a3a52;
+                background: #f0f4f8;
+            }
+            .card {
+                background: white;
+                box-shadow: 0 10px 40px rgba(26, 58, 82, 0.1);
+                border: 1px solid rgba(0, 212, 228, 0.2);
+            }
+            h1, h2 {
+                color: #00a3b8;
+            }
+            .stat-card {
+                background: linear-gradient(135deg, #00d4e4 0%, #00a3b8 100%);
+                border: none;
+                color: white;
+            }
+            .recent-terms {
+                background: #e8f4f8;
+                border-left: 4px solid #00d4e4;
+            }
+            .term-card {
+                background: white;
+                border: 2px solid #e0e7ed;
+            }
+            .term-card:hover {
+                border-color: #00d4e4;
+                box-shadow: 0 10px 30px rgba(0, 212, 228, 0.15);
+            }
+            .term-header h3 {
+                color: #00a3b8;
+            }
+            .term-definition {
+                color: #2d3e50;
+            }
+            .term-humor {
+                color: #d97706;
+                background: #fef3c7;
+                border-left-color: #fbbf24;
+            }
+            .tag {
+                background: #e0f7fa;
+                color: #00838f;
+                border: 1px solid #b2ebf2;
+            }
+            .button {
+                background: linear-gradient(135deg, #00d4e4 0%, #00a3b8 100%);
+                color: white;
+            }
+            .button:hover {
+                background: linear-gradient(135deg, #00f0ff 0%, #00d4e4 100%);
+                color: white;
+            }
+            .button-secondary {
+                background: white;
+                color: #00a3b8;
+                border-color: #00d4e4;
+            }
+            .button-secondary:hover {
+                background: #e0f7fa;
+            }
+            .last-updated {
+                color: #5a6c7d;
+            }
+            /* Fix scoring section background for light mode */
+            .card > div[style*="background: rgba(0, 0, 0, 0.3)"] {
+                background: #e8f4f8 !important;
+                border-left: 4px solid #00d4e4;
+            }
         }
+        
         @media (max-width: 768px) {
             h1 { font-size: 2rem; }
             .container { padding: 1rem; }
