@@ -19,13 +19,13 @@ const stats = {
 // Generate term cards HTML
 function generateTermCards(count = 6) {
   // Filter out invalid terms before displaying
-  const validTerms = terms.filter(term =>
-    term &&
-    term.term &&
-    typeof term.term === 'string' &&
+  const validTerms = terms.filter(term => 
+    term && 
+    term.term && 
+    typeof term.term === 'string' && 
     term.term.trim() !== '' &&
-    term.definition &&
-    typeof term.definition === 'string' &&
+    term.definition && 
+    typeof term.definition === 'string' && 
     term.definition.trim() !== ''
   );
   
@@ -33,7 +33,7 @@ function generateTermCards(count = 6) {
   
   return displayTerms.map(term => {
     const score = calculateTermScore(term);
-    const scoreColor = score >= 80 ? '#00d4e4' : score >= 60 ? '#00f0ff' : '#ffd93d';
+    const scoreColor = score >= 80 ? '#00ff00' : score >= 60 ? '#ffa500' : '#ffff00';
     
     return `
     <div class="term-card">
@@ -87,8 +87,8 @@ const html = `<!DOCTYPE html>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
             line-height: 1.6;
-            color: #f5f5f0;
-            background: #1a3a52;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
         }
         .container {
@@ -97,45 +97,23 @@ const html = `<!DOCTYPE html>
             padding: 2rem;
         }
         .card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
+            background: white;
             padding: 3rem;
             border-radius: 15px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             margin-bottom: 2rem;
             animation: slideUp 0.5s ease-out;
-            border: 1px solid rgba(0, 212, 228, 0.2);
         }
         @keyframes slideUp {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
-        .logo-section {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        
-        .logo {
-            width: 150px;
-            height: 150px;
-            margin: 0 auto 1rem;
-            border-radius: 50%;
-            box-shadow: 0 10px 40px rgba(0, 212, 228, 0.5);
-            overflow: hidden;
-            border: 2px solid rgba(0, 212, 228, 0.3);
-        }
-        
-        .logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
         h1 {
-            text-align: center;
             font-size: 3rem;
-            color: #00d4e4;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 1rem;
         }
         .live-stats {
@@ -145,9 +123,8 @@ const html = `<!DOCTYPE html>
             margin: 2rem 0;
         }
         .stat-card {
-            background: rgba(0, 212, 228, 0.1);
-            border: 2px solid #00d4e4;
-            color: #f5f5f0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
             padding: 1.5rem;
             border-radius: 10px;
             text-align: center;
@@ -162,7 +139,7 @@ const html = `<!DOCTYPE html>
             opacity: 0.9;
         }
         .recent-terms {
-            background: rgba(0, 0, 0, 0.3);
+            background: #f8f9fa;
             padding: 1.5rem;
             border-radius: 10px;
             margin: 2rem 0;
@@ -173,17 +150,17 @@ const html = `<!DOCTYPE html>
             gap: 1.5rem;
             margin: 2rem 0;
         }
-        .term-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 2px solid rgba(0, 212, 228, 0.3);
+        .ter        m-card {
+            background: white;
+            border: 2px solid #e9ecef;
             padding: 1.5rem;
             border-radius: 10px;
             transition: all 0.3s;
         }
         .term-card:hover {
-            border-color: #00d4e4;
+            border-color: #667eea;
             transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0, 212, 228, 0.2);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
         }
         .term-header {
             display: flex;
@@ -192,7 +169,7 @@ const html = `<!DOCTYPE html>
             margin-bottom: 0.5rem;
         }
         .term-header h3 {
-            color: #00d4e4;
+            color: #667eea;
             margin: 0;
         }
         .term-score {
@@ -200,16 +177,16 @@ const html = `<!DOCTYPE html>
             font-size: 1.2rem;
         }
         .term-definition {
-            color: #f5f5f0;
+            color: #495057;
             margin-bottom: 0.5rem;
         }
         .term-humor {
-            color: #ffd93d;
+            color: #6c757d;
             font-style: italic;
             font-size: 0.9rem;
             padding: 0.5rem;
-            background: rgba(0, 0, 0, 0.3);
-            border-left: 3px solid #ffd93d;
+            background: #f8f9fa;
+            border-left: 3px solid #ffc107;
             margin: 0.5rem 0;
         }
         .term-tags {
@@ -219,8 +196,8 @@ const html = `<!DOCTYPE html>
             margin-top: 0.5rem;
         }
         .tag {
-            background: rgba(0, 212, 228, 0.2);
-            color: #00d4e4;
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
             padding: 0.2rem 0.6rem;
             border-radius: 15px;
             font-size: 0.8rem;
@@ -231,38 +208,31 @@ const html = `<!DOCTYPE html>
         }
         .button {
             display: inline-block;
-            background: #00d4e4;
-            color: #0d1f2d;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
             padding: 1rem 2.5rem;
             text-decoration: none;
             border-radius: 50px;
             font-weight: bold;
             font-size: 1.1rem;
             transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(0, 212, 228, 0.4);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
             margin: 0.5rem;
         }
         .button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 25px rgba(0, 212, 228, 0.6);
-            background: #00f0ff;
-            color: #0d1f2d;
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
         }
         .button-secondary {
-            background: transparent;
-            color: #00d4e4;
-            border: 2px solid #00d4e4;
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
         }
         .last-updated {
             text-align: center;
-            color: #f5f5f0;
+            color: #6c757d;
             font-size: 0.9rem;
             margin-top: 2rem;
-            opacity: 0.7;
-        }
-        h2 {
-            color: #00d4e4;
-            margin: 2rem 0 1rem 0;
         }
         @media (max-width: 768px) {
             h1 { font-size: 2rem; }
@@ -275,14 +245,8 @@ const html = `<!DOCTYPE html>
 <body>
     <div class="container">
         <div class="card">
-            <div class="logo-section">
-                <div class="logo">
-                    <img src="https://raw.githubusercontent.com/LuminLynx/FOSS-Glossary/main/assets/logo.png" alt="FOSS Glossary Logo" />
-                </div>
-            </div>
-            
             <h1>🚀 FOSS Glossary</h1>
-            <p class="tagline" style="text-align: center; font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">A gamified glossary of Free and Open Source Software terms, with humor, sarcasm, and honest truths.</p>
+            <p class="tagline">A gamified glossary of Free and Open Source Software terms, with humor, sarcasm, and honest truths.</p>
             
             <!-- LIVE STATISTICS -->
             <div class="live-stats">
@@ -318,7 +282,7 @@ const html = `<!DOCTYPE html>
 
             <!-- SCORING SYSTEM -->
             <h2>📊 How Scoring Works</h2>
-            <div style="background: rgba(0, 0, 0, 0.3); padding: 1.5rem; border-radius: 10px; margin: 2rem 0;">
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 10px; margin: 2rem 0;">
                 <ul style="list-style: none; padding: 0;">
                     <li>✅ <strong>Base Definition</strong> - 20 points</li>
                     <li>😂 <strong>Humor</strong> - Up to 30 points (be funny!)</li>
