@@ -81,7 +81,34 @@ const html = `<!DOCTYPE html>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FOSS Glossary - ${stats.totalTerms} Terms and Growing!</title>
-    <meta name="description" content="A gamified glossary of FOSS terms with humor. ${stats.totalTerms} terms defined by the community!">
+    
+    <!-- Primary Meta Tags -->
+    <meta name="title" content="FOSS Glossary - Gamified Open Source Terms">
+    <meta name="description" content="A gamified glossary of FOSS terms with humor. ${stats.totalTerms} terms defined by the community! Score points, unlock achievements, and learn with fun.">
+    <meta name="keywords" content="FOSS, open source, glossary, gamification, github, programming, developer, community">
+    <meta name="author" content="LuminLynx">
+    <link rel="canonical" href="https://luminlynx.github.io/FOSS-Glossary/">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://luminlynx.github.io/FOSS-Glossary/">
+    <meta property="og:title" content="FOSS Glossary - Gamified Open Source Terms">
+    <meta property="og:description" content="Score points, unlock achievements, and learn FOSS terms with humor! ${stats.totalTerms} terms and growing.">
+    <meta property="og:image" content="https://raw.githubusercontent.com/LuminLynx/FOSS-Glossary/main/assets/twitter-card.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="628">
+    <meta property="og:site_name" content="FOSS Glossary">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://luminlynx.github.io/FOSS-Glossary/">
+    <meta name="twitter:title" content="FOSS Glossary - Gamified Open Source Terms">
+    <meta name="twitter:description" content="Score points, unlock achievements, and learn FOSS terms with humor! ${stats.totalTerms} terms and growing.">
+    <meta name="twitter:image" content="https://raw.githubusercontent.com/LuminLynx/FOSS-Glossary/main/assets/twitter-card.png">
+ 
+    <!-- Favicon (optional - add later) -->
+    <!-- <link rel="icon" type="image/png" href="assets/favicon.png"> -->
+
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
