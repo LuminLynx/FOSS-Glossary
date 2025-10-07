@@ -421,7 +421,7 @@ const html = `<!DOCTYPE html>
                     timeStyle: 'short' 
                 })} | 
                 ${stats.totalTerms} terms and growing! | 
-                Made with 💜 by the FOSS community
+                Made with 💙 by the FOSS community
             </p>
         </div>
     </div>
