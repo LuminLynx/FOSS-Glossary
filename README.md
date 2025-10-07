@@ -10,11 +10,11 @@ A community-driven glossary of FOSS terms with humor, sarcasm, and honest truths
 <!-- STATS-START -->
 ## 📊 Glossary Stats
 
-**Total Terms:** 26 | **Contributors:** 4 | **Terms with Humor:** 26 (100%)
+**Total Terms:** 27 | **Contributors:** 4 | **Terms with Humor:** 27 (100%)
 
 **🏆 Current Champion:** `License Proliferation` with ~98/100 points!
 
-**Recent additions:** `Commitfog`, `Mergequake`, `Forkprint`
+**Recent additions:** `Pullpocalypse`, `Commitfog`, `Mergequake`
 
 ### 🎮 Top Contributors
 🥇 Joao Portela | 🥈 Aditya Kumar Singh | 🥉 John Portley | 🌟 Joe Port
