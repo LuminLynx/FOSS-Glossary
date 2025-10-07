@@ -114,7 +114,8 @@ jobs:
       # Note: Skip commenting on forked PRs to avoid "Resource not accessible by integration"
       - name: Comment PR results
         uses: actions/github-script@v6
-        if: always() && github.event.pull_request.head.repo.fork == false
+        if: always()
+      # && github.event.pull_request.head.repo.fork == false
         with:
           github-token: ${{ github.token }}
           script: |
