@@ -183,4 +183,11 @@ terms:
     tags: ["commits", "history", "anti-pattern"]  
     see_also: ["Changelog", "Forkprint", "Mergequake"]
 
+  - term: "Pullpocalypse"
+    definition: "The overwhelming flood of open pull requests that threatens to drown maintainers"
+    explanation: "Occurs when contributors open more pull requests than the project team can reasonably review or merge, leading to backlog, merge conflicts, and contributor frustration"
+    humor: "Like trying to bail out a sinking ship with a coffee mug during a thunderstorm"
+    tags: ["pull requests", "maintenance", "overload", "anti-pattern"]
+    see_also: ["Issue Avalanche", "Yakstack", "Commitfog"]
+
 
