@@ -190,4 +190,10 @@ terms:
     tags: ["pull requests", "maintenance", "overload", "anti-pattern"]
     see_also: ["Issue Avalanche", "Yakstack", "Commitfog"]
 
+  - term: "PEBKAC"
+    definition: "Problem Exists Between Keyboard And Chair"
+    explanation: "A humorous way to say the issue is due to user error rather than the system or software."
+    humor: "A timeless classic in tech support — polite sarcasm wrapped in an acronym."
+    tags: ["acronym", "support", "user-error"]
+    see_also: ["RTFM", "ID10T Error"]
 
