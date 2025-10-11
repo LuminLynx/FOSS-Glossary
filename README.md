@@ -44,6 +44,10 @@ Every term is scored out of 100 points:
 - **🔥 Flame Warrior** - Document controversial topics
 - **📜 Historian** - Add historical context
 
+## 📣 Promote the Project
+
+Want to help spread the word? Check out the [FOSS Glossary Promotional Campaign](docs/promoting-campaign.md) for a 90-day plan covering content ideas, outreach channels, and success metrics.
+
 ## Example Term
 ```yaml
 - term: "Git"
