@@ -44,6 +44,10 @@ Every term is scored out of 100 points:
 - **🔥 Flame Warrior** - Document controversial topics
 - **📜 Historian** - Add historical context
 
+## 📣 Promote the Project
+
+Want to help spread the word? Open a discussion or issue to coordinate with the maintainers—we'll share the latest outreach playbook and align on next steps together.
+
 ## Example Term
 ```yaml
 - term: "Git"
@@ -51,7 +55,7 @@ Every term is scored out of 100 points:
   explanation: "Tracks changes in source code during software development"
   humor: "A tool that makes you feel like a time traveler, until you try to resolve a merge conflict and realize you're actually in hell"
   tags: ["vcs", "tools"]
-  see_also: ["GitHub", "GitLab"]# Test change
+  see_also: ["GitHub", "GitLab"]
 
 ## 🌐 [Visit our Documentation](https://luminlynx.github.io/FOSS-Glossary/)
 
