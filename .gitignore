@@ -21,3 +21,6 @@ temp/
 
 # Visual Studio Code settings
 .vscode/
+
+# assets/demo.html
+assets/demo.html
