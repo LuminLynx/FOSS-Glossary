@@ -2,19 +2,30 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "FOSS Glossary Terms",
   "type": "object",
+  "required": ["terms"],
+  "additionalProperties": false,
   "properties": {
     "terms": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["term", "definition"],
+        "required": ["slug", "term", "definition"],
+        "additionalProperties": false,
         "properties": {
+          "slug": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "minLength": 3,
+            "maxLength": 48,
+            "description": "Stable identifier for the glossary term"
+          },
           "term": {
             "type": "string",
             "description": "The FOSS term being defined"
           },
           "definition": {
             "type": "string",
+            "minLength": 80,
             "description": "Short, clear definition"
           },
           "explanation": {
@@ -34,6 +45,11 @@
             "type": "array",
             "items": { "type": "string" },
             "description": "Categories"
+          },
+          "aliases": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Alternate labels for this term"
           },
           "controversy_level": {
             "type": "string",

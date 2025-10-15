@@ -63,7 +63,13 @@ jobs:
       # Export terms.json only if new terms were added.
       # This runs after landing page generation to ensure the exported terms reflect the latest updates.
       - name: Export terms.json (only if new terms)
-        run: node scripts/exportTerms.js --only-if-new
+        run: |
+          npm run export:new
+          if [ -f docs/terms.json ]; then
+            echo "terms.json updated"
+          else
+            echo "ℹ️ No docs/terms.json generated (no new terms)"
+          fi
 
       - name: Add and commit changes
         run: |
