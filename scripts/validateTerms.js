@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const yaml = require('js-yaml');
+const Ajv = require('ajv');
+const addFormats = require('ajv-formats');
 
 function validateTerms() {
   try {
@@ -13,6 +15,22 @@ function validateTerms() {
       process.exit(1);
     }
     
+// Enforce schema.json (single insert)
+(() => {
+  const schema = JSON.parse(require('fs').readFileSync('schema.json', 'utf8'));
+  const ajv = new Ajv({ allErrors: true, strict: false });
+  addFormats(ajv);
+  const validate = ajv.compile(schema);
+  if (!validate(data)) {
+    console.error('❌ Schema validation failed:');
+    for (const e of validate.errors || []) {
+      const loc = e.instancePath || '(root)';
+      console.error(`  - ${loc} ${e.message}`);
+    }
+    process.exit(1);
+  }
+})();
+
     let hasErrors = false;
     const errors = [];
     
@@ -60,6 +78,18 @@ function validateTerms() {
       errors.push(`Duplicate terms found: ${[...new Set(duplicates)].join(', ')}`);
       hasErrors = true;
     }
+
+// Extra duplicate pass: case/space-insensitive
+(() => {
+  const norm = s => (typeof s === 'string' ? s.trim().toLowerCase().replace(/\s+/g, ' ') : '');
+  const names = data.terms.map(t => norm(t.term)).filter(Boolean);
+  const dups = names.filter((n, i) => names.indexOf(n) !== i);
+  if (dups.length) {
+    const unique = [...new Set(dups)];
+    errors.push(`Duplicate terms (normalized) found: ${unique.join(', ')}`);
+    hasErrors = true;
+  }
+})();
     
     if (hasErrors) {
       console.error('❌ Validation failed:\n');

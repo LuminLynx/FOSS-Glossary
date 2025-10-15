@@ -6,6 +6,8 @@
     "validate": "node scripts/validateTerms.js",
     "score": "node scripts/quickScore.js",
     "stats": "node scripts/updateReadmeStats.js",
+    "export": "node scripts/exportTerms.js",
+    "export:new": "node scripts/exportTerms.js --only-if-new",
     "test": "npm run validate && npm run score"
   },
   "dependencies": {
@@ -14,9 +16,10 @@
     "express": "^5.1.0",
     "js-yaml": "^4.1.0"
   },
-
   "devDependencies": {
     "@types/node": "^24.3.1",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
     "typescript": "^5.9.2"
   },
   "repository": {

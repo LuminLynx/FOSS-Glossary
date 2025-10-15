@@ -36,12 +36,12 @@ jobs:
           node-version: '20'
       
       - name: Install dependencies
-        run: npm install js-yaml
+        run: npm ci --no-audit --no-fund
 
       # IMPORTANT: Add delay before committing
       - name: Wait for any running Pages deployments
         run: |
-          echo "Waiting for other workflows to settle..."
+          echo "Waiting for other workflows to settle."
           sleep 15
       
       - name: Commit and push changes
@@ -50,17 +50,24 @@ jobs:
           git config --local user.name "github-actions[bot]"
           
           # FIX: Stash any unexpected changes before pulling
-          echo "Stashing any local changes..."
+          echo "Stashing any local changes."
           git stash --all
           
           # Now we can pull without issues
           git pull --rebase
           
-          # Generate the landing page AFTER pulling
-          node scripts/generateLandingPage.js 
-          
-          # Add and commit
-          git add docs/index.html
+      # Generate the landing page AFTER pulling
+      - name: Generate landing page
+        run: node scripts/generateLandingPage.js 
+
+      # Export terms.json only if new terms were added.
+      # This runs after landing page generation to ensure the exported terms reflect the latest updates.
+      - name: Export terms.json (only if new terms)
+        run: node scripts/exportTerms.js --only-if-new
+
+      - name: Add and commit changes
+        run: |
+          git add docs/index.html docs/terms.json
           if git diff --staged --quiet; then
             echo "No changes to landing page"
           else
