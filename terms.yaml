@@ -197,4 +197,6 @@ terms:
     tags: ["acronym", "support", "user-error"]
     see_also: ["RTFM", "ID10T Error"]
 
-# touch to trigger workflow
+# touch to trigger workflow 
+  - term "zz-test-term"
+  
