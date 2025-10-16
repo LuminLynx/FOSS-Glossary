@@ -224,3 +224,6 @@ terms:
     humor: "A timeless classic in tech support — polite sarcasm wrapped in an acronym."
     tags: ["acronym", "support", "user-error"]
     see_also: ["RTFM", "ID10T Error"]
+   
+   - "zz-test-term"
+  
