@@ -62,41 +62,52 @@ function main() {
   try {
     // Read the terms file
     const termsData = yaml.load(fs.readFileSync('terms.yaml', 'utf8'));
-    
+
     if (!termsData || !termsData.terms || !Array.isArray(termsData.terms)) {
       console.error('Error: Invalid terms.yaml structure');
       process.exit(1);
     }
-    
-    // Get the latest term (assuming it's the last one added)
-    const latestTerm = termsData.terms[termsData.terms.length - 1];
-    
-    if (!latestTerm) {
+
+    const targetSlug = process.env.TARGET_SLUG;
+    let termToScore = null;
+
+    if (targetSlug) {
+      termToScore = termsData.terms.find(term => term && term.slug === targetSlug);
+      if (!termToScore) {
+        console.error(`Error: No term found with slug "${targetSlug}".`);
+        process.exit(1);
+      }
+    } else {
+      // Get the latest term (assuming it's the last one added)
+      termToScore = termsData.terms[termsData.terms.length - 1];
+    }
+
+    if (!termToScore) {
       console.error('Error: No terms found');
       process.exit(1);
     }
-    
+
     // Score the term
-    const { score, badges } = scoreTerm(latestTerm);
-    
+    const { score, badges } = scoreTerm(termToScore);
+
     // Output for GitHub Actions
-    console.log(`\n📊 Scoring Results for "${latestTerm.term}":\n`);
+    console.log(`\n📊 Scoring Results for "${termToScore.term}":\n`);
     console.log(`SCORE:${score}`);
-    
+
     if (badges.length > 0) {
       console.log(`BADGE:${badges.join(', ')}`);
     }
-    
+
     // Detailed breakdown
     console.log('\n📋 Score Breakdown:');
-    console.log(`- Base definition: ${latestTerm.term && latestTerm.definition ? '20/20' : '0/20'}`);
-    console.log(`- Humor: ${latestTerm.humor ? Math.min(30, Math.floor(latestTerm.humor.length / 5)) : '0'}/30`);
-    console.log(`- Explanation: ${latestTerm.explanation ? '20/20' : '0/20'}`);
-    console.log(`- Tags: ${latestTerm.tags ? Math.min(10, latestTerm.tags.length * 3) : '0'}/10`);
-    console.log(`- Cross-references: ${latestTerm.see_also ? Math.min(20, latestTerm.see_also.length * 5) : '0'}/20`);
-    
+    console.log(`- Base definition: ${termToScore.term && termToScore.definition ? '20/20' : '0/20'}`);
+    console.log(`- Humor: ${termToScore.humor ? Math.min(30, Math.floor(termToScore.humor.length / 5)) : '0'}/30`);
+    console.log(`- Explanation: ${termToScore.explanation ? '20/20' : '0/20'}`);
+    console.log(`- Tags: ${termToScore.tags ? Math.min(10, termToScore.tags.length * 3) : '0'}/10`);
+    console.log(`- Cross-references: ${termToScore.see_also ? Math.min(20, termToScore.see_also.length * 5) : '0'}/20`);
+
     console.log(`\nTotal: ${score}/100`);
-    
+
     if (score >= 90) {
       console.log('\n🎉 OUTSTANDING! This is a legendary contribution!');
     } else if (score >= 80) {
