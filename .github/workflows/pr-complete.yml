@@ -22,18 +22,105 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0  # Need full history for diff
+          ref: ${{ github.event.pull_request.head.sha }}
       
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-      
+
       - name: Install dependencies
         run: npm ci --include=dev --no-audit --no-fund
+
+      - name: Fetch base branch
+        run: git fetch origin ${{ github.event.pull_request.base.ref }} --depth=1
+
+      - name: Detect glossary changes
+        id: glossary
+        run: |
+          BASE_REF="${{ github.event.pull_request.base.ref }}"
+          {
+            echo 'terms_changed=false'
+            echo 'has_new_slugs=false'
+            echo 'new_slug_count=0'
+            echo 'primary_slug='
+            echo 'new_slugs='
+          } >> "$GITHUB_OUTPUT"
+
+          node - <<'NODE'
+          const fs = require('fs');
+          const yaml = require('js-yaml');
+          const { execSync } = require('child_process');
+
+          const baseRef = process.env.BASE_REF;
+          const outputPath = process.env.GITHUB_OUTPUT;
+
+          function writeOutput(key, value) {
+            fs.appendFileSync(outputPath, `\n${key}=${value}`);
+          }
+
+          let headContent = '';
+          try {
+            headContent = fs.readFileSync('terms.yaml', 'utf8');
+          } catch (error) {
+            console.error('Unable to read terms.yaml from head commit.');
+            process.exit(1);
+          }
+
+          let baseContent = '';
+          try {
+            baseContent = execSync(`git show origin/${baseRef}:terms.yaml`, { encoding: 'utf8' });
+          } catch (error) {
+            // If the file does not exist on the base branch (e.g., first contribution), treat as empty.
+            baseContent = '';
+          }
+
+          const termsChanged = headContent.trim() !== baseContent.trim();
+          writeOutput('terms_changed', termsChanged);
+
+          if (!termsChanged) {
+            return;
+          }
+
+          let baseTerms = [];
+          let headTerms = [];
+
+          try {
+            if (baseContent.trim()) {
+              const parsedBase = yaml.load(baseContent);
+              if (parsedBase && Array.isArray(parsedBase.terms)) {
+                baseTerms = parsedBase.terms;
+              }
+            }
+          } catch (error) {
+            console.warn('Unable to parse base terms.yaml:', error.message);
+          }
+
+          try {
+            const parsedHead = yaml.load(headContent);
+            if (parsedHead && Array.isArray(parsedHead.terms)) {
+              headTerms = parsedHead.terms;
+            }
+          } catch (error) {
+            console.error('Unable to parse head terms.yaml:', error.message);
+            process.exit(1);
+          }
+
+          const baseSlugs = new Set((baseTerms || []).map(term => term && term.slug).filter(Boolean));
+          const newSlugs = (headTerms || [])
+            .map(term => term && term.slug)
+            .filter(slug => slug && !baseSlugs.has(slug));
+
+          writeOutput('has_new_slugs', newSlugs.length > 0);
+          writeOutput('new_slug_count', newSlugs.length);
+          writeOutput('primary_slug', newSlugs.length > 0 ? newSlugs[newSlugs.length - 1] : '');
+          writeOutput('new_slugs', newSlugs.join(','));
+          NODE
       
       # Step 1: Validate the YAML
       - name: Validate terms
         id: validate
+        if: steps.glossary.outputs.terms_changed == 'true'
         #continue-on-error: true
         run: |
           node scripts/validateTerms.js 2>&1 | tee validation-output.txt
@@ -49,13 +136,13 @@ jobs:
       # Step 2: Score if valid
       - name: Score terms
         id: score
-        if: steps.validate.outputs.valid == '0'
+        if: steps.validate.outputs.valid == '0' && steps.glossary.outputs.has_new_slugs == 'true'
         run: |
-          node scripts/quickScore.js > score-output.txt
+          TARGET_SLUG=${{ steps.glossary.outputs.primary_slug }} node scripts/quickScore.js > score-output.txt
           cat score-output.txt
           echo "score=$(grep 'SCORE:' score-output.txt | cut -d: -f2)" >> $GITHUB_OUTPUT
           echo "badge=$(grep 'BADGE:' score-output.txt | cut -d: -f2-)" >> $GITHUB_OUTPUT
-      
+
       # Step 3: Get PR statistics
       - name: Get glossary stats
         id: stats
@@ -91,17 +178,7 @@ jobs:
             console.log('high_score=' + highScore);
             console.log('top_scorer=' + topScorer);
             
-            // Get the diff to find new terms
-            const { execSync } = require('child_process');
-            try {
-              const diff = execSync('git diff origin/main...HEAD -- terms.yaml', { encoding: 'utf8' });
-              const newTermMatch = diff.match(/\+\s*- term: \"([^\"]+)\"/);
-              if (newTermMatch) {
-                console.log('new_term=' + newTermMatch[1]);
-              }
-            } catch (e) {
-              console.log('new_term=Unknown');
-            }
+            console.log('new_term=Unknown');
           } catch (error) {
             console.log('total_terms=0');
             console.log('high_score=0');
@@ -120,6 +197,11 @@ jobs:
           github-token: ${{ github.token }}
           script: |
             // Get all our data
+            const termsChanged = '${{ steps.glossary.outputs.terms_changed }}' === 'true';
+            const hasNewSlugs = '${{ steps.glossary.outputs.has_new_slugs }}' === 'true';
+            const newSlugList = '${{ steps.glossary.outputs.new_slugs }}';
+            const primarySlug = '${{ steps.glossary.outputs.primary_slug }}';
+            const newSlugCountRaw = '${{ steps.glossary.outputs.new_slug_count }}';
             const isValid = '${{ steps.validate.outputs.valid }}' === '0';
             const validationOutput = `${{ steps.validate.outputs.validation_output }}`;
             const score = '${{ steps.score.outputs.score }}' || '0';
@@ -127,19 +209,24 @@ jobs:
             const totalTerms = '${{ steps.stats.outputs.total_terms }}' || '0';
             const highScore = '${{ steps.stats.outputs.high_score }}' || '0';
             const topScorer = '${{ steps.stats.outputs.top_scorer }}' || 'None';
-            const newTerm = '${{ steps.stats.outputs.new_term }}' || 'Unknown';
-            
+            const newTerm = primarySlug || 'Unknown';
+            const newSlugCount = parseInt(newSlugCountRaw || '0', 10) || 0;
+
             let comment = '';
-            
+
             // Title based on whether it's first comment or update
             const isFirstRun = context.payload.action === 'opened';
-            
-            if (!isValid) {
+
+            if (!termsChanged) {
+              comment = `## ℹ️ No glossary changes detected\n\n`;
+              comment += `terms.yaml is unchanged in the latest commit. Validation and scoring were skipped.\n\n`;
+              comment += `I'll keep watching for glossary updates on future pushes. 🤖`;
+            } else if (!isValid) {
               // VALIDATION FAILED
               comment = `## ❌ Validation Failed!\n\n`;
               comment += `### The Issue:\n`;
               comment += '```\n' + validationOutput.replace(/✅.*\n/g, '').trim() + '\n```\n\n';
-              
+
               comment += `### 🔧 How to Fix:\n`;
               comment += `1. Check your YAML indentation (use 2 spaces, not tabs)\n`;
               comment += `2. Make sure you have both \`term\` and \`definition\` fields\n`;
@@ -159,66 +246,77 @@ jobs:
             } else {
               // VALIDATION PASSED - Show score
               comment = `## ✅ Validation Passed!\n\n`;
-              
-              if (newTerm !== 'Unknown') {
-                comment += `### 📝 New Term: "${newTerm}"\n\n`;
-              }
-              
-              comment += `### 📊 Your Score: ${score}/100\n\n`;
-              
-              // Score tier message
-              if (score >= 90) {
-                comment += `# 🏆 LEGENDARY CONTRIBUTION!\n`;
-                comment += `You've achieved excellence! This is Hall of Fame material! 🌟\n\n`;
-              } else if (score >= 80) {
-                comment += `## 🔥 AMAZING!\n`;
-                comment += `Outstanding work! You're in the top tier! 💪\n\n`;
-              } else if (score >= 70) {
-                comment += `### 💪 Great Job!\n`;
-                comment += `Solid contribution! Well above average! 👏\n\n`;
-              } else if (score >= 60) {
-                comment += `### 👍 Good Work!\n`;
-                comment += `Nice contribution! Consider adding more details for bonus points!\n\n`;
-              } else {
-                comment += `### 🌱 Good Start!\n`;
-                comment += `Thanks for contributing! Here's how to boost your score:\n\n`;
-              }
-              
-              // Achievements
-              if (badge) {
-                comment += `### 🏅 Achievements Unlocked:\n`;
-                badge.split(',').forEach(b => {
-                  const trimmed = b.trim();
-                  if (trimmed) comment += `- ${trimmed}\n`;
-                });
-                comment += '\n';
-              }
-              
-              // Improvement tips for lower scores
-              if (score < 80) {
-                comment += `### 💡 Quick Tips to Improve:\n`;
-                if (!badge.includes('Comedy Gold')) {
-                  comment += `- Add more humor (current max: 30 points)\n`;
+
+              if (hasNewSlugs && newSlugCount > 0) {
+                if (newSlugCount === 1) {
+                  comment += `### 📝 New Term: "${newTerm}"\n\n`;
+                } else {
+                  const slugDisplay = newSlugList.split(',').filter(Boolean).map(slug => `"${slug}"`).join(', ');
+                  comment += `### 📝 New Terms (${newSlugCount}): ${slugDisplay}\n\n`;
                 }
-                comment += `- Add an \`explanation\` field (+20 points)\n`;
-                comment += `- Include \`see_also\` references (+20 points)\n`;
-                comment += `- Add relevant \`tags\` (+10 points)\n\n`;
-              }
-              
-              // Leaderboard section
-              comment += `### 🏆 Current Leaderboard\n`;
-              comment += `- **Your Score:** ${score}/100\n`;
-              comment += `- **High Score:** ${highScore}/100 (${topScorer})\n`;
-              comment += `- **Total Terms:** ${totalTerms}\n\n`;
-              
-              // Comparison
-              if (parseInt(score) >= parseInt(highScore)) {
-                comment += `**🎊 NEW HIGH SCORE! You're the champion!** 🎊\n\n`;
+
+                comment += `### 📊 Your Score: ${score}/100\n\n`;
+
+                // Score tier message
+                if (score >= 90) {
+                  comment += `# 🏆 LEGENDARY CONTRIBUTION!\n`;
+                  comment += `You've achieved excellence! This is Hall of Fame material! 🌟\n\n`;
+                } else if (score >= 80) {
+                  comment += `## 🔥 AMAZING!\n`;
+                  comment += `Outstanding work! You're in the top tier! 💪\n\n`;
+                } else if (score >= 70) {
+                  comment += `### 💪 Great Job!\n`;
+                  comment += `Solid contribution! Well above average! 👏\n\n`;
+                } else if (score >= 60) {
+                  comment += `### 👍 Good Work!\n`;
+                  comment += `Nice contribution! Consider adding more details for bonus points!\n\n`;
+                } else {
+                  comment += `### 🌱 Good Start!\n`;
+                  comment += `Thanks for contributing! Here's how to boost your score:\n\n`;
+                }
+
+                // Achievements
+                if (badge) {
+                  comment += `### 🏅 Achievements Unlocked:\n`;
+                  badge.split(',').forEach(b => {
+                    const trimmed = b.trim();
+                    if (trimmed) comment += `- ${trimmed}\n`;
+                  });
+                  comment += '\n';
+                }
+
+                // Improvement tips for lower scores
+                if (score < 80) {
+                  comment += `### 💡 Quick Tips to Improve:\n`;
+                  if (!badge.includes('Comedy Gold')) {
+                    comment += `- Add more humor (current max: 30 points)\n`;
+                  }
+                  comment += `- Add an \`explanation\` field (+20 points)\n`;
+                  comment += `- Include \`see_also\` references (+20 points)\n`;
+                  comment += `- Add relevant \`tags\` (+10 points)\n\n`;
+                }
+
+                // Leaderboard section
+                comment += `### 🏆 Current Leaderboard\n`;
+                comment += `- **Your Score:** ${score}/100\n`;
+                comment += `- **High Score:** ${highScore}/100 (${topScorer})\n`;
+                comment += `- **Total Terms:** ${totalTerms}\n\n`;
+
+                // Comparison
+                if (parseInt(score) >= parseInt(highScore)) {
+                  comment += `**🎊 NEW HIGH SCORE! You're the champion!** 🎊\n\n`;
+                } else {
+                  const diff = parseInt(highScore) - parseInt(score);
+                  comment += `You're ${diff} points away from the high score! ${diff <= 10 ? 'So close! 🔥' : 'Keep pushing! 💪'}\n\n`;
+                }
               } else {
-                const diff = parseInt(highScore) - parseInt(score);
-                comment += `You're ${diff} points away from the high score! ${diff <= 10 ? 'So close! 🔥' : 'Keep pushing! 💪'}\n\n`;
+                comment += `### 📋 Summary\n`;
+                comment += `- No brand-new slugs detected in this update.\n`;
+                comment += `- Validation succeeded for the existing glossary entries.\n\n`;
+                comment += `Scoring only runs for newly added slugs per the PR gating rules. ✅\n\n`;
+                comment += `Total terms in the glossary: ${totalTerms}.\n\n`;
               }
-              
+
               comment += `---\n`;
               comment += `*Ready for merge after maintainer review!* ✨`;
             }
