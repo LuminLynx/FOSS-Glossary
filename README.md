@@ -17,7 +17,7 @@ A community-driven glossary of FOSS terms with humor, sarcasm, and honest truths
 **Recent additions:** `PEBKAC`, `Pullpocalypse`, `Commitfog`
 
 ### 🎮 Top Contributors
-🥇 Joao Portela | 🥈 Aditya Kumar Singh | 🥉 John Portley | 🌟 Joe Port
+🥇 John Portley | 🥈 Joao Portela | 🥉 Aditya Kumar Singh | 🌟 Joe Port
 <!-- STATS-END -->
 
 ## 🎮 How to Contribute
