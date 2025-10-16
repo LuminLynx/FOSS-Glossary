@@ -4,107 +4,100 @@ const yaml = require('js-yaml');
 const Ajv = require('ajv');
 const addFormats = require('ajv-formats');
 
-function validateTerms() {
+function loadYaml(path) {
   try {
-    // Read the terms file
-    const fileContents = fs.readFileSync('terms.yaml', 'utf8');
-    const data = yaml.load(fileContents);
-    
-    if (!data || !data.terms) {
-      console.error('❌ Error: terms.yaml must have a "terms" array');
-      process.exit(1);
-    }
-    
-// Enforce schema.json (single insert)
-(() => {
-  const schema = JSON.parse(require('fs').readFileSync('schema.json', 'utf8'));
-  const ajv = new Ajv({ allErrors: true, strict: false });
-  addFormats(ajv);
-  const validate = ajv.compile(schema);
-  if (!validate(data)) {
-    console.error('❌ Schema validation failed:');
-    for (const e of validate.errors || []) {
-      const loc = e.instancePath || '(root)';
-      console.error(`  - ${loc} ${e.message}`);
-    }
-    process.exit(1);
-  }
-})();
-
-    let hasErrors = false;
-    const errors = [];
-    
-    // Check each term
-    data.terms.forEach((term, index) => {
-      // Check required fields
-      if (!term.term) {
-        errors.push(`Term ${index + 1}: Missing 'term' field`);
-        hasErrors = true;
-      }
-      if (!term.definition) {
-        errors.push(`Term ${index + 1}: Missing 'definition' field`);
-        hasErrors = true;
-      }
-      
-      // Check field types
-      if (term.term && typeof term.term !== 'string') {
-        errors.push(`Term ${index + 1}: 'term' must be a string`);
-        hasErrors = true;
-      }
-      if (term.definition && typeof term.definition !== 'string') {
-        errors.push(`Term ${index + 1}: 'definition' must be a string`);
-        hasErrors = true;
-      }
-      
-      // Check optional field types
-      if (term.tags && !Array.isArray(term.tags)) {
-        errors.push(`Term ${index + 1}: 'tags' must be an array`);
-        hasErrors = true;
-      }
-      if (term.see_also && !Array.isArray(term.see_also)) {
-        errors.push(`Term ${index + 1}: 'see_also' must be an array`);
-        hasErrors = true;
-      }
-      if (term.controversy_level && !['low', 'medium', 'high'].includes(term.controversy_level)) {
-        errors.push(`Term ${index + 1}: 'controversy_level' must be low, medium, or high`);
-        hasErrors = true;
-      }
-    });
-    
-    // Check for duplicate terms
-    const termNames = data.terms.map(t => t.term?.toLowerCase());
-    const duplicates = termNames.filter((term, index) => termNames.indexOf(term) !== index);
-    if (duplicates.length > 0) {
-      errors.push(`Duplicate terms found: ${[...new Set(duplicates)].join(', ')}`);
-      hasErrors = true;
-    }
-
-// Extra duplicate pass: case/space-insensitive
-(() => {
-  const norm = s => (typeof s === 'string' ? s.trim().toLowerCase().replace(/\s+/g, ' ') : '');
-  const names = data.terms.map(t => norm(t.term)).filter(Boolean);
-  const dups = names.filter((n, i) => names.indexOf(n) !== i);
-  if (dups.length) {
-    const unique = [...new Set(dups)];
-    errors.push(`Duplicate terms (normalized) found: ${unique.join(', ')}`);
-    hasErrors = true;
-  }
-})();
-    
-    if (hasErrors) {
-      console.error('❌ Validation failed:\n');
-      errors.forEach(error => console.error(`  - ${error}`));
-      process.exit(1);
-    }
-    
-    console.log(`✅ Validation passed! ${data.terms.length} terms are valid.`);
-    process.exit(0);
-    
+    return yaml.load(fs.readFileSync(path, 'utf8'));
   } catch (error) {
-    console.error('❌ Error reading or parsing terms.yaml:', error.message);
+    console.error(`❌ Failed to read ${path}: ${error.message}`);
     process.exit(1);
   }
 }
 
-// Run validation
-validateTerms();
+function loadSchema(path) {
+  try {
+    return JSON.parse(fs.readFileSync(path, 'utf8'));
+  } catch (error) {
+    console.error(`❌ Failed to read ${path}: ${error.message}`);
+    process.exit(1);
+  }
+}
+
+function formatAjvError(error) {
+  const location = error.instancePath ? error.instancePath : '(root)';
+  const message = error.message || 'validation error';
+  if (error.keyword === 'additionalProperties' && error.params?.additionalProperty) {
+    return `${location} has unexpected property '${error.params.additionalProperty}'`;
+  }
+  if (error.keyword === 'required' && error.params?.missingProperty) {
+    return `${location} missing required property '${error.params.missingProperty}'`;
+  }
+  if (error.keyword === 'minLength' && error.params?.limit) {
+    return `${location} ${message} (minLength ${error.params.limit})`;
+  }
+  return `${location} ${message}`;
+}
+
+function normalizeName(value) {
+  if (typeof value !== 'string') return '';
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, '');
+}
+
+function main() {
+  const data = loadYaml('terms.yaml');
+  const schema = loadSchema('schema.json');
+
+  const ajv = new Ajv({ allErrors: true, strict: false });
+  addFormats(ajv);
+
+  const validate = ajv.compile(schema);
+  if (!validate(data)) {
+    console.error('❌ Schema validation failed:');
+    for (const err of validate.errors || []) {
+      console.error(`  - ${formatAjvError(err)}`);
+    }
+    process.exit(1);
+  }
+
+  const errors = [];
+  const slugSet = new Map();
+  const nameSet = new Map();
+
+  (data.terms || []).forEach((term, index) => {
+    const pos = `term #${index + 1}`;
+
+    if (slugSet.has(term.slug)) {
+      const other = slugSet.get(term.slug);
+      errors.push(`${pos} slug '${term.slug}' duplicates ${other}`);
+    } else {
+      slugSet.set(term.slug, pos);
+    }
+
+    const addName = (raw, label) => {
+      if (!raw) return;
+      const key = normalizeName(raw);
+      if (!key) return;
+      if (nameSet.has(key)) {
+        const prev = nameSet.get(key);
+        errors.push(`${pos} ${label} '${raw}' conflicts with ${prev}`);
+      } else {
+        nameSet.set(key, `${pos} ${label} '${raw}'`);
+      }
+    };
+
+    addName(term.term, 'term');
+
+    if (Array.isArray(term.aliases)) {
+      term.aliases.forEach(alias => addName(alias, 'alias'));
+    }
+  });
+
+  if (errors.length > 0) {
+    console.error('❌ Validation failed:\n');
+    errors.forEach(err => console.error(`  - ${err}`));
+    process.exit(1);
+  }
+
+  console.log(`✅ Validation passed! ${data.terms.length} terms are valid.`);
+}
+
+main();

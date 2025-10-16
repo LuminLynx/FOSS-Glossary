@@ -29,7 +29,7 @@ jobs:
           node-version: '20'
       
       - name: Install dependencies
-        run: npm install js-yaml
+        run: npm ci --include=dev --no-audit --no-fund
       
       # Step 1: Validate the YAML
       - name: Validate terms
@@ -59,7 +59,7 @@ jobs:
       # Step 3: Get PR statistics
       - name: Get glossary stats
         id: stats
-        if: always()
+        if: steps.validate.outputs.valid == '0'
         run: |
           node -e "
           const fs = require('fs');
