@@ -1,0 +1,79 @@
+name: On issue assigned to codex-bot
+
+on:
+  issues:
+    types: [assigned]
+
+permissions:
+  issues: write
+  pull-requests: write
+  contents: read
+  actions: read
+
+env:
+  BOT_LOGIN: codex-bot      # <-- change if your bot login is different
+  ACK_LABEL: in-progress    # <-- label to apply when bot picks the issue
+
+jobs:
+  acknowledge:
+    if: >
+      github.event.action == 'assigned' &&
+      github.event.assignee.login == env.BOT_LOGIN
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add acknowledgement comment and label
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+
+            // 1) Acknowledge
+            await github.rest.issues.createComment({
+              owner, repo, issue_number,
+              body: `👋 @${process.env.BOT_LOGIN} subscribed. Starting work.\n\nIf more details are needed, I'll ask here.`
+            });
+
+            // 2) Add/create label
+            const ackLabel = process.env.ACK_LABEL || 'in-progress';
+            try {
+              await github.rest.issues.addLabels({ owner, repo, issue_number, labels: [ackLabel] });
+            } catch (e) {
+              if (e.status === 404) {
+                await github.rest.issues.createLabel({
+                  owner, repo, name: ackLabel, color: '0E8A16',
+                  description: 'Issue is being handled by codex-bot'
+                }).catch(() => {});
+                await github.rest.issues.addLabels({ owner, repo, issue_number, labels: [ackLabel] });
+              } else {
+                throw e;
+              }
+            }
+
+            // 3) Job summary
+            core.summary
+              .addHeading('Codex-bot acknowledged')
+              .addRaw(`Issue #${issue_number} labeled **${ackLabel}** and acknowledged.`)
+              .write();
+
+      # -------------------- OPTIONAL ADD-ON STEP --------------------
+      # This step posts a simple "draft plan" comment.
+      # It runs ONLY if you add a repository secret named OPENAI_API_KEY.
+      # Remove the `if:` line if you want it to always run (no OpenAI call here yet).
+      - name: (Optional) Post a simple plan
+        if: ${{ secrets.OPENAI_API_KEY != '' }}
+        uses: actions/github-script@v7
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+
+            // Placeholder: keep it lightweight for now.
+            // Later you can replace this with logic that calls an API and posts a real diff plan.
+            await github.rest.issues.createComment({
+              owner, repo, issue_number,
+              body: "🤖 Draft plan: I'll analyze the issue and propose a minimal diff in a follow-up."
+            });
+      # ------------------ END OPTIONAL ADD-ON STEP ------------------
