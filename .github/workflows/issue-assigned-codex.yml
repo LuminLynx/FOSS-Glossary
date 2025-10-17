@@ -11,28 +11,35 @@ permissions:
   actions: read
 
 env:
-  # Single source of truth: set this once in repo Settings → Variables → Actions
-  BOT_LOGIN: ${{ vars.CODEX_BOT_LOGIN || 'codex-bot' }}
-  ACK_LABEL: in-progress
+  ACK_LABEL: in-progress   # label to apply; safe default
 
 jobs:
   acknowledge:
-    # Only run when the assignee matches BOT_LOGIN
+    # NOTE: job-level 'if' cannot use env.* — use vars.* + constants here.
     if: >
+      github.event_name == 'issues' &&
       github.event.action == 'assigned' &&
-      github.event.assignee.login == env.BOT_LOGIN
+      (
+        (vars.CODEX_BOT_LOGIN != '' && github.event.assignee.login == vars.CODEX_BOT_LOGIN) ||
+        (vars.CODEX_BOT_LOGIN == '' && github.event.assignee.login == 'codex-bot')
+      )
     runs-on: ubuntu-latest
     steps:
       - name: Acknowledge & label
         uses: actions/github-script@v7
+        env:
+          # Pass the variable into the step as env so the script can read it
+          CODEX_BOT_LOGIN: ${{ vars.CODEX_BOT_LOGIN }}
+          ACK_LABEL: ${{ env.ACK_LABEL }}
         with:
           script: |
             const { owner, repo } = context.repo;
             const issue_number = context.issue.number;
-            const bot = process.env.BOT_LOGIN;
+
+            const bot = process.env.CODEX_BOT_LOGIN || 'codex-bot';
             const ackLabel = process.env.ACK_LABEL || 'in-progress';
 
-            // 1) Comment
+            // 1) Acknowledge
             await github.rest.issues.createComment({
               owner, repo, issue_number,
               body: `👋 @${bot} subscribed. Starting work.\n\nIf more details are needed, I'll ask here.`
