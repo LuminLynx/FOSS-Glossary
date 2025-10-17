@@ -27,6 +27,15 @@ jobs:
             const ackLabel = (process.env.ACK_LABEL || '').trim();
             const codexLabel = (process.env.CODEX_LABEL || 'codex').toLowerCase();
             const botLogin = (process.env.CODEX_BOT_LOGIN || 'my-codex-bot').toLowerCase();
+            const hasCustomToken = process.env.HAS_CUSTOM_TOKEN === 'true';
+            const summary = core.summary;
+
+            const skip = async (reason) => {
+              await summary
+                .addHeading('Codex bot acknowledgement skipped')
+                .addRaw(reason)
+                .write();
+            };
 
             const { owner, repo } = context.repo;
             const issue_number = context.issue.number;
@@ -37,13 +46,17 @@ jobs:
 
             const assignedToBot = assignees.some(a => (a.login || '').toLowerCase() === botLogin);
             if (!assignedToBot) {
-              core.info(`Issue #${issue_number} is not assigned to ${botLogin}. Skipping.`);
+              const message = `Issue #${issue_number} is not assigned to @${botLogin}. No acknowledgement posted.`;
+              core.info(message);
+              await skip(message);
               return;
             }
 
             const hasCodexLabel = labels.some(l => (l.name || '').toLowerCase() === codexLabel);
             if (!hasCodexLabel) {
-              core.info(`Issue #${issue_number} is missing the required "${codexLabel}" label. Skipping.`);
+              const message = `Issue #${issue_number} is missing the required "${codexLabel}" label. No acknowledgement posted.`;
+              core.info(message);
+              await skip(message);
               return;
             }
 
@@ -80,9 +93,14 @@ jobs:
               }
             }
 
-            await core.summary
-              .addHeading('Codex bot acknowledgement complete')
-              .addRaw(`Issue #${issue_number} assigned to **@${botLogin}** acknowledged successfully.`)
-              .write();
+            summary.addHeading('Codex bot acknowledgement complete')
+              .addRaw(`Issue #${issue_number} assigned to **@${botLogin}** acknowledged successfully.`);
+
+            if (!hasCustomToken) {
+              summary.addRaw('\n\n⚠️ Using the default `GITHUB_TOKEN`. Add the `CODEX_FOSS_TOK` secret so the bot can act across repositories if needed.');
+            }
+
+            await summary.write();
         env:
           CODEX_BOT_LOGIN: ${{ vars.CODEX_BOT_LOGIN }}
+          HAS_CUSTOM_TOKEN: ${{ secrets.CODEX_FOSS_TOK != '' }}

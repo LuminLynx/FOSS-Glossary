@@ -36,6 +36,11 @@ Issues labeled `codex` and assigned to the bot account are acknowledged automati
 2. (Optional) Create a repository variable `CODEX_BOT_LOGIN` if you need to override the default bot login.
 3. Assign the issue to `my-codex-bot` and apply the `codex` label. The workflow will comment as the bot and add the `in-progress` label when it picks up the task.
 
+### After merging the automation
+
+- Confirm the `CODEX_FOSS_TOK` secret exists. If it is missing, the workflow will fall back to the default `GITHUB_TOKEN` and note this in the run summary so you know to add the secret later.
+- No other manual steps are required—the acknowledgement comment and progress label are applied automatically on the next qualifying issue.
+
 ## 📊 Scoring System
 
 Every term is scored out of 100 points:
