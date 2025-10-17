@@ -1,67 +1,88 @@
-name: On issue assigned to Codex bot
+name: Codex issue intake
 
 on:
   issues:
-    types: [assigned]
+    types: [assigned, labeled]
 
 permissions:
-  issues: write
-  pull-requests: write
   contents: read
-  actions: read
+  issues: write
+  pull-requests: read
 
 env:
-  ACK_LABEL: in-progress   # label to apply; safe default
+  ACK_LABEL: in-progress
+  CODEX_LABEL: codex
 
 jobs:
   acknowledge:
-    # NOTE: job-level 'if' cannot use env.* — use vars.* + constants here.
-    if: >
-      github.event_name == 'issues' &&
-      github.event.action == 'assigned' &&
-      (
-        (vars.CODEX_BOT_LOGIN != '' && github.event.assignee.login == vars.CODEX_BOT_LOGIN) ||
-        (vars.CODEX_BOT_LOGIN == '' && github.event.assignee.login == 'codex-bot')
-      )
+    if: github.event.issue.state == 'open'
     runs-on: ubuntu-latest
     steps:
-      - name: Acknowledge & label
+      - name: Acknowledge assignment as Codex bot
         uses: actions/github-script@v7
-        env:
-          # Pass the variable into the step as env so the script can read it
-          CODEX_BOT_LOGIN: ${{ vars.CODEX_BOT_LOGIN }}
-          ACK_LABEL: ${{ env.ACK_LABEL }}
         with:
+          github-token: ${{ secrets.CODEX_FOSS_TOK != '' && secrets.CODEX_FOSS_TOK || secrets.GITHUB_TOKEN }}
           script: |
+            const marker = '<!-- codex-acknowledged -->';
+            const ackLabel = (process.env.ACK_LABEL || '').trim();
+            const codexLabel = (process.env.CODEX_LABEL || 'codex').toLowerCase();
+            const botLogin = (process.env.CODEX_BOT_LOGIN || 'my-codex-bot').toLowerCase();
+
             const { owner, repo } = context.repo;
             const issue_number = context.issue.number;
+            const issue = context.payload.issue;
 
-            const bot = process.env.CODEX_BOT_LOGIN || 'codex-bot';
-            const ackLabel = process.env.ACK_LABEL || 'in-progress';
+            const assignees = issue.assignees || [];
+            const labels = issue.labels || [];
 
-            // 1) Acknowledge
-            await github.rest.issues.createComment({
-              owner, repo, issue_number,
-              body: `👋 @${bot} subscribed. Starting work.\n\nIf more details are needed, I'll ask here.`
-            });
+            const assignedToBot = assignees.some(a => (a.login || '').toLowerCase() === botLogin);
+            if (!assignedToBot) {
+              core.info(`Issue #${issue_number} is not assigned to ${botLogin}. Skipping.`);
+              return;
+            }
 
-            // 2) Add/create label
-            try {
-              await github.rest.issues.addLabels({ owner, repo, issue_number, labels: [ackLabel] });
-            } catch (e) {
-              if (e.status === 404) {
-                await github.rest.issues.createLabel({
-                  owner, repo, name: ackLabel, color: '0E8A16',
-                  description: 'Issue is being handled by the bot'
-                }).catch(() => {});
+            const hasCodexLabel = labels.some(l => (l.name || '').toLowerCase() === codexLabel);
+            if (!hasCodexLabel) {
+              core.info(`Issue #${issue_number} is missing the required "${codexLabel}" label. Skipping.`);
+              return;
+            }
+
+            const ackBody = `${marker}\n👋 Thanks for the assignment! @${issue.user.login} Codex is on it.\n\nI'll follow up here with questions or a pull request update once work begins.\n\n_This acknowledgement was posted automatically._`;
+
+            const existingComments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number });
+            const alreadyAcknowledged = existingComments.some(comment => (comment.body || '').includes(marker));
+
+            if (!alreadyAcknowledged) {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body: ackBody });
+              core.info(`Posted acknowledgement on issue #${issue_number} as ${botLogin}.`);
+            } else {
+              core.info(`Issue #${issue_number} was already acknowledged. Skipping comment.`);
+            }
+
+            if (ackLabel && ackLabel.toLowerCase() !== codexLabel) {
+              try {
                 await github.rest.issues.addLabels({ owner, repo, issue_number, labels: [ackLabel] });
-              } else {
-                throw e;
+                core.info(`Applied label "${ackLabel}" to issue #${issue_number}.`);
+              } catch (error) {
+                if (error.status === 404) {
+                  core.info(`Label "${ackLabel}" not found. Creating it before applying.`);
+                  await github.rest.issues.createLabel({
+                    owner,
+                    repo,
+                    name: ackLabel,
+                    color: '0E8A16',
+                    description: 'Issue is being handled by Codex bot',
+                  }).catch(() => core.info(`Label "${ackLabel}" may already exist. Continuing.`));
+                  await github.rest.issues.addLabels({ owner, repo, issue_number, labels: [ackLabel] });
+                } else {
+                  throw error;
+                }
               }
             }
 
-            // 3) Job summary
-            core.summary
-              .addHeading('Codex bot acknowledged')
-              .addRaw(`Issue #${issue_number} labeled **${ackLabel}** and acknowledged by **@${bot}**.`)
+            await core.summary
+              .addHeading('Codex bot acknowledgement complete')
+              .addRaw(`Issue #${issue_number} assigned to **@${botLogin}** acknowledged successfully.`)
               .write();
+        env:
+          CODEX_BOT_LOGIN: ${{ vars.CODEX_BOT_LOGIN }}
