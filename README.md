@@ -28,6 +28,14 @@ A community-driven glossary of FOSS terms with humor, sarcasm, and honest truths
 4. Get your quality score (try to beat 80/100!)
 5. Earn achievements! 🏆
 
+## 🤖 Codex Issue Automation
+
+Issues labeled `codex` and assigned to the bot account are acknowledged automatically:
+
+1. Store the Fine-Grained PAT for `my-codex-bot` in a repository secret named `CODEX_FOSS_TOK`.
+2. (Optional) Create a repository variable `CODEX_BOT_LOGIN` if you need to override the default bot login.
+3. Assign the issue to `my-codex-bot` and apply the `codex` label. The workflow will comment as the bot and add the `in-progress` label when it picks up the task.
+
 ## 📊 Scoring System
 
 Every term is scored out of 100 points:
