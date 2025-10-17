@@ -59,13 +59,17 @@ Every term is scored out of 100 points:
 
 ## Example Term
 ```yaml
-- term: "Git"
-  definition: "A distributed version control system"
-  explanation: "Tracks changes in source code during software development"
-  humor: "A tool that makes you feel like a time traveler, until you try to resolve a merge conflict and realize you're actually in hell"
-  tags: ["vcs", "tools"]
-  see_also: ["GitHub", "GitLab"]# Test change
+- slug: git
+  term: "Git"
+  definition: "A distributed version control system that lets teams branch, merge, and rewind project history so collaboration happens without overwriting each other's work."
+  explanation: "Git snapshots every commit locally, syncs through remotes, and helps keep parallel experiments manageable when they eventually converge."
+  humor: "Like a time machine for code that mostly works—until you run `git push --force` and become the office supervillain."
+  tags: ["vcs", "tools", "collaboration"]
+  see_also: ["GitHub", "GitLab", "Mercurial"]
+  aliases: ["git-scm", "version-control"]
+  controversy_level: "medium"
+```
 
 ## 🌐 [Visit our Documentation](https://luminlynx.github.io/FOSS-Glossary/)
 
- Check out our beautiful docs site with scoring explanation and examples!
+Check out our beautiful docs site with scoring explanation and examples!
