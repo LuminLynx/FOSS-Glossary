@@ -1,0 +1,70 @@
+name: Codex Agent
+
+on:
+  # Manual run from the Actions tab
+  workflow_dispatch:
+
+  # React when an issue is labeled (e.g., ready-for-codex) or mentioned
+  issues:
+    types: [labeled, reopened, opened]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  actions: read
+
+jobs:
+  codex:
+    # Safety: don't run secrets on PRs from forks
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'issues' && github.event.action == 'labeled' && contains(github.event.label.name, 'ready-for-codex')) ||
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@codex-bot'))
+
+    runs-on: ubuntu-latest
+    env:
+      # PAT from Settings > Secrets and variables > Actions (repo-level)
+      GITHUB_TOKEN: ${{ secrets.CODEX_PAT }}
+      REPO_FULL_NAME: ${{ github.repository }}
+      # Optional: restrict to only this repo to be extra safe
+      CODEX_REPO_ALLOWLIST: LuminLynx/FOSS-Glossary
+
+    steps:
+      - name: Sanity checks
+        run: |
+          if [ -z "${GITHUB_TOKEN}" ]; then
+            echo "::error::Missing CODEX_PAT secret"; exit 1
+          fi
+          echo "Repo: ${REPO_FULL_NAME}"
+
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify token can read the repo (optional)
+        run: |
+          curl -s -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+               -H "Accept: application/vnd.github+json" \
+               https://api.github.com/repos/${REPO_FULL_NAME} | jq -r '.full_name'
+
+      # --- Replace this block with however you actually run Codex ---
+      - name: Run Codex (replace with your command)
+        run: |
+          # Example shape; swap this for your real invocation.
+          # The agent should read GITHUB_TOKEN from env and act in this repo.
+          echo "Starting Codex..."
+          ./codex run \
+            --repo "${REPO_FULL_NAME}" \
+            --acknowledge-on-issue \
+            --branch-prefix "codex/" \
+            --watch-label "ready-for-codex"
+      # --------------------------------------------------------------
+
+      - name: Post run summary
+        if: always()
+        run: |
+          echo "Codex run finished with status: ${{ job.status }}"
