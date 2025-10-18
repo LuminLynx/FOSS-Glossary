@@ -70,6 +70,6 @@ Every term is scored out of 100 points:
   controversy_level: "medium"
 ```
 
-## 🌐 [Visit our Documentation](https://luminlynx.github.io/FOSS-Glossary/)
+## 🌐 [Visit our Landing Page](https://luminlynx.github.io/FOSS-Glossary/)
 
 Check out our beautiful docs site with scoring explanation and examples!
