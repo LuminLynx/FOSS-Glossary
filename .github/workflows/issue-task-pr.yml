@@ -4,6 +4,7 @@ on:
   issues:
     types:
       - assigned
+      - labeled
   workflow_dispatch:
     inputs:
       title:
@@ -15,9 +16,14 @@ on:
         required: false
         type: string
       labels:
-        description: Comma-separated labels
+        description: Comma-separated labels (e.g., enhancement, bug)
         required: false
         type: string
+      notify_slack:
+        description: Send Slack notification
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -29,152 +35,338 @@ jobs:
     if: github.event_name == 'issues'
     name: Handle assigned issues
     runs-on: ubuntu-latest
+    outputs:
+      pr-url: ${{ steps.process.outputs.pr-url }}
+      branch-name: ${{ steps.process.outputs.branch-name }}
+      success: ${{ steps.process.outputs.success }}
     steps:
-      - name: Prepare task branch and PR
+      - id: process
+        name: Prepare task branch and PR
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const BOT_USERNAME = 'my-codex-bot';
+            const BOT_USERNAME = process.env.BOT_USERNAME || 'my-codex-bot';
+            const TRIGGER_LABELS = (process.env.TRIGGER_LABELS || 'codex,ready-for-codex').split(',').map(l => l.trim().toLowerCase());
             const { core, context, github } = require('@actions/github-script');
 
-            const assignedUser = context.payload.assignee;
-            if (!assignedUser || assignedUser.login !== BOT_USERNAME) {
-              core.info('Issue not assigned to the Codex bot. Skipping.');
+            // Enhanced assignee and label handling
+            const issue = context.payload.issue;
+            const assignees = issue.assignees || [];
+            const labels = issue.labels || [];
+            
+            const assignedToBot = assignees.some(a => a.login === BOT_USERNAME);
+            const hasTriggerLabel = labels.some(l => TRIGGER_LABELS.includes(l.name.toLowerCase()));
+            
+            if (!assignedToBot && !hasTriggerLabel) {
+              core.info(`Issue not assigned to bot (${BOT_USERNAME}) and no trigger label found. Skipping.`);
+              core.setOutput('success', 'false');
               return;
             }
+            
+            core.info(`Processing issue #${issue.number} - Assigned to bot: ${assignedToBot}, Has trigger label: ${hasTriggerLabel}`);
 
             const { owner, repo } = context.repo;
-            const issue = context.payload.issue;
             const repository = context.payload.repository;
             const defaultBranch = repository.default_branch;
             const issueNumber = issue.number;
 
+            // Generate unique timestamp for conflict prevention
+            const timestamp = Date.now();
+            
             const slugFromTitle = (title) => {
               const base = title
                 .toLowerCase()
                 .replace(/[^a-z0-9]+/g, '-')
                 .replace(/^-+|-+$/g, '')
-                .slice(0, 40);
+                .slice(0, 35);
               return base || `issue-${issueNumber}`;
             };
 
             const slug = slugFromTitle(issue.title);
-            const branchName = `task/${issueNumber}-${slug}`;
-            const filePath = `tasks/${issueNumber}-${slug}.md`;
+            const branchName = `task/${issueNumber}-${slug}-${timestamp}`;
+            const filePath = `tasks/${issueNumber}/${slug}-${timestamp}.md`;
+            
+            core.info(`Branch: ${branchName}, File: ${filePath}`);
+
+            // Retry mechanism for API calls with exponential backoff
+            const retryWithBackoff = async (fn, maxRetries = 3, baseDelay = 1000) => {
+              for (let attempt = 1; attempt <= maxRetries; attempt++) {
+                try {
+                  return await fn();
+                } catch (error) {
+                  const isRetryable = error.status >= 500 || error.status === 429 || error.code === 'ECONNRESET';
+                  if (attempt === maxRetries || !isRetryable) {
+                    core.error(`Failed after ${attempt} attempts: ${error.message}`);
+                    throw error;
+                  }
+                  const delay = baseDelay * Math.pow(2, attempt - 1);
+                  core.warning(`Attempt ${attempt} failed: ${error.message}. Retrying in ${delay}ms...`);
+                  await new Promise(resolve => setTimeout(resolve, delay));
+                }
+              }
+            };
 
             const ensureBranch = async () => {
               const refName = `heads/${branchName}`;
-              try {
-                await github.rest.git.getRef({ owner, repo, ref: refName });
-                core.info(`Branch ${branchName} already exists.`);
-              } catch (error) {
-                if (error.status !== 404) throw error;
-                const baseRef = await github.rest.git.getRef({ owner, repo, ref: `heads/${defaultBranch}` });
-                await github.rest.git.createRef({
-                  owner,
-                  repo,
-                  ref: `refs/${refName}`,
-                  sha: baseRef.data.object.sha,
-                });
-                core.info(`Created branch ${branchName} from ${defaultBranch}.`);
-              }
+              return retryWithBackoff(async () => {
+                try {
+                  await github.rest.git.getRef({ owner, repo, ref: refName });
+                  core.info(`Branch ${branchName} already exists.`);
+                } catch (error) {
+                  if (error.status !== 404) throw error;
+                  const baseRef = await github.rest.git.getRef({ owner, repo, ref: `heads/${defaultBranch}` });
+                  await github.rest.git.createRef({
+                    owner,
+                    repo,
+                    ref: `refs/${refName}`,
+                    sha: baseRef.data.object.sha,
+                  });
+                  core.info(`✅ Created branch ${branchName} from ${defaultBranch}.`);
+                }
+              });
             };
 
             const upsertTaskFile = async () => {
-              const safeTitle = issue.title.replace(/"/g, '\\"');
-              const content = `---\nissue: #${issueNumber}\ntitle: "${safeTitle}"\nassignee: @${BOT_USERNAME}\nbranch: ${branchName}\n---\n\n## Checklist\n\n- [ ] Review issue requirements\n- [ ] Implement solution\n- [ ] Open pull request\n- [ ] Notify repository owner\n`;
-              const encodedContent = Buffer.from(content, 'utf8').toString('base64');
+              return retryWithBackoff(async () => {
+                const safeTitle = issue.title.replace(/"/g, '\\"');
+                const createdAt = new Date().toISOString();
+                const content = `---\nissue: #${issueNumber}\ntitle: "${safeTitle}"\nassignee: @${BOT_USERNAME}\nbranch: ${branchName}\ncreated: ${createdAt}\ntimestamp: ${timestamp}\n---\n\n## Checklist\n\n- [ ] Review issue requirements\n- [ ] Implement solution\n- [ ] Open pull request\n- [ ] Notify repository owner\n\n## Issue Details\n\n${issue.body || 'No description provided.'}\n`;
+                const encodedContent = Buffer.from(content, 'utf8').toString('base64');
 
-              let currentSha;
-              try {
-                const existing = await github.rest.repos.getContent({
+                let currentSha;
+                try {
+                  const existing = await github.rest.repos.getContent({
+                    owner,
+                    repo,
+                    path: filePath,
+                    ref: branchName,
+                  });
+                  if (!Array.isArray(existing.data)) {
+                    currentSha = existing.data.sha;
+                    core.info(`Task file already exists, updating...`);
+                  }
+                } catch (error) {
+                  if (error.status !== 404) throw error;
+                  core.info(`Creating new task file...`);
+                }
+
+                await github.rest.repos.createOrUpdateFileContents({
                   owner,
                   repo,
                   path: filePath,
-                  ref: branchName,
+                  message: `chore: track task #${issueNumber}`,
+                  content: encodedContent,
+                  branch: branchName,
+                  sha: currentSha,
                 });
-                if (!Array.isArray(existing.data)) {
-                  currentSha = existing.data.sha;
-                }
-              } catch (error) {
-                if (error.status !== 404) throw error;
-              }
-
-              await github.rest.repos.createOrUpdateFileContents({
-                owner,
-                repo,
-                path: filePath,
-                message: `chore: track task #${issueNumber}`,
-                content: encodedContent,
-                branch: branchName,
-                sha: currentSha,
+                core.info(`✅ Updated ${filePath} on ${branchName}.`);
               });
-              core.info(`Updated ${filePath} on ${branchName}.`);
             };
 
             const ensurePullRequest = async () => {
-              const head = `${owner}:${branchName}`;
-              const existing = await github.rest.pulls.list({
-                owner,
-                repo,
-                head,
-                base: defaultBranch,
-                state: 'open',
+              return retryWithBackoff(async () => {
+                const head = `${owner}:${branchName}`;
+                const existing = await github.rest.pulls.list({
+                  owner,
+                  repo,
+                  head,
+                  base: defaultBranch,
+                  state: 'open',
+                });
+
+                if (existing.data.length > 0) {
+                  core.info(`♻️  Reusing existing PR ${existing.data[0].html_url}.`);
+                  return existing.data[0];
+                }
+
+                const title = `task: #${issueNumber} ${issue.title}`.substring(0, 250);
+                const body = [
+                  '## Automated Task Preparation',
+                  '',
+                  `**Issue:** #${issueNumber}`,
+                  `**Assignee:** @${BOT_USERNAME}`,
+                  `**Branch:** \`${branchName}\``,
+                  `**Task File:** \`${filePath}\``,
+                  `**Created:** ${new Date().toISOString()}`,
+                  '',
+                  '### Context',
+                  issue.body || 'No description provided.',
+                  '',
+                  '### Checklist',
+                  '- [ ] Review issue requirements',
+                  '- [ ] Implement solution',
+                  '- [ ] Run tests and validation',
+                  '- [ ] Update documentation if needed',
+                  '',
+                  '---',
+                  '_This PR was created automatically by the Issue Task PR Automation workflow._'
+                ].join('\n');
+
+                const pr = await github.rest.pulls.create({
+                  owner,
+                  repo,
+                  title,
+                  head: branchName,
+                  base: defaultBranch,
+                  body,
+                });
+                core.info(`✅ Created PR ${pr.data.html_url}.`);
+                return pr.data;
               });
-
-              if (existing.data.length > 0) {
-                core.info(`Reusing existing PR ${existing.data[0].html_url}.`);
-                return existing.data[0];
-              }
-
-              const title = `task: #${issueNumber} ${issue.title}`.substring(0, 250);
-              const body = `Automated task preparation for #${issueNumber}.\n\n- Issue: #${issueNumber}\n- Assignee: @${BOT_USERNAME}\n- Branch: \`${branchName}\``;
-
-              const pr = await github.rest.pulls.create({
-                owner,
-                repo,
-                title,
-                head: branchName,
-                base: defaultBranch,
-                body,
-              });
-              core.info(`Created PR ${pr.data.html_url}.`);
-              return pr.data;
             };
 
             const ensureIssueComment = async (prUrl) => {
-              const comments = await github.paginate(github.rest.issues.listComments, {
-                owner,
-                repo,
-                issue_number: issueNumber,
+              return retryWithBackoff(async () => {
+                const comments = await github.paginate(github.rest.issues.listComments, {
+                  owner,
+                  repo,
+                  issue_number: issueNumber,
+                });
+
+                const alreadyCommented = comments.some(
+                  (comment) => comment.user?.login === BOT_USERNAME && comment.body.includes(prUrl)
+                );
+
+                if (alreadyCommented) {
+                  core.info('ℹ️  Issue already has automation comment.');
+                  return;
+                }
+
+                const body = [
+                  '🤖 **Automation Update**',
+                  '',
+                  `Opened ${prUrl} from branch \`${branchName}\`.`,
+                  '',
+                  `**Task file:** \`${filePath}\``,
+                  `**Timestamp:** ${timestamp}`,
+                  '',
+                  'The task file contains the checklist and details for this issue. Progress will be tracked in the pull request.'
+                ].join('\n');
+                
+                await github.rest.issues.createComment({
+                  owner,
+                  repo,
+                  issue_number: issueNumber,
+                  body,
+                });
+                core.info('✅ Posted comment linking to PR.');
               });
-
-              const alreadyCommented = comments.some(
-                (comment) => comment.user?.login === BOT_USERNAME && comment.body.includes(prUrl)
-              );
-
-              if (alreadyCommented) {
-                core.info('Issue already has automation comment.');
-                return;
-              }
-
-              const body = `Automation update: opened ${prUrl} from branch \`${branchName}\`. The task file lives at \`${filePath}\`.`;
-              await github.rest.issues.createComment({
-                owner,
-                repo,
-                issue_number: issueNumber,
-                body,
-              });
-              core.info('Posted comment linking to PR.');
             };
 
-            await ensureBranch();
-            await upsertTaskFile();
-            const pr = await ensurePullRequest();
-            await ensureIssueComment(pr.html_url);
+            try {
+              core.startGroup('Creating branch');
+              await ensureBranch();
+              core.endGroup();
+              
+              core.startGroup('Creating/updating task file');
+              await upsertTaskFile();
+              core.endGroup();
+              
+              core.startGroup('Creating/updating pull request');
+              const pr = await ensurePullRequest();
+              core.endGroup();
+              
+              core.startGroup('Posting issue comment');
+              await ensureIssueComment(pr.html_url);
+              core.endGroup();
+              
+              core.setOutput('pr-url', pr.html_url);
+              core.setOutput('branch-name', branchName);
+              core.setOutput('success', 'true');
+              
+              core.info('✅ Issue assignment processing complete.');
+              core.summary
+                .addHeading('✅ Task Automation Successful')
+                .addRaw(`**Issue:** #${issueNumber}`)
+                .addRaw(`\n**PR:** ${pr.html_url}`)
+                .addRaw(`\n**Branch:** \`${branchName}\``)
+                .addRaw(`\n**Task File:** \`${filePath}\``)
+                .write();
+            } catch (error) {
+              core.setFailed(`Task automation failed: ${error.message}`);
+              core.setOutput('success', 'false');
+              core.summary
+                .addHeading('❌ Task Automation Failed')
+                .addRaw(`**Issue:** #${issueNumber}`)
+                .addRaw(`\n**Error:** ${error.message}`)
+                .addRaw(`\n**Stack:** \`${error.stack}\``)
+                .write();
+              throw error;
+            }
+        env:
+          BOT_USERNAME: ${{ vars.CODEX_BOT_LOGIN || 'my-codex-bot' }}
+          TRIGGER_LABELS: ${{ vars.TRIGGER_LABELS || 'codex,ready-for-codex' }}
 
-            core.info('Issue assignment processing complete.');
+      - name: Send notification
+        if: always() && vars.SLACK_WEBHOOK_URL != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { core } = require('@actions/github-script');
+            const success = '${{ steps.process.outputs.success }}' === 'true';
+            const prUrl = '${{ steps.process.outputs.pr-url }}';
+            const branchName = '${{ steps.process.outputs.branch-name }}';
+            const issueNumber = context.payload.issue.number;
+            
+            const webhookUrl = process.env.SLACK_WEBHOOK_URL;
+            if (!webhookUrl) {
+              core.info('SLACK_WEBHOOK_URL not configured, skipping notification');
+              return;
+            }
+            
+            const emoji = success ? '✅' : '❌';
+            const status = success ? 'Success' : 'Failed';
+            const color = success ? 'good' : 'danger';
+            
+            const payload = {
+              attachments: [{
+                color: color,
+                title: `${emoji} Issue Task PR Automation - ${status}`,
+                fields: [
+                  { title: 'Issue', value: `#${issueNumber}`, short: true },
+                  { title: 'Repository', value: context.repo.owner + '/' + context.repo.repo, short: true }
+                ],
+                footer: 'GitHub Actions',
+                ts: Math.floor(Date.now() / 1000)
+              }]
+            };
+            
+            if (success && prUrl) {
+              payload.attachments[0].fields.push(
+                { title: 'PR', value: prUrl, short: false },
+                { title: 'Branch', value: branchName, short: true }
+              );
+            }
+            
+            try {
+              const https = require('https');
+              const data = JSON.stringify(payload);
+              
+              const options = {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Content-Length': data.length
+                }
+              };
+              
+              await new Promise((resolve, reject) => {
+                const req = https.request(webhookUrl, options, (res) => {
+                  res.on('data', () => {});
+                  res.on('end', () => resolve());
+                });
+                req.on('error', reject);
+                req.write(data);
+                req.end();
+              });
+              
+              core.info('✅ Slack notification sent');
+            } catch (error) {
+              core.warning(`Failed to send Slack notification: ${error.message}`);
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   create-issue:
     if: github.event_name == 'workflow_dispatch'
@@ -183,6 +375,37 @@ jobs:
     outputs:
       issue-number: ${{ steps.create.outputs.result }}
     steps:
+      - name: Validate inputs
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { core } = require('@actions/github-script');
+            const title = '${{ inputs.title }}';
+            const labels = '${{ inputs.labels }}';
+            
+            // Validate title
+            if (!title || title.trim().length === 0) {
+              core.setFailed('Title cannot be empty');
+              return;
+            }
+            
+            if (title.length > 256) {
+              core.setFailed('Title must be 256 characters or less');
+              return;
+            }
+            
+            // Validate labels format
+            if (labels) {
+              const labelArray = labels.split(',').map(l => l.trim()).filter(l => l.length > 0);
+              const invalidLabels = labelArray.filter(l => l.length > 50 || !/^[a-zA-Z0-9\s\-_]+$/.test(l));
+              if (invalidLabels.length > 0) {
+                core.setFailed(`Invalid label format: ${invalidLabels.join(', ')}`);
+                return;
+              }
+            }
+            
+            core.info('✅ Input validation passed');
+      
       - id: create
         uses: actions/github-script@v7
         with:
@@ -198,17 +421,100 @@ jobs:
               .map((label) => label.trim())
               .filter((label) => label.length > 0);
 
+            // Retry mechanism
+            const retryWithBackoff = async (fn, maxRetries = 3, baseDelay = 1000) => {
+              for (let attempt = 1; attempt <= maxRetries; attempt++) {
+                try {
+                  return await fn();
+                } catch (error) {
+                  const isRetryable = error.status >= 500 || error.status === 429 || error.code === 'ECONNRESET';
+                  if (attempt === maxRetries || !isRetryable) {
+                    core.error(`Failed after ${attempt} attempts: ${error.message}`);
+                    throw error;
+                  }
+                  const delay = baseDelay * Math.pow(2, attempt - 1);
+                  core.warning(`Attempt ${attempt} failed: ${error.message}. Retrying in ${delay}ms...`);
+                  await new Promise(resolve => setTimeout(resolve, delay));
+                }
+              }
+            };
+
             const { owner, repo } = context.repo;
-            const issue = await github.rest.issues.create({
-              owner,
-              repo,
-              title,
-              body,
-              labels,
+            
+            const issue = await retryWithBackoff(async () => {
+              return await github.rest.issues.create({
+                owner,
+                repo,
+                title,
+                body,
+                labels,
+              });
             });
 
-            core.info(`Created issue #${issue.data.number}.`);
+            core.info(`✅ Created issue #${issue.data.number}.`);
+            core.summary
+              .addHeading('✅ Issue Created Successfully')
+              .addRaw(`**Issue:** #${issue.data.number}`)
+              .addRaw(`\n**Title:** ${title}`)
+              .addRaw(`\n**URL:** ${issue.data.html_url}`)
+              .write();
             return issue.data.number.toString();
 
       - name: Log issue number
         run: echo "Created issue #${{ steps.create.outputs.result }}"
+      
+      - name: Send notification for workflow_dispatch
+        if: always() && inputs.notify_slack && secrets.SLACK_WEBHOOK_URL != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { core } = require('@actions/github-script');
+            const issueNumber = '${{ steps.create.outputs.result }}';
+            const webhookUrl = process.env.SLACK_WEBHOOK_URL;
+            
+            if (!webhookUrl) {
+              core.info('SLACK_WEBHOOK_URL not configured, skipping notification');
+              return;
+            }
+            
+            const payload = {
+              attachments: [{
+                color: 'good',
+                title: '✅ Issue Created via Workflow Dispatch',
+                fields: [
+                  { title: 'Issue', value: `#${issueNumber}`, short: true },
+                  { title: 'Repository', value: context.repo.owner + '/' + context.repo.repo, short: true },
+                  { title: 'Title', value: '${{ inputs.title }}', short: false }
+                ],
+                footer: 'GitHub Actions',
+                ts: Math.floor(Date.now() / 1000)
+              }]
+            };
+            
+            try {
+              const https = require('https');
+              const data = JSON.stringify(payload);
+              const options = {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Content-Length': data.length
+                }
+              };
+              
+              await new Promise((resolve, reject) => {
+                const req = https.request(webhookUrl, options, (res) => {
+                  res.on('data', () => {});
+                  res.on('end', () => resolve());
+                });
+                req.on('error', reject);
+                req.write(data);
+                req.end();
+              });
+              
+              core.info('✅ Slack notification sent');
+            } catch (error) {
+              core.warning(`Failed to send Slack notification: ${error.message}`);
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
