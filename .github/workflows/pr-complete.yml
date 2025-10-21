@@ -19,10 +19,13 @@ jobs:
     runs-on: ubuntu-latest
     if: always()      # Run even if other conditional jobs (now removed) would have been skipped
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout PR head
+        uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Need full history for diff
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
           ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0  # Need full history for diff
+          token: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Setup Node
         uses: actions/setup-node@v3
@@ -32,8 +35,10 @@ jobs:
       - name: Install dependencies
         run: npm ci --include=dev --no-audit --no-fund
 
-      - name: Fetch base branch
-        run: git fetch origin ${{ github.event.pull_request.base.ref }} --depth=1
+      - name: Add base repo as remote and fetch base branch
+        run: |
+          git remote add base https://github.com/${{ github.event.pull_request.base.repo.full_name }} || true
+          git fetch base ${{ github.event.pull_request.base.ref }} --depth=1
 
       - name: Detect glossary changes
         id: glossary
@@ -63,13 +68,13 @@ jobs:
           try {
             headContent = fs.readFileSync('terms.yaml', 'utf8');
           } catch (error) {
-            console.error('Unable to read terms.yaml from head commit.');
-            process.exit(1);
+            console.warn('terms.yaml not present in PR head; treating as empty.');
+            headContent = '';
           }
 
           let baseContent = '';
           try {
-            baseContent = execSync(`git show origin/${baseRef}:terms.yaml`, { encoding: 'utf8' });
+            baseContent = execSync(`git show base/${baseRef}:terms.yaml`, { encoding: 'utf8' });
           } catch (error) {
             // If the file does not exist on the base branch (e.g., first contribution), treat as empty.
             baseContent = '';
