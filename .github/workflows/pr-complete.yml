@@ -19,13 +19,12 @@ jobs:
     runs-on: ubuntu-latest
     if: always()      # Run even if other conditional jobs (now removed) would have been skipped
     steps:
-      - name: Checkout PR head
+      - name: Checkout base repository
         uses: actions/checkout@v3
         with:
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0  # Need full history for diff
-          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ github.event.pull_request.base.sha }}
+          fetch-depth: 0
+          persist-credentials: false
       
       - name: Setup Node
         uses: actions/setup-node@v3
@@ -35,91 +34,113 @@ jobs:
       - name: Install dependencies
         run: npm ci --include=dev --no-audit --no-fund
 
-      - name: Add base repo as remote and fetch base branch
+      - name: Prepare PR terms.yaml snapshot
+        id: pr-terms
+        env:
+          PR_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          PR_REF: ${{ github.event.pull_request.head.sha }}
         run: |
-          git remote add base https://github.com/${{ github.event.pull_request.base.repo.full_name }} || true
-          git fetch base ${{ github.event.pull_request.base.ref }} --depth=1
+          cp terms.yaml terms.base.yaml
+
+          git fetch --no-tags --depth=1 https://github.com/$PR_REPO.git $PR_REF:refs/remotes/pr/head
+
+          if git cat-file -e refs/remotes/pr/head:terms.yaml 2>/dev/null; then
+            git show refs/remotes/pr/head:terms.yaml > terms.yaml
+            echo "terms_present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::terms.yaml not found in PR head; using empty glossary for validation."
+            printf "terms: []\n" > terms.yaml
+            echo "terms_present=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Detect glossary changes
         id: glossary
+        env:
+          BASE_TERMS_PATH: terms.base.yaml
+          PR_TERMS_PATH: terms.yaml
         run: |
-          BASE_REF="${{ github.event.pull_request.base.ref }}"
-          {
-            echo 'terms_changed=false'
-            echo 'has_new_slugs=false'
-            echo 'new_slug_count=0'
-            echo 'primary_slug='
-            echo 'new_slugs='
-          } >> "$GITHUB_OUTPUT"
-
           node - <<'NODE'
           const fs = require('fs');
           const yaml = require('js-yaml');
-          const { execSync } = require('child_process');
 
-          const baseRef = process.env.BASE_REF;
           const outputPath = process.env.GITHUB_OUTPUT;
+          const basePath = process.env.BASE_TERMS_PATH || 'terms.base.yaml';
+          const prPath = process.env.PR_TERMS_PATH || 'terms.yaml';
+
+          const defaults = {
+            terms_changed: 'false',
+            has_new_slugs: 'false',
+            new_slug_count: '0',
+            primary_slug: '',
+            new_slugs: ''
+          };
 
           function writeOutput(key, value) {
             fs.appendFileSync(outputPath, `\n${key}=${value}`);
           }
 
-          let headContent = '';
-          try {
-            headContent = fs.readFileSync('terms.yaml', 'utf8');
-          } catch (error) {
-            console.warn('terms.yaml not present in PR head; treating as empty.');
-            headContent = '';
+          for (const [key, value] of Object.entries(defaults)) {
+            writeOutput(key, value);
           }
 
-          let baseContent = '';
-          try {
-            baseContent = execSync(`git show base/${baseRef}:terms.yaml`, { encoding: 'utf8' });
-          } catch (error) {
-            // If the file does not exist on the base branch (e.g., first contribution), treat as empty.
-            baseContent = '';
+          function readTrimmed(path) {
+            try {
+              return fs.readFileSync(path, 'utf8').trim();
+            } catch (error) {
+              return '';
+            }
           }
 
-          const termsChanged = headContent.trim() !== baseContent.trim();
-          writeOutput('terms_changed', termsChanged);
+          const baseContent = readTrimmed(basePath);
+          const prContent = readTrimmed(prPath);
 
-          if (!termsChanged) {
+          if (baseContent === prContent) {
             return;
           }
 
-          let baseTerms = [];
-          let headTerms = [];
+          if (!baseContent && !prContent) {
+            return;
+          }
 
-          try {
-            if (baseContent.trim()) {
+          writeOutput('terms_changed', 'true');
+
+          let baseTerms = [];
+          let prTerms = [];
+
+          if (baseContent) {
+            try {
               const parsedBase = yaml.load(baseContent);
               if (parsedBase && Array.isArray(parsedBase.terms)) {
                 baseTerms = parsedBase.terms;
               }
+            } catch (error) {
+              console.warn('Unable to parse base terms.yaml:', error.message);
             }
-          } catch (error) {
-            console.warn('Unable to parse base terms.yaml:', error.message);
           }
 
-          try {
-            const parsedHead = yaml.load(headContent);
-            if (parsedHead && Array.isArray(parsedHead.terms)) {
-              headTerms = parsedHead.terms;
+          if (prContent) {
+            try {
+              const parsedPr = yaml.load(prContent);
+              if (parsedPr && Array.isArray(parsedPr.terms)) {
+                prTerms = parsedPr.terms;
+              }
+            } catch (error) {
+              console.error('Unable to parse PR terms.yaml:', error.message);
+              process.exit(1);
             }
-          } catch (error) {
-            console.error('Unable to parse head terms.yaml:', error.message);
-            process.exit(1);
           }
 
           const baseSlugs = new Set((baseTerms || []).map(term => term && term.slug).filter(Boolean));
-          const newSlugs = (headTerms || [])
+          const newSlugs = (prTerms || [])
             .map(term => term && term.slug)
             .filter(slug => slug && !baseSlugs.has(slug));
 
-          writeOutput('has_new_slugs', newSlugs.length > 0);
-          writeOutput('new_slug_count', newSlugs.length);
-          writeOutput('primary_slug', newSlugs.length > 0 ? newSlugs[newSlugs.length - 1] : '');
-          writeOutput('new_slugs', newSlugs.join(','));
+          if (newSlugs.length > 0) {
+            writeOutput('has_new_slugs', 'true');
+            writeOutput('new_slug_count', String(newSlugs.length));
+            writeOutput('primary_slug', newSlugs[newSlugs.length - 1]);
+            writeOutput('new_slugs', newSlugs.join(','));
+          }
           NODE
       
       # Step 1: Validate the YAML
