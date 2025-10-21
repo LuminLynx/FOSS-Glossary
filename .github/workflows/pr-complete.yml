@@ -53,6 +53,22 @@ jobs:
             echo "terms_present=false" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Lint PR terms.yaml
+        id: lint
+        if: steps.pr-terms.outputs.terms_present == 'true'
+        continue-on-error: true
+        run: |
+          python3 -m pip install --disable-pip-version-check --quiet yamllint
+          yamllint -d "{extends: relaxed, rules: {document-start: disable, line-length: disable}}" -f parsable terms.yaml 2>&1 | tee lint-output.txt
+          EXIT_CODE=${PIPESTATUS[0]}
+          echo "exit_code=$EXIT_CODE" >> "$GITHUB_OUTPUT"
+          {
+            echo 'lint_output<<EOF'
+            cat lint-output.txt
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
+          exit $EXIT_CODE
+
       - name: Detect glossary changes
         id: glossary
         env:
@@ -72,7 +88,10 @@ jobs:
             has_new_slugs: 'false',
             new_slug_count: '0',
             primary_slug: '',
-            new_slugs: ''
+            new_slugs: '',
+            parse_error: 'false',
+            parse_error_message: '',
+            parse_error_excerpt: ''
           };
 
           function writeOutput(key, value) {
@@ -125,8 +144,17 @@ jobs:
                 prTerms = parsedPr.terms;
               }
             } catch (error) {
-              console.error('Unable to parse PR terms.yaml:', error.message);
-              process.exit(1);
+              const parseMessage = error && error.message ? error.message : String(error);
+              const excerpt = prContent.slice(0, 2000);
+
+              console.error('Unable to parse PR terms.yaml:', error);
+              console.error('PR terms.yaml contents (first 2000 chars):\n' + excerpt);
+
+              writeOutput('parse_error', 'true');
+              writeOutput('parse_error_message', parseMessage.replace(/[\r\n]+/g, ' '));
+              fs.appendFileSync(outputPath, `\nparse_error_excerpt<<EOF\n${excerpt}\nEOF`);
+
+              return;
             }
           }
 
@@ -146,7 +174,7 @@ jobs:
       # Step 1: Validate the YAML
       - name: Validate terms
         id: validate
-        if: steps.glossary.outputs.terms_changed == 'true'
+        if: steps.glossary.outputs.terms_changed == 'true' && steps.glossary.outputs.parse_error != 'true' && (steps.lint.outputs.exit_code == '' || steps.lint.outputs.exit_code == '0')
         #continue-on-error: true
         run: |
           node scripts/validateTerms.js 2>&1 | tee validation-output.txt
@@ -229,7 +257,14 @@ jobs:
             const primarySlug = '${{ steps.glossary.outputs.primary_slug }}';
             const newSlugCountRaw = '${{ steps.glossary.outputs.new_slug_count }}';
             const isValid = '${{ steps.validate.outputs.valid }}' === '0';
-            const validationOutput = `${{ steps.validate.outputs.validation_output }}`;
+            const parseError = '${{ steps.glossary.outputs.parse_error }}' === 'true';
+            const parseErrorMessage = '${{ steps.glossary.outputs.parse_error_message }}';
+            const parseErrorExcerpt = `${{ steps.glossary.outputs.parse_error_excerpt }}`;
+            const lintExitCodeRaw = '${{ steps.lint.outputs.exit_code }}';
+            const lintOutput = `${{ steps.lint.outputs.lint_output }}`;
+            const lintFailed = Boolean(lintExitCodeRaw && lintExitCodeRaw !== '0');
+            const validationOutputRaw = `${{ steps.validate.outputs.validation_output }}`;
+            const validationOutput = validationOutputRaw ? validationOutputRaw : '';
             const score = '${{ steps.score.outputs.score }}' || '0';
             const badge = '${{ steps.score.outputs.badge }}' || '';
             const totalTerms = '${{ steps.stats.outputs.total_terms }}' || '0';
@@ -240,10 +275,28 @@ jobs:
 
             let comment = '';
 
-            // Title based on whether it's first comment or update
-            const isFirstRun = context.payload.action === 'opened';
+            if (parseError) {
+              comment = `## ❌ terms.yaml could not be parsed\n\n`;
+              comment += `YAML parsing failed with this message:\n\n`;
+              comment += '```\n' + (parseErrorMessage || 'Unknown parser error') + '\n```\n\n';
 
-            if (!termsChanged) {
+              if (lintFailed && lintOutput.trim()) {
+                comment += `### 🔍 yamllint details\n`;
+                comment += '```\n' + lintOutput.trim() + '\n```\n\n';
+              }
+
+              if (parseErrorExcerpt && parseErrorExcerpt.trim()) {
+                comment += `### 📄 File snippet (first 2000 characters)\n`;
+                comment += '```yaml\n' + parseErrorExcerpt.trim() + '\n```\n\n';
+              }
+
+              comment += `Please fix the YAML syntax issues above and push an update. I'll retry automatically. 🤖`;
+            } else if (lintFailed) {
+              comment = `## ❌ YAML linting failed\n\n`;
+              comment += `yamllint reported the following issues:\n`;
+              comment += '```\n' + lintOutput.trim() + '\n```\n\n';
+              comment += `Please address these lint errors and push an update. I'll re-check automatically. 🤖`;
+            } else if (!termsChanged) {
               comment = `## ℹ️ No glossary changes detected\n\n`;
               comment += `terms.yaml is unchanged in the latest commit. Validation and scoring were skipped.\n\n`;
               comment += `I'll keep watching for glossary updates on future pushes. 🤖`;
@@ -251,7 +304,8 @@ jobs:
               // VALIDATION FAILED
               comment = `## ❌ Validation Failed!\n\n`;
               comment += `### The Issue:\n`;
-              comment += '```\n' + validationOutput.replace(/✅.*\n/g, '').trim() + '\n```\n\n';
+              const cleanedOutput = validationOutput ? validationOutput.replace(/✅.*\n/g, '').trim() : '';
+              comment += '```\n' + (cleanedOutput || 'Validation failed, but no output was captured.') + '\n```\n\n';
 
               comment += `### 🔧 How to Fix:\n`;
               comment += `1. Check your YAML indentation (use 2 spaces, not tabs)\n`;
@@ -355,9 +409,15 @@ jobs:
             });
             
             // Look for our validation comment (not the welcome message)
-            const validationComment = comments.find(comment => 
-              comment.user.type === 'Bot' && 
-              (comment.body.includes('✅ Validation Passed') || comment.body.includes('❌ Validation Failed'))
+            const validationComment = comments.find(comment =>
+              comment.user.type === 'Bot' &&
+              (
+                comment.body.includes('✅ Validation Passed') ||
+                comment.body.includes('❌ Validation Failed') ||
+                comment.body.includes('❌ YAML linting failed') ||
+                comment.body.includes('❌ terms.yaml could not be parsed') ||
+                comment.body.includes('ℹ️ No glossary changes detected')
+              )
             );
             
             if (validationComment) {
@@ -377,3 +437,9 @@ jobs:
                 body: comment
               });
             }
+
+      - name: Fail workflow on lint or parse errors
+        if: steps.glossary.outputs.parse_error == 'true' || (steps.lint.outputs.exit_code != '' && steps.lint.outputs.exit_code != '0')
+        run: |
+          echo "Lint or parse errors detected in terms.yaml."
+          exit 1
