@@ -225,11 +225,9 @@ terms:
     tags: ["acronym", "support", "user-error"]
     see_also: ["RTFM", "ID10T Error"]
 
-  - term: "Drive-by Contribution"
+  - term: Drive-by Contribution
     definition: "A one-off PR or patch from someone who isn’t sticking around"
     explanation: "Often fixes a bug or adds a small feature; helpful but may add maintenance load if it lacks tests or follow-up"
     humor: "Thanks for the fix—please don’t ghost us when CI turns red"
     tags: ["contributing", "maintenance", "community"]
     see_also: ["Maintainer Burden", "Good First Issue", "Code Review"]
-    controversy_level: medium
-
