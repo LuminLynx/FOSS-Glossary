@@ -1,343 +1,208 @@
-# Issue Task PR Automation
-#
-# This workflow automates the creation of task branches, task files, and PRs when
-# issues are assigned to the configured bot user.
-#
-# Required Permissions (configured below):
-#   - contents: write (for creating branches and files)
-#   - pull-requests: write (for creating PRs and adding labels)
-#   - issues: write (for posting comments)
-#
-# Recommended Setup:
-#   - Add a repository secret named TASK_BOT_USERNAME with the bot's GitHub username
-#   - This allows the bot username to be configured without modifying the workflow
-#   - If not set, the workflow will fall back to the user triggering the workflow
+# .github/workflows/issue-tasks.yml
 
-name: Issue Task PR Automation
+name: 'Issue Task Automation'
 
 on:
   issues:
-    types:
-      - assigned
+    types: [assigned]
   workflow_dispatch:
     inputs:
-      title:
-        description: Issue title for Codex to create
+      issueNumber:
+        description: 'Issue number to process'
         required: true
-        type: string
-      body:
-        description: Issue body
+      taskTitle:
+        description: 'Title for the task'
+        required: true
+      taskBody:
+        description: 'Body content for the task'
         required: false
-        type: string
-      labels:
-        description: Comma-separated labels
+      taskLabels:
+        description: 'Comma-separated labels for the task'
         required: false
-        type: string
-      bot_username:
-        description: Bot username (optional, overrides secret)
-        required: false
-        type: string
-
-permissions:
-  contents: write
-  pull-requests: write
-  issues: write
 
 jobs:
-  handle-issue-assignment:
-    if: github.event_name == 'issues'
-    name: Handle assigned issues
+  create_task_branch:
     runs-on: ubuntu-latest
-    env:
-      TASK_BOT_USERNAME: ${{ secrets.TASK_BOT_USERNAME }}
-      WORKFLOW_INPUT_BOT_USERNAME: ${{ github.event.inputs.bot_username }}
-    steps:
-      - name: Prepare task branch and PR
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { core, context, github } = require('@actions/github-script');
-            
-            // Resolve BOT_USERNAME with precedence: workflow input -> secret -> GITHUB_ACTOR
-            const BOT_USERNAME = process.env.WORKFLOW_INPUT_BOT_USERNAME || process.env.TASK_BOT_USERNAME || context.actor;
-            
-            core.info(`Using BOT_USERNAME: ${BOT_USERNAME}`);
-
-            const assignedUser = context.payload.assignee;
-            if (!assignedUser || assignedUser.login !== BOT_USERNAME) {
-              core.info('Issue not assigned to the configured bot user. Skipping.');
-              return;
-            }
-
-            const { owner, repo } = context.repo;
-            const issue = context.payload.issue;
-            const repository = context.payload.repository;
-            const defaultBranch = repository.default_branch;
-            const issueNumber = issue.number;
-
-            // Retry utility with exponential backoff
-            const retryWithBackoff = async (fn, retries = 3, delays = [500, 1000, 2000]) => {
-              for (let attempt = 0; attempt < retries; attempt++) {
-                try {
-                  return await fn();
-                } catch (error) {
-                  // Treat 409 conflicts as success (already exists)
-                  if (error.status === 409) {
-                    core.info('Resource already exists (409 conflict), treating as success.');
-                    return null;
-                  }
-                  
-                  if (attempt === retries - 1) {
-                    throw error;
-                  }
-                  
-                  const delay = delays[attempt] || delays[delays.length - 1];
-                  core.info(`Attempt ${attempt + 1} failed, retrying in ${delay}ms...`);
-                  await new Promise(resolve => setTimeout(resolve, delay));
-                }
-              }
-            };
-
-            const slugFromTitle = (title) => {
-              const base = title
-                .toLowerCase()
-                .replace(/[^a-z0-9]+/g, '-')
-                .replace(/^-+|-+$/g, '')
-                .slice(0, 40);
-              return base || `issue-${issueNumber}`;
-            };
-
-            const slug = slugFromTitle(issue.title);
-            const branchName = `task/${issueNumber}-${slug}`;
-            const filePath = `tasks/${issueNumber}-${slug}.md`;
-            
-            core.info(`Processing issue #${issueNumber}: ${issue.title}`);
-            core.info(`Branch: ${branchName}`);
-            core.info(`File: ${filePath}`);
-
-            const ensureBranch = async () => {
-              const getRefName = `heads/${branchName}`;
-              const createRefName = `refs/heads/${branchName}`;
-              
-              try {
-                await github.rest.git.getRef({ owner, repo, ref: getRefName });
-                core.info(`Branch ${branchName} already exists.`);
-              } catch (error) {
-                if (error.status !== 404) throw error;
-                
-                core.info(`Branch does not exist, creating from ${defaultBranch}...`);
-                const baseRef = await github.rest.git.getRef({ 
-                  owner, 
-                  repo, 
-                  ref: `heads/${defaultBranch}` 
-                });
-                
-                await retryWithBackoff(async () => {
-                  return await github.rest.git.createRef({
-                    owner,
-                    repo,
-                    ref: createRefName,
-                    sha: baseRef.data.object.sha,
-                  });
-                });
-                
-                core.info(`Created branch ${branchName} from ${defaultBranch}.`);
-              }
-            };
-
-            const upsertTaskFile = async () => {
-              // Sanitize title for YAML frontmatter (escape quotes and backslashes)
-              const safeTitle = issue.title
-                .replace(/\\/g, '\\\\')
-                .replace(/"/g, '\\"')
-                .replace(/\n/g, '\\n')
-                .replace(/\r/g, '');
-              
-              const content = `---\nissue: #${issueNumber}\ntitle: "${safeTitle}"\nassignee: @${BOT_USERNAME}\nbranch: ${branchName}\n---\n\n## Checklist\n\n- [ ] Review issue requirements\n- [ ] [...]`;
-              const encodedContent = Buffer.from(content, 'utf8').toString('base64');
-
-              let currentSha;
-              try {
-                const existing = await retryWithBackoff(async () => {
-                  return await github.rest.repos.getContent({
-                    owner,
-                    repo,
-                    path: filePath,
-                    ref: branchName,
-                  });
-                });
-                
-                if (existing && !Array.isArray(existing.data)) {
-                  currentSha = existing.data.sha;
-                }
-              } catch (error) {
-                if (error.status !== 404) throw error;
-              }
-
-              core.info(`Upserting task file ${filePath}...`);
-              await retryWithBackoff(async () => {
-                return await github.rest.repos.createOrUpdateFileContents({
-                  owner,
-                  repo,
-                  path: filePath,
-                  message: `chore: track task #${issueNumber}`,
-                  content: encodedContent,
-                  branch: branchName,
-                  sha: currentSha,
-                });
-              });
-              
-              core.info(`Updated ${filePath} on ${branchName}.`);
-            };
-
-            const ensurePullRequest = async () => {
-              const head = `${owner}:${branchName}`;
-              const existing = await github.rest.pulls.list({
-                owner,
-                repo,
-                head,
-                base: defaultBranch,
-                state: 'open',
-              });
-
-              if (existing.data.length > 0) {
-                core.info(`Reusing existing PR ${existing.data[0].html_url}.`);
-                return existing.data[0];
-              }
-
-              const title = `task: #${issueNumber} ${issue.title}`.substring(0, 250);
-              const body = `Automated task preparation for #${issueNumber}.\n\n- Issue: #${issueNumber}\n- Assignee: @${BOT_USERNAME}\n- Branch: \`${branchName}\``;
-
-              core.info(`Creating pull request from ${branchName} to ${defaultBranch}...`);
-              const pr = await retryWithBackoff(async () => {
-                return await github.rest.pulls.create({
-                  owner,
-                  repo,
-                  title,
-                  head: branchName,
-                  base: defaultBranch,
-                  body,
-                });
-              });
-              
-              if (!pr) {
-                throw new Error('Failed to create pull request');
-              }
-              
-              core.info(`Created PR ${pr.data.html_url}.`);
-              
-              // Add automation:task label to PR
-              try {
-                // First, ensure the label exists
-                try {
-                  await github.rest.issues.getLabel({
-                    owner,
-                    repo,
-                    name: 'automation:task',
-                  });
-                } catch (error) {
-                  if (error.status === 404) {
-                    core.info('Creating automation:task label...');
-                    await github.rest.issues.createLabel({
-                      owner,
-                      repo,
-                      name: 'automation:task',
-                      color: '0e8a16',
-                      description: 'Automated task PRs',
-                    });
-                  }
-                }
-                
-                // Add label to PR
-                await github.rest.issues.addLabels({
-                  owner,
-                  repo,
-                  issue_number: pr.data.number,
-                  labels: ['automation:task'],
-                });
-                core.info('Added automation:task label to PR.');
-              } catch (error) {
-                core.warning(`Failed to add label: ${error.message}`);
-              }
-              
-              return pr.data;
-            };
-
-            const ensureIssueComment = async (prUrl) => {
-              const comments = await github.paginate(github.rest.issues.listComments, {
-                owner,
-                repo,
-                issue_number: issueNumber,
-              });
-
-              // Check for duplicate by searching for PR URL or branch name in comments
-              const alreadyCommented = comments.some((comment) => {
-                const body = comment.body || '';
-                return body.includes(prUrl) || body.includes(branchName);
-              });
-
-              if (alreadyCommented) {
-                core.info('Issue already has automation comment with PR URL or branch name.');
-                return;
-              }
-
-              const body = `🤖 **Automation update:** opened ${prUrl} from branch \`${branchName}\`.\n\nThe task file lives at \`${filePath}\`.`;
-              await github.rest.issues.createComment({
-                owner,
-                repo,
-                issue_number: issueNumber,
-                body,
-              });
-              core.info('Posted comment linking to PR.');
-            };
-
-            try {
-              await ensureBranch();
-              await upsertTaskFile();
-              const pr = await ensurePullRequest();
-              await ensureIssueComment(pr.html_url);
-
-              core.info('✅ Issue assignment processing complete.');
-            } catch (error) {
-              core.error(`Failed to process issue assignment: ${error.message}`);
-              core.error(`Stack trace: ${error.stack}`);
-              throw error;
-            }
-
-  create-issue:
-    if: github.event_name == 'workflow_dispatch'
-    name: Create issue on demand
-    runs-on: ubuntu-latest
+    # Condition to run only for my-codex-bot assignee or workflow_dispatch
+    if: (github.event_name == 'issues' && github.actor == 'LuminLynx') || github.event_name == 'workflow_dispatch'
     outputs:
-      issue-number: ${{ steps.create.outputs.result }}
+      branch_name: ${{ steps.create_branch.outputs.branch_name }}
+      task_file_path: ${{ steps.set_paths.outputs.task_file_path }}
+
     steps:
-      - id: create
+      - name: 'Checkout repository'
+        uses: actions/checkout@v4
+
+      - name: 'Set Environment Variables'
+        id: set_env
+        run: |
+          if [ "${{ github.event_name }}" == "issues" ]; then
+            echo "ISSUE_NUMBER=${{ github.event.issue.number }}" >> $GITHUB_ENV
+            echo "TASK_TITLE=${{ github.event.issue.title }}" >> $GITHUB_ENV
+            echo "TASK_BODY=${{ github.event.issue.body }}" >> $GITHUB_ENV
+          else
+            echo "ISSUE_NUMBER=${{ github.event.inputs.issueNumber }}" >> $GITHUB_ENV
+            echo "TASK_TITLE=${{ github.event.inputs.taskTitle }}" >> $GITHUB_ENV
+            echo "TASK_BODY=${{ github.event.inputs.taskBody }}" >> $GITHUB_ENV
+          fi
+
+      - name: 'Validate Inputs'
+        run: |
+          if [ -z "${{ env.ISSUE_NUMBER }}" ] || [ -z "${{ env.TASK_TITLE }}" ]; then
+            echo "Error: Issue number and task title are required."
+            exit 1
+          fi
+
+      - name: 'Generate Unique ID and Slug'
+        id: generate_ids
+        run: |
+          UNIQUE_ID=$(date +%s)
+          TASK_SLUG=$(echo "${{ env.TASK_TITLE }}" | iconv -t ascii//TRANSLIT | sed -r s/[~\^]+//g | sed -r s/[^a-zA-Z0-9]+/-/g | sed -r s/^-+\|-+$//g | tr A-Z a-z)
+          echo "UNIQUE_ID=$UNIQUE_ID" >> $GITHUB_ENV
+          echo "TASK_SLUG=$TASK_SLUG" >> $GITHUB_ENV
+          echo "unique_id=$UNIQUE_ID" >> $GITHUB_OUTPUT
+          echo "task_slug=$TASK_SLUG" >> $GITHUB_OUTPUT
+
+      - name: 'Set Paths'
+        id: set_paths
+        run: |
+          BRANCH_NAME="task/${{ env.ISSUE_NUMBER }}-${{ steps.generate_ids.outputs.task_slug }}-${{ steps.generate_ids.outputs.unique_id }}"
+          TASK_FILE_PATH="tasks/${{ env.ISSUE_NUMBER }}/${{ steps.generate_ids.outputs.task_slug }}-${{ steps.generate_ids.outputs.unique_id }}.md"
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          echo "task_file_path=$TASK_FILE_PATH" >> $GITHUB_OUTPUT
+
+      - name: 'Create new branch'
+        id: create_branch
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          result-encoding: string
           script: |
-            const { core, context, github } = require('@actions/github-script');
-            const title = core.getInput('title', { required: true });
-            const body = core.getInput('body') || '';
-            const labelsInput = core.getInput('labels') || '';
-            const labels = labelsInput
-              .split(',')
-              .map((label) => label.trim())
-              .filter((label) => label.length > 0);
+            const branchName = '${{ steps.set_paths.outputs.branch_name }}';
+            let retries = 3;
+            while (retries > 0) {
+              try {
+                await github.rest.git.createRef({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  ref: `refs/heads/${branchName}`,
+                  sha: context.sha
+                });
+                console.log(`Branch ${branchName} created successfully.`);
+                core.setOutput('branch_name', branchName);
+                return;
+              } catch (error) {
+                console.error(`Failed to create branch: ${error.message}. Retries left: ${retries - 1}`);
+                retries--;
+                await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds before retrying
+              }
+            }
+            core.setFailed('Could not create branch after multiple retries.');
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-            const { owner, repo } = context.repo;
-            const issue = await github.rest.issues.create({
-              owner,
-              repo,
-              title,
-              body,
-              labels,
-            });
+  create_task_file:
+    needs: create_task_branch
+    runs-on: ubuntu-latest
+    if: success()
 
-            core.info(`Created issue #${issue.data.number}.`);
-            return issue.data.number.toString();
+    steps:
+      - name: 'Checkout repository'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.create_task_branch.outputs.branch_name }}
 
-      - name: Log issue number
-        run: echo "Created issue #${{ steps.create.outputs.result }}"
+      - name: 'Set Environment Variables from previous job'
+        run: |
+          if [ "${{ github.event_name }}" == "issues" ]; then
+            echo "TASK_TITLE=${{ github.event.issue.title }}" >> $GITHUB_ENV
+            echo "TASK_BODY=${{ github.event.issue.body }}" >> $GITHUB_ENV
+          else
+            echo "TASK_TITLE=${{ github.event.inputs.taskTitle }}" >> $GITHUB_ENV
+            echo "TASK_BODY=${{ github.event.inputs.taskBody }}" >> $GITHUB_ENV
+          fi
+
+      - name: 'Create task file'
+        run: |
+          TASK_FILE_PATH="${{ needs.create_task_branch.outputs.task_file_path }}"
+          mkdir -p $(dirname "$TASK_FILE_PATH")
+          echo "---" > "$TASK_FILE_PATH"
+          echo "title: ${{ env.TASK_TITLE }}" >> "$TASK_FILE_PATH"
+          echo "issue: ${{ github.event.issue.number || github.event.inputs.issueNumber }}" >> "$TASK_FILE_PATH"
+          echo "---" >> "$TASK_FILE_PATH"
+          echo "" >> "$TASK_FILE_PATH"
+          echo "${{ env.TASK_BODY }}" >> "$TASK_FILE_PATH"
+          echo "Task file created at ${TASK_FILE_PATH}"
+
+      - name: 'Commit and push task file'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { exec } = require('child_process');
+            exec('git config --global user.name "github-actions[bot]"', (err) => { if (err) core.setFailed(err.message); });
+            exec('git config --global user.email "github-actions[bot]@users.noreply.github.com"', (err) => { if (err) core.setFailed(err.message); });
+            exec('git add .', (err) => { if (err) core.setFailed(err.message); });
+            exec('git commit -m "Create task file for issue #${{ github.event.issue.number || github.event.inputs.issueNumber }}"', (err) => { if (err) core.setFailed(err.message); });
+            exec('git push origin ${{ needs.create_task_branch.outputs.branch_name }}', (err) => { if (err) core.setFailed(err.message); });
+
+  create_pull_request:
+    needs: create_task_file
+    runs-on: ubuntu-latest
+    if: success()
+
+    steps:
+      - name: 'Create Pull Request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const branchName = '${{ needs.create_task_branch.outputs.branch_name }}';
+            const issueNumber = '${{ github.event.issue.number || github.event.inputs.issueNumber }}';
+            const prTitle = 'Task for Issue #' + issueNumber;
+            const prBody = 'This PR addresses issue #' + issueNumber + '. Please review the changes.';
+            let retries = 3;
+            while (retries > 0) {
+              try {
+                const { data: pr } = await github.rest.pulls.create({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  title: prTitle,
+                  head: branchName,
+                  base: 'main',
+                  body: prBody
+                });
+                console.log(`Pull request #${pr.number} created successfully.`);
+                
+                // Add labels if provided
+                const labels = '${{ github.event.inputs.taskLabels }}';
+                if (labels) {
+                  await github.rest.issues.addLabels({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: pr.number,
+                    labels: labels.split(',').map(label => label.trim())
+                  });
+                }
+                return;
+              } catch (error) {
+                console.error(`Failed to create pull request: ${error.message}. Retries left: ${retries - 1}`);
+                retries--;
+                await new Promise(resolve => setTimeout(resolve, 2000));
+              }
+            }
+            core.setFailed('Could not create pull request after multiple retries.');
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  notify_status:
+    needs: [create_pull_request]
+    runs-on: ubuntu-latest
+    if: always() # Run whether jobs succeed or fail
+
+    steps:
+      - name: 'Send Notification'
+        run: |
+          if [ "${{ needs.create_pull_request.result }}" == "success" ]; then
+            echo "Workflow completed successfully!"
+            # Add your notification command here (e.g., Slack, Email)
+          else
+            echo "Workflow failed. Please check the logs."
+            # Add your failure notification command here
+          fi
