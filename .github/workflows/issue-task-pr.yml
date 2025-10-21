@@ -299,8 +299,10 @@ jobs:
           TRIGGER_LABELS: ${{ vars.TRIGGER_LABELS || 'codex,ready-for-codex' }}
 
       - name: Send notification
-        if: always() && vars.SLACK_WEBHOOK_URL != ''
+        if: always() && env.SLACK_WEBHOOK_URL != ''
         uses: actions/github-script@v7
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         with:
           script: |
             const { core } = require('@actions/github-script');
@@ -365,8 +367,6 @@ jobs:
             } catch (error) {
               core.warning(`Failed to send Slack notification: ${error.message}`);
             }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
   create-issue:
     if: github.event_name == 'workflow_dispatch'
@@ -464,8 +464,10 @@ jobs:
         run: echo "Created issue #${{ steps.create.outputs.result }}"
       
       - name: Send notification for workflow_dispatch
-        if: always() && inputs.notify_slack && secrets.SLACK_WEBHOOK_URL != ''
+        if: always() && inputs.notify_slack && env.SLACK_WEBHOOK_URL != ''
         uses: actions/github-script@v7
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         with:
           script: |
             const { core } = require('@actions/github-script');
@@ -516,5 +518,3 @@ jobs:
             } catch (error) {
               core.warning(`Failed to send Slack notification: ${error.message}`);
             }
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
