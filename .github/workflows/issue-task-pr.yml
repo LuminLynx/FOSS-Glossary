@@ -1,19 +1,28 @@
-name: Issue Task PR Automation
+# .github/workflows/issue-tasks.yml
+
+name: 'Issue Task Automation'
 
 on:
   issues:
+<<<<<<< HEAD
     types:
       - assigned
       - labeled
+=======
+    types: [assigned]
+>>>>>>> origin/main
   workflow_dispatch:
     inputs:
-      title:
-        description: Issue title for Codex to create
+      issueNumber:
+        description: 'Issue number to process'
         required: true
-        type: string
-      body:
-        description: Issue body
+      taskTitle:
+        description: 'Title for the task'
+        required: true
+      taskBody:
+        description: 'Body content for the task'
         required: false
+<<<<<<< HEAD
         type: string
       labels:
         description: Comma-separated labels (e.g., enhancement, bug)
@@ -371,10 +380,23 @@ jobs:
   create-issue:
     if: github.event_name == 'workflow_dispatch'
     name: Create issue on demand
+=======
+      taskLabels:
+        description: 'Comma-separated labels for the task'
+        required: false
+
+jobs:
+  create_task_branch:
+>>>>>>> origin/main
     runs-on: ubuntu-latest
+    # Condition to run only for my-codex-bot assignee or workflow_dispatch
+    if: (github.event_name == 'issues' && github.actor == 'LuminLynx') || github.event_name == 'workflow_dispatch'
     outputs:
-      issue-number: ${{ steps.create.outputs.result }}
+      branch_name: ${{ steps.create_branch.outputs.branch_name }}
+      task_file_path: ${{ steps.set_paths.outputs.task_file_path }}
+
     steps:
+<<<<<<< HEAD
       - name: Validate inputs
         uses: actions/github-script@v7
         with:
@@ -407,20 +429,78 @@ jobs:
             core.info('✅ Input validation passed');
       
       - id: create
+=======
+      - name: 'Checkout repository'
+        uses: actions/checkout@v4
+
+      - name: 'Set Environment Variables'
+        id: set_env
+        run: |
+          if [ "${{ github.event_name }}" == "issues" ]; then
+            echo "ISSUE_NUMBER=${{ github.event.issue.number }}" >> $GITHUB_ENV
+            echo "TASK_TITLE=${{ github.event.issue.title }}" >> $GITHUB_ENV
+            echo "TASK_BODY=${{ github.event.issue.body }}" >> $GITHUB_ENV
+          else
+            echo "ISSUE_NUMBER=${{ github.event.inputs.issueNumber }}" >> $GITHUB_ENV
+            echo "TASK_TITLE=${{ github.event.inputs.taskTitle }}" >> $GITHUB_ENV
+            echo "TASK_BODY=${{ github.event.inputs.taskBody }}" >> $GITHUB_ENV
+          fi
+
+      - name: 'Validate Inputs'
+        run: |
+          if [ -z "${{ env.ISSUE_NUMBER }}" ] || [ -z "${{ env.TASK_TITLE }}" ]; then
+            echo "Error: Issue number and task title are required."
+            exit 1
+          fi
+
+      - name: 'Generate Unique ID and Slug'
+        id: generate_ids
+        run: |
+          UNIQUE_ID=$(date +%s)
+          TASK_SLUG=$(echo "${{ env.TASK_TITLE }}" | iconv -t ascii//TRANSLIT | sed -r s/[~\^]+//g | sed -r s/[^a-zA-Z0-9]+/-/g | sed -r s/^-+\|-+$//g | tr A-Z a-z)
+          echo "UNIQUE_ID=$UNIQUE_ID" >> $GITHUB_ENV
+          echo "TASK_SLUG=$TASK_SLUG" >> $GITHUB_ENV
+          echo "unique_id=$UNIQUE_ID" >> $GITHUB_OUTPUT
+          echo "task_slug=$TASK_SLUG" >> $GITHUB_OUTPUT
+
+      - name: 'Set Paths'
+        id: set_paths
+        run: |
+          BRANCH_NAME="task/${{ env.ISSUE_NUMBER }}-${{ steps.generate_ids.outputs.task_slug }}-${{ steps.generate_ids.outputs.unique_id }}"
+          TASK_FILE_PATH="tasks/${{ env.ISSUE_NUMBER }}/${{ steps.generate_ids.outputs.task_slug }}-${{ steps.generate_ids.outputs.unique_id }}.md"
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+          echo "task_file_path=$TASK_FILE_PATH" >> $GITHUB_OUTPUT
+
+      - name: 'Create new branch'
+        id: create_branch
+>>>>>>> origin/main
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          result-encoding: string
           script: |
-            const { core, context, github } = require('@actions/github-script');
-            const title = core.getInput('title', { required: true });
-            const body = core.getInput('body') || '';
-            const labelsInput = core.getInput('labels') || '';
-            const labels = labelsInput
-              .split(',')
-              .map((label) => label.trim())
-              .filter((label) => label.length > 0);
+            const branchName = '${{ steps.set_paths.outputs.branch_name }}';
+            let retries = 3;
+            while (retries > 0) {
+              try {
+                await github.rest.git.createRef({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  ref: `refs/heads/${branchName}`,
+                  sha: context.sha
+                });
+                console.log(`Branch ${branchName} created successfully.`);
+                core.setOutput('branch_name', branchName);
+                return;
+              } catch (error) {
+                console.error(`Failed to create branch: ${error.message}. Retries left: ${retries - 1}`);
+                retries--;
+                await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds before retrying
+              }
+            }
+            core.setFailed('Could not create branch after multiple retries.');
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+<<<<<<< HEAD
             // Retry mechanism
             const retryWithBackoff = async (fn, maxRetries = 3, baseDelay = 1000) => {
               for (let attempt = 1; attempt <= maxRetries; attempt++) {
@@ -518,3 +598,112 @@ jobs:
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+=======
+  create_task_file:
+    needs: create_task_branch
+    runs-on: ubuntu-latest
+    if: success()
+
+    steps:
+      - name: 'Checkout repository'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.create_task_branch.outputs.branch_name }}
+
+      - name: 'Set Environment Variables from previous job'
+        run: |
+          if [ "${{ github.event_name }}" == "issues" ]; then
+            echo "TASK_TITLE=${{ github.event.issue.title }}" >> $GITHUB_ENV
+            echo "TASK_BODY=${{ github.event.issue.body }}" >> $GITHUB_ENV
+          else
+            echo "TASK_TITLE=${{ github.event.inputs.taskTitle }}" >> $GITHUB_ENV
+            echo "TASK_BODY=${{ github.event.inputs.taskBody }}" >> $GITHUB_ENV
+          fi
+
+      - name: 'Create task file'
+        run: |
+          TASK_FILE_PATH="${{ needs.create_task_branch.outputs.task_file_path }}"
+          mkdir -p $(dirname "$TASK_FILE_PATH")
+          echo "---" > "$TASK_FILE_PATH"
+          echo "title: ${{ env.TASK_TITLE }}" >> "$TASK_FILE_PATH"
+          echo "issue: ${{ github.event.issue.number || github.event.inputs.issueNumber }}" >> "$TASK_FILE_PATH"
+          echo "---" >> "$TASK_FILE_PATH"
+          echo "" >> "$TASK_FILE_PATH"
+          echo "${{ env.TASK_BODY }}" >> "$TASK_FILE_PATH"
+          echo "Task file created at ${TASK_FILE_PATH}"
+
+      - name: 'Commit and push task file'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { exec } = require('child_process');
+            exec('git config --global user.name "github-actions[bot]"', (err) => { if (err) core.setFailed(err.message); });
+            exec('git config --global user.email "github-actions[bot]@users.noreply.github.com"', (err) => { if (err) core.setFailed(err.message); });
+            exec('git add .', (err) => { if (err) core.setFailed(err.message); });
+            exec('git commit -m "Create task file for issue #${{ github.event.issue.number || github.event.inputs.issueNumber }}"', (err) => { if (err) core.setFailed(err.message); });
+            exec('git push origin ${{ needs.create_task_branch.outputs.branch_name }}', (err) => { if (err) core.setFailed(err.message); });
+
+  create_pull_request:
+    needs: create_task_file
+    runs-on: ubuntu-latest
+    if: success()
+
+    steps:
+      - name: 'Create Pull Request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const branchName = '${{ needs.create_task_branch.outputs.branch_name }}';
+            const issueNumber = '${{ github.event.issue.number || github.event.inputs.issueNumber }}';
+            const prTitle = 'Task for Issue #' + issueNumber;
+            const prBody = 'This PR addresses issue #' + issueNumber + '. Please review the changes.';
+            let retries = 3;
+            while (retries > 0) {
+              try {
+                const { data: pr } = await github.rest.pulls.create({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  title: prTitle,
+                  head: branchName,
+                  base: 'main',
+                  body: prBody
+                });
+                console.log(`Pull request #${pr.number} created successfully.`);
+                
+                // Add labels if provided
+                const labels = '${{ github.event.inputs.taskLabels }}';
+                if (labels) {
+                  await github.rest.issues.addLabels({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: pr.number,
+                    labels: labels.split(',').map(label => label.trim())
+                  });
+                }
+                return;
+              } catch (error) {
+                console.error(`Failed to create pull request: ${error.message}. Retries left: ${retries - 1}`);
+                retries--;
+                await new Promise(resolve => setTimeout(resolve, 2000));
+              }
+            }
+            core.setFailed('Could not create pull request after multiple retries.');
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  notify_status:
+    needs: [create_pull_request]
+    runs-on: ubuntu-latest
+    if: always() # Run whether jobs succeed or fail
+
+    steps:
+      - name: 'Send Notification'
+        run: |
+          if [ "${{ needs.create_pull_request.result }}" == "success" ]; then
+            echo "Workflow completed successfully!"
+            # Add your notification command here (e.g., Slack, Email)
+          else
+            echo "Workflow failed. Please check the logs."
+            # Add your failure notification command here
+          fi
+>>>>>>> origin/main
