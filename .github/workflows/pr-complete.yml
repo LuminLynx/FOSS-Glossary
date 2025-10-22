@@ -184,5 +184,5 @@ jobs:
       - name: Fail if validation failed
         if: steps.validate.outputs.exit_code != '0'
         run: |
-          echo "Glossary validation failed."
+          echo "Lint or parse errors detected in terms.yaml."
           exit 1
