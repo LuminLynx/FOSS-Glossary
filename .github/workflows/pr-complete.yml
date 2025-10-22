@@ -242,6 +242,10 @@ jobs:
           name: validation-output-${{ github.run_id }}
           path: validation-output.txt
 
+      - name: Dry-run exporter schema check
+        if: steps.validate.outputs.valid == '0'
+        run: node scripts/exportTerms.js --check
+
       - name: Score terms
         id: score
         if: steps.validate.outputs.valid == '0' && steps.glossary.outputs.has_new_slugs == 'true'
