@@ -1,19 +1,10 @@
 #!/usr/bin/env node
 const fs = require('fs');
-const { execSync } = require('child_process');
 const yaml = require('js-yaml');
 
 const ONLY_IF_NEW = process.argv.includes('--only-if-new');
 const OUT_PATH = 'docs/terms.json';  // serve via GitHub Pages
-
-function countTerms(text) {
-  try {
-    const data = yaml.load(text);
-    return Array.isArray(data?.terms) ? data.terms.length : 0;
-  } catch {
-    return 0;
-  }
-}
+const MANIFEST_PATH = '.terms-slugs.txt';
 
 function readFile(path) {
   return fs.readFileSync(path, 'utf8');
@@ -23,43 +14,91 @@ function readHeadYaml() {
   return readFile('terms.yaml');
 }
 
-function readPrevYaml() {
-  try {
-    // previous commit on main; safe on push-to-main workflows
-    return execSync('git show HEAD~1:terms.yaml', { encoding: 'utf8' });
-  } catch {
-    return null; // first commit or file newly added
-  }
-}
-
 function writeJsonFromYaml(yamlText) {
   const obj = yaml.load(yamlText) || {};
-  // (Optional) sanitize/normalize here if needed
   fs.mkdirSync('docs', { recursive: true });
   fs.writeFileSync(OUT_PATH, JSON.stringify(obj, null, 2) + '\n');
   console.log(`✅ Wrote ${OUT_PATH} (${Array.isArray(obj.terms) ? obj.terms.length : 0} terms).`);
 }
 
+function extractSlugs(yamlText) {
+  try {
+    const data = yaml.load(yamlText) || {};
+    if (!Array.isArray(data.terms)) return [];
+    return data.terms
+      .map((term) => {
+        if (!term || typeof term.slug !== 'string') return null;
+        const normalized = term.slug.trim().toLowerCase();
+        return normalized.length > 0 ? normalized : null;
+      })
+      .filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
+function readManifest() {
+  if (!fs.existsSync(MANIFEST_PATH)) {
+    return { slugs: [], exists: false };
+  }
+  const content = fs.readFileSync(MANIFEST_PATH, 'utf8');
+  const slugs = content
+    .split(/\r?\n/)
+    .map((line) => line.trim().toLowerCase())
+    .filter(Boolean);
+  return { slugs, exists: true };
+}
+
+function diffSlugs(nextSlugs, manifestSlugs) {
+  const nextSet = new Set(nextSlugs);
+  const manifestSet = new Set(manifestSlugs);
+
+  const newSlugs = Array.from(nextSet).filter((slug) => !manifestSet.has(slug));
+  const removedSlugs = Array.from(manifestSet).filter((slug) => !nextSet.has(slug));
+
+  newSlugs.sort();
+  removedSlugs.sort();
+
+  return { newSlugs, removedSlugs };
+}
+
+function writeManifest(slugs) {
+  const unique = Array.from(new Set(slugs.map((slug) => slug.trim().toLowerCase()).filter(Boolean)));
+  unique.sort();
+  fs.writeFileSync(MANIFEST_PATH, unique.join('\n') + '\n');
+  console.log(`✅ Updated ${MANIFEST_PATH} (${unique.length} slugs).`);
+}
+
 (function main() {
   const head = readHeadYaml();
+  const headSlugs = extractSlugs(head);
+
   if (!ONLY_IF_NEW) {
     writeJsonFromYaml(head);
+    writeManifest(headSlugs);
     return;
   }
 
-  const prev = readPrevYaml();
-  if (!prev) {
-    // No previous version to compare → treat as "new"
-    writeJsonFromYaml(head);
+  const { slugs: manifestSlugs, exists } = readManifest();
+  const { newSlugs, removedSlugs } = diffSlugs(headSlugs, manifestSlugs);
+
+  if (!exists) {
+    console.log(`ℹ️ No manifest found at ${MANIFEST_PATH}. Treating all ${headSlugs.length} slugs as new.`);
+  }
+
+  if (removedSlugs.length > 0) {
+    console.log(`ℹ️ Detected removed slugs: ${removedSlugs.join(', ')}`);
+  }
+
+  if (newSlugs.length === 0 && exists) {
+    console.log('ℹ️ No new slugs — skipped.');
     return;
   }
 
-  const cHead = countTerms(head);
-  const cPrev = countTerms(prev);
-
-  if (cHead > cPrev) {
-    writeJsonFromYaml(head);
-  } else {
-    console.log(`ℹ️ No new terms (prev=${cPrev}, head=${cHead}). Skipping export.`);
+  if (newSlugs.length > 0) {
+    console.log(`ℹ️ New slugs detected: ${newSlugs.join(', ')}`);
   }
+
+  writeJsonFromYaml(head);
+  writeManifest(headSlugs);
 })();

@@ -60,20 +60,14 @@ jobs:
       - name: Generate landing page
         run: node scripts/generateLandingPage.js 
 
-      # Export terms.json only if new terms were added.
-      # This runs after landing page generation to ensure the exported terms reflect the latest updates.
-      - name: Export terms.json (only if new terms)
-        run: |
-          npm run export:new
-          if [ -f docs/terms.json ]; then
-            echo "terms.json updated"
-          else
-            echo "ℹ️ No docs/terms.json generated (no new terms)"
-          fi
+      # Export terms.json only if new slugs were added.
+      # The script also keeps the .terms-slugs.txt manifest in sync when an export happens.
+      - name: Export terms.json (only if new slugs)
+        run: npm run export:new
 
       - name: Add and commit changes
         run: |
-          git add docs/index.html docs/terms.json
+          git add docs/index.html docs/terms.json .terms-slugs.txt
           if git diff --staged --quiet; then
             echo "No changes to landing page"
           else
