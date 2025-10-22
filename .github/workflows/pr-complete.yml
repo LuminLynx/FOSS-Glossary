@@ -1,493 +1,188 @@
-# .github/workflows/pr-complete.yml
-# Unified PR Review System: lint -> parse -> validate -> score -> comment
-name: PR Review System
+name: PR Glossary Validation
 
 on:
-  pull_request_target:
+  pull_request:
     paths:
       - 'terms.yaml'
-    types: [opened, synchronize, reopened]
 
 permissions:
   contents: read
   pull-requests: write
-  issues: write
 
 jobs:
   validate-and-score:
+    name: Validate & score glossary
     runs-on: ubuntu-latest
-    if: always()
     steps:
-      - name: Checkout base repository
-        uses: actions/checkout@v3
+      - name: Checkout PR merge commit
+        uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.base.sha }}
           fetch-depth: 0
-          persist-credentials: false
 
-      - name: Setup Node
-        uses: actions/setup-node@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
 
       - name: Install dependencies
         run: npm ci --include=dev --no-audit --no-fund
 
-      - name: Prepare PR terms.yaml snapshot
-        id: pr-terms
-        env:
-          PR_REPO: ${{ github.event.pull_request.head.repo.full_name }}
-          PR_REF: ${{ github.event.pull_request.head.sha }}
+      - name: Prepare base glossary snapshot
+        id: base
         run: |
-          # Safely snapshot base terms.yaml. If base lacks the file (PR is adding it),
-          # create an empty base file so cp doesn't fail.
-          if [ -f terms.yaml ]; then
-            cp terms.yaml terms.base.yaml
+          if git cat-file -e ${{ github.event.pull_request.base.sha }}:terms.yaml 2>/dev/null; then
+            git show ${{ github.event.pull_request.base.sha }}:terms.yaml > terms.base.yaml
           else
             printf "terms: []\n" > terms.base.yaml
           fi
 
-          git fetch --no-tags --depth=1 https://github.com/$PR_REPO.git $PR_REF:refs/remotes/pr/head
-
-          if git cat-file -e refs/remotes/pr/head:terms.yaml 2>/dev/null; then
-            git show refs/remotes/pr/head:terms.yaml > terms.yaml
-            echo "terms_present=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "::warning::terms.yaml not found in PR head; using empty glossary for validation."
-            printf "terms: []\n" > terms.yaml
-            echo "terms_present=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Lint PR terms.yaml
-        id: yamllint
-        if: steps.pr-terms.outputs.terms_present == 'true'
+      - name: Validate terms.yaml
+        id: validate
         continue-on-error: true
         run: |
-          python3 -m pip install --disable-pip-version-check --quiet yamllint
-          yamllint -d "{extends: relaxed, rules: {document-start: disable, line-length: disable}}" -f parsable terms.yaml 2>&1 | tee lint-output.txt
-          EXIT_CODE=${PIPESTATUS[0]}
-          echo "exit_code=$EXIT_CODE" >> "$GITHUB_OUTPUT"
-
-          # Base64-encode lint output to safely transport as a single-line action output.
-          if [ -f lint-output.txt ]; then
-            # Use base64 -w0 for no line wraps; fallback to plain base64 if -w not supported
-            if base64 --help 2>&1 | grep -q -- '--wrap'; then
-              LINT_B64=$(base64 -w0 lint-output.txt)
-            else
-              LINT_B64=$(base64 lint-output.txt | tr -d '\n')
-            fi
-            echo "lint_output_b64=$LINT_B64" >> "$GITHUB_OUTPUT"
-          else
-            echo "lint_output_b64=" >> "$GITHUB_OUTPUT"
-          fi
-
-          exit $EXIT_CODE
-
-      - name: Upload yamllint artifact
-        if: steps.pr-terms.outputs.terms_present == 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: yamllint-report-${{ github.run_id }}
-          path: lint-output.txt
-
-      - name: Detect glossary changes
-        id: glossary
-        env:
-          BASE_TERMS_PATH: terms.base.yaml
-          PR_TERMS_PATH: terms.yaml
-        run: |
-          node - <<'NODE'
-          const fs = require('fs');
-          const yaml = require('js-yaml');
-
-          const outputPath = process.env.GITHUB_OUTPUT;
-          const basePath = process.env.BASE_TERMS_PATH || 'terms.base.yaml';
-          const prPath = process.env.PR_TERMS_PATH || 'terms.yaml';
-
-          const MAX_EXCERPT_CHARS = 2000;
-
-          const defaults = {
-            terms_changed: 'false',
-            has_new_slugs: 'false',
-            new_slug_count: '0',
-            primary_slug: '',
-            new_slugs: '',
-            parse_error: 'false',
-            parse_error_message_b64: '',
-            parse_error_excerpt_b64: ''
-          };
-
-          function writeOutput(key, value) {
-            if (outputPath) {
-              fs.appendFileSync(outputPath, `\n${key}=${value}`);
-            } else {
-              // Fallback for environments without GITHUB_OUTPUT
-              console.log(`[GITHUB_OUTPUT_MISSING] ${key}=${value}`);
-            }
-          }
-
-          for (const [key, value] of Object.entries(defaults)) {
-            writeOutput(key, value);
-          }
-
-          function readTrimmed(path) {
-            try {
-              return fs.readFileSync(path, 'utf8').trim();
-            } catch (error) {
-              return '';
-            }
-          }
-
-          const baseContent = readTrimmed(basePath);
-          const prContent = readTrimmed(prPath);
-
-          if (baseContent === prContent) {
-            return;
-          }
-
-          if (!baseContent && !prContent) {
-            return;
-          }
-
-          writeOutput('terms_changed', 'true');
-
-          let baseTerms = [];
-          let prTerms = [];
-
-          if (baseContent) {
-            try {
-              const parsedBase = yaml.load(baseContent);
-              if (parsedBase && Array.isArray(parsedBase.terms)) {
-                baseTerms = parsedBase.terms;
-              }
-            } catch (error) {
-              const msg = error && error.message ? String(error.message) : String(error);
-              const truncated = msg.slice(0, MAX_EXCERPT_CHARS);
-              const b64msg = Buffer.from(truncated).toString('base64');
-              writeOutput('parse_error_message_b64', b64msg);
-              const excerpt = baseContent.slice(0, MAX_EXCERPT_CHARS);
-              writeOutput('parse_error_excerpt_b64', Buffer.from(excerpt).toString('base64'));
-              writeOutput('parse_error', 'true');
-            }
-          }
-
-          if (prContent) {
-            try {
-              const parsedPr = yaml.load(prContent);
-              if (parsedPr && Array.isArray(parsedPr.terms)) {
-                prTerms = parsedPr.terms;
-              } else if (parsedPr && parsedPr.terms && !Array.isArray(parsedPr.terms)) {
-                const msg = 'terms is present but is not an array';
-                writeOutput('parse_error_message_b64', Buffer.from(msg).toString('base64'));
-                writeOutput('parse_error_excerpt_b64', Buffer.from(prContent.slice(0, MAX_EXCERPT_CHARS)).toString('base64'));
-                writeOutput('parse_error', 'true');
-              }
-            } catch (error) {
-              const parseMessage = error && error.message ? String(error.message) : String(error);
-              const truncated = parseMessage.slice(0, MAX_EXCERPT_CHARS);
-              writeOutput('parse_error_message_b64', Buffer.from(truncated).toString('base64'));
-
-              try {
-                const lines = prContent.split(/\r?\n/);
-                const mark = error.mark || null;
-                let start = 0, end = Math.min(lines.length, 20);
-                if (mark && Number.isInteger(mark.line)) {
-                  start = Math.max(0, mark.line - 4);
-                  end = Math.min(lines.length, mark.line + 4);
-                }
-                const snippet = lines.slice(start, end).map((l, idx) => {
-                  const lineno = start + idx + 1;
-                  return `${lineno.toString().padStart(4)} | ${l}`;
-                }).join('\n').slice(0, MAX_EXCERPT_CHARS);
-                writeOutput('parse_error_excerpt_b64', Buffer.from(snippet).toString('base64'));
-              } catch(e) {
-                writeOutput('parse_error_excerpt_b64', Buffer.from(prContent.slice(0,MAX_EXCERPT_CHARS)).toString('base64'));
-              }
-
-              writeOutput('parse_error', 'true');
-            }
-          }
-
-          const baseSlugs = new Set((baseTerms || []).map(term => term && term.slug).filter(Boolean));
-          const newSlugs = (prTerms || [])
-            .map(term => term && term.slug)
-            .filter(slug => slug && !baseSlugs.has(slug));
-
-          if (newSlugs.length > 0) {
-            writeOutput('has_new_slugs', 'true');
-            writeOutput('new_slug_count', String(newSlugs.length));
-            writeOutput('primary_slug', newSlugs[newSlugs.length - 1]);
-            writeOutput('new_slugs', newSlugs.join(','));
-          }
-          NODE
-
-      - name: Validate terms
-        id: validate
-        if: steps.glossary.outputs.terms_changed == 'true' && steps.glossary.outputs.parse_error != 'true' && (steps.yamllint.outputs.exit_code == '' || steps.yamllint.outputs.exit_code == '0')
-        run: |
-          node scripts/validateTerms.js 2>&1 | tee validation-output.txt
-          VALIDATION_EXIT_CODE=${PIPESTATUS[0]}
-          echo "valid=$VALIDATION_EXIT_CODE" >> $GITHUB_OUTPUT
+          set -o pipefail
+          node scripts/validateTerms.js --base terms.base.yaml | tee validation-output.txt
+          EXIT=${PIPESTATUS[0]}
+          echo "exit_code=$EXIT" >> "$GITHUB_OUTPUT"
           {
-            echo 'validation_output<<EOF'
+            echo 'output<<EOF'
             cat validation-output.txt
             echo EOF
-          } >> $GITHUB_OUTPUT
-          exit $VALIDATION_EXIT_CODE
+          } >> "$GITHUB_OUTPUT"
+          exit $EXIT
 
-      - name: Upload validation artifact
-        if: steps.glossary.outputs.terms_changed == 'true' && steps.glossary.outputs.parse_error != 'true' && (steps.yamllint.outputs.exit_code == '' || steps.yamllint.outputs.exit_code == '0')
-        uses: actions/upload-artifact@v4
-        with:
-          name: validation-output-${{ github.run_id }}
-          path: validation-output.txt
-
-      - name: Score terms
+      - name: Score latest term
         id: score
-        if: steps.validate.outputs.valid == '0' && steps.glossary.outputs.has_new_slugs == 'true'
+        if: steps.validate.outputs.exit_code == '0'
         run: |
-          TARGET_SLUG=${{ steps.glossary.outputs.primary_slug }} node scripts/quickScore.js > score-output.txt
+          set -o pipefail
+          node scripts/quickScore.js > score-output.txt
           cat score-output.txt
-          echo "score=$(grep 'SCORE:' score-output.txt | cut -d: -f2)" >> $GITHUB_OUTPUT
-          echo "badge=$(grep 'BADGE:' score-output.txt | cut -d: -f2-)" >> $GITHUB_OUTPUT
 
-      - name: Get glossary stats
-        id: stats
-        if: steps.validate.outputs.valid == '0'
-        run: |
-          node -e "
-          const fs = require('fs');
-          const yaml = require('js-yaml');
-          
-          try {
-            const data = yaml.load(fs.readFileSync('terms.yaml', 'utf8'));
-            const terms = data.terms || [];
-            
-            console.log('total_terms=' + terms.length);
-            
-            let highScore = 0;
-            let topScorer = '';
-            terms.forEach(term => {
-              let score = 0;
-              if (term.term && term.definition) score += 20;
-              if (term.humor) score += Math.min(30, Math.floor(term.humor.length / 10) * 5);
-              if (term.explanation) score += 20;
-              if (term.see_also && term.see_also.length > 0) score += Math.min(20, term.see_also.length * 10);
-              if (term.tags && term.tags.length > 0) score += 10;
-              if (score > highScore) {
-                highScore = score;
-                topScorer = term.term;
-              }
-            });
-            
-            console.log('high_score=' + highScore);
-            console.log('top_scorer=' + topScorer);
-            
-            console.log('new_term=Unknown');
-          } catch (error) {
-            console.log('total_terms=0');
-            console.log('high_score=0');
-            console.log('top_scorer=None');
-            console.log('new_term=Unknown');
-          }
-          " >> $GITHUB_OUTPUT
+          SCORE_LINE=$(grep -m1 '^SCORE:' score-output.txt || true)
+          BADGES_LINE=$(grep -m1 '^BADGES:' score-output.txt || true)
+          TERM_NAME_LINE=$(grep -m1 '^TERM_NAME:' score-output.txt || true)
+          TERM_SLUG_LINE=$(grep -m1 '^TERM_SLUG:' score-output.txt || true)
 
-      - name: Comment PR results
-        uses: actions/github-script@v6
+          if [ -n "$SCORE_LINE" ]; then
+            SCORE_VALUE=$(echo "$SCORE_LINE" | cut -d: -f2- | xargs)
+            echo "score=$SCORE_VALUE" >> "$GITHUB_OUTPUT"
+          else
+            echo "score=" >> "$GITHUB_OUTPUT"
+          fi
+
+          if [ -n "$BADGES_LINE" ]; then
+            BADGES_VALUE=$(echo "$BADGES_LINE" | cut -d: -f2- | sed 's/^ *//' | sed 's/ *$//')
+            echo "badges=$BADGES_VALUE" >> "$GITHUB_OUTPUT"
+          else
+            echo "badges=" >> "$GITHUB_OUTPUT"
+          fi
+
+          if [ -n "$TERM_NAME_LINE" ]; then
+            TERM_NAME_VALUE=$(echo "$TERM_NAME_LINE" | cut -d: -f2-)
+            echo "term_name=${TERM_NAME_VALUE}" >> "$GITHUB_OUTPUT"
+          else
+            echo "term_name=" >> "$GITHUB_OUTPUT"
+          fi
+
+          if [ -n "$TERM_SLUG_LINE" ]; then
+            TERM_SLUG_VALUE=$(echo "$TERM_SLUG_LINE" | cut -d: -f2- | xargs)
+            echo "term_slug=$TERM_SLUG_VALUE" >> "$GITHUB_OUTPUT"
+          else
+            echo "term_slug=" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Comment on PR
         if: always()
+        uses: actions/github-script@v7
+        env:
+          VALIDATION_EXIT: ${{ steps.validate.outputs.exit_code }}
+          VALIDATION_OUTPUT: ${{ steps.validate.outputs.output }}
+          SCORE: ${{ steps.score.outputs.score }}
+          BADGES: ${{ steps.score.outputs.badges }}
+          TERM_NAME: ${{ steps.score.outputs.term_name }}
+          TERM_SLUG: ${{ steps.score.outputs.term_slug }}
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const termsChanged = '${{ steps.glossary.outputs.terms_changed }}' === 'true';
-            const hasNewSlugs = '${{ steps.glossary.outputs.has_new_slugs }}' === 'true';
-            const newSlugList = '${{ steps.glossary.outputs.new_slugs }}';
-            const primarySlug = '${{ steps.glossary.outputs.primary_slug }}';
-            const newSlugCountRaw = '${{ steps.glossary.outputs.new_slug_count }}';
-            const isValid = '${{ steps.validate.outputs.valid }}' === '0';
-            const parseError = '${{ steps.glossary.outputs.parse_error }}' === 'true';
-            const parseMsgB64 = '${{ steps.glossary.outputs.parse_error_message_b64 }}' || '';
-            const parseExcerptB64 = '${{ steps.glossary.outputs.parse_error_excerpt_b64 }}' || '';
-            const lintB64 = '${{ steps.yamllint.outputs.lint_output_b64 }}' || '';
-            const lintExitCodeRaw = '${{ steps.yamllint.outputs.exit_code }}';
-            const lintFailed = Boolean(lintExitCodeRaw && lintExitCodeRaw !== '0');
-            const validationOutputRaw = `${{ steps.validate.outputs.validation_output }}`;
-            const validationOutput = validationOutputRaw ? validationOutputRaw : '';
-            const score = '${{ steps.score.outputs.score }}' || '0';
-            const badge = '${{ steps.score.outputs.badge }}' || '';
-            const totalTerms = '${{ steps.stats.outputs.total_terms }}' || '0';
-            const highScore = '${{ steps.stats.outputs.high_score }}' || '0';
-            const topScorer = '${{ steps.stats.outputs.top_scorer }}' || 'None';
-            const newTerm = primarySlug || 'Unknown';
-            const newSlugCount = parseInt(newSlugCountRaw || '0', 10) || 0;
+            const marker = '<!-- glossary-check -->';
+            const validationExit = process.env.VALIDATION_EXIT || '';
+            const validationOutput = (process.env.VALIDATION_OUTPUT || '').trim();
+            const passed = validationExit === '0';
+            const score = process.env.SCORE || '';
+            const badges = process.env.BADGES || '';
+            const termName = process.env.TERM_NAME || '';
+            const termSlug = process.env.TERM_SLUG || '';
 
-            function b64decode(s){
-              if(!s) return '';
-              try { return Buffer.from(s, 'base64').toString('utf8'); } catch(e) { return s; }
-            }
+            const statusEmoji = passed ? '✅' : '❌';
+            let body = `${marker}\n### Glossary Check ${statusEmoji}\n\n`;
 
-            const parseMessage = b64decode(parseMsgB64).trim();
-            const parseExcerpt = b64decode(parseExcerptB64).trim();
-            const lintOutput = b64decode(lintB64).trim();
+            if (passed) {
+              const badgeList = badges
+                .split(',')
+                .map(b => b.trim())
+                .filter(Boolean);
 
-            const effectiveValid = isValid && !parseError && (!lintFailed);
+              body += `- Status: **Passed** – schema, duplicates, and slug checks succeeded.\n`;
 
-            let comment = '';
-
-            if (parseError) {
-              comment = `## ❌ terms.yaml could not be parsed\n\n`;
-              comment += `YAML parsing failed with this message:\n\n`;
-              comment += '```\n' + (parseMessage || 'Unknown parser error') + '\n```\n\n';
-
-              if (lintFailed && lintOutput) {
-                comment += `### 🔍 yamllint details\n`;
-                comment += '```\n' + lintOutput.slice(0, 8000) + '\n```\n\n';
+              if (termName || termSlug) {
+                const slugPart = termSlug ? ` (${termSlug})` : '';
+                const namePart = termName ? `\`${termName}\`` : 'Latest entry';
+                body += `- Latest term: ${namePart}${slugPart}\n`;
               }
 
-              if (parseExcerpt) {
-                comment += `### 📄 File excerpt (context around the error)\n`;
-                comment += '```text\n' + parseExcerpt.slice(0, 8000) + '\n```\n\n';
+              if (score) {
+                body += `- Score: ${score}/100\n`;
               }
 
-              comment += `Full lint/validation logs are attached to the workflow run as artifacts. You can download them from the Actions run page.\n\n`;
-              comment += `Please fix the YAML syntax issues above and push an update. I'll retry automatically. 🤖`;
-            } else if (lintFailed) {
-              comment = `## ❌ YAML linting failed\n\n`;
-              comment += `yamllint reported the following issues (truncated):\n`;
-              comment += '```\n' + lintOutput.slice(0, 8000) + '\n```\n\n';
-              comment += `Full lint/validation logs are attached to the workflow run as artifacts. You can download them from the Actions run page.\n\n`;
-              comment += `Please address these lint errors and push an update. I'll re-check automatically. 🤖`;
-            } else if (!termsChanged) {
-              comment = `## ℹ️ No glossary changes detected\n\n`;
-              comment += `terms.yaml is unchanged in the latest commit. Validation and scoring were skipped.\n\n`;
-              comment += `I'll keep watching for glossary updates on future pushes. 🤖`;
-            } else if (!isValid) {
-              comment = `## ❌ Validation Failed!\n\n`;
-              comment += `### The Issue:\n`;
-              const cleanedOutput = validationOutput ? validationOutput.replace(/✅.*\n/g, '').trim() : '';
-              comment += '```\n' + (cleanedOutput || 'Validation failed, but no output was captured.') + '\n```\n\n';
-              comment += `Full lint/validation logs are attached to the workflow run as artifacts. You can download them from the Actions run page.\n\n`;
-              comment += `### 🔧 How to Fix:\n`;
-              comment += `1. Check your YAML indentation (use 2 spaces, not tabs)\n`;
-              comment += `2. Make sure you have both \`term\` and \`definition\` fields\n`;
-              comment += `3. Put quotes around values with special characters\n`;
-              comment += `4. Check for typos in field names\n\n`;
-              comment += `### 📝 Valid Example:\n`;
-              comment += '```yaml\n';
-              comment += '- term: "Example"\n';
-              comment += '  definition: "A sample definition"\n';
-              comment += '  humor: "Something funny"\n';
-              comment += '  tags: ["example", "test"]\n';
-              comment += '```\n\n';
-              comment += `*Fix these issues and push again. I'll re-check automatically!* 🤖`;
+              const badgeDisplay = badgeList.length > 0 ? badgeList.join(', ') : 'None';
+              body += `- Badges: ${badgeDisplay}\n\n`;
             } else {
-              comment = `## ✅ Validation Passed!\n\n`;
+              body += `- Status: **Failed** – please address the errors below.\n\n`;
 
-              if (hasNewSlugs && newSlugCount > 0) {
-                if (newSlugCount === 1) {
-                  comment += `### 📝 New Term: "${newTerm}"\n\n`;
-                } else {
-                  const slugDisplay = newSlugList.split(',').filter(Boolean).map(slug => `"${slug}"`).join(', ');
-                  comment += `### 📝 New Terms (${newSlugCount}): ${slugDisplay}\n\n`;
-                }
-
-                comment += `### 📊 Your Score: ${score}/100\n\n`;
-                comment += `Full lint/validation logs are attached to the workflow run as artifacts.\n\n`;
-
-                if (score >= 90) {
-                  comment += `# 🏆 LEGENDARY CONTRIBUTION!\n`;
-                  comment += `You've achieved excellence! This is Hall of Fame material! 🌟\n\n`;
-                } else if (score >= 80) {
-                  comment += `## 🔥 AMAZING!\n`;
-                  comment += `Outstanding work! You're in the top tier! 💪\n\n`;
-                } else if (score >= 70) {
-                  comment += `### 💪 Great Job!\n`;
-                  comment += `Solid contribution! Well above average! 👏\n\n`;
-                } else if (score >= 60) {
-                  comment += `### 👍 Good Work!\n`;
-                  comment += `Nice contribution! Consider adding more details for bonus points!\n\n`;
-                } else {
-                  comment += `### 🌱 Good Start!\n`;
-                  comment += `Thanks for contributing! Here's how to boost your score:\n\n`;
-                }
-
-                if (badge) {
-                  comment += `### 🏅 Achievements Unlocked:\n`;
-                  badge.split(',').forEach(b => {
-                    const trimmed = b.trim();
-                    if (trimmed) comment += `- ${trimmed}\n`;
-                  });
-                  comment += '\n';
-                }
-
-                if (score < 80) {
-                  comment += `### 💡 Quick Tips to Improve:\n`;
-                  if (!badge.includes('Comedy Gold')) {
-                    comment += `- Add more humor (current max: 30 points)\n`;
-                  }
-                  comment += `- Add an \`explanation\` field (+20 points)\n`;
-                  comment += `- Include \`see_also\` references (+20 points)\n`;
-                  comment += `- Add relevant \`tags\` (+10 points)\n\n`;
-                }
-
-                comment += `### 🏆 Current Leaderboard\n`;
-                comment += `- **Your Score:** ${score}/100\n`;
-                comment += `- **High Score:** ${highScore}/100 (${topScorer})\n`;
-                comment += `- **Total Terms:** ${totalTerms}\n\n`;
-
-                if (parseInt(score) >= parseInt(highScore)) {
-                  comment += `**🎊 NEW HIGH SCORE! You're the champion!** 🎊\n\n`;
-                } else {
-                  const diff = parseInt(highScore) - parseInt(score);
-                  comment += `You're ${diff} points away from the high score! ${diff <= 10 ? 'So close! 🔥' : 'Keep pushing! 💪'}\n\n`;
-                }
-              } else {
-                comment += `### 📋 Summary\n`;
-                comment += `- No brand-new slugs detected in this update.\n`;
-                comment += `- Validation succeeded for the existing glossary entries.\n\n`;
-                comment += `Scoring only runs for newly added slugs per the PR gating rules. ✅\n\n`;
-                comment += `Total terms in the glossary: ${totalTerms}.\n\n`;
-                comment += `Full lint/validation logs are attached to the workflow run as artifacts.\n\n`;
+              if (validationOutput) {
+                const trimmed = validationOutput
+                  .split('\n')
+                  .map(line => line.trimEnd())
+                  .filter(Boolean)
+                  .slice(0, 20)
+                  .join('\n');
+                body += '```\n' + trimmed + '\n```\n\n';
               }
 
-              comment += `---\n`;
-              comment += `*Ready for merge after maintainer review!* ✨`;
+              body += `Scoring was skipped because validation did not succeed.\n\n`;
             }
+
+            const docsUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/docs/REPOSITORY_REVIEW.md#data-model--validation-rules`;
+            body += `[Validation docs](${docsUrl}) for field requirements and examples.`;
 
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.issue.number,
+              per_page: 100,
             });
 
-            const validationComment = comments.find(comment =>
-              comment.user.type === 'Bot' &&
-              (
-                comment.body.includes('✅ Validation Passed') ||
-                comment.body.includes('❌ Validation Failed') ||
-                comment.body.includes('❌ YAML linting failed') ||
-                comment.body.includes('❌ terms.yaml could not be parsed') ||
-                comment.body.includes('ℹ️ No glossary changes detected')
-              )
-            );
+            const existing = comments.find(comment => comment.body && comment.body.includes(marker));
 
-            if (validationComment) {
+            if (existing) {
               await github.rest.issues.updateComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                comment_id: validationComment.id,
-                body: comment
+                comment_id: existing.id,
+                body,
               });
             } else {
               await github.rest.issues.createComment({
-                issue_number: context.issue.number,
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                body: comment
+                issue_number: context.issue.number,
+                body,
               });
             }
 
-      - name: Fail workflow on lint or parse errors
-        if: steps.glossary.outputs.parse_error == 'true' || (steps.yamllint.outputs.exit_code != '' && steps.yamllint.outputs.exit_code != '0')
+      - name: Fail if validation failed
+        if: steps.validate.outputs.exit_code != '0'
         run: |
           echo "Lint or parse errors detected in terms.yaml."
           exit 1
