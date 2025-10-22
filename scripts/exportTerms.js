@@ -6,6 +6,26 @@ const yaml = require('js-yaml');
 const ONLY_IF_NEW = process.argv.includes('--only-if-new');
 const OUT_PATH = 'docs/terms.json';  // serve via GitHub Pages
 
+function resolveVersion() {
+  try {
+    return execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim();
+  } catch {
+    return 'unknown';
+  }
+}
+
+function buildExportPayload(yamlText) {
+  const src = yaml.load(yamlText) || {};
+  const terms = Array.isArray(src.terms) ? src.terms : [];
+
+  return {
+    version: resolveVersion(),
+    generated_at: new Date().toISOString(),
+    terms_count: terms.length,
+    terms
+  };
+}
+
 function countTerms(text) {
   try {
     const data = yaml.load(text);
@@ -33,11 +53,11 @@ function readPrevYaml() {
 }
 
 function writeJsonFromYaml(yamlText) {
-  const obj = yaml.load(yamlText) || {};
+  const obj = buildExportPayload(yamlText);
   // (Optional) sanitize/normalize here if needed
   fs.mkdirSync('docs', { recursive: true });
   fs.writeFileSync(OUT_PATH, JSON.stringify(obj, null, 2) + '\n');
-  console.log(`✅ Wrote ${OUT_PATH} (${Array.isArray(obj.terms) ? obj.terms.length : 0} terms).`);
+  console.log(`✅ Wrote ${OUT_PATH} (${obj.terms_count} terms).`);
 }
 
 (function main() {
