@@ -94,9 +94,13 @@ function main() {
     console.log(`\n📊 Scoring Results for "${termToScore.term}":\n`);
     console.log(`SCORE:${score}`);
 
+    const badgesLine = badges.join(', ');
     if (badges.length > 0) {
-      console.log(`BADGE:${badges.join(', ')}`);
+      console.log(`BADGE:${badgesLine}`);
     }
+    console.log(`BADGES:${badgesLine}`);
+    console.log(`TERM_NAME:${termToScore.term || ''}`);
+    console.log(`TERM_SLUG:${termToScore.slug || ''}`);
 
     // Detailed breakdown
     console.log('\n📋 Score Breakdown:');

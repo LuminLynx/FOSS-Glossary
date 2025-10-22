@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 const { execSync } = require('child_process');
 const process = require('process');
 const yaml = require('js-yaml');
@@ -8,6 +9,29 @@ const Ajv = require('ajv');
 const addFormats = require('ajv-formats');
 
 const yamlSchema = require('../schema.json');
+const ONLY_IF_NEW = process.argv.includes('--only-if-new');
+const OUT_PATH = 'docs/terms.json';  // serve via GitHub Pages
+const MANIFEST_PATH = '.terms-slugs.txt';
+
+function resolveVersion() {
+  try {
+    return execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim();
+  } catch {
+    return 'unknown';
+  }
+}
+
+function buildExportPayload(yamlText) {
+  const src = yaml.load(yamlText) || {};
+  const terms = Array.isArray(src.terms) ? src.terms : [];
+
+  return {
+    version: resolveVersion(),
+    generated_at: new Date().toISOString(),
+    terms_count: terms.length,
+    terms
+  };
+}
 
 const DEFAULT_OUT_PATH = 'docs/terms.json';
 const SIZE_WARN_THRESHOLD_BYTES = 2 * 1024 * 1024; // 2 MB
@@ -72,6 +96,8 @@ function readHeadYaml() {
   return readFile('terms.yaml');
 }
 
+function writeJsonFromYaml(yamlText) {
+  const obj = yaml.load(yamlText) || {};
 function readPrevYaml() {
   try {
     return execSync('git show HEAD~1:terms.yaml', { encoding: 'utf8' });
