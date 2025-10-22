@@ -1,6 +1,17 @@
 #!/usr/bin/env node
 const fs = require('fs');
+const { execSync } = require('child_process');
 const yaml = require('js-yaml');
+
+function getShortSha() {
+  try {
+    return execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim();
+  } catch {
+    return 'dev';
+  }
+}
+
+const artifactVersion = getShortSha();
 
 // Load terms
 const termsData = yaml.load(fs.readFileSync('terms.yaml', 'utf8'));
@@ -443,15 +454,18 @@ const html = `<!DOCTYPE html>
             </div>
 
             <p class="last-updated">
-                Last updated: ${new Date().toLocaleString('en-US', { 
-                    dateStyle: 'medium', 
-                    timeStyle: 'short' 
-                })} | 
-                ${stats.totalTerms} terms and growing! | 
+                Last updated: ${new Date().toLocaleString('en-US', {
+                    dateStyle: 'medium',
+                    timeStyle: 'short'
+                })} |
+                ${stats.totalTerms} terms and growing! |
                 Made with 💙 by the FOSS community
             </p>
         </div>
     </div>
+    <script>
+        window.__TERMS_JSON_URL = './terms.json?ver=${artifactVersion}';
+    </script>
 </body>
 </html>`;
 
