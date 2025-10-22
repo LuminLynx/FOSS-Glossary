@@ -67,11 +67,20 @@ jobs:
           yamllint -d "{extends: relaxed, rules: {document-start: disable, line-length: disable}}" -f parsable terms.yaml 2>&1 | tee lint-output.txt
           EXIT_CODE=${PIPESTATUS[0]}
           echo "exit_code=$EXIT_CODE" >> "$GITHUB_OUTPUT"
-          {
-            echo 'lint_output<<EOF'
-            cat lint-output.txt
-            echo EOF
-          } >> "$GITHUB_OUTPUT"
+
+          # Base64-encode lint output to safely transport as a single-line action output.
+          if [ -f lint-output.txt ]; then
+            # Use base64 -w0 for no line wraps; fallback to plain base64 if -w not supported
+            if base64 --help 2>&1 | grep -q -- '--wrap'; then
+              LINT_B64=$(base64 -w0 lint-output.txt)
+            else
+              LINT_B64=$(base64 lint-output.txt | tr -d '\n')
+            fi
+            echo "lint_output_b64=$LINT_B64" >> "$GITHUB_OUTPUT"
+          else
+            echo "lint_output_b64=" >> "$GITHUB_OUTPUT"
+          fi
+
           exit $EXIT_CODE
 
       - name: Upload yamllint artifact
@@ -95,6 +104,8 @@ jobs:
           const basePath = process.env.BASE_TERMS_PATH || 'terms.base.yaml';
           const prPath = process.env.PR_TERMS_PATH || 'terms.yaml';
 
+          const MAX_EXCERPT_CHARS = 2000;
+
           const defaults = {
             terms_changed: 'false',
             has_new_slugs: 'false',
@@ -107,7 +118,12 @@ jobs:
           };
 
           function writeOutput(key, value) {
-            fs.appendFileSync(outputPath, `\n${key}=${value}`);
+            if (outputPath) {
+              fs.appendFileSync(outputPath, `\n${key}=${value}`);
+            } else {
+              // Fallback for environments without GITHUB_OUTPUT
+              console.log(`[GITHUB_OUTPUT_MISSING] ${key}=${value}`);
+            }
           }
 
           for (const [key, value] of Object.entries(defaults)) {
@@ -146,9 +162,11 @@ jobs:
               }
             } catch (error) {
               const msg = error && error.message ? String(error.message) : String(error);
-              fs.appendFileSync(outputPath, `\nparse_error_message_b64=${Buffer.from(msg).toString('base64')}`);
-              const excerpt = baseContent.slice(0, 2000);
-              fs.appendFileSync(outputPath, `\nparse_error_excerpt_b64=${Buffer.from(excerpt).toString('base64')}`);
+              const truncated = msg.slice(0, MAX_EXCERPT_CHARS);
+              const b64msg = Buffer.from(truncated).toString('base64');
+              writeOutput('parse_error_message_b64', b64msg);
+              const excerpt = baseContent.slice(0, MAX_EXCERPT_CHARS);
+              writeOutput('parse_error_excerpt_b64', Buffer.from(excerpt).toString('base64'));
               writeOutput('parse_error', 'true');
             }
           }
@@ -160,13 +178,14 @@ jobs:
                 prTerms = parsedPr.terms;
               } else if (parsedPr && parsedPr.terms && !Array.isArray(parsedPr.terms)) {
                 const msg = 'terms is present but is not an array';
-                fs.appendFileSync(outputPath, `\nparse_error_message_b64=${Buffer.from(msg).toString('base64')}`);
-                fs.appendFileSync(outputPath, `\nparse_error_excerpt_b64=${Buffer.from(prContent.slice(0, 2000)).toString('base64')}`);
+                writeOutput('parse_error_message_b64', Buffer.from(msg).toString('base64'));
+                writeOutput('parse_error_excerpt_b64', Buffer.from(prContent.slice(0, MAX_EXCERPT_CHARS)).toString('base64'));
                 writeOutput('parse_error', 'true');
               }
             } catch (error) {
               const parseMessage = error && error.message ? String(error.message) : String(error);
-              fs.appendFileSync(outputPath, `\nparse_error_message_b64=${Buffer.from(parseMessage).toString('base64')}`);
+              const truncated = parseMessage.slice(0, MAX_EXCERPT_CHARS);
+              writeOutput('parse_error_message_b64', Buffer.from(truncated).toString('base64'));
 
               try {
                 const lines = prContent.split(/\r?\n/);
@@ -179,10 +198,10 @@ jobs:
                 const snippet = lines.slice(start, end).map((l, idx) => {
                   const lineno = start + idx + 1;
                   return `${lineno.toString().padStart(4)} | ${l}`;
-                }).join('\n');
-                fs.appendFileSync(outputPath, `\nparse_error_excerpt_b64=${Buffer.from(snippet).toString('base64')}`);
+                }).join('\n').slice(0, MAX_EXCERPT_CHARS);
+                writeOutput('parse_error_excerpt_b64', Buffer.from(snippet).toString('base64'));
               } catch(e) {
-                fs.appendFileSync(outputPath, `\nparse_error_excerpt_b64=${Buffer.from(prContent.slice(0,2000)).toString('base64')}`);
+                writeOutput('parse_error_excerpt_b64', Buffer.from(prContent.slice(0,MAX_EXCERPT_CHARS)).toString('base64'));
               }
 
               writeOutput('parse_error', 'true');
@@ -296,8 +315,8 @@ jobs:
             const parseError = '${{ steps.glossary.outputs.parse_error }}' === 'true';
             const parseMsgB64 = '${{ steps.glossary.outputs.parse_error_message_b64 }}' || '';
             const parseExcerptB64 = '${{ steps.glossary.outputs.parse_error_excerpt_b64 }}' || '';
+            const lintB64 = '${{ steps.yamllint.outputs.lint_output_b64 }}' || '';
             const lintExitCodeRaw = '${{ steps.yamllint.outputs.exit_code }}';
-            const lintOutput = `${{ steps.yamllint.outputs.lint_output }}`;
             const lintFailed = Boolean(lintExitCodeRaw && lintExitCodeRaw !== '0');
             const validationOutputRaw = `${{ steps.validate.outputs.validation_output }}`;
             const validationOutput = validationOutputRaw ? validationOutputRaw : '';
@@ -316,6 +335,7 @@ jobs:
 
             const parseMessage = b64decode(parseMsgB64).trim();
             const parseExcerpt = b64decode(parseExcerptB64).trim();
+            const lintOutput = b64decode(lintB64).trim();
 
             const effectiveValid = isValid && !parseError && (!lintFailed);
 
@@ -326,9 +346,9 @@ jobs:
               comment += `YAML parsing failed with this message:\n\n`;
               comment += '```\n' + (parseMessage || 'Unknown parser error') + '\n```\n\n';
 
-              if (lintFailed && lintOutput.trim()) {
+              if (lintFailed && lintOutput) {
                 comment += `### 🔍 yamllint details\n`;
-                comment += '```\n' + lintOutput.trim().slice(0, 8000) + '\n```\n\n';
+                comment += '```\n' + lintOutput.slice(0, 8000) + '\n```\n\n';
               }
 
               if (parseExcerpt) {
@@ -341,7 +361,7 @@ jobs:
             } else if (lintFailed) {
               comment = `## ❌ YAML linting failed\n\n`;
               comment += `yamllint reported the following issues (truncated):\n`;
-              comment += '```\n' + lintOutput.trim().slice(0, 8000) + '\n```\n\n';
+              comment += '```\n' + lintOutput.slice(0, 8000) + '\n```\n\n';
               comment += `Full lint/validation logs are attached to the workflow run as artifacts. You can download them from the Actions run page.\n\n`;
               comment += `Please address these lint errors and push an update. I'll re-check automatically. 🤖`;
             } else if (!termsChanged) {
