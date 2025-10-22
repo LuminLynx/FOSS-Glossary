@@ -12,6 +12,8 @@ node_modules/.package-lock.json
 
 # Build Output
 temp/
+docs/terms.json
+docs/_headers
 
 # Vim Swap Files
 *.swp

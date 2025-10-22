@@ -3,6 +3,9 @@
 A community-driven glossary of FOSS terms with humor, sarcasm, and honest truths about open source culture.
 
 
+📄 Deployment details for the exported glossary live in [docs/terms-json-deploy.md](docs/terms-json-deploy.md).
+
+
 
 
 
