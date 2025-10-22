@@ -1,4 +1,4 @@
-name: Update Landing Page
+name: Build & Deploy Landing Page
 
 on:
   push:
@@ -6,71 +6,57 @@ on:
     paths:
       - 'terms.yaml'
       - 'scripts/generateLandingPage.js'
+      - 'scripts/exportTerms.js'
+      - 'docs/**'
+      - 'package.json'
+      - 'package-lock.json'
   workflow_dispatch:
- # workflow_run:       # ADD THIS - runs after other workflows
-  #  workflows: ["Validate & Score Terms"]
-   # types: [completed]
-    #branches: [main]
 
-# Prevent multiple instances running at once
 concurrency:
-    group: "docs-updates"  # Changed from "update-landing"
-    cancel-in-progress: false  # Let current one finish
+  group: "docs-updates"
+  cancel-in-progress: false
 
 permissions:
-  contents: write
-  id-token: write  # ADD THIS LINE
-  pages: write     # ADD THIS LINE TOO
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
-  update-landing-page:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-      
+          fetch-depth: 0
+
+      - uses: actions/configure-pages@v5
+
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
-      
+
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
 
-      # IMPORTANT: Add delay before committing
-      - name: Wait for any running Pages deployments
-        run: |
-          echo "Waiting for other workflows to settle."
-          sleep 15
-      
-      - name: Commit and push changes
-        run: |
-          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          
-          # FIX: Stash any unexpected changes before pulling
-          echo "Stashing any local changes."
-          git stash --all
-          
-          # Now we can pull without issues
-          git pull --rebase
-          
-      # Generate the landing page AFTER pulling
       - name: Generate landing page
-        run: node scripts/generateLandingPage.js 
+        run: node scripts/generateLandingPage.js
 
-      # Export terms.json only if new slugs were added.
-      # The script also keeps the .terms-slugs.txt manifest in sync when an export happens.
-      - name: Export terms.json (only if new slugs)
-        run: npm run export:new
+      - name: Export terms bundle
+        run: npm run export
 
-      - name: Add and commit changes
-        run: |
-          git add docs/index.html docs/terms.json .terms-slugs.txt
-          if git diff --staged --quiet; then
-            echo "No changes to landing page"
-          else
-            git commit -m "🌐 Update landing page [skip ci]"
-            git push
-          fi
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 const fs = require('fs');
+const path = require('path');
 const yaml = require('js-yaml');
 const Ajv = require('ajv');
 const addFormats = require('ajv-formats');
 
-function loadYaml(path) {
+function loadYaml(filePath) {
   try {
-    return yaml.load(fs.readFileSync(path, 'utf8'));
+    return yaml.load(fs.readFileSync(filePath, 'utf8'));
   } catch (error) {
-    console.error(`❌ Failed to read ${path}: ${error.message}`);
+    console.error(`❌ Failed to read ${filePath}: ${error.message}`);
     process.exit(1);
   }
 }
@@ -42,9 +43,65 @@ function normalizeName(value) {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, '');
 }
 
+function collectNames(term) {
+  const names = [];
+  if (term && typeof term === 'object') {
+    if (typeof term.term === 'string') {
+      names.push(term.term);
+    }
+    if (Array.isArray(term.aliases)) {
+      term.aliases
+        .filter(alias => typeof alias === 'string')
+        .forEach(alias => names.push(alias));
+    }
+  }
+  return names;
+}
+
+function resolveBasePathFromArgs() {
+  const args = process.argv.slice(2);
+  let basePath = process.env.BASE_TERMS_PATH || null;
+
+  for (let index = 0; index < args.length; index += 1) {
+    const arg = args[index];
+    if (arg === '--base') {
+      const next = args[index + 1];
+      if (!next) {
+        console.error('❌ Missing value for --base option.');
+        process.exit(1);
+      }
+      basePath = next;
+      index += 1;
+    } else if (arg.startsWith('--base=')) {
+      basePath = arg.slice('--base='.length);
+    }
+  }
+
+  if (!basePath) {
+    return null;
+  }
+
+  const resolved = path.resolve(basePath);
+  if (!fs.existsSync(resolved)) {
+    console.warn(`⚠️ Base glossary file not found at ${resolved}; skipping slug change checks.`);
+    return null;
+  }
+
+  return resolved;
+}
+
 function main() {
   const data = loadYaml('terms.yaml');
   const schema = loadSchema('schema.json');
+
+  const basePath = resolveBasePathFromArgs();
+  let baseTerms = [];
+  if (basePath) {
+    const baseData = loadYaml(basePath);
+    if (baseData && Array.isArray(baseData.terms)) {
+      baseTerms = baseData.terms;
+    }
+  }
 
   const ajv = new Ajv({ allErrors: true, strict: false });
   addFormats(ajv);
@@ -62,7 +119,9 @@ function main() {
   const slugSet = new Map();
   const nameSet = new Map();
 
-  (data.terms || []).forEach((term, index) => {
+  const terms = Array.isArray(data.terms) ? data.terms : [];
+
+  (terms || []).forEach((term, index) => {
     const pos = `term #${index + 1}`;
 
     if (slugSet.has(term.slug)) {
@@ -91,13 +150,76 @@ function main() {
     }
   });
 
+  if (baseTerms.length > 0 && terms.length > 0) {
+    const baseNameMap = new Map();
+    const newNameMap = new Map();
+
+    baseTerms.forEach((term, index) => {
+      if (!term || typeof term !== 'object') {
+        return;
+      }
+      const slug = term.slug;
+      if (typeof slug !== 'string' || !slug) {
+        return;
+      }
+      const names = collectNames(term);
+      names.forEach(name => {
+        const key = normalizeName(name);
+        if (!key || baseNameMap.has(key)) {
+          return;
+        }
+        baseNameMap.set(key, {
+          slug,
+          term: term.term || slug,
+          label: name,
+          index: index + 1,
+        });
+      });
+    });
+
+    terms.forEach((term, index) => {
+      if (!term || typeof term !== 'object') {
+        return;
+      }
+      const slug = term.slug;
+      if (typeof slug !== 'string' || !slug) {
+        return;
+      }
+      const names = collectNames(term);
+      names.forEach(name => {
+        const key = normalizeName(name);
+        if (!key || newNameMap.has(key)) {
+          return;
+        }
+        newNameMap.set(key, {
+          slug,
+          term: term.term || slug,
+          label: name,
+          index: index + 1,
+        });
+      });
+    });
+
+    for (const [nameKey, baseInfo] of baseNameMap.entries()) {
+      if (!newNameMap.has(nameKey)) {
+        continue;
+      }
+      const nextInfo = newNameMap.get(nameKey);
+      if (nextInfo.slug !== baseInfo.slug) {
+        errors.push(
+          `Slug for term '${baseInfo.term}' changed from '${baseInfo.slug}' to '${nextInfo.slug}' (label '${baseInfo.label}')`
+        );
+      }
+    }
+  }
+
   if (errors.length > 0) {
     console.error('❌ Validation failed:\n');
     errors.forEach(err => console.error(`  - ${err}`));
     process.exit(1);
   }
 
-  console.log(`✅ Validation passed! ${data.terms.length} terms are valid.`);
+  console.log(`✅ Validation passed! ${terms.length} terms are valid.`);
 }
 
 main();

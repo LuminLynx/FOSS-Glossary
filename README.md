@@ -3,6 +3,9 @@
 A community-driven glossary of FOSS terms with humor, sarcasm, and honest truths about open source culture.
 
 
+📄 Deployment details for the exported glossary live in [docs/terms-json-deploy.md](docs/terms-json-deploy.md).
+
+
 
 
 
@@ -73,3 +76,8 @@ Every term is scored out of 100 points:
 ## 🌐 [Visit our Landing Page](https://luminlynx.github.io/FOSS-Glossary/)
 
 Check out our beautiful docs site with scoring explanation and examples!
+
+## 📚 Data Contracts
+
+- [`terms.json` export specification](docs/terms-json-spec.md)
+- [Slug policy](docs/slug-policy.md)
