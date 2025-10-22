@@ -51,6 +51,11 @@ jobs:
           } >> "$GITHUB_OUTPUT"
           exit $EXIT
 
+      - name: Dry-run exporter schema check
+        if: steps.validate.outputs.valid == '0'
+        run: node scripts/exportTerms.js --check
+
+      - name: Score terms
       - name: Score latest term
         id: score
         if: steps.validate.outputs.exit_code == '0'

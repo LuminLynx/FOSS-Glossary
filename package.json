@@ -8,7 +8,7 @@
     "stats": "node scripts/updateReadmeStats.js",
     "export": "node scripts/exportTerms.js",
     "export:new": "node scripts/exportTerms.js --only-if-new",
-    "test": "npm run validate && npm run score"
+    "test": "npm run validate && npm run score && node --test"
   },
   "dependencies": {
     "@octokit/rest": "^22.0.0",
