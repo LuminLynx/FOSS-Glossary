@@ -1,0 +1,152 @@
+name: Bootstrap v1 Planning
+on:
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  create:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create milestones, labels, and issues
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            // ---- DATA ----
+            const milestones = [
+              { title: "Oct 22, 2025 — Kickoff", due_on: "2025-10-22" },
+              { title: "Oct 23–24, 2025",        due_on: "2025-10-24" },
+              { title: "Oct 27, 2025",           due_on: "2025-10-27" },
+              { title: "Oct 28, 2025",           due_on: "2025-10-28" },
+              { title: "Oct 29–30, 2025",        due_on: "2025-10-30" },
+              { title: "Oct 31, 2025",           due_on: "2025-10-31" },
+              { title: "Nov 3–4, 2025",          due_on: "2025-11-04" },
+              { title: "Nov 5, 2025",            due_on: "2025-11-05" },
+              { title: "Nov 6, 2025",            due_on: "2025-11-06" },
+              { title: "Nov 7, 2025 — Launch",   due_on: "2025-11-07" },
+            ];
+
+            const issues = [
+              { title: "Confirm schema & slug rules",
+                body: "Finalize `terms.json` field list; document slug derivation/immutability.\nOwner: Data",
+                labels: ["area: data","v1"], milestone: "Oct 22, 2025 — Kickoff" },
+              { title: "Choose deploy path for terms.json",
+                body: "Decide between committing `docs/terms.json` vs. attaching as build artifact; confirm URL `/terms.json`.\nOwner: DevOps",
+                labels: ["area: devops","v1"], milestone: "Oct 22, 2025 — Kickoff" },
+
+              { title: "PR-time validation & scoring solid",
+                body: "Ensure CI validates schema/duplicates and scores PR terms; failures block merge.\nOwner: DevOps",
+                labels: ["area: devops","v1"], milestone: "Oct 23–24, 2025" },
+              { title: "Post-merge guard for new slugs",
+                body: "Run only when `terms.yaml` changes **and** new slugs exist; maintain `.terms-slugs.txt` manifest.\nOwner: DevOps",
+                labels: ["area: devops","v1"], milestone: "Oct 23–24, 2025" },
+
+              { title: "Exporter: terms.yaml → terms.json",
+                body: "Export with metadata: `version` (short SHA), `generated_at`, `terms_count`; stable key ordering.\nOwner: Backend",
+                labels: ["area: backend","v1"], milestone: "Oct 27, 2025" },
+
+              { title: "Publish & cache terms.json",
+                body: "Serve `/terms.json` with `Cache-Control: public,max-age=31536000,immutable`; cache-bust via `?ver=<shortSHA>`.\nOwner: DevOps",
+                labels: ["area: devops","v1"], milestone: "Oct 28, 2025" },
+
+              { title: "Client fetch & error states",
+                body: "Fetch `/terms.json?ver=<sha>`; implement empty/error states and retry guidance.\nOwner: Frontend",
+                labels: ["area: frontend","v1"], milestone: "Oct 29–30, 2025" },
+              { title: "Search MVP (fuzzy, debounce)",
+                body: "Fuzzy search across term/aliases/tags/body; debounce input 150–250ms.\nOwner: Frontend",
+                labels: ["area: frontend","v1"], milestone: "Oct 29–30, 2025" },
+
+              { title: "Navigation & deep links",
+                body: "A–Z jump, tag filters, deep links `/#<slug>`, copy-link button; keyboard: `/`, ↑/↓, Enter.\nOwner: Frontend",
+                labels: ["area: frontend","v1"], milestone: "Oct 31, 2025" },
+
+              { title: "Virtualized list rendering",
+                body: "Windowed list; smooth scroll at 5k+ terms; keep keyboard/a11y intact.\nOwner: Frontend",
+                labels: ["area: frontend","v1","performance"], milestone: "Nov 3–4, 2025" },
+              { title: "Workerized search",
+                body: "Move fuzzy matching to a Web Worker; keep main thread responsive.\nOwner: Frontend",
+                labels: ["area: frontend","v1","performance"], milestone: "Nov 3–4, 2025" },
+
+              { title: "Governance: slugs, redirects, deletions",
+                body: "Enforce slug immutability; add `redirects` mapping if needed; document deletion policy.\nOwner: Maintainers",
+                labels: ["area: maintainers","v1"], milestone: "Nov 5, 2025" },
+
+              { title: "Size guard & prebuilt index plan",
+                body: "Set threshold (e.g., 2 MB) for `terms.json`; document static prebuilt index strategy when crossed.\nOwner: Data & Frontend",
+                labels: ["area: data","area: frontend","v1"], milestone: "Nov 6, 2025" },
+
+              { title: "E2E dry run of pipeline",
+                body: "Merge a test term → CI export → site serves new JSON → UI refreshes via `?ver`/ETag.\nOwner: All",
+                labels: ["area: devops","area: frontend","area: backend","area: maintainers","v1"],
+                milestone: "Nov 7, 2025 — Launch" },
+              { title: "Docs & handover",
+                body: "Add README pipeline diagram, runbook for failures, rollback via commit SHA.\nOwner: Maintainers",
+                labels: ["area: maintainers","v1","documentation"], milestone: "Nov 7, 2025 — Launch" },
+            ];
+
+            const labelColors = new Map([
+              ["area: frontend",     "0e8a16"],
+              ["area: devops",       "fbca04"],
+              ["area: backend",      "5319e7"],
+              ["area: data",         "0052cc"],
+              ["area: maintainers",  "d93f0b"],
+              ["v1",                 "b60205"],
+              ["documentation",      "0075ca"],
+              ["performance",        "c2e0c6"],
+            ]);
+
+            // ---- HELPERS ----
+            async function ensureLabel(name) {
+              try {
+                await github.rest.issues.getLabel({ owner, repo, name });
+                core.info(`Label exists: ${name}`);
+              } catch {
+                const color = labelColors.get(name) || "1f6feb";
+                await github.rest.issues.createLabel({ owner, repo, name, color });
+                core.info(`Created label: ${name}`);
+              }
+            }
+
+            async function ensureMilestones(ms) {
+              const existing = await github.paginate(github.rest.issues.listMilestones, { owner, repo, state: "open" });
+              const map = new Map(existing.map(m => [m.title, m.number]));
+              for (const m of ms) {
+                if (map.has(m.title)) continue;
+                const res = await github.rest.issues.createMilestone({
+                  owner, repo,
+                  title: m.title,
+                  due_on: new Date(`${m.due_on}T23:59:59Z`).toISOString()
+                });
+                map.set(m.title, res.data.number);
+                core.info(`Created milestone: ${m.title}`);
+              }
+              return map;
+            }
+
+            // ---- RUN ----
+            // 1) Labels
+            const wanted = new Set(issues.flatMap(i => i.labels || []));
+            for (const name of wanted) await ensureLabel(name);
+
+            // 2) Milestones
+            const msMap = await ensureMilestones(milestones);
+
+            // 3) Issues (note: re-running will create duplicates)
+            for (const i of issues) {
+              const milestoneNumber = i.milestone ? msMap.get(i.milestone) : undefined;
+              const res = await github.rest.issues.create({
+                owner, repo,
+                title: i.title,
+                body: i.body || "",
+                labels: i.labels || [],
+                milestone: milestoneNumber
+              });
+              core.info(`#${res.data.number} ${i.title}`);
+            }
+
+            core.info("Done ✅");
