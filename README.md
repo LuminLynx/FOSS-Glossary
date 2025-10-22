@@ -73,3 +73,8 @@ Every term is scored out of 100 points:
 ## 🌐 [Visit our Landing Page](https://luminlynx.github.io/FOSS-Glossary/)
 
 Check out our beautiful docs site with scoring explanation and examples!
+
+## 📚 Data Contracts
+
+- [`terms.json` export specification](docs/terms-json-spec.md)
+- [Slug policy](docs/slug-policy.md)
