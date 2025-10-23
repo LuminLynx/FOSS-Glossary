@@ -18,7 +18,7 @@ function loadTerms() {
   try {
     // Check if file exists
     if (!fs.existsSync('terms.yaml')) {
-      console.error('❌ Error: terms.yaml file not found.');
+      console.error('❌ Error: terms.yaml file not found');
       console.error('   Make sure you are running this script from the repository root directory.');
       process.exit(1);
     }
@@ -37,8 +37,7 @@ function loadTerms() {
     try {
       termsData = yaml.load(yamlContent);
     } catch (error) {
-      console.error('❌ Error parsing terms.yaml:');
-      console.error(`   ${error.message}`);
+      console.error('❌ Error parsing terms.yaml:', error.message);
       if (error.mark) {
         console.error(`   Line ${error.mark.line + 1}, Column ${error.mark.column + 1}`);
       }
@@ -47,19 +46,19 @@ function loadTerms() {
 
     // Validate structure
     if (!termsData || typeof termsData !== 'object') {
-      console.error('❌ Error: terms.yaml must contain a valid YAML object.');
+      console.error('❌ Error: terms.yaml must contain a valid YAML object');
       process.exit(1);
     }
 
     if (!Array.isArray(termsData.terms)) {
-      console.error('❌ Error: terms.yaml must contain a "terms" array.');
+      console.error('❌ Error: terms.yaml must contain a "terms" array');
       process.exit(1);
     }
 
     return termsData.terms;
   } catch (error) {
     // Catch any unexpected errors
-    console.error('❌ Unexpected error loading terms:', error.message);
+    console.error('❌ Error: Unexpected error loading terms:', error.message);
     process.exit(1);
   }
 }

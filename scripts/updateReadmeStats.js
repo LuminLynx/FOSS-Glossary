@@ -118,7 +118,7 @@ ${Array.from(contributors).slice(0, 5).map((name, i) => {
     }
     
   } catch (error) {
-    console.error('Error updating README:', error);
+    console.error('❌ Error updating README:', error.message);
     process.exit(1);
   }
 }

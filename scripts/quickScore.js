@@ -64,7 +64,7 @@ function main() {
     const termsData = yaml.load(fs.readFileSync('terms.yaml', 'utf8'));
 
     if (!termsData || !termsData.terms || !Array.isArray(termsData.terms)) {
-      console.error('Error: Invalid terms.yaml structure');
+      console.error('❌ Error: Invalid terms.yaml structure');
       process.exit(1);
     }
 
@@ -74,7 +74,7 @@ function main() {
     if (targetSlug) {
       termToScore = termsData.terms.find(term => term && term.slug === targetSlug);
       if (!termToScore) {
-        console.error(`Error: No term found with slug "${targetSlug}".`);
+        console.error(`❌ Error: No term found with slug "${targetSlug}".`);
         process.exit(1);
       }
     } else {
@@ -83,7 +83,7 @@ function main() {
     }
 
     if (!termToScore) {
-      console.error('Error: No terms found');
+      console.error('❌ Error: No terms found');
       process.exit(1);
     }
 
@@ -125,7 +125,7 @@ function main() {
     }
     
   } catch (error) {
-    console.error('Error processing terms:', error.message);
+    console.error('❌ Error processing terms:', error.message);
     process.exit(1);
   }
 }

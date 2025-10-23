@@ -9,7 +9,7 @@ function loadYaml(filePath) {
   try {
     return yaml.load(fs.readFileSync(filePath, 'utf8'));
   } catch (error) {
-    console.error(`❌ Failed to read ${filePath}: ${error.message}`);
+    console.error(`❌ Error: Failed to read ${filePath}:`, error.message);
     process.exit(1);
   }
 }
@@ -18,7 +18,7 @@ function loadSchema(path) {
   try {
     return JSON.parse(fs.readFileSync(path, 'utf8'));
   } catch (error) {
-    console.error(`❌ Failed to read ${path}: ${error.message}`);
+    console.error(`❌ Error: Failed to read ${path}:`, error.message);
     process.exit(1);
   }
 }
@@ -67,7 +67,7 @@ function resolveBasePathFromArgs() {
     if (arg === '--base') {
       const next = args[index + 1];
       if (!next) {
-        console.error('❌ Missing value for --base option.');
+        console.error('❌ Error: Missing value for --base option');
         process.exit(1);
       }
       basePath = next;
@@ -83,7 +83,7 @@ function resolveBasePathFromArgs() {
 
   const resolved = path.resolve(basePath);
   if (!fs.existsSync(resolved)) {
-    console.warn(`⚠️ Base glossary file not found at ${resolved}; skipping slug change checks.`);
+    console.warn(`⚠️ Warning: Base glossary file not found at ${resolved}; skipping slug change checks`);
     return null;
   }
 
@@ -108,7 +108,7 @@ function main() {
 
   const validate = ajv.compile(schema);
   if (!validate(data)) {
-    console.error('❌ Schema validation failed:');
+    console.error('❌ Error: Schema validation failed');
     for (const err of validate.errors || []) {
       console.error(`  - ${formatAjvError(err)}`);
     }
@@ -214,7 +214,7 @@ function main() {
   }
 
   if (errors.length > 0) {
-    console.error('❌ Validation failed:\n');
+    console.error('❌ Error: Validation failed\n');
     errors.forEach(err => console.error(`  - ${err}`));
     process.exit(1);
   }
