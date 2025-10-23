@@ -69,6 +69,25 @@ function normalizeTerm(rawTerm) {
     throw new Error('Terms require slug, term, and definition');
   }
 
+  // Validate slug format: must be lowercase alphanumeric with hyphens
+  const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+  if (!slugPattern.test(slug)) {
+    throw new Error(`Slug '${slug}' must contain only lowercase letters, numbers, and hyphens (pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$)`);
+  }
+
+  // Validate slug length
+  if (slug.length < 3) {
+    throw new Error(`Slug '${slug}' must be at least 3 characters long`);
+  }
+  if (slug.length > 48) {
+    throw new Error(`Slug '${slug}' must be at most 48 characters long`);
+  }
+
+  // Validate definition length
+  if (definition.length < 80) {
+    throw new Error(`Definition for '${slug}' must be at least 80 characters long (current: ${definition.length})`);
+  }
+
   const normalized = {
     slug,
     term,
@@ -102,6 +121,11 @@ function normalizeTerm(rawTerm) {
 
   const controversy = normalizeString(rawTerm.controversy_level);
   if (controversy) {
+    // Validate controversy_level enum values
+    const validControversyLevels = ['low', 'medium', 'high'];
+    if (!validControversyLevels.includes(controversy)) {
+      throw new Error(`Controversy level '${controversy}' for '${slug}' must be one of: ${validControversyLevels.join(', ')}`);
+    }
     normalized.controversy_level = controversy;
   }
 
