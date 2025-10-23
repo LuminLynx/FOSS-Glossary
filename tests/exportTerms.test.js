@@ -151,6 +151,57 @@ test('extractSlugsFromYaml normalizes entries', () => {
   assert.deepEqual(extractSlugsFromYaml(yamlText), ['alpha']);
 });
 
+test('extractSlugsFromYaml logs warning on YAML parse error', () => {
+  const warnings = [];
+  const mockConsole = { warn(msg) { warnings.push(msg); } };
+  const originalWarn = console.warn;
+  console.warn = mockConsole.warn.bind(mockConsole);
+
+  const invalidYaml = 'invalid: yaml: content: [unclosed';
+  const result = extractSlugsFromYaml(invalidYaml);
+
+  console.warn = originalWarn;
+
+  assert.deepEqual(result, []);
+  assert.equal(warnings.length, 1);
+  assert.ok(warnings[0].includes('extractSlugsFromYaml'));
+  assert.ok(warnings[0].includes('Failed to parse YAML'));
+});
+
+test('extractSlugsFromYaml logs warning on invalid structure', () => {
+  const warnings = [];
+  const mockConsole = { warn(msg) { warnings.push(msg); } };
+  const originalWarn = console.warn;
+  console.warn = mockConsole.warn.bind(mockConsole);
+
+  const yamlWithoutTerms = 'foo: bar\nbaz: qux';
+  const result = extractSlugsFromYaml(yamlWithoutTerms);
+
+  console.warn = originalWarn;
+
+  assert.deepEqual(result, []);
+  assert.equal(warnings.length, 1);
+  assert.ok(warnings[0].includes('extractSlugsFromYaml'));
+  assert.ok(warnings[0].includes('Invalid YAML structure'));
+});
+
+test('extractSlugsFromYaml logs warning when terms is not an array', () => {
+  const warnings = [];
+  const mockConsole = { warn(msg) { warnings.push(msg); } };
+  const originalWarn = console.warn;
+  console.warn = mockConsole.warn.bind(mockConsole);
+
+  const yamlWithInvalidTerms = 'terms: "not an array"';
+  const result = extractSlugsFromYaml(yamlWithInvalidTerms);
+
+  console.warn = originalWarn;
+
+  assert.deepEqual(result, []);
+  assert.equal(warnings.length, 1);
+  assert.ok(warnings[0].includes('extractSlugsFromYaml'));
+  assert.ok(warnings[0].includes('Invalid YAML structure'));
+});
+
 test('normalize helpers handle nullish values', () => {
   assert.equal(normalizeString(null), undefined);
   assert.equal(normalizeString('   '), undefined);
