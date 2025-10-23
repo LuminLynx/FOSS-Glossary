@@ -134,14 +134,14 @@ function normalizeTerm(rawTerm) {
 
 /**
  * Normalize a name for duplicate detection
- * Converts to lowercase and removes all non-alphanumeric characters
+ * Applies Unicode normalization (NFC), converts to lowercase, and removes all non-alphanumeric characters
  * 
  * @param {*} value - Value to normalize
  * @returns {string} Normalized name (empty string if invalid)
  */
 function normalizeName(value) {
   if (typeof value !== 'string') return '';
-  return value.toLowerCase().replace(/[^a-z0-9]+/g, '');
+  return value.normalize('NFC').toLowerCase().replace(/[^a-z0-9]+/g, '');
 }
 
 module.exports = {
