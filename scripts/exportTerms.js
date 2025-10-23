@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 const fs = require('fs');
-const path = require('path');
-const crypto = require('crypto');
 const { execSync } = require('child_process');
 const process = require('process');
 const yaml = require('js-yaml');
@@ -13,29 +11,6 @@ const { normalizeString, normalizeArray, normalizeTerm } = require('../utils/nor
 const { formatAjvError } = require('../utils/validation');
 const { getGitSha } = require('../utils/git');
 const { ensureDirectoryForFile } = require('../utils/fileSystem');
-const ONLY_IF_NEW = process.argv.includes('--only-if-new');
-const OUT_PATH = 'docs/terms.json';  // serve via GitHub Pages
-const MANIFEST_PATH = '.terms-slugs.txt';
-
-/**
- * Build export payload from YAML text
- * Creates a JSON document with version, timestamp, term count, and terms array
- * 
- * @param {string} yamlText - Raw YAML content from terms.yaml
- * @returns {Object} Export payload with version, generated_at, terms_count, and terms
- * @deprecated This function is kept for backward compatibility but buildExportDocumentFromYaml is preferred
- */
-function buildExportPayload(yamlText) {
-  const src = yaml.load(yamlText) || {};
-  const terms = Array.isArray(src.terms) ? src.terms : [];
-
-  return {
-    version: getGitSha(),
-    generated_at: new Date().toISOString(),
-    terms_count: terms.length,
-    terms
-  };
-}
 
 const DEFAULT_OUT_PATH = 'docs/terms.json';
 const SIZE_WARN_THRESHOLD_BYTES = 2 * 1024 * 1024; // 2 MB
