@@ -375,7 +375,7 @@ test('generateLandingPage: XSS protection - escapes special characters', () => {
     assert.ok(html.includes('&lt;'), 'Should escape less than');
     assert.ok(html.includes('&gt;'), 'Should escape greater than');
     assert.ok(html.includes('&quot;') || html.includes('&#34;'), 'Should escape double quotes');
-    assert.ok(html.includes('&#039;') || html.includes('&#39;'), 'Should escape single quotes');
+    assert.ok(html.includes('&#039;') || html.includes('&#39;') || html.includes('&#x27;'), 'Should escape single quotes');
   } finally {
     if (fs.existsSync(backupPath)) {
       if (fs.existsSync(termsPath)) {
