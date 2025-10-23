@@ -9,6 +9,8 @@ const Ajv = require('ajv');
 const addFormats = require('ajv-formats');
 
 const yamlSchema = require('../schema.json');
+const { normalizeString, normalizeArray, normalizeTerm } = require('../utils/normalization');
+const { formatAjvError } = require('../utils/validation');
 const ONLY_IF_NEW = process.argv.includes('--only-if-new');
 const OUT_PATH = 'docs/terms.json';  // serve via GitHub Pages
 const MANIFEST_PATH = '.terms-slugs.txt';
@@ -104,86 +106,16 @@ function readPrevYaml() {
   }
 }
 
-function normalizeString(value) {
-  if (value === undefined || value === null) {
-    return undefined;
-  }
-  const str = String(value);
-  return str.trim().length === 0 ? undefined : str;
-}
-
-function normalizeArray(value) {
-  if (value === undefined || value === null) {
-    return undefined;
-  }
-  const arr = Array.isArray(value) ? value : [value];
-  const normalized = arr
-    .map((entry) => {
-      if (entry === undefined || entry === null) {
-        return undefined;
-      }
-      const str = String(entry);
-      return str.trim().length === 0 ? undefined : str;
-    })
-    .filter((entry) => entry !== undefined);
-
-  return normalized.length > 0 ? normalized : undefined;
-}
-
-function normalizeTerm(rawTerm) {
-  if (!rawTerm || typeof rawTerm !== 'object') {
-    throw new ExporterError('Error: Each term must be an object');
-  }
-
-  const slug = normalizeString(rawTerm.slug);
-  const term = normalizeString(rawTerm.term);
-  const definition = normalizeString(rawTerm.definition);
-
-  if (!slug || !term || !definition) {
-    throw new ExporterError('Error: Terms require slug, term, and definition');
-  }
-
-  const normalized = {
-    slug,
-    term,
-    definition,
-  };
-
-  const explanation = normalizeString(rawTerm.explanation);
-  if (explanation) {
-    normalized.explanation = explanation;
-  }
-
-  const humor = normalizeString(rawTerm.humor);
-  if (humor) {
-    normalized.humor = humor;
-  }
-
-  const tags = normalizeArray(rawTerm.tags);
-  if (tags) {
-    normalized.tags = tags;
-  }
-
-  const seeAlso = normalizeArray(rawTerm.see_also);
-  if (seeAlso) {
-    normalized.see_also = seeAlso;
-  }
-
-  const aliases = normalizeArray(rawTerm.aliases);
-  if (aliases) {
-    normalized.aliases = aliases;
-  }
-
-  const controversy = normalizeString(rawTerm.controversy_level);
-  if (controversy) {
-    normalized.controversy_level = controversy;
-  }
-
-  return normalized;
-}
-
 function sortTerms(terms) {
   return [...terms].sort((a, b) => a.slug.localeCompare(b.slug));
+}
+
+function normalizeTermWithError(rawTerm) {
+  try {
+    return normalizeTerm(rawTerm);
+  } catch (error) {
+    throw new ExporterError(`Error: ${error.message}`);
+  }
 }
 
 function prepareTerms(rawTerms) {
@@ -191,7 +123,7 @@ function prepareTerms(rawTerms) {
     throw new ExporterError('Error: Root "terms" must be an array');
   }
 
-  const normalized = rawTerms.map(normalizeTerm);
+  const normalized = rawTerms.map(normalizeTermWithError);
   return sortTerms(normalized);
 }
 
@@ -247,15 +179,6 @@ function getGitSha() {
   } catch {
     return 'unknown';
   }
-}
-
-function formatAjvError(errors) {
-  if (!errors || errors.length === 0) {
-    return 'Unknown validation error';
-  }
-  return errors
-    .map((error) => `${error.instancePath || '(root)'} ${error.message}`.trim())
-    .join('; ');
 }
 
 function ensureDirectoryForFile(filePath) {
@@ -342,7 +265,7 @@ if (require.main === module) {
 module.exports = {
   ExporterError,
   parseArgs,
-  normalizeTerm,
+  normalizeTerm: normalizeTermWithError,
   prepareTerms,
   buildDocument,
   buildExportDocumentFromYaml,

@@ -4,6 +4,8 @@ const path = require('path');
 const yaml = require('js-yaml');
 const Ajv = require('ajv');
 const addFormats = require('ajv-formats');
+const { normalizeName } = require('../utils/normalization');
+const { formatAjvError } = require('../utils/validation');
 
 function loadYaml(filePath) {
   try {
@@ -21,26 +23,6 @@ function loadSchema(path) {
     console.error(`❌ Error: Failed to read ${path}:`, error.message);
     process.exit(1);
   }
-}
-
-function formatAjvError(error) {
-  const location = error.instancePath ? error.instancePath : '(root)';
-  const message = error.message || 'validation error';
-  if (error.keyword === 'additionalProperties' && error.params?.additionalProperty) {
-    return `${location} has unexpected property '${error.params.additionalProperty}'`;
-  }
-  if (error.keyword === 'required' && error.params?.missingProperty) {
-    return `${location} missing required property '${error.params.missingProperty}'`;
-  }
-  if (error.keyword === 'minLength' && error.params?.limit) {
-    return `${location} ${message} (minLength ${error.params.limit})`;
-  }
-  return `${location} ${message}`;
-}
-
-function normalizeName(value) {
-  if (typeof value !== 'string') return '';
-  return value.toLowerCase().replace(/[^a-z0-9]+/g, '');
 }
 
 function resolveBasePathFromArgs() {
