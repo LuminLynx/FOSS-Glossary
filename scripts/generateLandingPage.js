@@ -75,36 +75,67 @@ const stats = {
   topScorers: [] // We'll calculate this when we have contributor data
 };
 
-// Generate term cards HTML
-function generateTermCards(count = 6) {
-  // Filter out invalid terms before displaying
-  const validTerms = terms.filter(term =>
-    term &&
+// Helper: Escape HTML special characters
+function escapeHtml(text) {
+  if (!text) return '';
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+// Helper: Get score color based on score value
+function getScoreColor(score) {
+  if (score >= 80) return '#00d4e4';
+  if (score >= 60) return '#00f0ff';
+  return '#ffd93d';
+}
+
+// Helper: Generate a single term card
+function generateTermCard(term) {
+  const score = calculateTermScore(term);
+  const scoreColor = getScoreColor(score);
+  
+  const parts = [
+    '    <div class="term-card">',
+    '      <div class="term-header">',
+    `        <h3>${escapeHtml(term.term)}</h3>`,
+    `        <span class="term-score" style="color: ${scoreColor}">${score}/100</span>`,
+    '      </div>',
+    `      <p class="term-definition">${escapeHtml(term.definition)}</p>`
+  ];
+  
+  if (term.humor) {
+    parts.push(`      <p class="term-humor">😂 "${escapeHtml(term.humor)}"</p>`);
+  }
+  
+  if (term.tags && term.tags.length > 0) {
+    const tagSpans = term.tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('');
+    parts.push(`      <div class="term-tags">${tagSpans}</div>`);
+  }
+  
+  parts.push('    </div>');
+  return parts.join('\n');
+}
+
+// Helper: Validate if a term is displayable
+function isValidTerm(term) {
+  return term &&
     term.term &&
     typeof term.term === 'string' &&
     term.term.trim() !== '' &&
     term.definition &&
     typeof term.definition === 'string' &&
-    term.definition.trim() !== ''
-  );
-  
+    term.definition.trim() !== '';
+}
+
+// Generate term cards HTML
+function generateTermCards(count = 6) {
+  const validTerms = terms.filter(isValidTerm);
   const displayTerms = validTerms.slice(-count).reverse();
-  
-  return displayTerms.map(term => {
-    const score = calculateTermScore(term);
-    const scoreColor = score >= 80 ? '#00d4e4' : score >= 60 ? '#00f0ff' : '#ffd93d';
-    
-    return `
-    <div class="term-card">
-      <div class="term-header">
-        <h3>${term.term}</h3>
-        <span class="term-score" style="color: ${scoreColor}">${score}/100</span>
-      </div>
-      <p class="term-definition">${term.definition}</p>
-      ${term.humor ? `<p class="term-humor">😂 "${term.humor}"</p>` : ''}
-      ${term.tags ? `<div class="term-tags">${term.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>` : ''}
-    </div>`;
-  }).join('\n');
+  return displayTerms.map(generateTermCard).join('\n');
 }
 
 // Calculate term score (matching your scoring logic)
@@ -133,36 +164,58 @@ function calculateTermScore(term) {
   return score;
 }
 
+// Helper: Generate meta tag
+function metaTag(name, content, property = false) {
+  const attr = property ? 'property' : 'name';
+  return `    <meta ${attr}="${name}" content="${escapeHtml(content)}">`;
+}
+
 // Generate HTML head section with meta tags
 function generateHead(stats) {
+  const title = `FOSS Glossary - ${stats.totalTerms} Terms and Growing!`;
+  const description = `A gamified glossary of FOSS terms with humor. ${stats.totalTerms} terms defined by the community! Score points, unlock achievements, and learn with fun.`;
+  const url = 'https://luminlynx.github.io/FOSS-Glossary/';
+  const imageUrl = 'https://raw.githubusercontent.com/LuminLynx/FOSS-Glossary/main/assets/twitter-card.png';
+  
+  const metaTags = [
+    // Primary Meta Tags
+    metaTag('title', 'FOSS Glossary - Gamified Open Source Terms'),
+    metaTag('description', description),
+    metaTag('keywords', 'FOSS, open source, glossary, gamification, github, programming, developer, community'),
+    metaTag('author', 'LuminLynx'),
+    
+    // Open Graph / Facebook
+    metaTag('og:type', 'website', true),
+    metaTag('og:url', url, true),
+    metaTag('og:title', 'FOSS Glossary - Gamified Open Source Terms', true),
+    metaTag('og:description', `Score points, unlock achievements, and learn FOSS terms with humor! ${stats.totalTerms} terms and growing.`, true),
+    metaTag('og:image', imageUrl, true),
+    metaTag('og:image:width', '1200', true),
+    metaTag('og:image:height', '628', true),
+    metaTag('og:site_name', 'FOSS Glossary', true),
+    
+    // Twitter
+    metaTag('twitter:card', 'summary_large_image'),
+    metaTag('twitter:url', url),
+    metaTag('twitter:title', 'FOSS Glossary - Gamified Open Source Terms'),
+    metaTag('twitter:description', `Score points, unlock achievements, and learn FOSS terms with humor! ${stats.totalTerms} terms and growing.`),
+    metaTag('twitter:image', imageUrl)
+  ];
+  
   return `<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FOSS Glossary - ${stats.totalTerms} Terms and Growing!</title>
+    <title>${title}</title>
     
     <!-- Primary Meta Tags -->
-    <meta name="title" content="FOSS Glossary - Gamified Open Source Terms">
-    <meta name="description" content="A gamified glossary of FOSS terms with humor. ${stats.totalTerms} terms defined by the community! Score points, unlock achievements, and learn with fun.">
-    <meta name="keywords" content="FOSS, open source, glossary, gamification, github, programming, developer, community">
-    <meta name="author" content="LuminLynx">
-    <link rel="canonical" href="https://luminlynx.github.io/FOSS-Glossary/">
+${metaTags.slice(0, 4).join('\n')}
+    <link rel="canonical" href="${url}">
     
     <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://luminlynx.github.io/FOSS-Glossary/">
-    <meta property="og:title" content="FOSS Glossary - Gamified Open Source Terms">
-    <meta property="og:description" content="Score points, unlock achievements, and learn FOSS terms with humor! ${stats.totalTerms} terms and growing.">
-    <meta property="og:image" content="https://raw.githubusercontent.com/LuminLynx/FOSS-Glossary/main/assets/twitter-card.png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="628">
-    <meta property="og:site_name" content="FOSS Glossary">
+${metaTags.slice(4, 12).join('\n')}
 
     <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://luminlynx.github.io/FOSS-Glossary/">
-    <meta name="twitter:title" content="FOSS Glossary - Gamified Open Source Terms">
-    <meta name="twitter:description" content="Score points, unlock achievements, and learn FOSS terms with humor! ${stats.totalTerms} terms and growing.">
-    <meta name="twitter:image" content="https://raw.githubusercontent.com/LuminLynx/FOSS-Glossary/main/assets/twitter-card.png">
+${metaTags.slice(12).join('\n')}
  
     <!-- Favicon (optional - add later) -->
     <!-- <link rel="icon" type="image/png" href="assets/favicon.png"> -->
@@ -171,9 +224,8 @@ function generateHead(stats) {
 </head>`;
 }
 
-// Generate CSS styles
-function generateStyles() {
-  return `<style>
+// CSS styles as a constant for better maintainability
+const CSS_STYLES = `
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         /* DARK THEME (Default) */
@@ -437,7 +489,11 @@ function generateStyles() {
             .card { padding: 1.5rem; }
             .term-grid { grid-template-columns: 1fr; }
         }
-    </style>`;
+`;
+
+// Generate CSS styles
+function generateStyles() {
+  return `<style>${CSS_STYLES}</style>`;
 }
 
 // Generate logo and header section
@@ -452,28 +508,28 @@ function generateHeader() {
             <p class="tagline" style="text-align: center; font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">A gamified glossary of Free and Open Source Software terms, with humor, sarcasm, and honest truths.</p>`;
 }
 
+// Helper: Generate a single stat card
+function statCard(number, label) {
+  return `                <div class="stat-card">
+                    <span class="stat-number">${number}</span>
+                    <span class="stat-label">${label}</span>
+                </div>`;
+}
+
 // Generate statistics section
 function generateStats(stats) {
   const humorPercentage = Math.round((stats.termsWithHumor / stats.totalTerms) * 100);
   
+  const statCards = [
+    statCard(stats.totalTerms, 'Total Terms'),
+    statCard(stats.termsWithHumor, 'Funny Terms'),
+    statCard(`${humorPercentage}%`, 'Humor Rate'),
+    statCard(stats.totalTags, 'Categories')
+  ];
+  
   return `<!-- LIVE STATISTICS -->
             <div class="live-stats">
-                <div class="stat-card">
-                    <span class="stat-number">${stats.totalTerms}</span>
-                    <span class="stat-label">Total Terms</span>
-                </div>
-                <div class="stat-card">
-                    <span class="stat-number">${stats.termsWithHumor}</span>
-                    <span class="stat-label">Funny Terms</span>
-                </div>
-                <div class="stat-card">
-                    <span class="stat-number">${humorPercentage}%</span>
-                    <span class="stat-label">Humor Rate</span>
-                </div>
-                <div class="stat-card">
-                    <span class="stat-number">${stats.totalTags}</span>
-                    <span class="stat-label">Categories</span>
-                </div>
+${statCards.join('\n')}
             </div>`;
 }
 
@@ -486,32 +542,49 @@ function generateRecentAdditions(stats) {
             </div>`;
 }
 
+// Helper: Generate scoring list item
+function scoringItem(emoji, text, points) {
+  return `                    <li>${emoji} <strong>${text}</strong> - ${points}</li>`;
+}
+
 // Generate scoring section
 function generateScoringSection() {
+  const items = [
+    scoringItem('✅', 'Base Definition', '20 points'),
+    scoringItem('😂', 'Humor', 'Up to 30 points (be funny!)'),
+    scoringItem('📝', 'Explanation', '20 points'),
+    scoringItem('🔗', 'Cross-references', 'Up to 20 points'),
+    scoringItem('🏷️', 'Tags', '10 points')
+  ];
+  
   return `<!-- SCORING SYSTEM -->
             <h2>📊 How Scoring Works</h2>
             <div style="background: rgba(0, 0, 0, 0.3); padding: 1.5rem; border-radius: 10px; margin: 2rem 0;">
                 <ul style="list-style: none; padding: 0;">
-                    <li>✅ <strong>Base Definition</strong> - 20 points</li>
-                    <li>😂 <strong>Humor</strong> - Up to 30 points (be funny!)</li>
-                    <li>📝 <strong>Explanation</strong> - 20 points</li>
-                    <li>🔗 <strong>Cross-references</strong> - Up to 20 points</li>
-                    <li>🏷️ <strong>Tags</strong> - 10 points</li>
+${items.join('\n')}
                 </ul>
                 <p style="margin-top: 1rem; font-weight: bold;">💯 Score 90+ to become a legend!</p>
             </div>`;
 }
 
+// Helper: Generate a button
+function button(text, href, secondary = false) {
+  const className = secondary ? 'button button-secondary' : 'button';
+  return `                <a href="${href}" class="${className}">
+                    ${text}
+                </a>`;
+}
+
 // Generate CTA section
 function generateCTA(stats) {
+  const buttons = [
+    button('🎮 Contribute on GitHub', 'https://github.com/LuminLynx/FOSS-Glossary'),
+    button(`📝 View All ${stats.totalTerms} Terms`, 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/terms.yaml', true)
+  ];
+  
   return `<!-- CALL TO ACTION -->
             <div class="cta">
-                <a href="https://github.com/LuminLynx/FOSS-Glossary" class="button">
-                    🎮 Contribute on GitHub
-                </a>
-                <a href="https://github.com/LuminLynx/FOSS-Glossary/blob/main/terms.yaml" class="button button-secondary">
-                    📝 View All ${stats.totalTerms} Terms
-                </a>
+${buttons.join('\n')}
             </div>`;
 }
 
