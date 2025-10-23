@@ -4,6 +4,21 @@ const { execSync } = require('child_process');
 const { scoreTerm } = require('./scoring');
 const { loadYaml } = require('../utils/fileSystem');
 
+/**
+ * Update README.md with current glossary statistics
+ * Calculates and updates:
+ * - Total terms count
+ * - Number of contributors
+ * - Terms with humor count and percentage
+ * - Current champion (highest scoring term)
+ * - Recent additions (last 3 terms)
+ * - Top contributors list
+ * 
+ * The function replaces content between <!-- STATS-START --> and <!-- STATS-END -->
+ * markers, or inserts new stats section if markers don't exist
+ * 
+ * @throws {Error} Exits process with code 1 if terms.yaml cannot be read or parsed
+ */
 function updateReadmeStats() {
   try {
     // Load terms

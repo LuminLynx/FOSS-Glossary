@@ -7,6 +7,13 @@ const { normalizeName } = require('../utils/normalization');
 const { formatAjvError } = require('../utils/validation');
 const { loadYaml, loadJson } = require('../utils/fileSystem');
 
+/**
+ * Resolve the base terms path from command line arguments or environment variable
+ * Supports both --base flag and BASE_TERMS_PATH environment variable
+ * Validates that the resolved path exists and warns if not found
+ * 
+ * @returns {string|null} Absolute path to base terms file, or null if not specified or invalid
+ */
 function resolveBasePathFromArgs() {
   const args = process.argv.slice(2);
   let basePath = process.env.BASE_TERMS_PATH || null;
@@ -39,6 +46,16 @@ function resolveBasePathFromArgs() {
   return resolved;
 }
 
+/**
+ * Main validation function for FOSS Glossary terms
+ * Validates terms.yaml against schema.json and performs additional checks:
+ * - Schema validation using AJV
+ * - Duplicate slug detection
+ * - Duplicate term/alias name detection (normalized)
+ * - Slug change detection (when base terms file is provided)
+ * 
+ * @throws {Error} Exits process with code 1 if validation fails
+ */
 function main() {
   const data = loadYaml('terms.yaml');
   const schema = loadJson('schema.json');
