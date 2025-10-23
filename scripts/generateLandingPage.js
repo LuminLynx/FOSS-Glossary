@@ -13,9 +13,58 @@ function getShortSha() {
 
 const artifactVersion = getShortSha();
 
-// Load terms
-const termsData = yaml.load(fs.readFileSync('terms.yaml', 'utf8'));
-const terms = termsData.terms || [];
+// Load terms with error handling
+function loadTerms() {
+  try {
+    // Check if file exists
+    if (!fs.existsSync('terms.yaml')) {
+      console.error('❌ Error: terms.yaml file not found.');
+      console.error('   Make sure you are running this script from the repository root directory.');
+      process.exit(1);
+    }
+
+    // Read file
+    let yamlContent;
+    try {
+      yamlContent = fs.readFileSync('terms.yaml', 'utf8');
+    } catch (error) {
+      console.error('❌ Error reading terms.yaml file:', error.message);
+      process.exit(1);
+    }
+
+    // Parse YAML
+    let termsData;
+    try {
+      termsData = yaml.load(yamlContent);
+    } catch (error) {
+      console.error('❌ Error parsing terms.yaml:');
+      console.error(`   ${error.message}`);
+      if (error.mark) {
+        console.error(`   Line ${error.mark.line + 1}, Column ${error.mark.column + 1}`);
+      }
+      process.exit(1);
+    }
+
+    // Validate structure
+    if (!termsData || typeof termsData !== 'object') {
+      console.error('❌ Error: terms.yaml must contain a valid YAML object.');
+      process.exit(1);
+    }
+
+    if (!Array.isArray(termsData.terms)) {
+      console.error('❌ Error: terms.yaml must contain a "terms" array.');
+      process.exit(1);
+    }
+
+    return termsData.terms;
+  } catch (error) {
+    // Catch any unexpected errors
+    console.error('❌ Unexpected error loading terms:', error.message);
+    process.exit(1);
+  }
+}
+
+const terms = loadTerms();
 
 // Calculate statistics
 const stats = {
@@ -469,8 +518,22 @@ const html = `<!DOCTYPE html>
 </body>
 </html>`;
 
-// Write the file
-fs.writeFileSync('docs/index.html', html);
-console.log(`✅ Generated landing page with ${stats.totalTerms} terms!`);
-console.log(`📊 Stats: ${stats.termsWithHumor}/${stats.totalTerms} terms have humor (${Math.round((stats.termsWithHumor/stats.totalTerms)*100)}%)`);
-console.log(`🆕 Recent: ${stats.recentTerms.join(', ')}`);
+// Write the file with error handling
+function writeOutputFile() {
+  try {
+    // Ensure docs directory exists
+    if (!fs.existsSync('docs')) {
+      fs.mkdirSync('docs', { recursive: true });
+    }
+
+    fs.writeFileSync('docs/index.html', html);
+    console.log(`✅ Generated landing page with ${stats.totalTerms} terms!`);
+    console.log(`📊 Stats: ${stats.termsWithHumor}/${stats.totalTerms} terms have humor (${Math.round((stats.termsWithHumor/stats.totalTerms)*100)}%)`);
+    console.log(`🆕 Recent: ${stats.recentTerms.join(', ')}`);
+  } catch (error) {
+    console.error('❌ Error writing landing page file:', error.message);
+    process.exit(1);
+  }
+}
+
+writeOutputFile();
