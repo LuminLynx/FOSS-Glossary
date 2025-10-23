@@ -3,6 +3,14 @@ const fs = require('fs');
 const yaml = require('js-yaml');
 const { scoreTerm, getScoreBreakdown } = require('./scoring');
 
+/**
+ * Main function to score a term from terms.yaml and display results
+ * Scores either the term specified by TARGET_SLUG environment variable
+ * or the latest term (last in the array)
+ * Outputs score, badges, breakdown, and GitHub Actions compatible variables
+ * 
+ * @throws {Error} Exits process with code 1 if terms.yaml is invalid or term not found
+ */
 function main() {
   try {
     // Read the terms file

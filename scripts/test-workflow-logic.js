@@ -8,8 +8,15 @@ const assert = require('assert');
 
 console.log('🧪 Testing workflow logic...\n');
 
-// Test 1: Slug generation
-console.log('Test 1: Slug generation');
+/**
+ * Generate a URL-safe slug from an issue title
+ * Converts title to lowercase, replaces non-alphanumeric with hyphens,
+ * removes leading/trailing hyphens, and truncates to 35 characters
+ * 
+ * @param {string} title - Issue title to convert to slug
+ * @param {number} issueNumber - Issue number to use as fallback
+ * @returns {string} URL-safe slug (max 35 chars) or issue-{number} if empty
+ */
 const slugFromTitle = (title, issueNumber) => {
   const base = title
     .toLowerCase()
@@ -19,6 +26,8 @@ const slugFromTitle = (title, issueNumber) => {
   return base || `issue-${issueNumber}`;
 };
 
+// Test 1: Slug generation
+console.log('Test 1: Slug generation');
 const testCases = [
   { title: 'Add dark mode support', expected: 'add-dark-mode-support' },
   { title: 'Fix: Authentication Error!!!', expected: 'fix-authentication-error' },
@@ -58,9 +67,16 @@ setTimeout(() => {
   console.log(`  ✅ Difference: ${timestamp2 - timestamp1}ms`);
 }, 5);
 
-console.log('\nTest 5: Retry mechanism simulation');
-let attempts = 0;
-const maxRetries = 3;
+/**
+ * Retry an async function with exponential backoff
+ * Attempts the function multiple times with increasing delays between attempts
+ * 
+ * @param {Function} fn - Async function to retry
+ * @param {number} [maxRetries=3] - Maximum number of retry attempts
+ * @param {number} [baseDelay=100] - Base delay in milliseconds (doubled each retry)
+ * @returns {Promise<*>} Result from successful function execution
+ * @throws {Error} Error from last attempt if all retries fail
+ */
 const retryWithBackoff = async (fn, maxRetries = 3, baseDelay = 100) => {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     attempts++;
@@ -76,6 +92,10 @@ const retryWithBackoff = async (fn, maxRetries = 3, baseDelay = 100) => {
     }
   }
 };
+
+console.log('\nTest 5: Retry mechanism simulation');
+let attempts = 0;
+const maxRetries = 3;
 
 // Test successful retry
 (async () => {

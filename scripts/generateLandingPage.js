@@ -41,9 +41,16 @@ const stats = {
   topScorers: [] // We'll calculate this when we have contributor data
 };
 
-// Helper: Escape HTML special characters
-// Note: This function is kept for backward compatibility but Handlebars
-// handles escaping automatically. Only use this for pre-processing if needed.
+/**
+ * Escape HTML special characters to prevent XSS attacks
+ * Converts &, <, >, ", and ' to their HTML entity equivalents
+ * 
+ * Note: This function is kept for backward compatibility but Handlebars
+ * handles escaping automatically. Only use this for pre-processing if needed.
+ * 
+ * @param {string} text - Text to escape
+ * @returns {string} HTML-escaped text
+ */
 function escapeHtml(text) {
   if (!text) return '';
   return text
@@ -58,15 +65,34 @@ function escapeHtml(text) {
 // (available in template if needed, though Handlebars auto-escapes by default)
 Handlebars.registerHelper('escapeHtml', escapeHtml);
 
-// Helper: Get score color based on score value
+/**
+ * Get score color based on score value
+ * Returns color hex code for score visualization
+ * - 80+: Cyan (#00d4e4)
+ * - 60-79: Bright cyan (#00f0ff)
+ * - <60: Yellow (#ffd93d)
+ * 
+ * @param {number} score - Score value (0-100)
+ * @returns {string} Hex color code
+ */
 function getScoreColor(score) {
   if (score >= 80) return '#00d4e4';
   if (score >= 60) return '#00f0ff';
   return '#ffd93d';
 }
 
-// Helper: Prepare a single term card data
-// Returns a plain object with term data. Handlebars will auto-escape HTML.
+/**
+ * Prepare a single term card data object for template rendering
+ * Calculates score, determines color, and structures all term properties
+ * Returns a plain object with term data that Handlebars will auto-escape
+ * 
+ * @param {Object} term - Term object from terms.yaml
+ * @param {string} term.term - Term name
+ * @param {string} term.definition - Term definition
+ * @param {string} [term.humor] - Humorous description
+ * @param {string[]} [term.tags] - Category tags
+ * @returns {Object} Prepared term card data with term, score, scoreColor, definition, humor, and tags
+ */
 function prepareTermCardData(term) {
   const { score } = scoreTerm(term);
   const scoreColor = getScoreColor(score);
@@ -83,7 +109,14 @@ function prepareTermCardData(term) {
   };
 }
 
-// Helper: Validate if a term is displayable
+/**
+ * Validate if a term is displayable
+ * Checks that term has required fields (term and definition)
+ * and that they are non-empty strings
+ * 
+ * @param {Object} term - Term object to validate
+ * @returns {boolean} True if term is valid for display
+ */
 function isValidTerm(term) {
   return term &&
     term.term &&
@@ -94,14 +127,26 @@ function isValidTerm(term) {
     term.definition.trim() !== '';
 }
 
-// Prepare term cards data
+/**
+ * Prepare term cards data for landing page
+ * Filters valid terms and returns the most recent ones in reverse order
+ * 
+ * @param {number} [count=6] - Number of recent terms to display
+ * @returns {Object[]} Array of prepared term card data objects
+ */
 function prepareTermCardsData(count = 6) {
   const validTerms = terms.filter(isValidTerm);
   const displayTerms = validTerms.slice(-count).reverse();
   return displayTerms.map(prepareTermCardData);
 }
 
-// Prepare meta tags data
+/**
+ * Prepare meta tags data for HTML head
+ * Creates structured meta tag objects for primary, Open Graph, and Twitter Card tags
+ * 
+ * @param {Object} stats - Statistics object with totalTerms and other metrics
+ * @returns {Object} Meta tags organized by type (primary, og, twitter)
+ */
 function prepareMetaTags(stats) {
   const description = `A gamified glossary of FOSS terms with humor. ${stats.totalTerms} terms defined by the community! Score points, unlock achievements, and learn with fun.`;
   const url = 'https://luminlynx.github.io/FOSS-Glossary/';
@@ -401,7 +446,16 @@ const CSS_STYLES = `
         }
 `;
 
-// Prepare stat cards data
+/**
+ * Prepare stat cards data for statistics section
+ * Creates array of stat card objects with numbers and labels
+ * 
+ * @param {Object} stats - Statistics object
+ * @param {number} stats.totalTerms - Total number of terms
+ * @param {number} stats.termsWithHumor - Number of terms with humor field
+ * @param {number} stats.totalTags - Total unique tags
+ * @returns {Object[]} Array of stat card objects with number and label
+ */
 function prepareStatCardsData(stats) {
   const humorPercentage = Math.round((stats.termsWithHumor / stats.totalTerms) * 100);
   
@@ -413,7 +467,12 @@ function prepareStatCardsData(stats) {
   ];
 }
 
-// Prepare scoring items data
+/**
+ * Prepare scoring items data for scoring section
+ * Creates array of scoring criteria with emoji, description, and points
+ * 
+ * @returns {Object[]} Array of scoring item objects with emoji, text, and points
+ */
 function prepareScoringItemsData() {
   return [
     { emoji: '✅', text: 'Base Definition', points: '20 points' },
@@ -424,7 +483,13 @@ function prepareScoringItemsData() {
   ];
 }
 
-// Prepare CTA buttons data
+/**
+ * Prepare CTA (Call to Action) buttons data
+ * Creates array of button objects with text, href, and CSS class
+ * 
+ * @param {Object} stats - Statistics object with totalTerms
+ * @returns {Object[]} Array of button objects with text, href, and className
+ */
 function prepareCTAButtonsData(stats) {
   return [
     {
@@ -500,7 +565,13 @@ function generateHTML(stats, artifactVersion) {
 
 const html = generateHTML(stats, artifactVersion);
 
-// Write the file with error handling
+/**
+ * Write generated HTML to output file
+ * Ensures docs directory exists and writes docs/index.html
+ * Logs statistics about the generation
+ * 
+ * @throws {Error} Exits process with code 1 if file write fails
+ */
 function writeOutputFile() {
   try {
     // Ensure docs directory exists
