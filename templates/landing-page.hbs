@@ -1,3 +1,28 @@
+{{!-- 
+  FOSS Glossary Landing Page Template
+  
+  This Handlebars template generates the landing page HTML.
+  
+  Template syntax:
+  - {{variable}} - Auto-escaped HTML output (safe for user content)
+  - {{{variable}}} - Unescaped output (use only for trusted content like CSS)
+  - {{#if condition}} ... {{/if}} - Conditional rendering
+  - {{#each array}} ... {{/each}} - Loop over arrays
+  
+  Data structure expected:
+  - title: Page title string
+  - canonicalUrl: Canonical URL for SEO
+  - metaTags: Object with primary, og, and twitter arrays
+  - styles: CSS styles string (unescaped)
+  - statCards: Array of {number, label} objects
+  - recentTermsList: Comma-separated string of recent terms
+  - termCards: Array of term objects with {term, score, scoreColor, definition, humor, tags}
+  - scoringItems: Array of {emoji, text, points} objects
+  - ctaButtons: Array of {text, href, className} objects
+  - lastUpdated: Formatted date string
+  - stats: Statistics object
+  - artifactVersion: Git commit SHA
+--}}
 <!DOCTYPE html>
 <html lang="en">
 <head>

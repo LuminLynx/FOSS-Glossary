@@ -1,4 +1,25 @@
 #!/usr/bin/env node
+/**
+ * Landing Page Generator with Handlebars Template Engine
+ * 
+ * This script generates the FOSS Glossary landing page (docs/index.html) using:
+ * - Handlebars template engine for better maintainability and readability
+ * - Separation of concerns: data preparation vs. presentation
+ * - Automatic HTML escaping for XSS protection (Handlebars built-in)
+ * 
+ * Architecture:
+ * 1. Load and validate terms.yaml
+ * 2. Calculate statistics (total terms, humor rate, etc.)
+ * 3. Prepare data structures for each section (meta tags, stats, term cards, etc.)
+ * 4. Load and compile Handlebars template from templates/landing-page.hbs
+ * 5. Render HTML by passing data to template
+ * 6. Write output to docs/index.html
+ * 
+ * Security:
+ * - Handlebars automatically escapes HTML content to prevent XSS attacks
+ * - CSS styles use triple-braces {{{ }}} in template to remain unescaped
+ * - All user-provided content (terms, definitions, humor, tags) is escaped
+ */
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
@@ -79,6 +100,8 @@ const stats = {
 };
 
 // Helper: Escape HTML special characters
+// Note: This function is kept for backward compatibility but Handlebars
+// handles escaping automatically. Only use this for pre-processing if needed.
 function escapeHtml(text) {
   if (!text) return '';
   return text
@@ -89,7 +112,8 @@ function escapeHtml(text) {
     .replace(/'/g, '&#039;');
 }
 
-// Register Handlebars helper for HTML escaping (used in template)
+// Register Handlebars helper for HTML escaping
+// (available in template if needed, though Handlebars auto-escapes by default)
 Handlebars.registerHelper('escapeHtml', escapeHtml);
 
 // Helper: Get score color based on score value
@@ -100,18 +124,19 @@ function getScoreColor(score) {
 }
 
 // Helper: Prepare a single term card data
+// Returns a plain object with term data. Handlebars will auto-escape HTML.
 function prepareTermCardData(term) {
   const { score } = scoreTerm(term);
   const scoreColor = getScoreColor(score);
   
   return {
-    term: term.term,  // Let Handlebars escape
+    term: term.term,  // Handlebars auto-escapes
     score,
-    scoreColor,
-    definition: term.definition,  // Let Handlebars escape
-    humor: term.humor || null,  // Let Handlebars escape
+    scoreColor,  // Color codes are safe, not escaped
+    definition: term.definition,  // Handlebars auto-escapes
+    humor: term.humor || null,  // Handlebars auto-escapes
     tags: (term.tags && term.tags.length > 0) 
-      ? term.tags  // Let Handlebars escape
+      ? term.tags  // Handlebars auto-escapes each tag
       : []
   };
 }
@@ -473,7 +498,17 @@ function prepareCTAButtonsData(stats) {
   ];
 }
 
-// Load and compile the Handlebars template
+/**
+ * Load and compile the Handlebars template
+ * 
+ * Reads the landing page template from templates/landing-page.hbs
+ * and compiles it for use with data. The template uses:
+ * - {{variable}} for HTML-escaped output
+ * - {{{variable}}} for unescaped output (used for CSS styles)
+ * - {{#if}}, {{#each}} for conditionals and loops
+ * 
+ * @returns {Function} Compiled Handlebars template function
+ */
 function loadTemplate() {
   try {
     const templatePath = path.join(__dirname, '..', 'templates', 'landing-page.hbs');
@@ -485,7 +520,17 @@ function loadTemplate() {
   }
 }
 
-// Generate HTML using Handlebars template
+/**
+ * Generate HTML using Handlebars template
+ * 
+ * Prepares all data structures and passes them to the compiled template.
+ * Data preparation functions ensure proper structure while Handlebars
+ * handles HTML escaping automatically.
+ * 
+ * @param {Object} stats - Statistics object with term counts and metadata
+ * @param {string} artifactVersion - Git commit SHA for cache-busting
+ * @returns {string} Complete HTML document as string
+ */
 function generateHTML(stats, artifactVersion) {
   const template = loadTemplate();
   
@@ -496,7 +541,7 @@ function generateHTML(stats, artifactVersion) {
     metaTags: prepareMetaTags(stats),
     styles: CSS_STYLES,  // Use triple-braces in template for unescaped CSS
     statCards: prepareStatCardsData(stats),
-    recentTermsList: stats.recentTerms.join(', '),  // Let Handlebars escape
+    recentTermsList: stats.recentTerms.join(', '),  // Handlebars auto-escapes
     termCards: prepareTermCardsData(),
     scoringItems: prepareScoringItemsData(),
     ctaButtons: prepareCTAButtonsData(stats),
