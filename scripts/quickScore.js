@@ -1,62 +1,7 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const yaml = require('js-yaml');
-
-function scoreTerm(term) {
-  let score = 0;
-  let badges = [];
-  
-  // Base score for having required fields (20 points)
-  if (term.term && term.definition) {
-    score += 20;
-  }
-  
-  // Humor (up to 30 points)
-  if (term.humor) {
-    const humorLength = term.humor.length;
-    const humorPoints = Math.min(30, Math.floor(humorLength / 5));
-    score += humorPoints;
-    
-    if (humorLength > 100) {
-      badges.push('😂 Comedy Gold');
-    }
-  }
-  
-  // Explanation (20 points)
-  if (term.explanation && term.explanation.length > 20) {
-    score += 20;
-  }
-  
-  // Tags (10 points)
-  if (term.tags && Array.isArray(term.tags) && term.tags.length > 0) {
-    score += Math.min(10, term.tags.length * 3);
-  }
-  
-  // See also / cross-references (up to 20 points)
-  if (term.see_also && Array.isArray(term.see_also)) {
-    score += Math.min(20, term.see_also.length * 5);
-  }
-  
-  // Controversy bonus
-  if (term.controversy_level) {
-    if (term.controversy_level === 'high') {
-      badges.push('🔥 Flame Warrior');
-    } else if (term.controversy_level === 'medium') {
-      badges.push('🌶️ Spicy Take');
-    }
-  }
-  
-  // Achievement badges based on score
-  if (score >= 90) {
-    badges.push('💯 Perfectionist');
-  } else if (score >= 80) {
-    badges.push('⭐ Star Contributor');
-  } else if (score >= 70) {
-    badges.push('💪 Strong Entry');
-  }
-  
-  return { score: Math.min(100, score), badges };
-}
+const { scoreTerm, getScoreBreakdown } = require('./scoring');
 
 function main() {
   try {
@@ -102,13 +47,14 @@ function main() {
     console.log(`TERM_NAME:${termToScore.term || ''}`);
     console.log(`TERM_SLUG:${termToScore.slug || ''}`);
 
-    // Detailed breakdown
+    // Detailed breakdown using the breakdown function
+    const breakdown = getScoreBreakdown(termToScore);
     console.log('\n📋 Score Breakdown:');
-    console.log(`- Base definition: ${termToScore.term && termToScore.definition ? '20/20' : '0/20'}`);
-    console.log(`- Humor: ${termToScore.humor ? Math.min(30, Math.floor(termToScore.humor.length / 5)) : '0'}/30`);
-    console.log(`- Explanation: ${termToScore.explanation ? '20/20' : '0/20'}`);
-    console.log(`- Tags: ${termToScore.tags ? Math.min(10, termToScore.tags.length * 3) : '0'}/10`);
-    console.log(`- Cross-references: ${termToScore.see_also ? Math.min(20, termToScore.see_also.length * 5) : '0'}/20`);
+    console.log(`- Base definition: ${breakdown.base}/${breakdown.maxScores.base}`);
+    console.log(`- Humor: ${breakdown.humor}/${breakdown.maxScores.humor}`);
+    console.log(`- Explanation: ${breakdown.explanation}/${breakdown.maxScores.explanation}`);
+    console.log(`- Tags: ${breakdown.tags}/${breakdown.maxScores.tags}`);
+    console.log(`- Cross-references: ${breakdown.crossReferences}/${breakdown.maxScores.crossReferences}`);
 
     console.log(`\nTotal: ${score}/100`);
 
