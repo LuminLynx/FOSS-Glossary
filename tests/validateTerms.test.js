@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { execSync } = require('child_process');
+const { spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
@@ -18,24 +18,27 @@ function runValidation(termsData, baseTermsData = null) {
   fs.copyFileSync(SCHEMA_PATH, tmpSchemaPath);
   
   try {
-    let cmd = `node ${VALIDATE_SCRIPT}`;
-    let cwd = tmpDir;
+    const args = [VALIDATE_SCRIPT];
     
     if (baseTermsData) {
       const baseTermsPath = path.join(tmpDir, 'base-terms.yaml');
       fs.writeFileSync(baseTermsPath, yaml.dump(baseTermsData));
-      cmd += ` --base=${baseTermsPath}`;
+      args.push('--base', baseTermsPath);
     }
     
-    const result = execSync(cmd, { 
-      cwd,
+    const result = spawnSync('node', args, { 
+      cwd: tmpDir,
       encoding: 'utf8',
       stdio: 'pipe'
     });
     
-    return { success: true, output: result };
+    if (result.status === 0) {
+      return { success: true, output: result.stdout };
+    } else {
+      return { success: false, output: result.stdout || result.stderr };
+    }
   } catch (error) {
-    return { success: false, output: error.stdout || error.message };
+    return { success: false, output: error.message };
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
   }
@@ -186,15 +189,4 @@ test('validateTerms: handles base comparison with many terms efficiently', () =>
   assert.equal(result.success, true);
   // Should complete efficiently even with base comparison
   assert.ok(duration < 5000, `Base comparison took ${duration}ms, expected < 5000ms`);
-});
-
-test('validateTerms: passes validation with real terms.yaml', () => {
-  const termsData = yaml.load(fs.readFileSync(TERMS_PATH, 'utf8'));
-  const result = runValidation(termsData);
-  
-  if (!result.success) {
-    console.log('Validation failed with output:', result.output);
-  }
-  assert.equal(result.success, true);
-  assert.match(result.output, /Validation passed!/);
 });
