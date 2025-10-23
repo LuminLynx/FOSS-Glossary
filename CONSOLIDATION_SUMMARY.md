@@ -1,7 +1,7 @@
 # Duplicate Code Elimination: Consolidation Summary
 
 ## Overview
-This PR consolidates duplicate normalization and validation functions into shared utility modules, reducing code duplication and improving maintainability across the FOSS Glossary codebase.
+This PR consolidates duplicate normalization, validation, Git, and file system functions into shared utility modules, reducing code duplication and improving maintainability across the FOSS Glossary codebase.
 
 ## Changes Made
 
@@ -20,18 +20,37 @@ Centralized validation utilities:
 - Handles both single error objects and arrays of errors
 - Supports different error types (additionalProperties, required, minLength, etc.)
 
+#### `utils/git.js`
+Centralized Git operations:
+- `getGitSha(defaultValue)` - Gets the short Git SHA of the current HEAD commit
+- Supports custom default values when Git is not available
+
+#### `utils/fileSystem.js`
+Centralized file system operations:
+- `ensureDirectoryForFile(filePath)` - Creates parent directories recursively
+- `loadYaml(filePath)` - Loads and parses YAML files with error handling
+- `loadJson(filePath)` - Loads and parses JSON files with error handling
+- `loadTermsYaml()` - Specialized loader for terms.yaml with comprehensive validation
+
 ### 2. Updated Scripts to Use Shared Utilities
 
 #### `scripts/exportTerms.js`
-- Removed 76 lines of duplicate code (3 functions)
-- Added imports for `normalizeString`, `normalizeArray`, `normalizeTerm` from `utils/normalization.js`
-- Added import for `formatAjvError` from `utils/validation.js`
+- Removed 99 lines of duplicate code (normalization, validation, Git, and file system functions)
+- Added imports for shared utilities
 - Created wrapper function `normalizeTermWithError` to maintain ExporterError compatibility
 
 #### `scripts/validateTerms.js`
-- Removed 20 lines of duplicate code (2 functions)
-- Added imports for `normalizeName` from `utils/normalization.js`
-- Added import for `formatAjvError` from `utils/validation.js`
+- Removed 37 lines of duplicate code (normalization, validation, and file system functions)
+- Added imports for shared utilities
+
+#### `scripts/generateLandingPage.js`
+- Removed 52 lines of duplicate code (Git and file system functions)
+- Added imports for shared utilities
+- Simplified term loading logic
+
+#### `scripts/updateReadmeStats.js`
+- Removed 3 lines of duplicate YAML loading code
+- Added import for shared file system utilities
 
 ### 3. Added Comprehensive Tests
 
@@ -45,16 +64,25 @@ Centralized validation utilities:
 - Tests for `formatAjvError` with arrays (6 tests)
 - Tests for `formatAjvError` with single error objects (7 tests)
 
+#### `tests/git.test.js` (4 tests)
+- Tests for `getGitSha` functionality and default values
+
+#### `tests/fileSystem.test.js` (9 tests)
+- Tests for `ensureDirectoryForFile` (3 tests)
+- Tests for `loadYaml` (2 tests)
+- Tests for `loadJson` (2 tests)
+- Tests for `loadTermsYaml` (2 tests)
+
 ## Results
 
 ### Code Reduction
-- **Total lines removed:** 96 lines of duplicate code
-- **Scripts refactored:** 2 (exportTerms.js, validateTerms.js)
-- **New utility modules:** 2 (normalization.js, validation.js)
+- **Total lines removed:** 191 lines of duplicate code
+- **Scripts refactored:** 4 (exportTerms.js, validateTerms.js, generateLandingPage.js, updateReadmeStats.js)
+- **New utility modules:** 4 (normalization.js, validation.js, git.js, fileSystem.js)
 
 ### Test Coverage
-- **Tests added:** 41 new tests
-- **Total tests passing:** 92 (up from 55)
+- **Tests added:** 54 new tests
+- **Total tests passing:** 105 (up from 55)
 - **Test pass rate:** 100%
 
 ### Verification
@@ -71,18 +99,12 @@ All scripts verified to work correctly:
 
 ## Benefits
 
-1. **Reduced Duplication:** Eliminated 96 lines of duplicate code across 2 scripts
-2. **Improved Maintainability:** Changes to normalization/validation logic now only need to be made in one place
+1. **Reduced Duplication:** Eliminated 191 lines of duplicate code across 4 scripts
+2. **Improved Maintainability:** Changes to utility logic now only need to be made in one place
 3. **Better Testability:** Utility functions are now independently testable with comprehensive test coverage
-4. **Consistency:** All scripts now use identical normalization and validation logic
+4. **Consistency:** All scripts now use identical utility logic
 5. **Reusability:** New scripts can easily import and use these utilities
-
-## Future Improvements
-
-The following functions could be candidates for future consolidation:
-- `getGitSha()` / `getShortSha()` - Git utility functions duplicated across scripts
-- `loadYaml()` / `loadTerms()` - YAML loading functions with similar patterns
-- `ensureDirectoryForFile()` - File system utilities
+6. **Better Organization:** Code is now organized by function (normalization, validation, Git, file system)
 
 ## No Breaking Changes
 
