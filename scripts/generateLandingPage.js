@@ -486,8 +486,8 @@ function generateHeader() {
 // Helper: Generate a single stat card
 function statCard(number, label) {
   return `                <div class="stat-card">
-                    <span class="stat-number">${number}</span>
-                    <span class="stat-label">${label}</span>
+                    <span class="stat-number">${escapeHtml(String(number))}</span>
+                    <span class="stat-label">${escapeHtml(label)}</span>
                 </div>`;
 }
 
@@ -510,16 +510,17 @@ ${statCards.join('\n')}
 
 // Generate recent additions section
 function generateRecentAdditions(stats) {
+  const escapedTerms = stats.recentTerms.map(t => escapeHtml(t)).join(', ');
   return `<!-- RECENT ADDITIONS -->
             <div class="recent-terms">
                 <h2>🆕 Latest Additions</h2>
-                <p>Just added: <strong>${stats.recentTerms.join(', ')}</strong></p>
+                <p>Just added: <strong>${escapedTerms}</strong></p>
             </div>`;
 }
 
 // Helper: Generate scoring list item
 function scoringItem(emoji, text, points) {
-  return `                    <li>${emoji} <strong>${text}</strong> - ${points}</li>`;
+  return `                    <li>${escapeHtml(emoji)} <strong>${escapeHtml(text)}</strong> - ${escapeHtml(points)}</li>`;
 }
 
 // Generate scoring section
@@ -545,8 +546,8 @@ ${items.join('\n')}
 // Helper: Generate a button
 function button(text, href, secondary = false) {
   const className = secondary ? 'button button-secondary' : 'button';
-  return `                <a href="${href}" class="${className}">
-                    ${text}
+  return `                <a href="${escapeHtml(href)}" class="${className}">
+                    ${escapeHtml(text)}
                 </a>`;
 }
 
@@ -571,8 +572,8 @@ function generateFooter(stats) {
   });
   
   return `<p class="last-updated">
-                Last updated: ${lastUpdated} |
-                ${stats.totalTerms} terms and growing! |
+                Last updated: ${escapeHtml(lastUpdated)} |
+                ${escapeHtml(String(stats.totalTerms))} terms and growing! |
                 Made with 💙 by the FOSS community
             </p>`;
 }
