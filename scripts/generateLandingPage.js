@@ -2,6 +2,7 @@
 const fs = require('fs');
 const { execSync } = require('child_process');
 const yaml = require('js-yaml');
+const { scoreTerm } = require('./scoring');
 
 function getShortSha() {
   try {
@@ -95,7 +96,7 @@ function getScoreColor(score) {
 
 // Helper: Generate a single term card
 function generateTermCard(term) {
-  const score = calculateTermScore(term);
+  const { score } = scoreTerm(term);
   const scoreColor = getScoreColor(score);
   
   const parts = [
@@ -136,32 +137,6 @@ function generateTermCards(count = 6) {
   const validTerms = terms.filter(isValidTerm);
   const displayTerms = validTerms.slice(-count).reverse();
   return displayTerms.map(generateTermCard).join('\n');
-}
-
-// Calculate term score (matching your scoring logic)
-function calculateTermScore(term) {
-  let score = 0;
-  
-  // Base: term and definition (20 points)
-  if (term.term && term.definition) score += 20;
-  
-  // Humor (up to 30 points)
-  if (term.humor) {
-    score += Math.min(30, Math.floor(term.humor.length / 10) * 5);
-  }
-  
-  // Explanation (20 points)
-  if (term.explanation) score += 20;
-  
-  // Cross-references (up to 20 points)
-  if (term.see_also && term.see_also.length > 0) {
-    score += Math.min(20, term.see_also.length * 10);
-  }
-  
-  // Tags (10 points)
-  if (term.tags && term.tags.length > 0) score += 10;
-  
-  return score;
 }
 
 // Helper: Generate meta tag

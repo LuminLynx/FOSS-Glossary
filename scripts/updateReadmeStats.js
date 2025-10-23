@@ -2,6 +2,7 @@
 const fs = require('fs');
 const yaml = require('js-yaml');
 const { execSync } = require('child_process');
+const { scoreTerm } = require('./scoring');
 
 function updateReadmeStats() {
   try {
@@ -33,12 +34,7 @@ function updateReadmeStats() {
     // Calculate high scores (terms with 80+ score potential)
     let highScorers = [];
     terms.forEach(term => {
-      let score = 0;
-      if (term.term && term.definition) score += 20;
-      if (term.humor) score += Math.min(30, Math.floor(term.humor.length / 5));
-      if (term.explanation) score += 20;
-      if (term.tags) score += Math.min(10, term.tags.length * 3);
-      if (term.see_also) score += Math.min(20, term.see_also.length * 5);
+      const { score } = scoreTerm(term);
       
       if (score >= 80) {
         highScorers.push({ term: term.term, score });
