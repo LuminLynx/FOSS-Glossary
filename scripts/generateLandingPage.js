@@ -134,10 +134,9 @@ function calculateTermScore(term) {
   return score;
 }
 
-// Generate the full HTML
-const html = `<!DOCTYPE html>
-<html lang="en">
-<head>
+// Generate HTML head section with meta tags
+function generateHead(stats) {
+  return `<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FOSS Glossary - ${stats.totalTerms} Terms and Growing!</title>
@@ -169,7 +168,13 @@ const html = `<!DOCTYPE html>
     <!-- Favicon (optional - add later) -->
     <!-- <link rel="icon" type="image/png" href="assets/favicon.png"> -->
 
-    <style>
+    ${generateStyles()}
+</head>`;
+}
+
+// Generate CSS styles
+function generateStyles() {
+  return `<style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         /* DARK THEME (Default) */
@@ -433,21 +438,26 @@ const html = `<!DOCTYPE html>
             .card { padding: 1.5rem; }
             .term-grid { grid-template-columns: 1fr; }
         }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="card">
-            <div class="logo-section">
+    </style>`;
+}
+
+// Generate logo and header section
+function generateHeader() {
+  return `<div class="logo-section">
                 <div class="logo">
                     <img src="https://raw.githubusercontent.com/LuminLynx/FOSS-Glossary/main/assets/logo.png" alt="FOSS Glossary Logo" />
                 </div>
             </div>
             
             <h1>🚀 FOSS Glossary</h1>
-            <p class="tagline" style="text-align: center; font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">A gamified glossary of Free and Open Source Software terms, with humor, sarcasm, and honest truths.</p>
-            
-            <!-- LIVE STATISTICS -->
+            <p class="tagline" style="text-align: center; font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">A gamified glossary of Free and Open Source Software terms, with humor, sarcasm, and honest truths.</p>`;
+}
+
+// Generate statistics section
+function generateStats(stats) {
+  const humorPercentage = Math.round((stats.termsWithHumor / stats.totalTerms) * 100);
+  
+  return `<!-- LIVE STATISTICS -->
             <div class="live-stats">
                 <div class="stat-card">
                     <span class="stat-number">${stats.totalTerms}</span>
@@ -458,28 +468,28 @@ const html = `<!DOCTYPE html>
                     <span class="stat-label">Funny Terms</span>
                 </div>
                 <div class="stat-card">
-                    <span class="stat-number">${Math.round((stats.termsWithHumor / stats.totalTerms) * 100)}%</span>
+                    <span class="stat-number">${humorPercentage}%</span>
                     <span class="stat-label">Humor Rate</span>
                 </div>
                 <div class="stat-card">
                     <span class="stat-number">${stats.totalTags}</span>
                     <span class="stat-label">Categories</span>
                 </div>
-            </div>
+            </div>`;
+}
 
-            <!-- RECENT ADDITIONS -->
+// Generate recent additions section
+function generateRecentAdditions(stats) {
+  return `<!-- RECENT ADDITIONS -->
             <div class="recent-terms">
                 <h2>🆕 Latest Additions</h2>
                 <p>Just added: <strong>${stats.recentTerms.join(', ')}</strong></p>
-            </div>
+            </div>`;
+}
 
-            <!-- SAMPLE TERMS -->
-            <h2>📖 Recent Terms</h2>
-            <div class="term-grid">
-                ${generateTermCards()}
-            </div>
-
-            <!-- SCORING SYSTEM -->
+// Generate scoring section
+function generateScoringSection() {
+  return `<!-- SCORING SYSTEM -->
             <h2>📊 How Scoring Works</h2>
             <div style="background: rgba(0, 0, 0, 0.3); padding: 1.5rem; border-radius: 10px; margin: 2rem 0;">
                 <ul style="list-style: none; padding: 0;">
@@ -490,9 +500,12 @@ const html = `<!DOCTYPE html>
                     <li>🏷️ <strong>Tags</strong> - 10 points</li>
                 </ul>
                 <p style="margin-top: 1rem; font-weight: bold;">💯 Score 90+ to become a legend!</p>
-            </div>
+            </div>`;
+}
 
-            <!-- CALL TO ACTION -->
+// Generate CTA section
+function generateCTA(stats) {
+  return `<!-- CALL TO ACTION -->
             <div class="cta">
                 <a href="https://github.com/LuminLynx/FOSS-Glossary" class="button">
                     🎮 Contribute on GitHub
@@ -500,16 +513,48 @@ const html = `<!DOCTYPE html>
                 <a href="https://github.com/LuminLynx/FOSS-Glossary/blob/main/terms.yaml" class="button button-secondary">
                     📝 View All ${stats.totalTerms} Terms
                 </a>
-            </div>
+            </div>`;
+}
 
-            <p class="last-updated">
-                Last updated: ${new Date().toLocaleString('en-US', {
-                    dateStyle: 'medium',
-                    timeStyle: 'short'
-                })} |
+// Generate footer with last updated info
+function generateFooter(stats) {
+  const lastUpdated = new Date().toLocaleString('en-US', {
+    dateStyle: 'medium',
+    timeStyle: 'short'
+  });
+  
+  return `<p class="last-updated">
+                Last updated: ${lastUpdated} |
                 ${stats.totalTerms} terms and growing! |
                 Made with 💙 by the FOSS community
-            </p>
+            </p>`;
+}
+
+// Generate the full HTML by composing sections
+function generateHTML(stats, artifactVersion) {
+  return `<!DOCTYPE html>
+<html lang="en">
+${generateHead(stats)}
+<body>
+    <div class="container">
+        <div class="card">
+            ${generateHeader()}
+            
+            ${generateStats(stats)}
+
+            ${generateRecentAdditions(stats)}
+
+            <!-- SAMPLE TERMS -->
+            <h2>📖 Recent Terms</h2>
+            <div class="term-grid">
+                ${generateTermCards()}
+            </div>
+
+            ${generateScoringSection()}
+
+            ${generateCTA(stats)}
+
+            ${generateFooter(stats)}
         </div>
     </div>
     <script>
@@ -517,6 +562,9 @@ const html = `<!DOCTYPE html>
     </script>
 </body>
 </html>`;
+}
+
+const html = generateHTML(stats, artifactVersion);
 
 // Write the file with error handling
 function writeOutputFile() {
