@@ -1,12 +1,35 @@
 /**
  * Unified scoring module for FOSS Glossary terms
  * This module provides consistent scoring logic across all scripts
+ * 
+ * Scoring Formula:
+ * - Base Score: 20 points (requires both term.term and term.definition)
+ * - Humor: min(30, floor(humor.length / 5)) points
+ * - Explanation: 20 points (requires explanation.length > 20)
+ * - Tags: min(10, tags.length × 3) points
+ * - Cross-references: min(20, see_also.length × 5) points
+ * - Total: min(100, sum of all components)
+ * 
+ * Achievement Badges:
+ * - 😂 Comedy Gold: humor length > 100 characters
+ * - 🔥 Flame Warrior: controversy_level = 'high'
+ * - 🌶️ Spicy Take: controversy_level = 'medium'
+ * - 💯 Perfectionist: score >= 90
+ * - ⭐ Star Contributor: score >= 80
+ * - 💪 Strong Entry: score >= 70
  */
 
 /**
  * Calculate the score for a glossary term
  * @param {Object} term - The term object to score
- * @returns {Object} - Object containing score (number) and badges (array)
+ * @param {string} term.term - The term name (required for base score)
+ * @param {string} term.definition - The term definition (required for base score)
+ * @param {string} [term.humor] - Humorous take on the term (1 point per 5 chars, max 30)
+ * @param {string} [term.explanation] - Detailed explanation (20 points if length > 20)
+ * @param {string[]} [term.tags] - Category tags (3 points each, max 10 points)
+ * @param {string[]} [term.see_also] - Cross-references (5 points each, max 20 points)
+ * @param {string} [term.controversy_level] - 'high' or 'medium' for controversy badges
+ * @returns {Object} Object containing score (number 0-100) and badges (string array)
  */
 function scoreTerm(term) {
   let score = 0;
@@ -66,8 +89,23 @@ function scoreTerm(term) {
 
 /**
  * Get a detailed breakdown of scoring components for a term
+ * This function returns the individual score components and their maximum possible values,
+ * useful for displaying scoring details to contributors.
+ * 
  * @param {Object} term - The term object to analyze
- * @returns {Object} - Object containing detailed scoring breakdown
+ * @param {string} term.term - The term name
+ * @param {string} term.definition - The term definition
+ * @param {string} [term.humor] - Humorous take on the term
+ * @param {string} [term.explanation] - Detailed explanation
+ * @param {string[]} [term.tags] - Category tags
+ * @param {string[]} [term.see_also] - Cross-references
+ * @returns {Object} Object containing detailed scoring breakdown
+ * @returns {number} return.base - Points earned for base definition (0-20)
+ * @returns {number} return.humor - Points earned for humor (0-30)
+ * @returns {number} return.explanation - Points earned for explanation (0-20)
+ * @returns {number} return.tags - Points earned for tags (0-10)
+ * @returns {number} return.crossReferences - Points earned for cross-references (0-20)
+ * @returns {Object} return.maxScores - Maximum possible score for each component
  */
 function getScoreBreakdown(term) {
   const breakdown = {

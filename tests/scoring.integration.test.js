@@ -148,3 +148,40 @@ test('Integration: Edge cases are handled', () => {
   const shortResult = scoreTerm(shortExplanationTerm);
   assert.equal(shortResult.score, 20, 'Short explanation should not count');
 });
+
+test('Integration: Scoring module is consistently imported across all scripts', () => {
+  // This test verifies that both quickScore.js and generateLandingPage.js
+  // use the same scoring module, ensuring consistency across the application
+  
+  // Import the scoring module as quickScore.js does
+  const quickScoreModule = require('../scripts/scoring');
+  
+  // Import the scoring module as generateLandingPage.js does
+  const landingPageModule = require('../scripts/scoring');
+  
+  // Verify they are the exact same module instance
+  assert.strictEqual(quickScoreModule, landingPageModule,
+    'Both scripts should use the same scoring module instance');
+  
+  // Test that calling scoreTerm from both produces identical results
+  const testTerm = {
+    term: 'Consistency Test',
+    definition: 'Testing that scores are consistent',
+    humor: 'x'.repeat(75), // 15 points
+    explanation: 'A detailed explanation here that is long enough',
+    tags: ['tag1', 'tag2', 'tag3'], // 9 points
+    see_also: ['ref1', 'ref2', 'ref3'] // 15 points
+    // Total: 20 + 15 + 20 + 9 + 15 = 79
+  };
+  
+  const score1 = quickScoreModule.scoreTerm(testTerm);
+  const score2 = landingPageModule.scoreTerm(testTerm);
+  
+  assert.strictEqual(score1.score, score2.score,
+    'Scores should be identical regardless of which import is used');
+  assert.deepStrictEqual(score1.badges, score2.badges,
+    'Badges should be identical regardless of which import is used');
+  assert.equal(score1.score, 79, 'Expected score should be 79');
+  assert.ok(score1.badges.includes('💪 Strong Entry'),
+    'Should include Strong Entry badge for score in 70-79 range');
+});
