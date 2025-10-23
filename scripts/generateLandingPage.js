@@ -22,72 +22,14 @@
  */
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
-const yaml = require('js-yaml');
 const Handlebars = require('handlebars');
 const { scoreTerm } = require('./scoring');
+const { getGitSha } = require('../utils/git');
+const { loadTermsYaml } = require('../utils/fileSystem');
 
-function getShortSha() {
-  try {
-    return execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim();
-  } catch {
-    return 'dev';
-  }
-}
+const artifactVersion = getGitSha('dev');
 
-const artifactVersion = getShortSha();
-
-// Load terms with error handling
-function loadTerms() {
-  try {
-    // Check if file exists
-    if (!fs.existsSync('terms.yaml')) {
-      console.error('❌ Error: terms.yaml file not found');
-      console.error('   Make sure you are running this script from the repository root directory.');
-      process.exit(1);
-    }
-
-    // Read file
-    let yamlContent;
-    try {
-      yamlContent = fs.readFileSync('terms.yaml', 'utf8');
-    } catch (error) {
-      console.error('❌ Error reading terms.yaml file:', error.message);
-      process.exit(1);
-    }
-
-    // Parse YAML
-    let termsData;
-    try {
-      termsData = yaml.load(yamlContent);
-    } catch (error) {
-      console.error('❌ Error parsing terms.yaml:', error.message);
-      if (error.mark) {
-        console.error(`   Line ${error.mark.line + 1}, Column ${error.mark.column + 1}`);
-      }
-      process.exit(1);
-    }
-
-    // Validate structure
-    if (!termsData || typeof termsData !== 'object') {
-      console.error('❌ Error: terms.yaml must contain a valid YAML object');
-      process.exit(1);
-    }
-
-    if (!Array.isArray(termsData.terms)) {
-      console.error('❌ Error: terms.yaml must contain a "terms" array');
-      process.exit(1);
-    }
-
-    return termsData.terms;
-  } catch (error) {
-    // Catch any unexpected errors
-    console.error('❌ Error: Unexpected error loading terms:', error.message);
-    process.exit(1);
-  }
-}
-
-const terms = loadTerms();
+const terms = loadTermsYaml();
 
 // Calculate statistics
 const stats = {

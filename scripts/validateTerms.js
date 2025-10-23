@@ -1,47 +1,11 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
-const yaml = require('js-yaml');
 const Ajv = require('ajv');
 const addFormats = require('ajv-formats');
-
-function loadYaml(filePath) {
-  try {
-    return yaml.load(fs.readFileSync(filePath, 'utf8'));
-  } catch (error) {
-    console.error(`❌ Error: Failed to read ${filePath}:`, error.message);
-    process.exit(1);
-  }
-}
-
-function loadSchema(path) {
-  try {
-    return JSON.parse(fs.readFileSync(path, 'utf8'));
-  } catch (error) {
-    console.error(`❌ Error: Failed to read ${path}:`, error.message);
-    process.exit(1);
-  }
-}
-
-function formatAjvError(error) {
-  const location = error.instancePath ? error.instancePath : '(root)';
-  const message = error.message || 'validation error';
-  if (error.keyword === 'additionalProperties' && error.params?.additionalProperty) {
-    return `${location} has unexpected property '${error.params.additionalProperty}'`;
-  }
-  if (error.keyword === 'required' && error.params?.missingProperty) {
-    return `${location} missing required property '${error.params.missingProperty}'`;
-  }
-  if (error.keyword === 'minLength' && error.params?.limit) {
-    return `${location} ${message} (minLength ${error.params.limit})`;
-  }
-  return `${location} ${message}`;
-}
-
-function normalizeName(value) {
-  if (typeof value !== 'string') return '';
-  return value.toLowerCase().replace(/[^a-z0-9]+/g, '');
-}
+const { normalizeName } = require('../utils/normalization');
+const { formatAjvError } = require('../utils/validation');
+const { loadYaml, loadJson } = require('../utils/fileSystem');
 
 function resolveBasePathFromArgs() {
   const args = process.argv.slice(2);
@@ -77,7 +41,7 @@ function resolveBasePathFromArgs() {
 
 function main() {
   const data = loadYaml('terms.yaml');
-  const schema = loadSchema('schema.json');
+  const schema = loadJson('schema.json');
 
   const basePath = resolveBasePathFromArgs();
   let baseTerms = [];
