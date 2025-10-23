@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    
+    <!-- Primary Meta Tags -->
+    {{#each metaTags.primary}}
+    <meta name="{{name}}" content="{{content}}">
+    {{/each}}
+    <link rel="canonical" href="{{canonicalUrl}}">
+    
+    <!-- Open Graph / Facebook -->
+    {{#each metaTags.og}}
+    <meta property="{{property}}" content="{{content}}">
+    {{/each}}
+
+    <!-- Twitter -->
+    {{#each metaTags.twitter}}
+    <meta name="{{name}}" content="{{content}}">
+    {{/each}}
+ 
+    <!-- Favicon (optional - add later) -->
+    <!-- <link rel="icon" type="image/png" href="assets/favicon.png"> -->
+
+    <style>{{{styles}}}</style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="logo-section">
+                <div class="logo">
+                    <img src="https://raw.githubusercontent.com/LuminLynx/FOSS-Glossary/main/assets/logo.png" alt="FOSS Glossary Logo" />
+                </div>
+            </div>
+            
+            <h1>🚀 FOSS Glossary</h1>
+            <p class="tagline" style="text-align: center; font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">A gamified glossary of Free and Open Source Software terms, with humor, sarcasm, and honest truths.</p>
+            
+            <!-- LIVE STATISTICS -->
+            <div class="live-stats">
+                {{#each statCards}}
+                <div class="stat-card">
+                    <span class="stat-number">{{number}}</span>
+                    <span class="stat-label">{{label}}</span>
+                </div>
+                {{/each}}
+            </div>
+
+            <!-- RECENT ADDITIONS -->
+            <div class="recent-terms">
+                <h2>🆕 Latest Additions</h2>
+                <p>Just added: <strong>{{recentTermsList}}</strong></p>
+            </div>
+
+            <!-- SAMPLE TERMS -->
+            <h2>📖 Recent Terms</h2>
+            <div class="term-grid">
+                {{#each termCards}}
+                <div class="term-card">
+                    <div class="term-header">
+                        <h3>{{term}}</h3>
+                        <span class="term-score" style="color: {{scoreColor}}">{{score}}/100</span>
+                    </div>
+                    <p class="term-definition">{{definition}}</p>
+                    {{#if humor}}
+                    <p class="term-humor">😂 "{{humor}}"</p>
+                    {{/if}}
+                    {{#if tags.length}}
+                    <div class="term-tags">
+                        {{#each tags}}
+                        <span class="tag">{{this}}</span>
+                        {{/each}}
+                    </div>
+                    {{/if}}
+                </div>
+                {{/each}}
+            </div>
+
+            <!-- SCORING SYSTEM -->
+            <h2>📊 How Scoring Works</h2>
+            <div style="background: rgba(0, 0, 0, 0.3); padding: 1.5rem; border-radius: 10px; margin: 2rem 0;">
+                <ul style="list-style: none; padding: 0;">
+                    {{#each scoringItems}}
+                    <li>{{emoji}} <strong>{{text}}</strong> - {{points}}</li>
+                    {{/each}}
+                </ul>
+                <p style="margin-top: 1rem; font-weight: bold;">💯 Score 90+ to become a legend!</p>
+            </div>
+
+            <!-- CALL TO ACTION -->
+            <div class="cta">
+                {{#each ctaButtons}}
+                <a href="{{href}}" class="{{className}}">
+                    {{text}}
+                </a>
+                {{/each}}
+            </div>
+
+            <p class="last-updated">
+                Last updated: {{lastUpdated}} |
+                {{stats.totalTerms}} terms and growing! |
+                Made with 💙 by the FOSS community
+            </p>
+        </div>
+    </div>
+    <script>
+        window.__TERMS_JSON_URL = './terms.json?ver={{artifactVersion}}';
+    </script>
+</body>
+</html>

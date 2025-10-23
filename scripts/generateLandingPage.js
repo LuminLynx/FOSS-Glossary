@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 const fs = require('fs');
+const path = require('path');
 const { execSync } = require('child_process');
 const yaml = require('js-yaml');
+const Handlebars = require('handlebars');
 const { scoreTerm } = require('./scoring');
 
 function getShortSha() {
@@ -87,6 +89,9 @@ function escapeHtml(text) {
     .replace(/'/g, '&#039;');
 }
 
+// Register Handlebars helper for HTML escaping (used in template)
+Handlebars.registerHelper('escapeHtml', escapeHtml);
+
 // Helper: Get score color based on score value
 function getScoreColor(score) {
   if (score >= 80) return '#00d4e4';
@@ -94,31 +99,21 @@ function getScoreColor(score) {
   return '#ffd93d';
 }
 
-// Helper: Generate a single term card
-function generateTermCard(term) {
+// Helper: Prepare a single term card data
+function prepareTermCardData(term) {
   const { score } = scoreTerm(term);
   const scoreColor = getScoreColor(score);
   
-  const parts = [
-    '    <div class="term-card">',
-    '      <div class="term-header">',
-    `        <h3>${escapeHtml(term.term)}</h3>`,
-    `        <span class="term-score" style="color: ${scoreColor}">${score}/100</span>`,
-    '      </div>',
-    `      <p class="term-definition">${escapeHtml(term.definition)}</p>`
-  ];
-  
-  if (term.humor) {
-    parts.push(`      <p class="term-humor">😂 "${escapeHtml(term.humor)}"</p>`);
-  }
-  
-  if (term.tags && term.tags.length > 0) {
-    const tagSpans = term.tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('');
-    parts.push(`      <div class="term-tags">${tagSpans}</div>`);
-  }
-  
-  parts.push('    </div>');
-  return parts.join('\n');
+  return {
+    term: term.term,  // Let Handlebars escape
+    score,
+    scoreColor,
+    definition: term.definition,  // Let Handlebars escape
+    humor: term.humor || null,  // Let Handlebars escape
+    tags: (term.tags && term.tags.length > 0) 
+      ? term.tags  // Let Handlebars escape
+      : []
+  };
 }
 
 // Helper: Validate if a term is displayable
@@ -132,71 +127,44 @@ function isValidTerm(term) {
     term.definition.trim() !== '';
 }
 
-// Generate term cards HTML
-function generateTermCards(count = 6) {
+// Prepare term cards data
+function prepareTermCardsData(count = 6) {
   const validTerms = terms.filter(isValidTerm);
   const displayTerms = validTerms.slice(-count).reverse();
-  return displayTerms.map(generateTermCard).join('\n');
+  return displayTerms.map(prepareTermCardData);
 }
 
-// Helper: Generate meta tag
-function metaTag(name, content, property = false) {
-  const attr = property ? 'property' : 'name';
-  return `    <meta ${attr}="${name}" content="${escapeHtml(content)}">`;
-}
-
-// Generate HTML head section with meta tags
-function generateHead(stats) {
-  const title = `FOSS Glossary - ${stats.totalTerms} Terms and Growing!`;
+// Prepare meta tags data
+function prepareMetaTags(stats) {
   const description = `A gamified glossary of FOSS terms with humor. ${stats.totalTerms} terms defined by the community! Score points, unlock achievements, and learn with fun.`;
   const url = 'https://luminlynx.github.io/FOSS-Glossary/';
   const imageUrl = 'https://raw.githubusercontent.com/LuminLynx/FOSS-Glossary/main/assets/twitter-card.png';
   
-  const metaTags = [
-    // Primary Meta Tags
-    metaTag('title', 'FOSS Glossary - Gamified Open Source Terms'),
-    metaTag('description', description),
-    metaTag('keywords', 'FOSS, open source, glossary, gamification, github, programming, developer, community'),
-    metaTag('author', 'LuminLynx'),
-    
-    // Open Graph / Facebook
-    metaTag('og:type', 'website', true),
-    metaTag('og:url', url, true),
-    metaTag('og:title', 'FOSS Glossary - Gamified Open Source Terms', true),
-    metaTag('og:description', `Score points, unlock achievements, and learn FOSS terms with humor! ${stats.totalTerms} terms and growing.`, true),
-    metaTag('og:image', imageUrl, true),
-    metaTag('og:image:width', '1200', true),
-    metaTag('og:image:height', '628', true),
-    metaTag('og:site_name', 'FOSS Glossary', true),
-    
-    // Twitter
-    metaTag('twitter:card', 'summary_large_image'),
-    metaTag('twitter:url', url),
-    metaTag('twitter:title', 'FOSS Glossary - Gamified Open Source Terms'),
-    metaTag('twitter:description', `Score points, unlock achievements, and learn FOSS terms with humor! ${stats.totalTerms} terms and growing.`),
-    metaTag('twitter:image', imageUrl)
-  ];
-  
-  return `<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${title}</title>
-    
-    <!-- Primary Meta Tags -->
-${metaTags.slice(0, 4).join('\n')}
-    <link rel="canonical" href="${url}">
-    
-    <!-- Open Graph / Facebook -->
-${metaTags.slice(4, 12).join('\n')}
-
-    <!-- Twitter -->
-${metaTags.slice(12).join('\n')}
- 
-    <!-- Favicon (optional - add later) -->
-    <!-- <link rel="icon" type="image/png" href="assets/favicon.png"> -->
-
-    ${generateStyles()}
-</head>`;
+  return {
+    primary: [
+      { name: 'title', content: 'FOSS Glossary - Gamified Open Source Terms' },
+      { name: 'description', content: description },
+      { name: 'keywords', content: 'FOSS, open source, glossary, gamification, github, programming, developer, community' },
+      { name: 'author', content: 'LuminLynx' }
+    ],
+    og: [
+      { property: 'og:type', content: 'website' },
+      { property: 'og:url', content: url },
+      { property: 'og:title', content: 'FOSS Glossary - Gamified Open Source Terms' },
+      { property: 'og:description', content: `Score points, unlock achievements, and learn FOSS terms with humor! ${stats.totalTerms} terms and growing.` },
+      { property: 'og:image', content: imageUrl },
+      { property: 'og:image:width', content: '1200' },
+      { property: 'og:image:height', content: '628' },
+      { property: 'og:site_name', content: 'FOSS Glossary' }
+    ],
+    twitter: [
+      { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:url', content: url },
+      { name: 'twitter:title', content: 'FOSS Glossary - Gamified Open Source Terms' },
+      { name: 'twitter:description', content: `Score points, unlock achievements, and learn FOSS terms with humor! ${stats.totalTerms} terms and growing.` },
+      { name: 'twitter:image', content: imageUrl }
+    ]
+  };
 }
 
 // CSS styles as a constant for better maintainability
@@ -466,150 +434,81 @@ const CSS_STYLES = `
         }
 `;
 
-// Generate CSS styles
-function generateStyles() {
-  return `<style>${CSS_STYLES}</style>`;
-}
-
-// Generate logo and header section
-function generateHeader() {
-  return `<div class="logo-section">
-                <div class="logo">
-                    <img src="https://raw.githubusercontent.com/LuminLynx/FOSS-Glossary/main/assets/logo.png" alt="FOSS Glossary Logo" />
-                </div>
-            </div>
-            
-            <h1>🚀 FOSS Glossary</h1>
-            <p class="tagline" style="text-align: center; font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">A gamified glossary of Free and Open Source Software terms, with humor, sarcasm, and honest truths.</p>`;
-}
-
-// Helper: Generate a single stat card
-function statCard(number, label) {
-  return `                <div class="stat-card">
-                    <span class="stat-number">${escapeHtml(String(number))}</span>
-                    <span class="stat-label">${escapeHtml(label)}</span>
-                </div>`;
-}
-
-// Generate statistics section
-function generateStats(stats) {
+// Prepare stat cards data
+function prepareStatCardsData(stats) {
   const humorPercentage = Math.round((stats.termsWithHumor / stats.totalTerms) * 100);
   
-  const statCards = [
-    statCard(stats.totalTerms, 'Total Terms'),
-    statCard(stats.termsWithHumor, 'Funny Terms'),
-    statCard(`${humorPercentage}%`, 'Humor Rate'),
-    statCard(stats.totalTags, 'Categories')
+  return [
+    { number: String(stats.totalTerms), label: 'Total Terms' },
+    { number: String(stats.termsWithHumor), label: 'Funny Terms' },
+    { number: `${humorPercentage}%`, label: 'Humor Rate' },
+    { number: String(stats.totalTags), label: 'Categories' }
   ];
-  
-  return `<!-- LIVE STATISTICS -->
-            <div class="live-stats">
-${statCards.join('\n')}
-            </div>`;
 }
 
-// Generate recent additions section
-function generateRecentAdditions(stats) {
-  const escapedTerms = stats.recentTerms.map(t => escapeHtml(t)).join(', ');
-  return `<!-- RECENT ADDITIONS -->
-            <div class="recent-terms">
-                <h2>🆕 Latest Additions</h2>
-                <p>Just added: <strong>${escapedTerms}</strong></p>
-            </div>`;
-}
-
-// Helper: Generate scoring list item
-function scoringItem(emoji, text, points) {
-  return `                    <li>${escapeHtml(emoji)} <strong>${escapeHtml(text)}</strong> - ${escapeHtml(points)}</li>`;
-}
-
-// Generate scoring section
-function generateScoringSection() {
-  const items = [
-    scoringItem('✅', 'Base Definition', '20 points'),
-    scoringItem('😂', 'Humor', 'Up to 30 points (be funny!)'),
-    scoringItem('📝', 'Explanation', '20 points'),
-    scoringItem('🔗', 'Cross-references', 'Up to 20 points'),
-    scoringItem('🏷️', 'Tags', '10 points')
+// Prepare scoring items data
+function prepareScoringItemsData() {
+  return [
+    { emoji: '✅', text: 'Base Definition', points: '20 points' },
+    { emoji: '😂', text: 'Humor', points: 'Up to 30 points (be funny!)' },
+    { emoji: '📝', text: 'Explanation', points: '20 points' },
+    { emoji: '🔗', text: 'Cross-references', points: 'Up to 20 points' },
+    { emoji: '🏷️', text: 'Tags', points: '10 points' }
   ];
-  
-  return `<!-- SCORING SYSTEM -->
-            <h2>📊 How Scoring Works</h2>
-            <div style="background: rgba(0, 0, 0, 0.3); padding: 1.5rem; border-radius: 10px; margin: 2rem 0;">
-                <ul style="list-style: none; padding: 0;">
-${items.join('\n')}
-                </ul>
-                <p style="margin-top: 1rem; font-weight: bold;">💯 Score 90+ to become a legend!</p>
-            </div>`;
 }
 
-// Helper: Generate a button
-function button(text, href, secondary = false) {
-  const className = secondary ? 'button button-secondary' : 'button';
-  return `                <a href="${escapeHtml(href)}" class="${className}">
-                    ${escapeHtml(text)}
-                </a>`;
-}
-
-// Generate CTA section
-function generateCTA(stats) {
-  const buttons = [
-    button('🎮 Contribute on GitHub', 'https://github.com/LuminLynx/FOSS-Glossary'),
-    button(`📝 View All ${stats.totalTerms} Terms`, 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/terms.yaml', true)
+// Prepare CTA buttons data
+function prepareCTAButtonsData(stats) {
+  return [
+    {
+      text: '🎮 Contribute on GitHub',
+      href: 'https://github.com/LuminLynx/FOSS-Glossary',
+      className: 'button'
+    },
+    {
+      text: `📝 View All ${stats.totalTerms} Terms`,
+      href: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/terms.yaml',
+      className: 'button button-secondary'
+    }
   ];
-  
-  return `<!-- CALL TO ACTION -->
-            <div class="cta">
-${buttons.join('\n')}
-            </div>`;
 }
 
-// Generate footer with last updated info
-function generateFooter(stats) {
-  const lastUpdated = new Date().toLocaleString('en-US', {
-    dateStyle: 'medium',
-    timeStyle: 'short'
-  });
-  
-  return `<p class="last-updated">
-                Last updated: ${escapeHtml(lastUpdated)} |
-                ${escapeHtml(String(stats.totalTerms))} terms and growing! |
-                Made with 💙 by the FOSS community
-            </p>`;
+// Load and compile the Handlebars template
+function loadTemplate() {
+  try {
+    const templatePath = path.join(__dirname, '..', 'templates', 'landing-page.hbs');
+    const templateSource = fs.readFileSync(templatePath, 'utf8');
+    return Handlebars.compile(templateSource);
+  } catch (error) {
+    console.error('❌ Error loading template:', error.message);
+    process.exit(1);
+  }
 }
 
-// Generate the full HTML by composing sections
+// Generate HTML using Handlebars template
 function generateHTML(stats, artifactVersion) {
-  return `<!DOCTYPE html>
-<html lang="en">
-${generateHead(stats)}
-<body>
-    <div class="container">
-        <div class="card">
-            ${generateHeader()}
-            
-            ${generateStats(stats)}
-
-            ${generateRecentAdditions(stats)}
-
-            <!-- SAMPLE TERMS -->
-            <h2>📖 Recent Terms</h2>
-            <div class="term-grid">
-                ${generateTermCards()}
-            </div>
-
-            ${generateScoringSection()}
-
-            ${generateCTA(stats)}
-
-            ${generateFooter(stats)}
-        </div>
-    </div>
-    <script>
-        window.__TERMS_JSON_URL = './terms.json?ver=${artifactVersion}';
-    </script>
-</body>
-</html>`;
+  const template = loadTemplate();
+  
+  // Prepare all data for the template
+  const templateData = {
+    title: `FOSS Glossary - ${stats.totalTerms} Terms and Growing!`,
+    canonicalUrl: 'https://luminlynx.github.io/FOSS-Glossary/',
+    metaTags: prepareMetaTags(stats),
+    styles: CSS_STYLES,  // Use triple-braces in template for unescaped CSS
+    statCards: prepareStatCardsData(stats),
+    recentTermsList: stats.recentTerms.join(', '),  // Let Handlebars escape
+    termCards: prepareTermCardsData(),
+    scoringItems: prepareScoringItemsData(),
+    ctaButtons: prepareCTAButtonsData(stats),
+    lastUpdated: new Date().toLocaleString('en-US', {
+      dateStyle: 'medium',
+      timeStyle: 'short'
+    }),
+    stats,
+    artifactVersion
+  };
+  
+  return template(templateData);
 }
 
 const html = generateHTML(stats, artifactVersion);
