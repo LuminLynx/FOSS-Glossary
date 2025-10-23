@@ -397,3 +397,37 @@ test('normalizeName: returns empty string for string with only special character
   assert.equal(normalizeName('!!!'), '');
   assert.equal(normalizeName('   '), '');
 });
+
+// Tests for Unicode normalization
+test('normalizeName: handles Unicode normalization - NFC and NFD forms produce same result', () => {
+  // café with precomposed é (NFC form)
+  const nfc = 'café';
+  // café with decomposed e + combining acute accent (NFD form)
+  const nfd = 'cafe\u0301';
+  
+  assert.equal(normalizeName(nfc), normalizeName(nfd), 'NFC and NFD forms should normalize to the same value');
+});
+
+test('normalizeName: handles Unicode normalization - removes accents consistently', () => {
+  const nfc = 'café';
+  const nfd = 'cafe\u0301';
+  
+  // Both should normalize to 'caf' (accented e is removed as non-alphanumeric)
+  assert.equal(normalizeName(nfc), 'caf');
+  assert.equal(normalizeName(nfd), 'caf');
+});
+
+test('normalizeName: handles various Unicode accented characters', () => {
+  // Test various accented characters in both forms produce same result
+  assert.equal(normalizeName('naïve'), normalizeName('nai\u0308ve'));
+  assert.equal(normalizeName('résumé'), normalizeName('re\u0301sume\u0301'));
+  assert.equal(normalizeName('Zürich'), normalizeName('Zu\u0308rich'));
+});
+
+test('normalizeName: handles Unicode normalization with mixed case', () => {
+  const nfc = 'Café';
+  const nfd = 'Cafe\u0301';
+  
+  assert.equal(normalizeName(nfc), normalizeName(nfd));
+  assert.equal(normalizeName(nfc), 'caf');
+});
