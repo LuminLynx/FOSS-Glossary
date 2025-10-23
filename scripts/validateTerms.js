@@ -1,29 +1,11 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
-const yaml = require('js-yaml');
 const Ajv = require('ajv');
 const addFormats = require('ajv-formats');
 const { normalizeName } = require('../utils/normalization');
 const { formatAjvError } = require('../utils/validation');
-
-function loadYaml(filePath) {
-  try {
-    return yaml.load(fs.readFileSync(filePath, 'utf8'));
-  } catch (error) {
-    console.error(`❌ Error: Failed to read ${filePath}:`, error.message);
-    process.exit(1);
-  }
-}
-
-function loadSchema(path) {
-  try {
-    return JSON.parse(fs.readFileSync(path, 'utf8'));
-  } catch (error) {
-    console.error(`❌ Error: Failed to read ${path}:`, error.message);
-    process.exit(1);
-  }
-}
+const { loadYaml, loadJson } = require('../utils/fileSystem');
 
 function resolveBasePathFromArgs() {
   const args = process.argv.slice(2);
@@ -59,7 +41,7 @@ function resolveBasePathFromArgs() {
 
 function main() {
   const data = loadYaml('terms.yaml');
-  const schema = loadSchema('schema.json');
+  const schema = loadJson('schema.json');
 
   const basePath = resolveBasePathFromArgs();
   let baseTerms = [];

@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 const fs = require('fs');
-const yaml = require('js-yaml');
 const { execSync } = require('child_process');
 const { scoreTerm } = require('./scoring');
+const { loadYaml } = require('../utils/fileSystem');
 
 function updateReadmeStats() {
   try {
     // Load terms
-    const termsData = yaml.load(fs.readFileSync('terms.yaml', 'utf8'));
+    const termsData = loadYaml('terms.yaml');
     const terms = termsData.terms || [];
     
     // Calculate stats

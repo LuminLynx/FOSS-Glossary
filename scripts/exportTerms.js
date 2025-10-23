@@ -11,24 +11,18 @@ const addFormats = require('ajv-formats');
 const yamlSchema = require('../schema.json');
 const { normalizeString, normalizeArray, normalizeTerm } = require('../utils/normalization');
 const { formatAjvError } = require('../utils/validation');
+const { getGitSha } = require('../utils/git');
+const { ensureDirectoryForFile } = require('../utils/fileSystem');
 const ONLY_IF_NEW = process.argv.includes('--only-if-new');
 const OUT_PATH = 'docs/terms.json';  // serve via GitHub Pages
 const MANIFEST_PATH = '.terms-slugs.txt';
-
-function resolveVersion() {
-  try {
-    return execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim();
-  } catch {
-    return 'unknown';
-  }
-}
 
 function buildExportPayload(yamlText) {
   const src = yaml.load(yamlText) || {};
   const terms = Array.isArray(src.terms) ? src.terms : [];
 
   return {
-    version: resolveVersion(),
+    version: getGitSha(),
     generated_at: new Date().toISOString(),
     terms_count: terms.length,
     terms
@@ -171,21 +165,6 @@ function checkSizeLimit(serializedJson, logger = console) {
     return true;
   }
   return false;
-}
-
-function getGitSha() {
-  try {
-    return execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim();
-  } catch {
-    return 'unknown';
-  }
-}
-
-function ensureDirectoryForFile(filePath) {
-  const dir = path.dirname(filePath);
-  if (dir && dir !== '.') {
-    fs.mkdirSync(dir, { recursive: true });
-  }
 }
 
 function extractSlugsFromYaml(yamlText) {
