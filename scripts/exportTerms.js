@@ -245,6 +245,7 @@ function checkSizeLimit(serializedJson, logger = console) {
  * Extract slugs from YAML text
  * Parses YAML and extracts normalized slugs from terms array
  * Returns empty array if parsing fails or structure is invalid
+ * Logs warnings when failures occur to aid debugging
  * 
  * @param {string} yamlText - Raw YAML content
  * @returns {string[]} Array of normalized slug strings
@@ -253,12 +254,14 @@ function extractSlugsFromYaml(yamlText) {
   try {
     const parsed = yaml.load(yamlText);
     if (!parsed || typeof parsed !== 'object' || !Array.isArray(parsed.terms)) {
+      console.warn('⚠️ Warning: extractSlugsFromYaml - Invalid YAML structure: missing or invalid "terms" array');
       return [];
     }
     return parsed.terms
       .map((term) => normalizeString(term?.slug))
       .filter(Boolean);
-  } catch {
+  } catch (error) {
+    console.warn(`⚠️ Warning: extractSlugsFromYaml - Failed to parse YAML: ${error.message}`);
     return [];
   }
 }
