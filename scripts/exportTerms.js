@@ -74,14 +74,14 @@ function parseArgs(argv) {
     } else if (arg === '--out') {
       const next = argv[i + 1];
       if (!next) {
-        throw new ExporterError('Missing value for --out');
+        throw new ExporterError('Error: Missing value for --out');
       }
       options.outPath = next;
       i += 1;
     } else if (arg.startsWith('--out=')) {
       options.outPath = arg.slice('--out='.length);
     } else {
-      throw new ExporterError(`Unknown flag: ${arg}`);
+      throw new ExporterError(`Error: Unknown flag: ${arg}`);
     }
   }
 
@@ -132,7 +132,7 @@ function normalizeArray(value) {
 
 function normalizeTerm(rawTerm) {
   if (!rawTerm || typeof rawTerm !== 'object') {
-    throw new ExporterError('Each term must be an object.');
+    throw new ExporterError('Error: Each term must be an object');
   }
 
   const slug = normalizeString(rawTerm.slug);
@@ -140,7 +140,7 @@ function normalizeTerm(rawTerm) {
   const definition = normalizeString(rawTerm.definition);
 
   if (!slug || !term || !definition) {
-    throw new ExporterError('Terms require slug, term, and definition.');
+    throw new ExporterError('Error: Terms require slug, term, and definition');
   }
 
   const normalized = {
@@ -188,7 +188,7 @@ function sortTerms(terms) {
 
 function prepareTerms(rawTerms) {
   if (!Array.isArray(rawTerms)) {
-    throw new ExporterError('Root "terms" must be an array.');
+    throw new ExporterError('Error: Root "terms" must be an array');
   }
 
   const normalized = rawTerms.map(normalizeTerm);
@@ -220,7 +220,7 @@ function buildDocument(terms, metadata = {}) {
 function buildExportDocumentFromYaml(yamlText, metadata) {
   const parsed = yaml.load(yamlText);
   if (!parsed || typeof parsed !== 'object') {
-    throw new ExporterError('terms.yaml must contain an object with a terms array.');
+    throw new ExporterError('Error: terms.yaml must contain an object with a terms array');
   }
 
   const terms = prepareTerms(parsed.terms);
@@ -235,7 +235,7 @@ function serializeDocument(document, { pretty = false } = {}) {
 function checkSizeLimit(serializedJson, logger = console) {
   const bytes = Buffer.byteLength(serializedJson, 'utf8');
   if (bytes > SIZE_WARN_THRESHOLD_BYTES) {
-    logger.warn(`⚠️ Export size ${bytes} bytes exceeds ${SIZE_WARN_THRESHOLD_BYTES} byte limit.`);
+    logger.warn(`⚠️ Warning: Export size ${bytes} bytes exceeds ${SIZE_WARN_THRESHOLD_BYTES} byte limit`);
     return true;
   }
   return false;
@@ -303,7 +303,7 @@ function main(argv = process.argv.slice(2)) {
   if (options.onlyIfNew) {
     const prevYaml = readPrevYaml();
     if (!hasNewTerms(headYaml, prevYaml)) {
-      console.log('ℹ️ No new terms detected. Skipping export.');
+      console.log('ℹ️ No new terms detected; skipping export');
       return;
     }
   }
@@ -317,13 +317,13 @@ function main(argv = process.argv.slice(2)) {
   checkSizeLimit(serialized);
 
   if (options.check) {
-    console.log('✅ Export validation passed.');
+    console.log('✅ Export validation passed');
     return;
   }
 
   ensureDirectoryForFile(options.outPath);
   fs.writeFileSync(options.outPath, serialized, 'utf8');
-  console.log(`✅ Wrote ${options.outPath} (${document.terms_count} terms).`);
+  console.log(`✅ Wrote ${options.outPath} (${document.terms_count} terms)`);
 }
 
 if (require.main === module) {
