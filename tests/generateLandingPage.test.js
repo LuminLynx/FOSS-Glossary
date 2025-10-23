@@ -152,3 +152,46 @@ test('generateLandingPage: creates docs directory if missing', () => {
     }
   }
 });
+
+test('generateLandingPage: contains all expected HTML sections', () => {
+  const result = runScript();
+  
+  assert.equal(result.exitCode, 0, 'Script should exit with code 0');
+  assert.ok(fs.existsSync(indexPath), 'Should create docs/index.html');
+  
+  const html = fs.readFileSync(indexPath, 'utf8');
+  
+  // Verify document structure
+  assert.ok(html.includes('<!DOCTYPE html>'), 'Should have DOCTYPE');
+  assert.ok(html.includes('<html lang="en">'), 'Should have html tag with lang');
+  assert.ok(html.includes('<head>'), 'Should have head section');
+  assert.ok(html.includes('<body>'), 'Should have body section');
+  
+  // Verify meta tags
+  assert.ok(html.includes('<meta charset="UTF-8">'), 'Should have charset meta tag');
+  assert.ok(html.includes('<meta name="viewport"'), 'Should have viewport meta tag');
+  assert.ok(html.includes('FOSS Glossary'), 'Should contain site title');
+  
+  // Verify main sections exist
+  assert.ok(html.includes('LIVE STATISTICS'), 'Should have statistics section');
+  assert.ok(html.includes('Total Terms'), 'Should display total terms stat');
+  assert.ok(html.includes('Funny Terms'), 'Should display funny terms stat');
+  assert.ok(html.includes('Humor Rate'), 'Should display humor rate stat');
+  assert.ok(html.includes('Categories'), 'Should display categories stat');
+  
+  // Verify other key sections
+  assert.ok(html.includes('Latest Additions'), 'Should have recent additions section');
+  assert.ok(html.includes('Recent Terms'), 'Should have term cards section');
+  assert.ok(html.includes('How Scoring Works'), 'Should have scoring section');
+  assert.ok(html.includes('Contribute on GitHub'), 'Should have CTA button');
+  assert.ok(html.includes('Last updated'), 'Should have footer with timestamp');
+  
+  // Verify styling is included
+  assert.ok(html.includes('<style>'), 'Should include CSS styles');
+  assert.ok(html.includes('.term-card'), 'Should include term card styles');
+  assert.ok(html.includes('@media (prefers-color-scheme: light)'), 'Should include light theme media query');
+  
+  // Verify script tag for terms.json
+  assert.ok(html.includes('window.__TERMS_JSON_URL'), 'Should include terms JSON URL');
+  assert.ok(html.includes('terms.json?ver='), 'Should include version parameter');
+});
