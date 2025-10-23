@@ -96,8 +96,6 @@ function readHeadYaml() {
   return readFile('terms.yaml');
 }
 
-function writeJsonFromYaml(yamlText) {
-  const obj = yaml.load(yamlText) || {};
 function readPrevYaml() {
   try {
     return execSync('git show HEAD~1:terms.yaml', { encoding: 'utf8' });
