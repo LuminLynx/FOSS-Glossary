@@ -43,21 +43,6 @@ function normalizeName(value) {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, '');
 }
 
-function collectNames(term) {
-  const names = [];
-  if (term && typeof term === 'object') {
-    if (typeof term.term === 'string') {
-      names.push(term.term);
-    }
-    if (Array.isArray(term.aliases)) {
-      term.aliases
-        .filter(alias => typeof alias === 'string')
-        .forEach(alias => names.push(alias));
-    }
-  }
-  return names;
-}
-
 function resolveBasePathFromArgs() {
   const args = process.argv.slice(2);
   let basePath = process.env.BASE_TERMS_PATH || null;
@@ -154,61 +139,94 @@ function main() {
     const baseNameMap = new Map();
     const newNameMap = new Map();
 
-    baseTerms.forEach((term, index) => {
+    // Build base terms index - optimized single pass
+    for (let i = 0; i < baseTerms.length; i++) {
+      const term = baseTerms[i];
       if (!term || typeof term !== 'object') {
-        return;
-      }
-      const slug = term.slug;
-      if (typeof slug !== 'string' || !slug) {
-        return;
-      }
-      const names = collectNames(term);
-      names.forEach(name => {
-        const key = normalizeName(name);
-        if (!key || baseNameMap.has(key)) {
-          return;
-        }
-        baseNameMap.set(key, {
-          slug,
-          term: term.term || slug,
-          label: name,
-          index: index + 1,
-        });
-      });
-    });
-
-    terms.forEach((term, index) => {
-      if (!term || typeof term !== 'object') {
-        return;
-      }
-      const slug = term.slug;
-      if (typeof slug !== 'string' || !slug) {
-        return;
-      }
-      const names = collectNames(term);
-      names.forEach(name => {
-        const key = normalizeName(name);
-        if (!key || newNameMap.has(key)) {
-          return;
-        }
-        newNameMap.set(key, {
-          slug,
-          term: term.term || slug,
-          label: name,
-          index: index + 1,
-        });
-      });
-    });
-
-    for (const [nameKey, baseInfo] of baseNameMap.entries()) {
-      if (!newNameMap.has(nameKey)) {
         continue;
       }
-      const nextInfo = newNameMap.get(nameKey);
-      if (nextInfo.slug !== baseInfo.slug) {
-        errors.push(
-          `Slug for term '${baseInfo.term}' changed from '${baseInfo.slug}' to '${nextInfo.slug}' (label '${baseInfo.label}')`
-        );
+      const slug = term.slug;
+      if (typeof slug !== 'string' || !slug) {
+        continue;
+      }
+      
+      // Inline name collection to avoid function call overhead
+      const names = [];
+      if (typeof term.term === 'string') {
+        names.push(term.term);
+      }
+      if (Array.isArray(term.aliases)) {
+        for (const alias of term.aliases) {
+          if (typeof alias === 'string') {
+            names.push(alias);
+          }
+        }
+      }
+      
+      // Process names with early duplicate detection
+      for (const name of names) {
+        const key = normalizeName(name);
+        if (key && !baseNameMap.has(key)) {
+          baseNameMap.set(key, {
+            slug,
+            term: term.term || slug,
+            label: name,
+            index: i + 1,
+          });
+        }
+      }
+    }
+
+    // Build new terms index and check for slug changes in one pass
+    for (let i = 0; i < terms.length; i++) {
+      const term = terms[i];
+      if (!term || typeof term !== 'object') {
+        continue;
+      }
+      const slug = term.slug;
+      if (typeof slug !== 'string' || !slug) {
+        continue;
+      }
+      
+      // Inline name collection to avoid function call overhead
+      const names = [];
+      if (typeof term.term === 'string') {
+        names.push(term.term);
+      }
+      if (Array.isArray(term.aliases)) {
+        for (const alias of term.aliases) {
+          if (typeof alias === 'string') {
+            names.push(alias);
+          }
+        }
+      }
+      
+      // Process names and check for slug changes simultaneously
+      for (const name of names) {
+        const key = normalizeName(name);
+        if (!key) {
+          continue;
+        }
+        
+        // Check for slug change while building the map
+        if (baseNameMap.has(key)) {
+          const baseInfo = baseNameMap.get(key);
+          if (baseInfo.slug !== slug) {
+            errors.push(
+              `Slug for term '${baseInfo.term}' changed from '${baseInfo.slug}' to '${slug}' (label '${baseInfo.label}')`
+            );
+          }
+        }
+        
+        // Only add to newNameMap if not already present
+        if (!newNameMap.has(key)) {
+          newNameMap.set(key, {
+            slug,
+            term: term.term || slug,
+            label: name,
+            index: i + 1,
+          });
+        }
       }
     }
   }
