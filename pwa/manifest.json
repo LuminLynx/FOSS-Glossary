@@ -1,0 +1,41 @@
+{
+  "name": "FOSS Glossary - Progressive Web App",
+  "short_name": "FOSS Glossary",
+  "description": "A gamified glossary of FOSS terms with humor. Search, favorite, and share terms offline.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1a3a52",
+  "theme_color": "#1a3a52",
+  "orientation": "any",
+  "scope": "./",
+  "icons": [
+    {
+      "src": "./assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "reference", "utilities"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Search Terms",
+      "short_name": "Search",
+      "description": "Search FOSS glossary terms",
+      "url": "./index.html",
+      "icons": [
+        {
+          "src": "./assets/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}
