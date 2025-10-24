@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FOSS Glossary - A gamified glossary of FOSS terms with humor. Search, favorite, and share terms offline.">
+    <meta name="keywords" content="FOSS, open source, glossary, PWA, offline, progressive web app">
+    <meta name="author" content="LuminLynx">
+    <meta name="theme-color" content="#1a3a52">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="FOSS Glossary - Progressive Web App">
+    <meta property="og:description" content="Search, favorite, and share FOSS terms offline. A gamified glossary with humor!">
+    <meta property="og:image" content="../assets/logo.png">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="FOSS Glossary - Progressive Web App">
+    <meta name="twitter:description" content="Search, favorite, and share FOSS terms offline. A gamified glossary with humor!">
+    <meta name="twitter:image" content="../assets/logo.png">
+    
+    <!-- Apple Touch Icon -->
+    <link rel="apple-touch-icon" href="./assets/icons/icon-192.png">
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="./manifest.json">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../assets/logo.png">
+    
+    <title>FOSS Glossary - PWA</title>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="./styles/main.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="header-top">
+                <div class="logo-section">
+                    <img src="../assets/logo.png" alt="FOSS Glossary Logo" class="logo">
+                    <div>
+                        <h1 class="title">FOSS Glossary</h1>
+                        <p class="subtitle">Search, Learn, and Share Offline</p>
+                    </div>
+                </div>
+                <div class="header-controls">
+                    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">
+                        ☀️ Light
+                    </button>
+                    <button id="favorites-toggle" class="favorites-toggle" aria-label="Toggle favorites view">
+                        ⭐ Favorites
+                    </button>
+                </div>
+            </div>
+            <div class="search-section">
+                <input 
+                    type="search" 
+                    id="search-input" 
+                    class="search-box" 
+                    placeholder="Search terms, definitions, tags... (Ctrl+K)"
+                    autocomplete="off"
+                    aria-label="Search terms"
+                >
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Stats Bar -->
+        <div id="stats-bar" class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-value">0</div>
+                <div class="stat-label">Total Terms</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">0</div>
+                <div class="stat-label">Favorites</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">0</div>
+                <div class="stat-label">Showing</div>
+            </div>
+        </div>
+
+        <!-- Terms Grid -->
+        <div id="terms-grid" class="terms-grid">
+            <div class="loading">Loading terms</div>
+        </div>
+    </main>
+
+    <!-- Share Modal -->
+    <div id="share-modal" class="share-modal">
+        <div class="share-modal-content">
+            <h3 class="share-modal-title">Share This Term</h3>
+            <div id="share-modal-text" class="share-modal-text"></div>
+            <div class="share-buttons">
+                <button id="share-copy" class="share-btn-modal">📋 Copy Link</button>
+                <button id="share-twitter" class="share-btn-modal">🐦 Twitter</button>
+                <button id="share-linkedin" class="share-btn-modal">💼 LinkedIn</button>
+                <button id="share-text" class="share-btn-modal">📝 Copy Text</button>
+            </div>
+            <button id="close-share-modal" class="close-modal">Close</button>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- App Script -->
+    <script src="./app.js"></script>
+</body>
+</html>
