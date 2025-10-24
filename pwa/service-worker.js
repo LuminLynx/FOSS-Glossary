@@ -1,4 +1,4 @@
-const CACHE_NAME = 'foss-glossary-v1';
+const CACHE_NAME = 'foss-glossary-v2';
 const TERMS_API_URL = '../docs/terms.json';
 
 // List of URLs to cache on install

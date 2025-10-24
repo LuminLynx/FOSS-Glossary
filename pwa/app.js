@@ -193,7 +193,10 @@ function renderTerms() {
     const shareBtn = card.querySelector('.share-btn');
     shareBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      showShareModal(term);
+      const term = allTerms.find(t => t.slug === slug);
+      if (term) {
+        showShareModal(term);
+      }
     });
   });
 }
