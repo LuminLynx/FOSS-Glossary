@@ -1,7 +1,5 @@
 # 🚀 FOSS Glossary
 
-A community-driven glossary of FOSS terms with humor, sarcasm, and honest truths about open source culture.
-
 [![Docs](https://img.shields.io/badge/docs-passing-brightgreen)](https://luminlynx.github.io/FOSS-Glossary/)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/LuminLynx/FOSS-Glossary/blob/main/CONTRIBUTING.md)
 [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)](https://github.com/LuminLynx/FOSS-Glossary)
@@ -11,6 +9,9 @@ A community-driven glossary of FOSS terms with humor, sarcasm, and honest truths
 [![Last Updated](https://img.shields.io/github/last-commit/LuminLynx/FOSS-Glossary)](https://github.com/LuminLynx/FOSS-Glossary/commits/main)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![CI](https://github.com/LuminLynx/FOSS-Glossary/actions/workflows/readme-stats.yml/badge.svg)](https://github.com/LuminLynx/FOSS-Glossary/actions)
+
+# A community-driven glossary of FOSS terms with humor, sarcasm, and honest truths 
+about open source culture.
 
 
 
@@ -40,19 +41,6 @@ A community-driven glossary of FOSS terms with humor, sarcasm, and honest truths
 3. Submit a PR
 4. Get your quality score (try to beat 80/100!)
 5. Earn achievements! 🏆
-
-## 🤖 Codex Issue Automation
-
-Issues labeled `codex` and assigned to the bot account are acknowledged automatically:
-
-1. Store the Fine-Grained PAT for `my-codex-bot` in a repository secret named `CODEX_FOSS_TOK`.
-2. (Optional) Create a repository variable `CODEX_BOT_LOGIN` if you need to override the default bot login.
-3. Assign the issue to `my-codex-bot` and apply the `codex` label. The workflow will comment as the bot and add the `in-progress` label when it picks up the task.
-
-### After merging the automation
-
-- Confirm the `CODEX_FOSS_TOK` secret exists. If it is missing, the workflow will fall back to the default `GITHUB_TOKEN` and note this in the run summary so you know to add the secret later.
-- No other manual steps are required—the acknowledgement comment and progress label are applied automatically on the next qualifying issue.
 
 ## 📊 Scoring System
 
