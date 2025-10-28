@@ -67,11 +67,11 @@ npm run export
 
 # Serve the PWA locally
 # Option 1: Using Python
-cd pwa
+cd docs/pwa
 python3 -m http.server 8000
 
 # Option 2: Using Node.js http-server
-npx http-server pwa -p 8000
+npx http-server docs/pwa -p 8000
 
 # Open http://localhost:8000 in your browser
 ```
@@ -94,7 +94,7 @@ https://luminlynx.github.io/FOSS-Glossary/pwa/
 ## File Structure
 
 ```
-pwa/
+docs/pwa/
 ├── index.html              # Main entry point
 ├── manifest.json           # PWA manifest (app metadata)
 ├── service-worker.js       # Offline caching & support
