@@ -128,27 +128,29 @@ function handleHashChange() {
     const termElement = document.querySelector(`[data-slug="${hash}"]`);
     
     if (termElement) {
-        // Wait a bit for rendering to complete
-        setTimeout(() => {
+        // Wait for next animation frame to ensure rendering is complete
+        requestAnimationFrame(() => {
             // Expand the term
             if (!termElement.classList.contains('expanded')) {
                 termElement.classList.add('expanded');
             }
             
-            // Scroll to the term smoothly
-            termElement.scrollIntoView({ 
-                behavior: 'smooth', 
-                block: 'center' 
+            // Scroll to the term smoothly after a brief delay for expansion animation
+            requestAnimationFrame(() => {
+                termElement.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+                
+                // Add a highlight effect temporarily
+                termElement.style.animation = 'highlight 2s ease-out';
+                setTimeout(() => {
+                    termElement.style.animation = '';
+                }, 2000);
+                
+                console.log(`Auto-expanded term: ${hash}`);
             });
-            
-            // Add a highlight effect temporarily
-            termElement.style.animation = 'highlight 2s ease-out';
-            setTimeout(() => {
-                termElement.style.animation = '';
-            }, 2000);
-            
-            console.log(`Auto-expanded term: ${hash}`);
-        }, 100);
+        });
     } else {
         console.warn(`Term not found for hash: ${hash}`);
     }
@@ -356,8 +358,8 @@ function slugify(text) {
     return text
         .toLowerCase()
         .trim()
-        .replace(/[^\w\s-]/g, '')
-        .replace(/[\s_-]+/g, '-')
+        .replace(/[^\w\s\-]/g, '')
+        .replace(/[\s_\-]+/g, '-')
         .replace(/^-+|-+$/g, '');
 }
 
