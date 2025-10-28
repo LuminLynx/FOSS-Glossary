@@ -1,7 +1,7 @@
 // FOSS Glossary PWA - Main Application Logic
 
 // Constants
-const TERMS_API_URL = '../docs/terms.json';
+const TERMS_API_URL = '../terms.json';
 const FAVORITES_KEY = 'foss-glossary-favorites';
 const THEME_KEY = 'foss-glossary-theme';
 

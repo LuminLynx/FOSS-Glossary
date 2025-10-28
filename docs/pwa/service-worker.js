@@ -1,5 +1,5 @@
 const CACHE_NAME = 'foss-glossary-v2';
-const TERMS_API_URL = '../docs/terms.json';
+const TERMS_API_URL = '../terms.json';
 
 // List of URLs to cache on install
 const urlsToCache = [
@@ -10,7 +10,7 @@ const urlsToCache = [
   './manifest.json',
   './assets/icons/icon-192.png',
   './assets/icons/icon-512.png',
-  '../assets/logo.png',
+  '../../assets/logo.png',
   TERMS_API_URL
 ];
 
