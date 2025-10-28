@@ -1,0 +1,22 @@
+{
+  "name": "FOSS Glossary",
+  "short_name": "FOSS Glossary",
+  "description": "A gamified glossary of FOSS terms with humor, sarcasm, and honest truths",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1a3a52",
+  "theme_color": "#00d4e4",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "../assets/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "../assets/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

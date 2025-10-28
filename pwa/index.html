@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOSS Glossary - PWA</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#1a3a52">
+    <meta name="description" content="Progressive Web App for FOSS Glossary - Browse and favorite FOSS terms offline">
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="FOSS Glossary">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-color: #00d4e4;
+            --bg-dark: #1a3a52;
+            --bg-card: rgba(255, 255, 255, 0.05);
+            --text-light: #f5f5f0;
+            --text-accent: #ffd93d;
+            --border-color: rgba(0, 212, 228, 0.3);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-light);
+            background: var(--bg-dark);
+            min-height: 100vh;
+            padding-bottom: 60px;
+        }
+        
+        .header {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 0.5rem 1rem;
+            background: var(--primary-color);
+            color: var(--bg-dark);
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 212, 228, 0.4);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+        
+        .search-box {
+            width: 100%;
+            max-width: 500px;
+            margin: 1rem auto;
+            padding: 0.75rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid var(--border-color);
+            border-radius: 25px;
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        
+        .stats {
+            background: var(--bg-card);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+        
+        .terms-list {
+            display: grid;
+            gap: 1rem;
+        }
+        
+        .term-item {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .term-item.expanded {
+            border-color: var(--primary-color);
+            box-shadow: 0 10px 30px rgba(0, 212, 228, 0.2);
+        }
+        
+        .term-header {
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .term-header:hover {
+            background: rgba(0, 212, 228, 0.1);
+        }
+        
+        .term-title {
+            flex: 1;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .term-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        
+        .favorite-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.25rem;
+            transition: transform 0.2s;
+        }
+        
+        .favorite-btn:hover {
+            transform: scale(1.2);
+        }
+        
+        .favorite-btn.active {
+            filter: drop-shadow(0 0 5px var(--text-accent));
+        }
+        
+        .expand-icon {
+            font-size: 1.2rem;
+            transition: transform 0.3s;
+        }
+        
+        .term-item.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+        
+        .term-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .term-item.expanded .term-content {
+            max-height: 2000px;
+        }
+        
+        .term-details {
+            padding: 0 1rem 1rem 1rem;
+        }
+        
+        .term-definition {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+        
+        .term-explanation {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: rgba(0, 212, 228, 0.05);
+            border-left: 3px solid var(--primary-color);
+            border-radius: 5px;
+        }
+        
+        .term-humor {
+            color: var(--text-accent);
+            font-style: italic;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-left: 3px solid var(--text-accent);
+            margin-bottom: 1rem;
+            border-radius: 5px;
+        }
+        
+        .term-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        
+        .tag {
+            background: rgba(0, 212, 228, 0.2);
+            color: var(--primary-color);
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        .see-also {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+        
+        .see-also h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .see-also-links {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .see-also-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            padding: 0.3rem 0.8rem;
+            background: rgba(0, 212, 228, 0.1);
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s;
+        }
+        
+        .see-also-link:hover {
+            background: rgba(0, 212, 228, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            font-size: 1.2rem;
+        }
+        
+        .error {
+            background: rgba(255, 0, 0, 0.1);
+            border: 2px solid rgba(255, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+            margin: 1rem;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 212, 228, 0.4);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(20deg);
+        }
+        
+        /* Light theme */
+        body.light-theme {
+            --bg-dark: #f0f4f8;
+            --bg-card: white;
+            --text-light: #1a3a52;
+            --border-color: #e0e7ed;
+            --primary-color: #00a3b8;
+        }
+        
+        body.light-theme .term-humor {
+            color: #d97706;
+            background: #fef3c7;
+            border-left-color: #fbbf24;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.2rem;
+            }
+            
+            .term-title {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🚀 FOSS Glossary</h1>
+        <div class="controls">
+            <input type="text" id="searchBox" class="search-box" placeholder="Search terms...">
+            <button id="showAllBtn" class="btn">All Terms</button>
+            <button id="showFavoritesBtn" class="btn btn-secondary">⭐ Favorites</button>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div id="stats" class="stats">
+            <span id="statsText">Loading...</span>
+        </div>
+        
+        <div id="termsList" class="terms-list">
+            <div class="loading">Loading terms...</div>
+        </div>
+    </div>
+    
+    <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">🌓</button>
+    
+    <script src="app.js"></script>
+</body>
+</html>
