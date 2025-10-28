@@ -255,3 +255,71 @@ test('validateTerms: allows different terms with similar Unicode characters', ()
   // 'résumé' normalizes to 'rsum' (accents removed) and 'resume' stays 'resume', so they're different
   assert.equal(result.success, true);
 });
+
+test('validateTerms: produces user-friendly error for YAML parse error', () => {
+  const tmpDir = fs.mkdtempSync('/tmp/validate-yaml-error-');
+  const tmpTermsPath = path.join(tmpDir, 'terms.yaml');
+  const tmpSchemaPath = path.join(tmpDir, 'schema.json');
+  
+  // Write invalid YAML with bad indentation
+  const invalidYaml = `terms:
+  - slug: test1
+    term: "Test 1"
+    definition: "A test definition that is long enough to pass validation requirements."
+  - slug: test2
+  term: "Bad indentation"
+  definition: "This has incorrect indentation"`;
+  
+  fs.writeFileSync(tmpTermsPath, invalidYaml);
+  fs.copyFileSync(SCHEMA_PATH, tmpSchemaPath);
+  
+  try {
+    const result = spawnSync('node', [VALIDATE_SCRIPT], {
+      cwd: tmpDir,
+      encoding: 'utf8',
+      stdio: 'pipe'
+    });
+    
+    assert.equal(result.status, 1, 'Should exit with non-zero status');
+    
+    const output = result.stderr || result.stdout;
+    assert.match(output, /Validation failed: YAML parse error/, 'Should indicate YAML parse error');
+    assert.match(output, /Line:.*Column:/, 'Should show line and column');
+    assert.match(output, /Context:/, 'Should show context');
+    assert.match(output, /Suggested fix:/, 'Should provide suggested fix');
+    
+    // Check that validation-output.txt was created
+    const validationOutputPath = path.join(tmpDir, 'validation-output.txt');
+    assert.ok(fs.existsSync(validationOutputPath), 'Should create validation-output.txt');
+    
+    const validationOutput = fs.readFileSync(validationOutputPath, 'utf8');
+    assert.match(validationOutput, /YAML parse error/, 'Output file should contain error details');
+    assert.match(validationOutput, /Line:/, 'Output file should contain line number');
+    assert.match(validationOutput, /Context:/, 'Output file should contain context');
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test('validateTerms: handles missing file gracefully', () => {
+  const tmpDir = fs.mkdtempSync('/tmp/validate-missing-');
+  const tmpSchemaPath = path.join(tmpDir, 'schema.json');
+  fs.copyFileSync(SCHEMA_PATH, tmpSchemaPath);
+  
+  // Don't create terms.yaml - it's missing
+  
+  try {
+    const result = spawnSync('node', [VALIDATE_SCRIPT], {
+      cwd: tmpDir,
+      encoding: 'utf8',
+      stdio: 'pipe'
+    });
+    
+    assert.equal(result.status, 1, 'Should exit with non-zero status');
+    
+    const output = result.stderr || result.stdout;
+    assert.match(output, /Failed to read/, 'Should indicate file read error');
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  }
+});
