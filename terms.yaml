@@ -224,3 +224,14 @@ terms:
     humor: "A timeless classic in tech support — polite sarcasm wrapped in an acronym."
     tags: ["acronym", "support", "user-error"]
     see_also: ["RTFM", "ID10T Error"]
+
+  - slug: dependencyhell
+  term: "Dependency Hell"
+  definition: "That special place in software where installing one package breaks five others, and upgrading fixes nothing."
+  explanation: "Dependency Hell happens when software libraries rely on incompatible versions of other libraries. It’s a cascading mess of unmet requirements, broken builds, and desperate Stack Overflow searches."
+  humor: "A fiery realm ruled by npm, where every 'npm install' summons a new demon. You just wanted to update one package, but now Babel won’t compile, Webpack is crying, and somehow your coffee machine runs Node 18. Welcome home."
+  tags: ["package-management", "builds", "chaos"]
+  see_also: ["npm", "Yarn", "Version Lock", "SemVer"]
+  aliases: ["version hell", "library conflict"]
+  controversy_level: "high"
+
