@@ -8,6 +8,7 @@ on:
 permissions:
   contents: read
   pull-requests: write
+  issues: write
 
 jobs:
   validate-and-score:
@@ -107,7 +108,7 @@ jobs:
           TERM_NAME: ${{ steps.score.outputs.term_name }}
           TERM_SLUG: ${{ steps.score.outputs.term_slug }}
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ github.token }}
           script: |
             const marker = '<!-- glossary-check -->';
             const validationExit = process.env.VALIDATION_EXIT || '';
