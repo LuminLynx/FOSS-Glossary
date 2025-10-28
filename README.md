@@ -10,7 +10,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![CI](https://github.com/LuminLynx/FOSS-Glossary/actions/workflows/readme-stats.yml/badge.svg)](https://github.com/LuminLynx/FOSS-Glossary/actions)
 
-# A community-driven glossary of FOSS terms with humor, sarcasm, and honest truths 
+## A community-driven glossary of FOSS terms with humor, sarcasm, and honest truths 
 about open source culture.
 
 
