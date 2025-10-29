@@ -1,11 +1,75 @@
 #!/usr/bin/env node
 const fs = require('fs');
 const path = require('path');
+const yaml = require('js-yaml');
 const Ajv = require('ajv');
 const addFormats = require('ajv-formats');
 const { normalizeName } = require('../utils/normalization');
 const { formatAjvError } = require('../utils/validation');
-const { loadYaml, loadJson } = require('../utils/fileSystem');
+const { loadJson } = require('../utils/fileSystem');
+
+/**
+ * Load and parse a YAML file with user-friendly error handling
+ * 
+ * @param {string} filePath - Path to the YAML file
+ * @returns {*} Parsed YAML content
+ * @throws {Error} Exits process with code 1 if file cannot be read or parsed
+ */
+function loadYamlWithFriendlyErrors(filePath) {
+  try {
+    const content = fs.readFileSync(filePath, 'utf8');
+    return yaml.load(content);
+  } catch (error) {
+    // Handle YAML parse errors with detailed, user-friendly output
+    if (error.name === 'YAMLException' && error.mark) {
+      const line = error.mark.line + 1;
+      const col = error.mark.column + 1;
+      
+      // Read file lines for context
+      const lines = fs.readFileSync(filePath, 'utf8').split(/\r?\n/);
+      const startLine = Math.max(0, line - 2);
+      const endLine = Math.min(lines.length, line + 2);
+      const contextLines = [];
+      
+      for (let i = startLine; i < endLine; i++) {
+        const lineNum = i + 1;
+        const marker = (lineNum === line) ? '→' : ' ';
+        contextLines.push(`${marker} ${lineNum}: ${lines[i]}`);
+      }
+      
+      const context = contextLines.join('\n');
+      
+      // Extract the main error message
+      const mainError = error.message.split('\n')[0];
+      
+      // Create user-friendly validation output
+      const output = [
+        `Validation failed: YAML parse error in ${filePath}`,
+        `Line: ${line}, Column: ${col}`,
+        '',
+        mainError,
+        '',
+        'Context:',
+        context,
+        '',
+        'Suggested fix: Check indentation for the list item starting near the shown line.',
+        'Ensure keys (term, definition, etc.) are properly indented under "- slug:".',
+        'YAML requires consistent spacing - use spaces (not tabs) for indentation.',
+      ].join('\n');
+      
+      // Write to validation-output.txt for CI workflows
+      fs.writeFileSync('validation-output.txt', output);
+      
+      // Print to stderr for immediate visibility
+      console.error(output);
+      process.exit(1);
+    }
+    
+    // Handle other file read errors
+    console.error(`❌ Error: Failed to read ${filePath}:`, error.message);
+    process.exit(1);
+  }
+}
 
 /**
  * Resolve the base terms path from command line arguments or environment variable
@@ -57,13 +121,13 @@ function resolveBasePathFromArgs() {
  * @throws {Error} Exits process with code 1 if validation fails
  */
 function main() {
-  const data = loadYaml('terms.yaml');
+  const data = loadYamlWithFriendlyErrors('terms.yaml');
   const schema = loadJson('schema.json');
 
   const basePath = resolveBasePathFromArgs();
   let baseTerms = [];
   if (basePath) {
-    const baseData = loadYaml(basePath);
+    const baseData = loadYamlWithFriendlyErrors(basePath);
     if (baseData && Array.isArray(baseData.terms)) {
       baseTerms = baseData.terms;
     }

@@ -1,0 +1,177 @@
+name: PR Validation Comment (Forked PRs)
+
+# This workflow safely posts validation results for PRs from forks
+# Security: Uses pull_request_target to run with base repo permissions
+# Only fetches terms.yaml via API - does NOT checkout or execute PR code
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'terms.yaml'
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  validate-and-comment:
+    name: Validate terms.yaml and comment
+    runs-on: ubuntu-latest
+    # Only run for forked PRs (base repo PRs are handled by pr-complete.yml)
+    if: github.event.pull_request.head.repo.full_name != github.repository
+    
+    steps:
+      - name: Checkout base repository only
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.ref }}
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install dependencies
+        run: npm ci --include=dev --no-audit --no-fund
+      
+      - name: Fetch terms.yaml from PR head
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            const fs = require('fs');
+            
+            // Fetch terms.yaml content from PR head using API
+            try {
+              const { data } = await github.rest.repos.getContent({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                path: 'terms.yaml',
+                ref: context.payload.pull_request.head.sha,
+              });
+              
+              // Decode base64 content
+              const content = Buffer.from(data.content, 'base64').toString('utf8');
+              
+              // Write to local file for validation
+              fs.writeFileSync('terms.yaml', content);
+              console.log('✅ Successfully fetched terms.yaml from PR head');
+            } catch (error) {
+              console.error('❌ Failed to fetch terms.yaml:', error.message);
+              
+              // Write error message to validation-output.txt
+              const errorOutput = [
+                'Validation failed: Could not fetch terms.yaml from PR',
+                '',
+                `Error: ${error.message}`,
+                '',
+                'This file may not exist in the PR or may be too large to fetch via API.',
+              ].join('\n');
+              
+              fs.writeFileSync('validation-output.txt', errorOutput);
+              process.exit(1);
+            }
+      
+      - name: Prepare base glossary snapshot
+        id: base
+        run: |
+          if git cat-file -e ${{ github.event.pull_request.base.sha }}:terms.yaml 2>/dev/null; then
+            git show ${{ github.event.pull_request.base.sha }}:terms.yaml > terms.base.yaml
+          else
+            printf "terms: []\n" > terms.base.yaml
+          fi
+      
+      - name: Validate terms.yaml
+        id: validate
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          node scripts/validateTerms.js --base terms.base.yaml | tee validation-output.txt
+          EXIT=${PIPESTATUS[0]}
+          echo "exit_code=$EXIT" >> "$GITHUB_OUTPUT"
+          exit $EXIT
+      
+      - name: Read validation output
+        id: read-output
+        if: always()
+        run: |
+          if [ -f validation-output.txt ]; then
+            # Truncate to ~64k chars to stay within GitHub comment limits
+            OUTPUT=$(head -c 64000 validation-output.txt)
+          else
+            OUTPUT="Validation output file not found"
+          fi
+          
+          {
+            echo 'output<<EOF'
+            echo "$OUTPUT"
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
+      
+      - name: Comment validation result on PR
+        if: always()
+        uses: actions/github-script@v7
+        env:
+          VALIDATION_EXIT: ${{ steps.validate.outputs.exit_code }}
+          VALIDATION_OUTPUT: ${{ steps.read-output.outputs.output }}
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            const marker = '<!-- glossary-validation-forked-pr -->';
+            const validationExit = process.env.VALIDATION_EXIT || '';
+            const validationOutput = (process.env.VALIDATION_OUTPUT || '').trim();
+            const passed = validationExit === '0';
+            const statusEmoji = passed ? '✅' : '❌';
+            
+            let body = `${marker}\n### Glossary Validation ${statusEmoji}\n\n`;
+            
+            if (passed) {
+              body += `- Status: **Passed** – schema, duplicates, and slug checks succeeded.\n\n`;
+              body += `The main validation workflow will provide detailed scoring once the PR is approved.\n`;
+            } else {
+              body += `- Status: **Failed** – please address the errors below.\n\n`;
+              
+              if (validationOutput) {
+                const trimmed = validationOutput
+                  .split('\n')
+                  .map(line => line.trimEnd())
+                  .filter(Boolean)
+                  .slice(0, 50)  // Limit to 50 lines
+                  .join('\n');
+                body += '```\n' + trimmed + '\n```\n\n';
+              }
+            }
+            
+            const docsUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/docs/REPOSITORY_REVIEW.md#data-model--validation-rules`;
+            body += `[Validation docs](${docsUrl}) for field requirements and examples.\n\n`;
+            body += `*This is a preliminary validation for forked PRs. Full validation with scoring will run after merge approval.*`;
+            
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              per_page: 100,
+            });
+            
+            const existing = comments.find(comment => comment.body && comment.body.includes(marker));
+            
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+              console.log('✅ Updated existing validation comment');
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+              console.log('✅ Created new validation comment');
+            }
