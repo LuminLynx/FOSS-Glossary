@@ -232,5 +232,4 @@ terms:
     humor: "A fiery realm ruled by npm, where every 'npm install' summons a new demon. You just wanted to update one package, but now Babel won’t compile, Webpack is crying, and somehow your coffee machine runs Node 18. Welcome home."
     tags: ["package-management", "builds", "chaos"]
     see_also: ["npm", "Yarn", "Version Lock", "SemVer"]
-    aliases: ["version hell", "library conflict"]
-    controversy_level: "high"
+  
