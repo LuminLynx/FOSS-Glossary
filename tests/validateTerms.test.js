@@ -103,10 +103,10 @@ test('validateTerms: detects duplicate aliases efficiently', () => {
       },
     ],
   };
-  
+
   const result = runValidation(termsData);
   assert.equal(result.success, false);
-  assert.match(result.output, /conflicts with/);
+  assert.match(result.output, /alias 'Common Alias'/);
 });
 
 test('validateTerms: handles large datasets efficiently (100 terms)', () => {
@@ -139,25 +139,28 @@ test('validateTerms: detects slug changes with base terms efficiently', () => {
     terms: [
       {
         slug: 'original-slug',
-        term: 'Test Term',
+        term: 'Legacy Term Name',
         definition: 'A test definition that is long enough to pass validation requirements. Adding more text here.',
+        aliases: ['Shared Alias'],
       },
     ],
   };
-  
+
   const newTerms = {
     terms: [
       {
-        slug: 'changed-slug', // Slug changed but term name same
-        term: 'Test Term',
+        slug: 'changed-slug', // Slug changed but alias still matches base entry
+        term: 'Rebranded Term Name',
         definition: 'A test definition that is long enough to pass validation requirements. Adding more text here.',
+        aliases: ['Shared Alias'],
       },
     ],
   };
-  
+
   const result = runValidation(newTerms, baseTerms);
   assert.equal(result.success, false);
-  assert.match(result.output, /Slug for term .* changed from 'original-slug' to 'changed-slug'/);
+  assert.match(result.output, /Slug for term 'Legacy Term Name' changed from 'original-slug' to 'changed-slug'/);
+  assert.match(result.output, /label 'Shared Alias'/);
 });
 
 test('validateTerms: handles base comparison with many terms efficiently', () => {
