@@ -129,27 +129,33 @@ curl -X POST \
 
 **Script:**
 ```javascript
-const { Octokit } = require('@octokit/rest');
-
-const octokit = new Octokit({
-  auth: process.env.GITHUB_TOKEN
-});
-
 async function createTaskIssue(title, body, labels) {
-  const result = await octokit.actions.createWorkflowDispatch({
-    owner: 'OWNER',
-    repo: 'REPO',
-    workflow_id: 'issue-task-pr.yml',
-    ref: 'main',
-    inputs: {
-      title,
-      body,
-      labels: labels.join(','),
-      notify_slack: 'true'
+  const response = await fetch(
+    'https://api.github.com/repos/OWNER/REPO/actions/workflows/issue-task-pr.yml/dispatches',
+    {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/vnd.github+json',
+        'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
+        'X-GitHub-Api-Version': '2022-11-28'
+      },
+      body: JSON.stringify({
+        ref: 'main',
+        inputs: {
+          title,
+          body,
+          labels: labels.join(','),
+          notify_slack: 'true'
+        }
+      })
     }
-  });
-  
-  console.log('Workflow dispatched:', result.status);
+  );
+
+  if (!response.ok) {
+    throw new Error(`GitHub API request failed: ${response.status} ${response.statusText}`);
+  }
+
+  console.log('Workflow dispatched:', response.status);
 }
 
 // Usage
