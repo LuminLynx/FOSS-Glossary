@@ -21,22 +21,10 @@ function main() {
       process.exit(1);
     }
 
-    const targetSlug = process.env.TARGET_SLUG;
-    let termToScore = null;
-
-    if (targetSlug) {
-      termToScore = termsData.terms.find(term => term && term.slug === targetSlug);
-      if (!termToScore) {
-        console.error(`❌ Error: No term found with slug "${targetSlug}".`);
-        process.exit(1);
-      }
-    } else {
-      // Get the latest term (assuming it's the last one added)
-      termToScore = termsData.terms[termsData.terms.length - 1];
-    }
+    const { term: termToScore, errorMessage } = resolveTermToScore(termsData.terms);
 
     if (!termToScore) {
-      console.error('❌ Error: No terms found');
+      console.error(errorMessage || '❌ Error: No terms found');
       process.exit(1);
     }
 
@@ -84,4 +72,70 @@ function main() {
   }
 }
 
-main();
+function getCliSlug(argv = process.argv) {
+  if (!Array.isArray(argv)) {
+    return undefined;
+  }
+
+  const args = argv.slice(2);
+  for (let i = 0; i < args.length; i += 1) {
+    const arg = args[i];
+    if (!arg) {
+      continue;
+    }
+
+    if (arg.startsWith('--slug=')) {
+      const [, value] = arg.split('=');
+      if (value) {
+        return value;
+      }
+      continue;
+    }
+
+    if (arg === '--slug') {
+      const next = args[i + 1];
+      if (next && !next.startsWith('-')) {
+        return next;
+      }
+      continue;
+    }
+
+    if (!arg.startsWith('-')) {
+      return arg;
+    }
+  }
+
+  return undefined;
+}
+
+function resolveTermToScore(terms, { argv = process.argv, env = process.env } = {}) {
+  if (!Array.isArray(terms) || terms.length === 0) {
+    return { term: null, errorMessage: '❌ Error: No terms found' };
+  }
+
+  const cliSlug = getCliSlug(argv);
+  const targetSlug = cliSlug || env.TARGET_SLUG;
+
+  if (targetSlug) {
+    const term = terms.find(candidate => candidate && candidate.slug === targetSlug);
+    if (!term) {
+      return {
+        term: null,
+        errorMessage: `❌ Error: No term found with slug "${targetSlug}".`
+      };
+    }
+    return { term };
+  }
+
+  return { term: terms[terms.length - 1] };
+}
+
+if (require.main === module) {
+  main();
+}
+
+module.exports = {
+  main,
+  getCliSlug,
+  resolveTermToScore
+};

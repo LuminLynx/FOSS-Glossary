@@ -49,7 +49,11 @@ function runFullPipeline(termsData, options = {}) {
         const scoringResult = spawnSync('node', [SCORE_SCRIPT, firstSlug], {
           cwd: tmpDir,
           encoding: 'utf8',
-          stdio: 'pipe'
+          stdio: 'pipe',
+          env: {
+            ...process.env,
+            TARGET_SLUG: 'non-existent-slug'
+          }
         });
         results.scoring = {
           success: scoringResult.status === 0,
