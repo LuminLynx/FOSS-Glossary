@@ -4,6 +4,8 @@
 
 The landing page (`docs/index.html`) displays a subset of terms from `terms.yaml` to showcase the glossary. It includes statistics, latest additions, and recent terms. This document explains how the landing page stays in sync with the data.
 
+**Important**: `docs/index.html` is a **generated file** and is not tracked in git (listed in `.gitignore`). It is automatically generated during deployment and should never be edited manually or committed to the repository.
+
 ## How It Works
 
 ### Components
@@ -80,7 +82,7 @@ npm run validate:landing
 
 ## Manual Regeneration
 
-If you need to regenerate the landing page manually:
+If you need to regenerate the landing page manually for local testing:
 
 ```bash
 # Install dependencies (if not already installed)
@@ -91,12 +93,9 @@ npm run generate:landing
 
 # Validate it's in sync
 npm run validate:landing
-
-# Commit the changes
-git add docs/index.html
-git commit -m "Regenerate landing page"
-git push
 ```
+
+**Note**: Since `docs/index.html` is in `.gitignore`, you don't need to commit it. The deployment workflow will regenerate it automatically when changes are pushed to main.
 
 ## Troubleshooting
 
@@ -113,8 +112,8 @@ npm run generate:landing
 ```
 
 **Why it happens:**
-- The workflow may not have run (e.g., if changes were made directly to main without triggering paths)
-- Manual commits to docs/index.html without regenerating
+- The landing page is generated during deployment, not stored in the repository
+- If you need to view it locally, run `npm run generate:landing`
 
 ### Validation Fails
 
@@ -175,10 +174,11 @@ The generator uses Handlebars templates:
 
 ## Best Practices
 
-1. **Never edit `docs/index.html` directly** - Always regenerate using the script
-2. **Test locally before pushing** - Run `npm run validate:landing` to verify
-3. **Trust the automation** - The workflow handles regeneration on merge to main
-4. **Check workflow status** - If you modify terms.yaml, verify the workflow succeeds
+1. **Never edit `docs/index.html` directly** - It's a generated file that is not tracked in git
+2. **Never commit `docs/index.html`** - It's in `.gitignore` and generated during deployment
+3. **Test locally if needed** - Run `npm run generate:landing` to generate it locally for testing
+4. **Trust the automation** - The workflow handles regeneration automatically on deployment
+5. **Check workflow status** - If you modify terms.yaml, verify the deployment workflow succeeds
 
 ## Related Documentation
 
