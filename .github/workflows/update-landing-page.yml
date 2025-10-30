@@ -43,7 +43,7 @@ jobs:
         run: node scripts/generateLandingPage.js
 
       - name: Export terms bundle
-        run: npm run export:new
+        run: npm run export
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
