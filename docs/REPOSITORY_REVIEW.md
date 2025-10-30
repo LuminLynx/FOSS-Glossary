@@ -24,7 +24,7 @@ This guide orients reviewers and new contributors by outlining the core data flo
 - `scripts/exportTerms.js` turns the YAML dataset into `docs/terms.json`. The `--only-if-new` flag (used by `npm run export:new`) checks for new slugs to avoid unnecessary publishes while honoring the "no manual edits" rule for the exported JSON.【F:scripts/exportTerms.js†L1-L52】【F:AGENTS.md†L64-L84】
 
 ## CI, Publishing & Pages
-- `.github/workflows/pr.complete.yml` (referenced in `AGENTS.md`) runs validation before scoring/stats to block downstream jobs on failure. Local runs with `npm test` mirror this order.【F:AGENTS.md†L24-L76】
+- `.github/workflows/pr-complete.yml` (referenced in `AGENTS.md`) runs validation before scoring/stats to block downstream jobs on failure. Local runs with `npm test` mirror this order.【F:AGENTS.md†L24-L76】
 - `npm run export:new` executes on pushes to `main` when `terms.yaml` changes, exporting `docs/terms.json` with metadata fields (`version`, `generated_at`, `terms_count`).【F:AGENTS.md†L64-L84】【F:package.json†L6-L19】
 - `/docs/index.html` powers the GitHub Pages landing experience, consuming the generated JSON and surfacing glossary highlights for visitors.【F:docs/index.html†L1-L360】
 
