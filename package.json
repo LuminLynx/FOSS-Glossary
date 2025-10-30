@@ -4,6 +4,8 @@
   "description": "A fun FOSS glossary with gamification",
   "scripts": {
     "validate": "node scripts/validateTerms.js",
+    "validate:landing": "node scripts/validateLandingPage.js",
+    "generate:landing": "node scripts/generateLandingPage.js",
     "score": "node scripts/quickScore.js",
     "stats": "node scripts/updateReadmeStats.js",
     "export": "node scripts/exportTerms.js",

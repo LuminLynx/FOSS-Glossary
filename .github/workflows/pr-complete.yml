@@ -56,6 +56,16 @@ jobs:
         if: steps.validate.outputs.exit_code == '0'
         run: node scripts/exportTerms.js --check
 
+      - name: Check landing page sync (informational)
+        if: steps.validate.outputs.exit_code == '0'
+        continue-on-error: true
+        run: |
+          echo "Checking if landing page needs regeneration..."
+          if ! node scripts/validateLandingPage.js; then
+            echo "⚠️  Warning: Landing page may need regeneration after merge"
+            echo "   This will be handled automatically by the update-landing-page workflow"
+          fi
+
       - name: Score latest term
         id: score
         if: steps.validate.outputs.exit_code == '0'
