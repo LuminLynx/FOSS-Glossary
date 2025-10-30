@@ -19,7 +19,15 @@ const path = require('path');
 const { loadTermsYaml } = require('../utils/fileSystem');
 
 const DOCS_INDEX_PATH = path.join(__dirname, '..', 'docs', 'index.html');
-const EXPECTED_RECENT_COUNT = 6; // Number of recent terms displayed
+const EXPECTED_RECENT_COUNT = 6; // Number of recent terms displayed in cards
+const EXPECTED_LATEST_COUNT = 3; // Number of terms in "Latest Additions"
+
+// Regex patterns for HTML parsing
+const PATTERNS = {
+  TOTAL_TERMS: /<span class="stat-number">(\d+)<\/span>\s*<span class="stat-label">Total Terms<\/span>/,
+  LATEST_ADDITIONS: /<h2>🆕 Latest Additions<\/h2>\s*<p>Just added: <strong>([^<]+)<\/strong><\/p>/,
+  TERM_CARD: /<div class="term-card">/g
+};
 
 /**
  * Extract a number from HTML content using a regex pattern
@@ -62,7 +70,7 @@ function validateLandingPage() {
     // Load terms.yaml
     const terms = loadTermsYaml();
     const totalTerms = terms.length;
-    const recentTerms = terms.slice(-3).reverse();
+    const recentTerms = terms.slice(-EXPECTED_LATEST_COUNT).reverse();
     
     // Check if docs/index.html exists
     if (!fs.existsSync(DOCS_INDEX_PATH)) {
@@ -75,7 +83,7 @@ function validateLandingPage() {
     const html = fs.readFileSync(DOCS_INDEX_PATH, 'utf8');
     
     // Validation 1: Check total terms count in statistics
-    const htmlTotalTerms = extractNumber(html, /<span class="stat-number">(\d+)<\/span>\s*<span class="stat-label">Total Terms<\/span>/);
+    const htmlTotalTerms = extractNumber(html, PATTERNS.TOTAL_TERMS);
     
     if (htmlTotalTerms === null) {
       console.error('❌ Error: Could not find total terms count in HTML');
@@ -92,7 +100,7 @@ function validateLandingPage() {
     
     // Validation 2: Check recent terms in "Latest Additions"
     const recentTermsList = recentTerms.map(t => t.term).join(', ');
-    const htmlRecentTerms = extractText(html, /<h2>🆕 Latest Additions<\/h2>\s*<p>Just added: <strong>([^<]+)<\/strong><\/p>/);
+    const htmlRecentTerms = extractText(html, PATTERNS.LATEST_ADDITIONS);
     
     if (!htmlRecentTerms) {
       console.error('❌ Error: Could not find "Latest Additions" section in HTML');
@@ -109,7 +117,7 @@ function validateLandingPage() {
     }
     
     // Validation 3: Check number of term cards
-    const termCardCount = countMatches(html, /<div class="term-card">/g);
+    const termCardCount = countMatches(html, PATTERNS.TERM_CARD);
     
     if (termCardCount === 0) {
       console.error('❌ Error: No term cards found in HTML');
