@@ -11,16 +11,9 @@
 **Agent name:** `Codex` (or `codex-bot` if using a GitHub user/bot).
 
 **Scope of work (allowed):**
-- Propose code changes via PRs only (no direct pushes to `main`).
-- Modify **only** automation scripts, schema, CI, docs, and files explicitly requested in an issue.
-- Run validation locally and in CI. Reflect results in PR description.
-- Comment status updates on issues/PRs.
-
+N/A
 **Out of scope (not allowed):**
-- Changing scoring logic unless explicitly requested.
-- Altering hosting (Landing Page served from `/docs`, main branch) or introducing a runtime backend.
-- Committing build artifacts (e.g., `docs/terms.json`) in PRs. The JSON is generated **after merge** by CI when a new term is added.
-
+N/A
 ---
 
 ## 2) Repository Truths
