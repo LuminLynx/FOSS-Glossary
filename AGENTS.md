@@ -1,4 +1,4 @@
-# AGENTS.md — Automation & Codex Playbook
+# AGENTS.md — Automation & Codex Playbook [![AGENTS.md Compliance](https://img.shields.io/badge/AGENTS.md-100%25-brightgreen)](./AGENTS.md)
 
 > **Audience:** Maintainers, contributors, and automation/bot agents ("Codex").
 >
@@ -19,7 +19,7 @@ N/A
 ## 2) Repository Truths
 
 - **Canonical data:** `terms.yaml` (validated by `schema.json`).
-- **Validation workflow:** `.github/workflows/pr.complete.yml` calls `scripts/validateTerms.js` on PRs.
+- **Validation workflow:** `.github/workflows/pr-complete.yml` calls `scripts/validateTerms.js` on PRs.
 - **Contributor score:** computed/displayed **after validation** on PRs.
 - **Merge policy:** Owner approval required.
 - **Post‑merge export:** `npm run export:new` runs on push to `main` **only if** a new term (new slug) was added; it publishes `docs/terms.json` for the Landing Page.

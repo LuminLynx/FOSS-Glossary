@@ -1,5 +1,5 @@
 # 🚀 FOSS Glossary
-
+[![GitHub Pages](https://img.shields.io/badge/GitHub-Pages-blue)](https://luminlynx.github.io/FOSS-Glossary/)
 [![Docs](https://img.shields.io/badge/docs-passing-brightgreen)](https://luminlynx.github.io/FOSS-Glossary/)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/LuminLynx/FOSS-Glossary/blob/main/CONTRIBUTING.md)
 [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)](https://github.com/LuminLynx/FOSS-Glossary)
