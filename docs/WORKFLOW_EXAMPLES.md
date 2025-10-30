@@ -353,26 +353,36 @@ app.post('/jira-webhook', async (req, res) => {
   const issue = req.body.issue;
   
   if (issue.fields.status.name === 'Ready for Dev') {
-    await fetch(
-      'https://api.github.com/repos/OWNER/REPO/actions/workflows/issue-task-pr.yml/dispatches',
-      {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/vnd.github+json',
-          'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
-          'X-GitHub-Api-Version': '2022-11-28'
-        },
-        body: JSON.stringify({
-          ref: 'main',
-          inputs: {
-            title: `[JIRA-${issue.key}] ${issue.fields.summary}`,
-            body: issue.fields.description,
-            labels: 'jira,external',
-            notify_slack: 'true'
-          }
-        })
+    try {
+      const response = await fetch(
+        'https://api.github.com/repos/OWNER/REPO/actions/workflows/issue-task-pr.yml/dispatches',
+        {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/vnd.github+json',
+            'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
+            'Content-Type': 'application/json',
+            'X-GitHub-Api-Version': '2022-11-28'
+          },
+          body: JSON.stringify({
+            ref: 'main',
+            inputs: {
+              title: `[JIRA-${issue.key}] ${issue.fields.summary}`,
+              body: issue.fields.description,
+              labels: 'jira,external',
+              notify_slack: 'true'
+            }
+          })
+        }
+      );
+      
+      if (!response.ok) {
+        throw new Error(`GitHub API request failed: ${response.status}`);
       }
-    );
+    } catch (error) {
+      console.error('Failed to dispatch workflow:', error);
+      return res.status(500).send('Workflow dispatch failed');
+    }
   }
   
   res.sendStatus(200);
