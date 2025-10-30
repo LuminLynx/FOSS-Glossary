@@ -42,6 +42,9 @@ jobs:
       - name: Generate landing page
         run: node scripts/generateLandingPage.js
 
+      - name: Validate landing page is in sync
+        run: node scripts/validateLandingPage.js
+
       - name: Export terms bundle (only if new slugs)
         run: npm run export:new
 
