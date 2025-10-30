@@ -353,18 +353,26 @@ app.post('/jira-webhook', async (req, res) => {
   const issue = req.body.issue;
   
   if (issue.fields.status.name === 'Ready for Dev') {
-    await octokit.actions.createWorkflowDispatch({
-      owner: 'OWNER',
-      repo: 'REPO',
-      workflow_id: 'issue-task-pr.yml',
-      ref: 'main',
-      inputs: {
-        title: `[JIRA-${issue.key}] ${issue.fields.summary}`,
-        body: issue.fields.description,
-        labels: 'jira,external',
-        notify_slack: 'true'
+    await fetch(
+      'https://api.github.com/repos/OWNER/REPO/actions/workflows/issue-task-pr.yml/dispatches',
+      {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/vnd.github+json',
+          'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
+          'X-GitHub-Api-Version': '2022-11-28'
+        },
+        body: JSON.stringify({
+          ref: 'main',
+          inputs: {
+            title: `[JIRA-${issue.key}] ${issue.fields.summary}`,
+            body: issue.fields.description,
+            labels: 'jira,external',
+            notify_slack: 'true'
+          }
+        })
       }
-    });
+    );
   }
   
   res.sendStatus(200);
