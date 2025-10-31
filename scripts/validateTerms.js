@@ -279,6 +279,7 @@ function main() {
   }
 
   // Validate redirects: old slugs must not exist, target slugs must exist
+  // Note: slugSet is already populated from the terms loop above, enabling O(1) lookups
   Object.entries(redirects).forEach(([oldSlug, newSlug]) => {
     if (slugSet.has(oldSlug)) {
       errors.push(`Redirect source '${oldSlug}' conflicts with an active term slug`);
