@@ -4,6 +4,7 @@
 const TERMS_API_URL = '../terms.json';
 const FAVORITES_KEY = 'foss-glossary-favorites';
 const THEME_KEY = 'foss-glossary-theme';
+const SEARCH_DEBOUNCE_MS = 150; // Debounce search input
 
 // State
 let allTerms = [];
@@ -11,6 +12,11 @@ let filteredTerms = [];
 let favorites = new Set();
 let currentView = 'all'; // 'all' or 'favorites'
 let expandedTerms = new Set();
+
+// Web Worker for search
+let searchWorker = null;
+let searchDebounceTimer = null;
+let workerReady = false;
 
 // DOM Elements
 let searchInput;
@@ -23,6 +29,7 @@ let toast;
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
   initializeDOM();
+  initializeSearchWorker();
   initializeServiceWorker();
   loadTheme();
   loadFavorites();
@@ -38,6 +45,49 @@ function initializeDOM() {
   themeToggle = document.getElementById('theme-toggle');
   favoritesToggle = document.getElementById('favorites-toggle');
   toast = document.getElementById('toast');
+}
+
+// Initialize Search Worker
+function initializeSearchWorker() {
+  if (typeof Worker !== 'undefined') {
+    try {
+      searchWorker = new Worker('./search-worker.js');
+      
+      searchWorker.addEventListener('message', (event) => {
+        const { type, payload } = event.data;
+        
+        switch (type) {
+          case 'WORKER_LOADED':
+            console.log('Search worker loaded');
+            break;
+            
+          case 'READY':
+            workerReady = true;
+            console.log('Search worker ready');
+            break;
+            
+          case 'RESULTS':
+            // Update filtered terms with results from worker
+            filteredTerms = payload.results;
+            updateStats();
+            renderTerms();
+            break;
+        }
+      });
+      
+      searchWorker.addEventListener('error', (error) => {
+        console.error('Search worker error:', error);
+        // Fallback to main thread search
+        searchWorker = null;
+      });
+      
+    } catch (error) {
+      console.error('Failed to initialize search worker:', error);
+      searchWorker = null;
+    }
+  } else {
+    console.warn('Web Workers not supported, search will run on main thread');
+  }
 }
 
 // Register Service Worker
@@ -107,6 +157,14 @@ async function loadTerms() {
     const data = await response.json();
     allTerms = data.terms || [];
     
+    // Initialize worker with terms data
+    if (searchWorker) {
+      searchWorker.postMessage({
+        type: 'INIT',
+        payload: { terms: allTerms }
+      });
+    }
+    
     filterTerms();
     updateStats();
     renderTerms();
@@ -127,6 +185,26 @@ async function loadTerms() {
 function filterTerms() {
   const query = searchInput.value.toLowerCase().trim();
   
+  // Use worker if available and ready
+  if (searchWorker && workerReady) {
+    // Send search request to worker
+    searchWorker.postMessage({
+      type: 'SEARCH',
+      payload: {
+        query,
+        favorites: [...favorites], // Convert Set to Array for worker
+        currentView
+      }
+    });
+    // Worker will post results back, which updates filteredTerms in message handler
+  } else {
+    // Fallback to main thread search
+    filterTermsMainThread(query);
+  }
+}
+
+// Fallback search on main thread (for browsers without Worker support)
+function filterTermsMainThread(query) {
   // First, filter by view (all or favorites)
   let terms = currentView === 'favorites' 
     ? allTerms.filter(term => favorites.has(term.slug))
@@ -148,6 +226,8 @@ function filterTerms() {
   }
   
   filteredTerms = terms;
+  updateStats();
+  renderTerms();
 }
 
 // Render terms to the grid
@@ -284,7 +364,7 @@ function toggleFavorite(slug) {
   // If in favorites view and removed, refresh
   if (currentView === 'favorites' && !favorites.has(slug)) {
     filterTerms();
-    renderTerms();
+    // renderTerms() will be called by worker response or fallback
   }
 }
 
@@ -294,7 +374,7 @@ function toggleFavoritesView() {
   favoritesToggle.textContent = currentView === 'favorites' ? '📖 All Terms' : '⭐ Favorites';
   
   filterTerms();
-  renderTerms();
+  // renderTerms() will be called by worker response or fallback
 }
 
 // Update statistics
@@ -402,11 +482,18 @@ function showToast(message) {
 
 // Setup event listeners
 function setupEventListeners() {
-  // Search input
+  // Search input with debouncing
   searchInput.addEventListener('input', () => {
-    filterTerms();
-    updateStats();
-    renderTerms();
+    // Clear existing timer
+    if (searchDebounceTimer) {
+      clearTimeout(searchDebounceTimer);
+    }
+    
+    // Set new timer to debounce search
+    searchDebounceTimer = setTimeout(() => {
+      filterTerms();
+      // Note: updateStats and renderTerms are called by worker response or fallback
+    }, SEARCH_DEBOUNCE_MS);
   });
   
   // Theme toggle
@@ -464,8 +551,7 @@ document.addEventListener('keydown', (e) => {
     } else if (searchInput.value) {
       searchInput.value = '';
       filterTerms();
-      updateStats();
-      renderTerms();
+      // updateStats() and renderTerms() will be called by worker response or fallback
     }
   }
 });
