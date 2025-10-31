@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 const fs = require('fs');
+const path = require('path');
 const { execSync } = require('child_process');
 const process = require('process');
 const yaml = require('js-yaml');
@@ -293,6 +294,43 @@ function hasNewTerms(currentYaml, previousYaml) {
 }
 
 /**
+ * Generate _headers file content for terms.json caching
+ * Creates headers configuration compatible with Netlify/Cloudflare Pages
+ * 
+ * Note: GitHub Pages does not support _headers files (as of 2024).
+ * This file is included for potential future migration to platforms
+ * that do support custom headers (Netlify, Cloudflare Pages, etc.)
+ * 
+ * @returns {string} Headers file content
+ */
+function generateHeadersFile() {
+  return `# Cache-Control headers for terms.json
+# This file is compatible with Netlify and Cloudflare Pages
+# GitHub Pages does not currently support custom headers via _headers files
+# Cache-busting is handled via query parameters (?ver=<shortSHA>)
+
+/terms.json
+  Cache-Control: public, max-age=31536000, immutable
+`;
+}
+
+/**
+ * Write _headers file to docs directory
+ * Creates a headers configuration file for platforms that support it
+ * (Netlify, Cloudflare Pages). GitHub Pages will ignore this file.
+ * 
+ * @param {string} outPath - Path where terms.json is written (e.g., 'docs/terms.json')
+ */
+function writeHeadersFile(outPath) {
+  const outDir = path.dirname(outPath);
+  const headersPath = path.join(outDir, '_headers');
+  const headersContent = generateHeadersFile();
+  
+  fs.writeFileSync(headersPath, headersContent, 'utf8');
+  console.log(`ℹ️  Wrote ${headersPath} (for future platform compatibility)`);
+}
+
+/**
  * Main export function
  * Parses arguments, reads YAML, builds export document, and writes output
  * Supports --only-if-new flag to skip export if no new terms detected
@@ -328,6 +366,9 @@ function main(argv = process.argv.slice(2)) {
   ensureDirectoryForFile(options.outPath);
   fs.writeFileSync(options.outPath, serialized, 'utf8');
   console.log(`✅ Wrote ${options.outPath} (${document.terms_count} terms)`);
+  
+  // Write _headers file for future platform compatibility
+  writeHeadersFile(options.outPath);
 }
 
 if (require.main === module) {
