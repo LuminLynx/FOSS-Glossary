@@ -13,7 +13,6 @@ node_modules/.package-lock.json
 # Build Output
 temp/
 docs/terms.json
-docs/index.html
 docs/_headers
 
 # Vim Swap Files
