@@ -121,20 +121,53 @@ test('serializeDocument respects pretty flag and ensures newline', () => {
   assert.ok(compact.indexOf('\n  "terms"') === -1);
 });
 
-test('checkSizeLimit warns when exceeding threshold', () => {
-  const logger = { warnCalled: false, warn() { this.warnCalled = true; } };
+test('checkSizeLimit throws when exceeding threshold', () => {
+  const logger = { 
+    errorCalled: false, 
+    error() { this.errorCalled = true; } 
+  };
   const largeContent = 'x'.repeat(SIZE_WARN_THRESHOLD_BYTES + 1);
-  const warned = checkSizeLimit(largeContent, logger);
-  assert.equal(warned, true);
-  assert.equal(logger.warnCalled, true);
+  
+  assert.throws(
+    () => checkSizeLimit(largeContent, { logger, termsCount: 1000 }),
+    ExporterError,
+    'Should throw ExporterError when size exceeds threshold'
+  );
+  assert.equal(logger.errorCalled, true);
 });
 
 test('checkSizeLimit silent under threshold', () => {
-  const logger = { warnCalled: false, warn() { this.warnCalled = true; } };
+  const logger = { 
+    errorCalled: false, 
+    error() { this.errorCalled = true; } 
+  };
   const content = 'x'.repeat(1024);
-  const warned = checkSizeLimit(content, logger);
-  assert.equal(warned, false);
-  assert.equal(logger.warnCalled, false);
+  const result = checkSizeLimit(content, { logger });
+  assert.equal(result, false);
+  assert.equal(logger.errorCalled, false);
+});
+
+test('checkSizeLimit error message includes size and limit information', () => {
+  const logger = { 
+    errorCalled: false,
+    lastError: null,
+    error(msg) { 
+      this.errorCalled = true; 
+      this.lastError = msg;
+    } 
+  };
+  const largeContent = 'x'.repeat(SIZE_WARN_THRESHOLD_BYTES + 1);
+  
+  try {
+    checkSizeLimit(largeContent, { logger, termsCount: 500 });
+    assert.fail('Should have thrown an error');
+  } catch (error) {
+    assert.ok(error instanceof ExporterError);
+    assert.ok(error.message.includes('2.00 MB'));
+    assert.ok(error.message.includes('500 terms'));
+    assert.ok(error.message.includes('PREBUILT_INDEX_STRATEGY.md'));
+  }
+  assert.equal(logger.errorCalled, true);
 });
 
 test('hasNewTerms detects new slugs', () => {
