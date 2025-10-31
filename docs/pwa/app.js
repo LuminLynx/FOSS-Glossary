@@ -13,7 +13,6 @@ let filteredTerms = [];
 let favorites = new Set();
 let currentView = 'all'; // 'all' or 'favorites'
 let expandedTerms = new Set();
-let searchDebounceTimer = null;
 
 // Web Worker for search
 let searchWorker = null;
