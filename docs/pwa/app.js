@@ -381,6 +381,7 @@ function toggleFavoritesView() {
 function updateStats() {
   const favCount = favorites.size;
   const totalCount = allTerms.length;
+  const showingCount = filteredTerms ? filteredTerms.length : 0;
   
   statsBar.innerHTML = `
     <div class="stat-item">
@@ -392,7 +393,7 @@ function updateStats() {
       <div class="stat-label">Favorites</div>
     </div>
     <div class="stat-item">
-      <div class="stat-value">${filteredTerms.length}</div>
+      <div class="stat-value">${showingCount}</div>
       <div class="stat-label">Showing</div>
     </div>
   `;
