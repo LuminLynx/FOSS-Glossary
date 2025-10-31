@@ -13,6 +13,7 @@ let filteredTerms = [];
 let favorites = new Set();
 let currentView = 'all'; // 'all' or 'favorites'
 let expandedTerms = new Set();
+let searchDebounceTimer = null;
 
 // Web Worker for search
 let searchWorker = null;
@@ -590,7 +591,7 @@ function setupEventListeners() {
       clearTimeout(searchDebounceTimer);
     }
     
-    // Set new timer to debounce search
+    // Set new timer for debounced search
     searchDebounceTimer = setTimeout(() => {
       filterTerms();
       // Note: updateStats and renderTerms are called by worker response or fallback
