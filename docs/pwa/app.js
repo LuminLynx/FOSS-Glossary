@@ -636,6 +636,6 @@ if (typeof window !== 'undefined') {
     allTerms,
     filteredTerms,
     favorites,
-    reloadTerms: loadTerms
+    reloadTerms: () => loadTerms(0) // Explicitly start fresh with retry count 0
   };
 }
