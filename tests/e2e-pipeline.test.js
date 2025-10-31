@@ -208,7 +208,7 @@ test('E2E: complete pipeline from merge to deployment', () => {
   
   // Assert: generated_at is a valid ISO 8601 timestamp
   assert.ok(
-    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(results.termsJson.generated_at),
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z?$/.test(results.termsJson.generated_at),
     'generated_at should be a valid ISO 8601 timestamp'
   );
   
@@ -272,7 +272,7 @@ test('E2E: pipeline handles validation failure gracefully', () => {
   
   fs.copyFileSync(SCHEMA_PATH, tmpSchemaPath);
   
-  // Create invalid terms.yaml (definition too short)
+  // Create invalid terms.yaml (definition too short - less than schema minLength requirement of 80 chars)
   const invalidTermsData = {
     terms: [
       {
@@ -293,9 +293,9 @@ test('E2E: pipeline handles validation failure gracefully', () => {
     });
     
     // Assert: Validation fails
-    assert.equal(
-      validationResult.status !== 0,
-      true,
+    assert.notEqual(
+      validationResult.status,
+      0,
       'Validation should fail for invalid terms'
     );
     assert.match(
