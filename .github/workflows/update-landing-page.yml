@@ -42,8 +42,11 @@ jobs:
       - name: Generate landing page
         run: node scripts/generateLandingPage.js
 
-      - name: Export terms bundle
-        run: npm run export
+      - name: Validate landing page is in sync
+        run: node scripts/validateLandingPage.js
+
+      - name: Export terms bundle (only if new slugs)
+        run: npm run export:new
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

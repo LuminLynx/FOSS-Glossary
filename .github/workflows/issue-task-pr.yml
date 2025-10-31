@@ -48,7 +48,6 @@ jobs:
         script: |
           const BOT_USERNAME = process.env.BOT_USERNAME || 'my-codex-bot';
           const TRIGGER_LABELS = (process.env.TRIGGER_LABELS || 'codex,ready-for-codex').split(',').map(l => l.trim().toLowerCase());
-          const { core, context, github } = require('@actions/github-script');
 
           // Enhanced assignee and label handling
           const issue = context.payload.issue;
@@ -304,7 +303,6 @@ jobs:
       uses: actions/github-script@v7
       with:
         script: |
-          const { core } = require('@actions/github-script');
           const success = '${{ steps.process.outputs.success }}' === 'true';
           const prUrl = '${{ steps.process.outputs.pr-url }}';
           const branchName = '${{ steps.process.outputs.branch-name }}';
@@ -380,7 +378,6 @@ jobs:
       uses: actions/github-script@v7
       with:
         script: |
-          const { core } = require('@actions/github-script');
           const title = '${{ inputs.title }}';
           const labels = '${{ inputs.labels }}';
 
@@ -413,7 +410,6 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         result-encoding: string
         script: |
-          const { core, context, github } = require('@actions/github-script');
           const title = core.getInput('title', { required: true });
           const body = core.getInput('body') || '';
           const labelsInput = core.getInput('labels') || '';
@@ -470,7 +466,6 @@ jobs:
       uses: actions/github-script@v7
       with:
         script: |
-          const { core } = require('@actions/github-script');
           const issueNumber = '${{ steps.create.outputs.result }}';
           const webhookUrl = process.env.SLACK_WEBHOOK_URL;
 
