@@ -51,9 +51,32 @@ This document compares two deployment strategies for the generated `terms.json` 
 
 ## Decision
 
-We are adopting **Option B**, exporting `terms.json` during the GitHub Pages build and shipping it as part of the deployment artifact. This keeps artifacts out of git, allows precise cache headers, and matches the repository’s automation policies. The UI references the payload at `./terms.json?ver=<shortSHA>` so the cache-busting query string always matches the version metadata embedded in the JSON.
+We are adopting **Option B**, exporting `terms.json` during the GitHub Pages build and shipping it as part of the deployment artifact. This keeps artifacts out of git, allows precise cache headers (when supported), and matches the repository's automation policies. The UI references the payload at `./terms.json?ver=<shortSHA>` so the cache-busting query string always matches the version metadata embedded in the JSON.
+
+## GitHub Pages Limitations (2024)
+
+**Important:** As of 2024, GitHub Pages does **not** support custom HTTP headers via `_headers` files or any other configuration mechanism. GitHub Pages serves all content with `Cache-Control: max-age=600` (10 minutes).
+
+Despite this limitation, we generate a `_headers` file for the following reasons:
+1. **Future migration readiness** - If we migrate to Netlify or Cloudflare Pages (which do support `_headers` files), the configuration is already in place
+2. **Documentation** - The file serves as explicit documentation of our intended caching policy
+3. **Cache-busting** - We work around GitHub Pages limitations by using query string cache-busting (`?ver=<shortSHA>`)
+
+### Current Workaround
+
+Since GitHub Pages doesn't support custom `Cache-Control` headers, we rely on:
+- **Query parameter cache-busting**: `./terms.json?ver=<shortSHA>` ensures browsers fetch fresh content when the version changes
+- **GitHub's default caching**: The 10-minute cache helps reduce server load while still allowing relatively fresh updates
+
+### Future Platform Options
+
+If longer cache times become critical, consider migrating to:
+- **Cloudflare Pages**: Supports `_headers` files, automatic cache invalidation, and CDN edge caching
+- **Netlify**: Supports `_headers` files and custom caching policies
+- **Custom CDN**: Place a CDN in front of GitHub Pages with custom cache rules
 
 ## Follow-up Checklist
-- GitHub Pages workflow builds the site, runs `npm run export`, and uploads `docs/` as the artifact.
-- The export script injects metadata (`version`, `generated_at`, `terms_count`) and writes a `_headers` file with `Cache-Control: public,max-age=31536000,immutable` plus a content-derived `ETag`.
+- ✅ GitHub Pages workflow builds the site, runs `npm run export`, and uploads `docs/` as the artifact.
+- ✅ The export script injects metadata (`version`, `generated_at`, `terms_count`) and writes a `_headers` file with `Cache-Control: public,max-age=31536000,immutable` for future platform compatibility.
+- ✅ Cache-busting implemented via query parameters (`?ver=<shortSHA>`) in the landing page.
 - README links back to this decision record for future maintainers.
