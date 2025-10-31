@@ -561,8 +561,11 @@ git push origin main
    # Wait for workflow to complete
    gh run watch
    
-   # Check the new terms.json
+   # Check the new terms.json (using jq if available)
    curl -s https://luminlynx.github.io/FOSS-Glossary/terms.json | jq '.version'
+   
+   # Or without jq
+   curl -s https://luminlynx.github.io/FOSS-Glossary/terms.json | grep -o '"version":"[^"]*"'
    ```
 
 **Emergency cache clear (if clients are stuck on bad version):**
@@ -613,8 +616,19 @@ gh run watch
 **Better approach - Reset via new commits:**
 ```bash
 # Instead of force push, use revert commits
-git revert --no-commit <bad-start>..<bad-end>
-git commit -m "Revert changes from <bad-start> to <bad-end>"
+# For a single commit:
+git revert <bad-commit-sha>
+git push origin main
+
+# For multiple commits, revert them individually (most recent first):
+git revert <most-recent-bad-commit>
+git revert <previous-bad-commit>
+git revert <oldest-bad-commit>
+git push origin main
+
+# Or revert multiple commits in one new commit:
+git revert --no-commit <oldest-bad-commit>^..<most-recent-bad-commit>
+git commit -m "Revert changes from <oldest-bad> to <most-recent-bad>"
 git push origin main
 ```
 
