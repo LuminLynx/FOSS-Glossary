@@ -3,6 +3,7 @@ const assert = require('node:assert/strict');
 const { spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 const yaml = require('js-yaml');
 
 const SCHEMA_PATH = path.join(__dirname, '..', 'schema.json');
@@ -15,7 +16,7 @@ const EXPORT_SCRIPT = path.join(__dirname, '..', 'scripts', 'exportTerms.js');
  * This matches the behavior in .github/workflows/pr-complete.yml
  */
 function simulateWorkflow(termsData, baseTermsData = null) {
-  const tmpDir = fs.mkdtempSync('/tmp/workflow-test-');
+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'workflow-test-'));
   const tmpTermsPath = path.join(tmpDir, 'terms.yaml');
   const tmpBaseTermsPath = path.join(tmpDir, 'terms.base.yaml');
   const tmpSchemaPath = path.join(tmpDir, 'schema.json');
