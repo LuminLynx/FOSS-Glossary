@@ -4,11 +4,8 @@
 const TERMS_API_BASE_URL = '../terms.json';
 const FAVORITES_KEY = 'foss-glossary-favorites';
 const THEME_KEY = 'foss-glossary-theme';
-<<<<<<< HEAD
 const MAX_RETRY_ATTEMPTS = 3;
 const RETRY_DELAY_MS = 2000;
-=======
->>>>>>> origin/main
 const SEARCH_DEBOUNCE_MS = 200; // Debounce delay in milliseconds (150-250ms range)
 const FUZZY_MATCH_BONUS_MULTIPLIER = 3.5; // Max score multiplier accounting for bonuses
 
@@ -18,10 +15,7 @@ let filteredTerms = [];
 let favorites = new Set();
 let currentView = 'all'; // 'all' or 'favorites'
 let expandedTerms = new Set();
-<<<<<<< HEAD
 let termsVersion = null; // Store the version from terms.json
-=======
->>>>>>> origin/main
 let searchDebounceTimer = null;
 
 // DOM Elements
@@ -161,9 +155,6 @@ async function loadTerms(retryCount = 0) {
   }
 }
 
-<<<<<<< HEAD
-}
-
 // Show empty state when no terms are available
 function showEmptyState() {
   termsGrid.innerHTML = `
@@ -295,8 +286,6 @@ function getErrorMessage(error) {
   return 'An unexpected error occurred while loading terms.';
 }
 
-=======
->>>>>>> origin/main
 /**
  * Calculate fuzzy match score between query and text
  * Returns a score from 0 to 1, where 1 is perfect match
