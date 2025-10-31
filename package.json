@@ -4,6 +4,8 @@
   "description": "A fun FOSS glossary with gamification",
   "scripts": {
     "validate": "node scripts/validateTerms.js",
+    "validate:landing": "node scripts/validateLandingPage.js",
+    "generate:landing": "node scripts/generateLandingPage.js",
     "score": "node scripts/quickScore.js",
     "stats": "node scripts/updateReadmeStats.js",
     "export": "node scripts/exportTerms.js",
@@ -12,8 +14,6 @@
   },
   "dependencies": {
     "@octokit/rest": "^22.0.0",
-    "discord.js": "^14.22.1",
-    "express": "^5.1.0",
     "handlebars": "^4.7.8",
     "js-yaml": "^4.1.0"
   },
