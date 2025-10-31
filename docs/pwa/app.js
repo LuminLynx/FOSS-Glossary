@@ -4,6 +4,8 @@
 const TERMS_API_URL = '../terms.json';
 const FAVORITES_KEY = 'foss-glossary-favorites';
 const THEME_KEY = 'foss-glossary-theme';
+const SEARCH_DEBOUNCE_MS = 200; // Debounce delay in milliseconds (150-250ms range)
+const FUZZY_MATCH_BONUS_MULTIPLIER = 3.5; // Max score multiplier accounting for bonuses
 
 // State
 let allTerms = [];
@@ -128,6 +130,9 @@ async function loadTerms() {
  * Calculate fuzzy match score between query and text
  * Returns a score from 0 to 1, where 1 is perfect match
  * Uses character position matching with bonus for consecutive matches
+ * @param {string} query - The search query string
+ * @param {string} text - The text to search within
+ * @returns {number} Match score from 0 to 1
  */
 function fuzzyMatch(query, text) {
   if (!query) return 1; // Empty query matches everything
@@ -173,7 +178,7 @@ function fuzzyMatch(query, text) {
   
   // Normalize score based on query length and text length
   // Prefer shorter matches with same score
-  const maxPossibleScore = query.length * 3.5; // account for bonuses
+  const maxPossibleScore = query.length * FUZZY_MATCH_BONUS_MULTIPLIER;
   const normalizedScore = score / maxPossibleScore;
   const lengthPenalty = Math.min(1, query.length / text.length);
   
@@ -183,6 +188,9 @@ function fuzzyMatch(query, text) {
 /**
  * Search across multiple fields with fuzzy matching
  * Returns the best match score across all searchable fields
+ * @param {Object} term - The term object with properties: term, definition, explanation, humor, aliases, tags
+ * @param {string} query - The search query string
+ * @returns {number} Best match score across all fields
  */
 function fuzzySearchTerm(term, query) {
   if (!query) return 1; // Empty query matches everything
@@ -487,7 +495,7 @@ function showToast(message) {
 
 // Setup event listeners
 function setupEventListeners() {
-  // Search input with debouncing (200ms delay)
+  // Search input with debouncing
   searchInput.addEventListener('input', () => {
     // Clear existing timer
     if (searchDebounceTimer) {
@@ -499,7 +507,7 @@ function setupEventListeners() {
       filterTerms();
       updateStats();
       renderTerms();
-    }, 200); // 200ms debounce - middle of 150-250ms range
+    }, SEARCH_DEBOUNCE_MS);
   });
   
   // Theme toggle
