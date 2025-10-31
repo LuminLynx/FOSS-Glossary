@@ -1,4 +1,4 @@
-// Search Worker - Handles fuzzy matching in background thread
+// Search Worker - Handles search operations in background thread
 // This worker keeps the main thread responsive during search operations
 
 let allTerms = [];

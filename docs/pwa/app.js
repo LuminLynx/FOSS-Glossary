@@ -64,6 +64,10 @@ function initializeSearchWorker() {
           case 'READY':
             workerReady = true;
             console.log('Search worker ready');
+            // Initial filter now that worker is ready
+            if (allTerms.length > 0) {
+              filterTerms();
+            }
             break;
             
           case 'RESULTS':
@@ -79,11 +83,13 @@ function initializeSearchWorker() {
         console.error('Search worker error:', error);
         // Fallback to main thread search
         searchWorker = null;
+        workerReady = false;
       });
       
     } catch (error) {
       console.error('Failed to initialize search worker:', error);
       searchWorker = null;
+      workerReady = false;
     }
   } else {
     console.warn('Web Workers not supported, search will run on main thread');
@@ -163,9 +169,12 @@ async function loadTerms() {
         type: 'INIT',
         payload: { terms: allTerms }
       });
+      // filterTerms will be called when worker sends READY message
+    } else {
+      // No worker, call filterTerms directly
+      filterTerms();
     }
     
-    filterTerms();
     updateStats();
     renderTerms();
     
