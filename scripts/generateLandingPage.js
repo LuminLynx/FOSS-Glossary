@@ -27,29 +27,19 @@ const { scoreTerm } = require('./scoring');
 const { getGitSha } = require('../utils/git');
 const { loadTermsYaml } = require('../utils/fileSystem');
 
-// Module-level variables will be initialized in main()
-let artifactVersion;
-let terms;
-let stats;
+const artifactVersion = getGitSha('dev');
 
-/**
- * Initialize data by loading terms and calculating statistics
- * This is called at the start of main() to ensure fresh data on each run
- */
-function initializeData() {
-  artifactVersion = getGitSha('dev');
-  terms = loadTermsYaml();
-  
-  // Calculate statistics
-  stats = {
-    totalTerms: terms.length,
-    termsWithHumor: terms.filter(t => t.humor).length,
-    termsWithExplanation: terms.filter(t => t.explanation).length,
-    totalTags: new Set(terms.flatMap(t => t.tags || [])).size,
-    recentTerms: terms.slice(-3).reverse().map(t => t.term),
-    topScorers: [] // We'll calculate this when we have contributor data
-  };
-}
+const terms = loadTermsYaml();
+
+// Calculate statistics
+const stats = {
+  totalTerms: terms.length,
+  termsWithHumor: terms.filter(t => t.humor).length,
+  termsWithExplanation: terms.filter(t => t.explanation).length,
+  totalTags: new Set(terms.flatMap(t => t.tags || [])).size,
+  recentTerms: terms.slice(-3).reverse().map(t => t.term),
+  topScorers: [] // We'll calculate this when we have contributor data
+};
 
 /**
  * Escape HTML special characters to prevent XSS attacks
@@ -573,15 +563,16 @@ function generateHTML(stats, artifactVersion) {
   return template(templateData);
 }
 
+const html = generateHTML(stats, artifactVersion);
+
 /**
  * Write generated HTML to output file
  * Ensures docs directory exists and writes docs/index.html
  * Logs statistics about the generation
  * 
- * @param {string} html - Generated HTML content
  * @throws {Error} Exits process with code 1 if file write fails
  */
-function writeOutputFile(html) {
+function writeOutputFile() {
   try {
     // Ensure docs directory exists
     if (!fs.existsSync('docs')) {
@@ -598,20 +589,4 @@ function writeOutputFile(html) {
   }
 }
 
-/**
- * Main function to generate the landing page
- * Initializes data, generates HTML, and writes output
- */
-function main() {
-  // Initialize data fresh on each run to avoid caching issues
-  initializeData();
-  
-  // Generate HTML with current data
-  const html = generateHTML(stats, artifactVersion);
-  
-  // Write output file
-  writeOutputFile(html);
-}
-
-// Run the main function
-main();
+writeOutputFile();
