@@ -36,6 +36,59 @@ Use these prompts when evaluating contributions:
 4. **CI parity:** Do local commands mirror the CI flow (`validate` → `score` → `stats`)? Encourage contributors to run `npm test` before opening PRs.【F:package.json†L6-L19】
 5. **Policy adherence:** Branch naming, PR templates, and automation guardrails are defined in `AGENTS.md`; ensure submissions stay within that envelope.【F:AGENTS.md†L1-L208】
 
+## CI Secrets Configuration
+
+### COMMENT_TOKEN (Optional but Recommended)
+
+The PR Glossary Validation workflow (`.github/workflows/pr-complete.yml`) posts validation results as comments on pull requests. For **fork PRs**, the default `GITHUB_TOKEN` may lack permissions to create/update comments, causing the workflow to fail with "Resource not accessible by integration" errors.
+
+**Solution:** Add a `COMMENT_TOKEN` repository secret containing a Personal Access Token (PAT) with appropriate permissions.
+
+#### Creating the PAT
+
+1. **Navigate to GitHub Settings:**
+   - Go to **Settings** → **Developer settings** → **Personal access tokens** → **Tokens (classic)**
+   - Or visit: https://github.com/settings/tokens
+
+2. **Generate new token (classic):**
+   - Click **Generate new token** → **Generate new token (classic)**
+   - Give it a descriptive name: `FOSS-Glossary PR Comments`
+   - Set expiration: recommend 90 days or 1 year (set a calendar reminder to rotate)
+
+3. **Select scopes:**
+   - For **public repositories:** Check `public_repo` (under `repo` section)
+   - For **private repositories:** Check full `repo` scope
+   - **Note:** The token needs write access to issues/PRs in the repository
+
+4. **Generate and copy the token**
+   - Click **Generate token** at the bottom
+   - **Copy the token immediately** – you won't be able to see it again
+
+#### Adding the Secret to the Repository
+
+1. **Navigate to Repository Settings:**
+   - Go to your repository → **Settings** → **Secrets and variables** → **Actions**
+
+2. **Add new secret:**
+   - Click **New repository secret**
+   - Name: `COMMENT_TOKEN`
+   - Value: Paste the PAT you generated
+   - Click **Add secret**
+
+#### Security Considerations
+
+- **Scope minimization:** Use `public_repo` for public repositories rather than full `repo` access
+- **Expiration:** Set an expiration date and rotate the token regularly
+- **Access control:** Only repository administrators can view/edit secrets
+- **Audit:** Review token usage in GitHub's token settings periodically
+- **Revocation:** If compromised, immediately revoke the token in GitHub settings and generate a new one
+
+#### Behavior
+
+- **With COMMENT_TOKEN:** The workflow will use this PAT for all PR comments, ensuring fork PRs work reliably
+- **Without COMMENT_TOKEN:** The workflow falls back to `GITHUB_TOKEN`, which works for repository PRs but may fail for fork PRs
+- **Error handling:** If commenting fails, the workflow logs helpful error messages and suggests adding the secret
+
 ## Additional References
 - README stats block and contribution guidance: `README.md` (look for `<!-- STATS-START -->`).【F:README.md†L10-L23】
 - Schema definition: `schema.json`.
