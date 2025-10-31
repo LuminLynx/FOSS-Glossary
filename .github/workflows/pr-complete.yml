@@ -55,8 +55,14 @@ jobs:
           exit $EXIT
 
       - name: Dry-run exporter schema check
+        id: exporter
         if: steps.validate.outputs.exit_code == '0'
-        run: node scripts/exportTerms.js --check
+        continue-on-error: true
+        run: |
+          node scripts/exportTerms.js --check
+          EXIT=$?
+          echo "exit_code=$EXIT" >> "$GITHUB_OUTPUT"
+          exit $EXIT
 
       - name: Check landing page sync (informational)
         if: steps.validate.outputs.exit_code == '0'
@@ -70,10 +76,12 @@ jobs:
 
       - name: Score latest term
         id: score
-        if: steps.validate.outputs.exit_code == '0'
+        if: steps.validate.outputs.exit_code == '0' && steps.exporter.outputs.exit_code == '0'
+        continue-on-error: true
         run: |
           set -o pipefail
           node scripts/quickScore.js > score-output.txt
+          EXIT=${PIPESTATUS[0]}
           cat score-output.txt
 
           SCORE_LINE=$(grep -m1 '^SCORE:' score-output.txt || true)
@@ -108,6 +116,9 @@ jobs:
           else
             echo "term_slug=" >> "$GITHUB_OUTPUT"
           fi
+          
+          echo "exit_code=$EXIT" >> "$GITHUB_OUTPUT"
+          exit $EXIT
 
       - name: Comment on PR
         if: always()
@@ -122,8 +133,19 @@ jobs:
           COMMENT_TOKEN: ${{ secrets.COMMENT_TOKEN }}
         run: node .github/scripts/postGlossaryComment.js
 
-      - name: Fail if validation failed
-        if: steps.validate.outputs.exit_code != '0'
+      - name: Fail if any check failed
+        if: always() && (steps.validate.outputs.exit_code != '0' || (steps.exporter.outputs.exit_code != '' && steps.exporter.outputs.exit_code != '0') || (steps.score.outputs.exit_code != '' && steps.score.outputs.exit_code != '0'))
         run: |
-          echo "Lint or parse errors detected in terms.yaml."
+          echo "❌ CI validation failed:"
+          if [ -n "${{ steps.validate.outputs.exit_code }}" ] && [ "${{ steps.validate.outputs.exit_code }}" != "0" ]; then
+            echo "  - Schema/duplicate validation failed"
+          fi
+          if [ -n "${{ steps.exporter.outputs.exit_code }}" ] && [ "${{ steps.exporter.outputs.exit_code }}" != "0" ]; then
+            echo "  - Export schema check failed"
+          fi
+          if [ -n "${{ steps.score.outputs.exit_code }}" ] && [ "${{ steps.score.outputs.exit_code }}" != "0" ]; then
+            echo "  - Term scoring failed"
+          fi
+          echo ""
+          echo "Please fix the errors above before merge."
           exit 1
