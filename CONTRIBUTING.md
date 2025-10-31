@@ -149,6 +149,40 @@ npm run validate
 npm run score
 ```
 
+## 📚 Governance & Policies
+
+### Slug Immutability
+
+Once a term is merged, its slug (URL identifier) is **permanent**. This ensures:
+- External links don't break
+- Bookmarks continue to work
+- Search engines maintain proper references
+
+See [docs/slug-policy.md](docs/slug-policy.md) for slug formatting rules.
+
+### Redirects
+
+If a term needs to be renamed or merged, use the `redirects` mapping instead of changing the slug:
+
+```yaml
+terms:
+  - slug: new-term-name
+    term: "New Term"
+    definition: "..."
+
+redirects:
+  old-term-name: new-term-name
+```
+
+### Deletion Policy
+
+Terms should rarely be deleted. Before removing a term, consider:
+- Using redirects to merge with another term
+- Editing to improve quality
+- Marking as deprecated in the explanation
+
+See [docs/deletion-policy.md](docs/deletion-policy.md) for complete guidance.
+
 ## 💡 Pro Tips
 
 1. Check for duplicates before adding

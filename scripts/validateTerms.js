@@ -150,6 +150,7 @@ function main() {
   const nameSet = new Map();
 
   const terms = Array.isArray(data.terms) ? data.terms : [];
+  const redirects = data.redirects || {};
 
   (terms || []).forEach((term, index) => {
     const pos = `term #${index + 1}`;
@@ -258,7 +259,8 @@ function main() {
           const baseInfo = baseNameMap.get(key);
           if (baseInfo.slug !== slug) {
             errors.push(
-              `Slug for term '${baseInfo.term}' changed from '${baseInfo.slug}' to '${slug}' (label '${baseInfo.label}')`
+              `Slug immutability violation: Term '${baseInfo.term}' slug changed from '${baseInfo.slug}' to '${slug}'. ` +
+              `Use redirects instead: add 'redirects: { "${baseInfo.slug}": "${slug}" }' to preserve the old URL.`
             );
           }
         }
@@ -275,6 +277,16 @@ function main() {
       }
     }
   }
+
+  // Validate redirects: old slugs must not exist, target slugs must exist
+  Object.entries(redirects).forEach(([oldSlug, newSlug]) => {
+    if (slugSet.has(oldSlug)) {
+      errors.push(`Redirect source '${oldSlug}' conflicts with an active term slug`);
+    }
+    if (!slugSet.has(newSlug)) {
+      errors.push(`Redirect target '${newSlug}' does not exist in terms`);
+    }
+  });
 
   if (errors.length > 0) {
     console.error('❌ Error: Validation failed\n');
