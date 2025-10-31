@@ -11,6 +11,7 @@ let filteredTerms = [];
 let favorites = new Set();
 let currentView = 'all'; // 'all' or 'favorites'
 let expandedTerms = new Set();
+let searchDebounceTimer = null;
 
 // DOM Elements
 let searchInput;
@@ -123,6 +124,90 @@ async function loadTerms() {
   }
 }
 
+/**
+ * Calculate fuzzy match score between query and text
+ * Returns a score from 0 to 1, where 1 is perfect match
+ * Uses character position matching with bonus for consecutive matches
+ */
+function fuzzyMatch(query, text) {
+  if (!query) return 1; // Empty query matches everything
+  if (!text) return 0;
+  
+  query = query.toLowerCase();
+  text = text.toLowerCase();
+  
+  // Exact match gets highest score
+  if (text === query) return 1;
+  if (text.includes(query)) return 0.9;
+  
+  let queryIndex = 0;
+  let textIndex = 0;
+  let score = 0;
+  let consecutiveMatches = 0;
+  
+  while (queryIndex < query.length && textIndex < text.length) {
+    if (query[queryIndex] === text[textIndex]) {
+      // Character matches
+      score += 1;
+      consecutiveMatches++;
+      
+      // Bonus for consecutive matches (makes sequential matches rank higher)
+      if (consecutiveMatches > 1) {
+        score += consecutiveMatches * 0.5;
+      }
+      
+      // Bonus for matching at word boundaries
+      if (textIndex === 0 || text[textIndex - 1] === ' ' || text[textIndex - 1] === '-') {
+        score += 2;
+      }
+      
+      queryIndex++;
+    } else {
+      consecutiveMatches = 0;
+    }
+    textIndex++;
+  }
+  
+  // If we didn't match all query characters, it's not a match
+  if (queryIndex < query.length) return 0;
+  
+  // Normalize score based on query length and text length
+  // Prefer shorter matches with same score
+  const maxPossibleScore = query.length * 3.5; // account for bonuses
+  const normalizedScore = score / maxPossibleScore;
+  const lengthPenalty = Math.min(1, query.length / text.length);
+  
+  return normalizedScore * lengthPenalty;
+}
+
+/**
+ * Search across multiple fields with fuzzy matching
+ * Returns the best match score across all searchable fields
+ */
+function fuzzySearchTerm(term, query) {
+  if (!query) return 1; // Empty query matches everything
+  
+  const fields = [
+    { text: term.term, weight: 3 },           // Term name is most important
+    { text: term.definition, weight: 2 },     // Definition is second
+    { text: term.explanation || '', weight: 1.5 },
+    { text: term.humor || '', weight: 1 },
+    { text: (term.aliases || []).join(' '), weight: 2.5 }, // Aliases are important
+    { text: (term.tags || []).join(' '), weight: 1.5 }
+  ];
+  
+  let bestScore = 0;
+  
+  for (const field of fields) {
+    if (field.text) {
+      const fieldScore = fuzzyMatch(query, field.text) * field.weight;
+      bestScore = Math.max(bestScore, fieldScore);
+    }
+  }
+  
+  return bestScore;
+}
+
 // Filter terms based on search query and current view
 function filterTerms() {
   const query = searchInput.value.toLowerCase().trim();
@@ -132,19 +217,19 @@ function filterTerms() {
     ? allTerms.filter(term => favorites.has(term.slug))
     : allTerms;
   
-  // Then, filter by search query
+  // Then, filter by search query using fuzzy matching
   if (query) {
-    terms = terms.filter(term => {
-      const searchText = [
-        term.term,
-        term.definition,
-        term.explanation || '',
-        term.humor || '',
-        ...(term.tags || [])
-      ].join(' ').toLowerCase();
-      
-      return searchText.includes(query);
-    });
+    // Score each term
+    const scoredTerms = terms.map(term => ({
+      term,
+      score: fuzzySearchTerm(term, query)
+    }));
+    
+    // Filter out terms with no match (score = 0) and sort by score descending
+    terms = scoredTerms
+      .filter(item => item.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .map(item => item.term);
   }
   
   filteredTerms = terms;
@@ -402,11 +487,19 @@ function showToast(message) {
 
 // Setup event listeners
 function setupEventListeners() {
-  // Search input
+  // Search input with debouncing (200ms delay)
   searchInput.addEventListener('input', () => {
-    filterTerms();
-    updateStats();
-    renderTerms();
+    // Clear existing timer
+    if (searchDebounceTimer) {
+      clearTimeout(searchDebounceTimer);
+    }
+    
+    // Set new timer for debounced search
+    searchDebounceTimer = setTimeout(() => {
+      filterTerms();
+      updateStats();
+      renderTerms();
+    }, 200); // 200ms debounce - middle of 150-250ms range
   });
   
   // Theme toggle
@@ -463,6 +556,10 @@ document.addEventListener('keydown', (e) => {
       modal.classList.remove('show');
     } else if (searchInput.value) {
       searchInput.value = '';
+      // Clear debounce timer and search immediately
+      if (searchDebounceTimer) {
+        clearTimeout(searchDebounceTimer);
+      }
       filterTerms();
       updateStats();
       renderTerms();
