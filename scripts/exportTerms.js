@@ -226,17 +226,30 @@ function serializeDocument(document, { pretty = false } = {}) {
 
 /**
  * Check if serialized JSON exceeds size threshold
- * Warns if document size exceeds SIZE_WARN_THRESHOLD_BYTES (2MB)
+ * Throws an error if document size exceeds SIZE_WARN_THRESHOLD_BYTES (2MB)
  * 
  * @param {string} serializedJson - Serialized JSON string
- * @param {Object} [logger=console] - Logger object with warn method
- * @returns {boolean} True if size exceeds threshold, false otherwise
+ * @param {Object} [options] - Options object
+ * @param {Object} [options.logger=console] - Logger object with warn and error methods
+ * @param {number} [options.termsCount] - Number of terms for error reporting
+ * @throws {ExporterError} If size exceeds threshold
  */
-function checkSizeLimit(serializedJson, logger = console) {
+function checkSizeLimit(serializedJson, options = {}) {
+  const { logger = console, termsCount } = options;
   const bytes = Buffer.byteLength(serializedJson, 'utf8');
+  const sizeMB = (bytes / (1024 * 1024)).toFixed(2);
+  const limitMB = (SIZE_WARN_THRESHOLD_BYTES / (1024 * 1024)).toFixed(2);
+  
   if (bytes > SIZE_WARN_THRESHOLD_BYTES) {
-    logger.warn(`⚠️ Warning: Export size ${bytes} bytes exceeds ${SIZE_WARN_THRESHOLD_BYTES} byte limit`);
-    return true;
+    const termsInfo = termsCount ? ` (${termsCount} terms)` : '';
+    const errorMsg = `❌ Error: Export size ${sizeMB} MB exceeds ${limitMB} MB limit.\n` +
+      `   Current size: ${bytes} bytes${termsInfo}\n` +
+      `   Size limit: ${SIZE_WARN_THRESHOLD_BYTES} bytes\n` +
+      `   \n` +
+      `   The terms.json file has grown too large for efficient client-side loading.\n` +
+      `   See docs/PREBUILT_INDEX_STRATEGY.md for the migration path to a prebuilt index.`;
+    logger.error(errorMsg);
+    throw new ExporterError(errorMsg);
   }
   return false;
 }
@@ -318,7 +331,7 @@ function main(argv = process.argv.slice(2)) {
   });
 
   const serialized = serializeDocument(document, { pretty: options.pretty });
-  checkSizeLimit(serialized);
+  checkSizeLimit(serialized, { termsCount: document.terms_count });
 
   if (options.check) {
     console.log('✅ Export validation passed');

@@ -573,3 +573,65 @@ test('validation edge case: slug with space fails', () => {
   assert.equal(result.success, false);
   assert.match(result.output, /pattern/i);
 });
+
+// Edge case: Valid redirects mapping
+test('validation edge case: valid redirects mapping passes', () => {
+  const termsData = {
+    terms: [
+      { slug: 'current-slug', term: 'Current Term', definition: 'x'.repeat(80) }
+    ],
+    redirects: {
+      'old-slug': 'current-slug',
+      'another-old': 'current-slug'
+    }
+  };
+  const result = runValidation(termsData);
+  assert.equal(result.success, true);
+});
+
+// Edge case: Redirect source conflicts with existing term
+test('validation edge case: redirect source conflicts with existing term', () => {
+  const termsData = {
+    terms: [
+      { slug: 'existing-term', term: 'Existing', definition: 'x'.repeat(80) }
+    ],
+    redirects: {
+      'existing-term': 'another-term'
+    }
+  };
+  const result = runValidation(termsData);
+  assert.equal(result.success, false);
+  assert.match(result.output, /Redirect source 'existing-term' conflicts with an active term slug/);
+});
+
+// Edge case: Redirect target does not exist
+test('validation edge case: redirect target does not exist', () => {
+  const termsData = {
+    terms: [
+      { slug: 'existing-term', term: 'Existing', definition: 'x'.repeat(80) }
+    ],
+    redirects: {
+      'old-slug': 'non-existent-target'
+    }
+  };
+  const result = runValidation(termsData);
+  assert.equal(result.success, false);
+  assert.match(result.output, /Redirect target 'non-existent-target' does not exist in terms/);
+});
+
+// Edge case: Multiple redirect errors
+test('validation edge case: multiple redirect errors detected', () => {
+  const termsData = {
+    terms: [
+      { slug: 'term-a', term: 'Term A', definition: 'x'.repeat(80) }
+    ],
+    redirects: {
+      'term-a': 'term-b',  // conflicts with existing term
+      'old-slug': 'non-existent'  // target doesn't exist
+    }
+  };
+  const result = runValidation(termsData);
+  assert.equal(result.success, false);
+  assert.match(result.output, /Redirect source 'term-a' conflicts/);
+  assert.match(result.output, /Redirect target 'non-existent' does not exist/);
+});
