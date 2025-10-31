@@ -197,5 +197,55 @@ If information is missing, add `needs-info` and ask one precise question.
 
 ---
 
+## 15) Related Documentation
+
+### Essential Reading for Agents
+
+- **[RUNBOOK.md](./RUNBOOK.md)** — Operations runbook for troubleshooting workflow failures, rollback procedures, and emergency responses. Consult this when:
+  - Workflows fail and need diagnosis
+  - Landing page or terms.json needs rollback
+  - Emergency procedures required (outage, data corruption, leaked secrets)
+  - Common error patterns need resolution
+
+- **[README.md](./README.md)** — Contains CI/CD pipeline diagram showing complete flow from PR to deployment. Reference for:
+  - Understanding the complete automation pipeline
+  - Visualizing workflow dependencies
+  - Quick links to all project resources
+
+- **[docs/WORKFLOW_DOCUMENTATION.md](./docs/WORKFLOW_DOCUMENTATION.md)** — Complete workflow reference for issue-task-PR automation. Use when:
+  - Setting up or modifying issue automation
+  - Troubleshooting task branch creation
+  - Configuring Slack notifications
+
+- **[docs/landing-page-maintenance.md](./docs/landing-page-maintenance.md)** — Landing page sync and maintenance guide. Consult for:
+  - Understanding landing page generation
+  - Manual regeneration procedures
+  - Validation processes
+
+- **[docs/terms-json-deploy.md](./docs/terms-json-deploy.md)** — Terms JSON deployment strategy and rationale. Important for:
+  - Understanding why terms.json is NOT committed
+  - Export workflow behavior
+  - Caching and rollback strategies
+
+### Quick Reference Commands
+
+```bash
+# Troubleshooting
+npm run validate          # Validate terms.yaml
+npm run validate:landing  # Check landing page sync
+npm test                  # Run all tests
+
+# Operations
+npm run generate:landing  # Regenerate landing page
+npm run export:new        # Export terms (if new slugs)
+npm run score            # Score latest term
+
+# Rollback (via git revert - preferred method)
+git revert COMMIT_SHA    # Revert specific commit
+git revert --no-commit SHA1^..SHA2  # Revert range
+```
+
+---
+
 *This document is guidance for agents and automation. GitHub does not provide an `AGENTS.md` by default — this file is project‑specific.*
 
