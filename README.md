@@ -1,7 +1,5 @@
 # 🚀 FOSS Glossary
-[![GitHub Pages](https://img.shields.io/badge/GitHub-Pages-blue)](https://luminlynx.github.io/FOSS-Glossary/)
-[![PWA Ready](https://img.shields.io/badge/PWA-Ready-purple)](https://luminlynx.github.io/FOSS-Glossary/pwa/)
-[![Terms Count](https://img.shields.io/badge/Terms-28-orange)](./terms.yaml)
+
 [![Docs](https://img.shields.io/badge/docs-passing-brightgreen)](https://luminlynx.github.io/FOSS-Glossary/)
 [![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/LuminLynx/FOSS-Glossary/blob/main/CONTRIBUTING.md)
 [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)](https://github.com/LuminLynx/FOSS-Glossary)
@@ -15,17 +13,13 @@
 ## A community-driven glossary of FOSS terms with humor, sarcasm, and honest truths 
 about open source culture.
 
----
 
-## 🔗 Quick Links
 
-- 📖 **[Landing Page](https://luminlynx.github.io/FOSS-Glossary/)** — Browse the latest terms
-- 📱 **[PWA](https://luminlynx.github.io/FOSS-Glossary/pwa/)** — Full glossary with offline support & installable app
-- 📋 **[Terms Data (JSON API)](https://luminlynx.github.io/FOSS-Glossary/terms.json)** — Developer-friendly JSON endpoint
-- 🤖 **[AGENTS.md](./AGENTS.md)** — Automation playbook (100% compliant)
-- 📊 **[GitHub Actions](https://github.com/LuminLynx/FOSS-Glossary/actions)** — CI/CD status & workflows
 
----
+
+
+
+
 
 <!-- STATS-START -->
 ## 📊 Glossary Stats
