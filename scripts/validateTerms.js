@@ -8,6 +8,27 @@ const { normalizeName } = require('../utils/normalization');
 const { formatAjvError } = require('../utils/validation');
 const { loadJson } = require('../utils/fileSystem');
 
+function collectNames(term) {
+  const names = [];
+  if (!term || typeof term !== 'object') {
+    return names;
+  }
+
+  if (typeof term.term === 'string') {
+    names.push(term.term);
+  }
+
+  if (Array.isArray(term.aliases)) {
+    for (const alias of term.aliases) {
+      if (typeof alias === 'string') {
+        names.push(alias);
+      }
+    }
+  }
+
+  return names;
+}
+
 /**
  * Load and parse a YAML file with user-friendly error handling
  * 
@@ -182,7 +203,6 @@ function main() {
 
   if (baseTerms.length > 0 && terms.length > 0) {
     const baseNameMap = new Map();
-    const newNameMap = new Map();
 
     // Build base terms index - optimized single pass
     for (let i = 0; i < baseTerms.length; i++) {
@@ -195,19 +215,8 @@ function main() {
         continue;
       }
       
-      // Inline name collection to avoid function call overhead
-      const names = [];
-      if (typeof term.term === 'string') {
-        names.push(term.term);
-      }
-      if (Array.isArray(term.aliases)) {
-        for (const alias of term.aliases) {
-          if (typeof alias === 'string') {
-            names.push(alias);
-          }
-        }
-      }
-      
+      const names = collectNames(term);
+
       // Process names with early duplicate detection
       for (const name of names) {
         const key = normalizeName(name);
@@ -233,26 +242,15 @@ function main() {
         continue;
       }
       
-      // Inline name collection to avoid function call overhead
-      const names = [];
-      if (typeof term.term === 'string') {
-        names.push(term.term);
-      }
-      if (Array.isArray(term.aliases)) {
-        for (const alias of term.aliases) {
-          if (typeof alias === 'string') {
-            names.push(alias);
-          }
-        }
-      }
-      
+      const names = collectNames(term);
+
       // Process names and check for slug changes simultaneously
       for (const name of names) {
         const key = normalizeName(name);
         if (!key) {
           continue;
         }
-        
+
         // Check for slug change while building the map
         if (baseNameMap.has(key)) {
           const baseInfo = baseNameMap.get(key);
@@ -261,16 +259,6 @@ function main() {
               `Slug for term '${baseInfo.term}' changed from '${baseInfo.slug}' to '${slug}' (label '${baseInfo.label}')`
             );
           }
-        }
-        
-        // Only add to newNameMap if not already present
-        if (!newNameMap.has(key)) {
-          newNameMap.set(key, {
-            slug,
-            term: term.term || slug,
-            label: name,
-            index: i + 1,
-          });
         }
       }
     }
