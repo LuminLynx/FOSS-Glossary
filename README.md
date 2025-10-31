@@ -21,7 +21,7 @@ about open source culture.
 
 - 📖 **[Landing Page](https://luminlynx.github.io/FOSS-Glossary/)** — Browse the latest terms
 - 📱 **[PWA](https://luminlynx.github.io/FOSS-Glossary/pwa/)** — Full glossary with offline support & installable app
-- 📋 **[Terms Data (JSON API)](https://luminlynx.github.io/FOSS-Glossary/terms.json)** — Developer-friendly JSON endpoint
+- 📋 **[Terms Data (JSON API)](https://luminlynx.github.io/FOSS-Glossary/terms.json)** — Developer-friendly JSON endpoint (2 MB size limit)
 - 🤖 **[AGENTS.md](./AGENTS.md)** — Automation playbook (100% compliant)
 - 📊 **[GitHub Actions](https://github.com/LuminLynx/FOSS-Glossary/actions)** — CI/CD status & workflows
 
