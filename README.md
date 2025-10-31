@@ -24,6 +24,7 @@ about open source culture.
 - 📋 **[Terms Data (JSON API)](https://luminlynx.github.io/FOSS-Glossary/terms.json)** — Developer-friendly JSON endpoint
 - 🤖 **[AGENTS.md](./AGENTS.md)** — Automation playbook (100% compliant)
 - 📊 **[GitHub Actions](https://github.com/LuminLynx/FOSS-Glossary/actions)** — CI/CD status & workflows
+- 🔧 **[RUNBOOK.md](./RUNBOOK.md)** — Troubleshooting & rollback procedures for maintainers
 
 ---
 
@@ -39,6 +40,85 @@ about open source culture.
 ### 🎮 Top Contributors
 🥇 John Portley | 🥈 Joao Portela | 🥉 Aditya Kumar Singh | 🌟 Joe Port
 <!-- STATS-END -->
+
+---
+
+## 🔄 CI/CD Pipeline
+
+Our automated pipeline ensures quality and consistency for every contribution:
+
+### Pull Request Workflow
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     Contributor submits PR                       │
+│                      (modifies terms.yaml)                       │
+└────────────────────────────┬────────────────────────────────────┘
+                             │
+                             ▼
+              ┌──────────────────────────────┐
+              │   pr-complete.yml (CI)       │
+              ├──────────────────────────────┤
+              │  ✓ Schema validation         │
+              │  ✓ Duplicate detection       │
+              │  ✓ Export dry-run            │
+              │  ✓ Score calculation         │
+              │  ✓ Comment on PR             │
+              └──────────────┬───────────────┘
+                             │
+                             ▼
+                    ✅ Ready for Review
+                             │
+                             ▼
+                    👤 Maintainer Approval
+                             │
+                             ▼
+                      Merge to main
+```
+
+### Deployment Workflow
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                       Merged to main                             │
+│                    (terms.yaml updated)                          │
+└────────────────────────────┬────────────────────────────────────┘
+                             │
+                             ▼
+              ┌──────────────────────────────┐
+              │ update-landing-page.yml      │
+              ├──────────────────────────────┤
+              │  1. Generate HTML            │
+              │  2. Validate sync            │
+              │  3. Export terms.json        │
+              │     (if new terms)           │
+              │  4. Upload artifact          │
+              │  5. Deploy to Pages          │
+              └──────────────┬───────────────┘
+                             │
+                             ▼
+              ┌──────────────────────────────┐
+              │   GitHub Pages (Live Site)   │
+              ├──────────────────────────────┤
+              │  📖 Landing Page             │
+              │  📱 PWA App                  │
+              │  📋 terms.json API           │
+              └──────────────────────────────┘
+                             │
+                             ▼
+                    🎉 Live for users!
+```
+
+**Pipeline Features:**
+- ⚡ Automated validation and scoring on every PR
+- 🚀 Zero-downtime deployments to GitHub Pages
+- 🔒 Schema enforcement prevents breaking changes
+- 📊 Automatic statistics updates
+- 🎯 Smart exports (only when new terms added)
+
+For troubleshooting failed workflows, see our **[Operations Runbook](./RUNBOOK.md)**.
+
+---
 
 ## 🎮 How to Contribute
 

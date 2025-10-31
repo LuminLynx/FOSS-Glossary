@@ -24,6 +24,7 @@ N/A
 - **Merge policy:** Owner approval required.
 - **Post‑merge export:** `npm run export:new` runs on push to `main` **only if** a new term (new slug) was added; it publishes `docs/terms.json` for the Landing Page.
 - **Landing Page:** served from `/docs` (GitHub Pages). Glossary UI fetches `./terms.json`.
+- **Operations:** See [RUNBOOK.md](./RUNBOOK.md) for troubleshooting, rollback procedures, and failure recovery.
 
 ---
 
