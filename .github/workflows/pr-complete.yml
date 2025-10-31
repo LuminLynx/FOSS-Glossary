@@ -14,6 +14,8 @@ jobs:
   validate-and-score:
     name: Validate & score glossary
     runs-on: ubuntu-latest
+    # Only run for same-repo PRs (forked PRs are handled by pr-comment.yml)
+    if: github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - name: Checkout PR merge commit
         uses: actions/checkout@v4
