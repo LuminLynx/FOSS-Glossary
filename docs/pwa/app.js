@@ -1,9 +1,11 @@
 // FOSS Glossary PWA - Main Application Logic
 
 // Constants
-const TERMS_API_URL = '../terms.json';
+const TERMS_API_BASE_URL = '../terms.json';
 const FAVORITES_KEY = 'foss-glossary-favorites';
 const THEME_KEY = 'foss-glossary-theme';
+const MAX_RETRY_ATTEMPTS = 3;
+const RETRY_DELAY_MS = 2000;
 
 // State
 let allTerms = [];
@@ -11,6 +13,7 @@ let filteredTerms = [];
 let favorites = new Set();
 let currentView = 'all'; // 'all' or 'favorites'
 let expandedTerms = new Set();
+let termsVersion = null; // Store the version from terms.json
 
 // DOM Elements
 let searchInput;
@@ -94,18 +97,44 @@ function saveFavorites() {
   }
 }
 
-// Load terms from API
-async function loadTerms() {
+// Build terms URL with cache busting
+function buildTermsUrl(version = null) {
+  // Use version from previous load or timestamp for cache busting
+  const ver = version || termsVersion || Date.now();
+  return `${TERMS_API_BASE_URL}?ver=${ver}`;
+}
+
+// Load terms from API with retry logic
+async function loadTerms(retryCount = 0) {
   try {
-    termsGrid.innerHTML = '<div class="loading">Loading terms</div>';
+    termsGrid.innerHTML = '<div class="loading">Loading terms...</div>';
     
-    const response = await fetch(TERMS_API_URL);
+    const url = buildTermsUrl();
+    const response = await fetch(url);
+    
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
     
     const data = await response.json();
+    
+    // Validate data structure
+    if (!data || typeof data !== 'object') {
+      throw new Error('Invalid data format received');
+    }
+    
+    // Store version for cache busting
+    if (data.version) {
+      termsVersion = data.version;
+    }
+    
+    // Handle empty terms
     allTerms = data.terms || [];
+    
+    if (allTerms.length === 0) {
+      showEmptyState();
+      return;
+    }
     
     filterTerms();
     updateStats();
@@ -113,14 +142,145 @@ async function loadTerms() {
     
   } catch (error) {
     console.error('Error loading terms:', error);
-    termsGrid.innerHTML = `
-      <div class="empty-state">
-        <div class="empty-state-icon">⚠️</div>
-        <div class="empty-state-title">Failed to load terms</div>
-        <div class="empty-state-text">Please check your connection and try again.</div>
-      </div>
-    `;
+    
+    // Show retry option if we haven't exhausted attempts
+    if (retryCount < MAX_RETRY_ATTEMPTS) {
+      showErrorStateWithRetry(error, retryCount);
+    } else {
+      showFinalErrorState(error);
+    }
   }
+}
+
+// Show empty state when no terms are available
+function showEmptyState() {
+  termsGrid.innerHTML = `
+    <div class="empty-state">
+      <div class="empty-state-icon">📭</div>
+      <div class="empty-state-title">No Terms Available</div>
+      <div class="empty-state-text">
+        The glossary is currently empty. Check back later for new terms!
+      </div>
+      <button class="retry-btn" onclick="location.reload()">
+        🔄 Refresh Page
+      </button>
+    </div>
+  `;
+  updateStats();
+}
+
+// Show error state with retry button
+function showErrorStateWithRetry(error, retryCount) {
+  const attemptsLeft = MAX_RETRY_ATTEMPTS - retryCount;
+  const errorMessage = getErrorMessage(error);
+  
+  termsGrid.innerHTML = `
+    <div class="empty-state error-state">
+      <div class="empty-state-icon">⚠️</div>
+      <div class="empty-state-title">Failed to Load Terms</div>
+      <div class="empty-state-text">
+        ${errorMessage}
+      </div>
+      <div class="error-details">
+        <p><strong>Attempts remaining:</strong> ${attemptsLeft}</p>
+        <p><strong>What you can try:</strong></p>
+        <ul class="troubleshooting-list">
+          <li>Check your internet connection</li>
+          <li>Try refreshing the page</li>
+          <li>Clear your browser cache</li>
+          <li>Try again in a few moments</li>
+        </ul>
+      </div>
+      <div class="error-actions">
+        <button class="retry-btn primary" id="retry-btn">
+          🔄 Retry Now (${attemptsLeft} left)
+        </button>
+        <button class="retry-btn secondary" onclick="location.reload()">
+          ↻ Refresh Page
+        </button>
+      </div>
+    </div>
+  `;
+  
+  // Add retry button event listener
+  const retryBtn = document.getElementById('retry-btn');
+  if (retryBtn) {
+    retryBtn.addEventListener('click', () => {
+      retryBtn.disabled = true;
+      retryBtn.textContent = '⏳ Retrying...';
+      
+      // Wait before retrying
+      setTimeout(() => {
+        loadTerms(retryCount + 1);
+      }, RETRY_DELAY_MS);
+    });
+  }
+}
+
+// Show final error state after all retries exhausted
+function showFinalErrorState(error) {
+  const errorMessage = getErrorMessage(error);
+  
+  termsGrid.innerHTML = `
+    <div class="empty-state error-state">
+      <div class="empty-state-icon">❌</div>
+      <div class="empty-state-title">Unable to Load Terms</div>
+      <div class="empty-state-text">
+        ${errorMessage}
+      </div>
+      <div class="error-details">
+        <p><strong>All retry attempts exhausted.</strong></p>
+        <p><strong>Troubleshooting steps:</strong></p>
+        <ul class="troubleshooting-list">
+          <li>Verify your internet connection is active</li>
+          <li>Check if the site is accessible from another device</li>
+          <li>Try clearing your browser cache and cookies</li>
+          <li>Disable browser extensions that might block requests</li>
+          <li>Wait a few minutes and refresh the page</li>
+          <li>If the problem persists, the service may be temporarily unavailable</li>
+        </ul>
+      </div>
+      <div class="error-actions">
+        <button class="retry-btn primary" onclick="location.reload()">
+          ↻ Refresh Page
+        </button>
+        <button class="retry-btn secondary" onclick="window.fossGlossary.reloadTerms()">
+          🔄 Try Again
+        </button>
+      </div>
+      <div class="error-technical">
+        <details>
+          <summary>Technical Details</summary>
+          <pre>${escapeHtml(error.toString())}</pre>
+        </details>
+      </div>
+    </div>
+  `;
+}
+
+// Get user-friendly error message
+function getErrorMessage(error) {
+  if (!navigator.onLine) {
+    return 'You appear to be offline. Please check your internet connection.';
+  }
+  
+  if (error.message.includes('HTTP 404')) {
+    return 'The terms file could not be found. The glossary may be temporarily unavailable.';
+  }
+  
+  if (error.message.includes('HTTP 500') || error.message.includes('HTTP 503')) {
+    return 'The server is experiencing issues. Please try again in a few moments.';
+  }
+  
+  if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+    return 'Network error occurred. Please check your connection and try again.';
+  }
+  
+  if (error.message.includes('Invalid data format')) {
+    return 'Received invalid data from server. The glossary may be updating.';
+  }
+  
+  return 'An unexpected error occurred while loading terms.';
 }
 
 // Filter terms based on search query and current view

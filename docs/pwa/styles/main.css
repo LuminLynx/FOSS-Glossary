@@ -367,6 +367,119 @@ body {
   60%, 100% { content: '...'; }
 }
 
+/* Error state enhancements */
+.error-state {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.error-details {
+  text-align: left;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: var(--bg-card);
+  border-radius: 8px;
+  border-left: 4px solid #ef4444;
+}
+
+.error-details p {
+  margin-bottom: 0.75rem;
+}
+
+.troubleshooting-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 0.5rem 0;
+}
+
+.troubleshooting-list li {
+  padding: 0.5rem 0 0.5rem 1.5rem;
+  position: relative;
+  color: var(--text-secondary);
+}
+
+.troubleshooting-list li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--accent-color);
+}
+
+.error-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.retry-btn {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.retry-btn.primary {
+  background: var(--accent-color);
+  color: white;
+}
+
+.retry-btn.primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--shadow);
+}
+
+.retry-btn.secondary {
+  background: transparent;
+  color: var(--accent-color);
+  border: 2px solid var(--accent-color);
+}
+
+.retry-btn.secondary:hover:not(:disabled) {
+  background: var(--accent-color);
+  color: white;
+  transform: translateY(-2px);
+}
+
+.retry-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.error-technical {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: var(--bg-card);
+  border-radius: 8px;
+  text-align: left;
+}
+
+.error-technical details {
+  cursor: pointer;
+}
+
+.error-technical summary {
+  font-weight: 600;
+  padding: 0.5rem;
+  user-select: none;
+}
+
+.error-technical pre {
+  margin-top: 0.5rem;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  overflow-x: auto;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
 /* Share modal */
 .share-modal {
   display: none;
