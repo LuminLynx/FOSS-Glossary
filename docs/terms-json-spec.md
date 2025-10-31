@@ -8,6 +8,7 @@ This document defines the contract for the `docs/terms.json` artifact consumed b
 - **Exporter:** [`scripts/exportTerms.js`](../scripts/exportTerms.js)
 - **Consumers:** Static docs site (`/docs`) and any external integrations relying on the glossary dataset.
 - **Update cadence:** Emitted on pushes to `main` when at least one new slug is added (see `npm run export:new`).
+- **Size limit:** **2 MB maximum**. Exports exceeding this threshold will fail. See [PREBUILT_INDEX_STRATEGY.md](./PREBUILT_INDEX_STRATEGY.md) for the migration path when the limit is reached.
 
 ## Top-level structure
 
@@ -80,6 +81,17 @@ The snippet below illustrates the full document layout. Only two terms are shown
 - `terms_count` must equal `terms.length`; exporters should fail fast if a mismatch occurs.
 - Slug uniqueness, definition length, and duplicate alias checks are enforced upstream by the YAML validator (`npm run validate`).
 - Consumers should defensively ignore unknown fields to remain forward-compatible with additive changes.
+
+## Size constraints
+
+The export is subject to a **hard 2 MB limit** to ensure performant client-side loading:
+
+- **Current enforcement:** The exporter (`scripts/exportTerms.js`) throws an error if the serialized JSON exceeds 2,097,152 bytes (2 MB).
+- **CI integration:** Pull requests that exceed this limit will fail validation and cannot be merged.
+- **Rationale:** At 2 MB, the payload remains fast to download (< 1s on 3G) and quick to parse in JavaScript (< 100ms). Beyond this, user experience degrades significantly on mobile devices.
+- **Migration path:** When the limit is reached, the repository will migrate to a **prebuilt index architecture** with lazy-loaded individual term files. See [PREBUILT_INDEX_STRATEGY.md](./PREBUILT_INDEX_STRATEGY.md) for the detailed implementation plan.
+
+**Current size:** ~16 KB (28 terms) — well within the limit.
 
 ## Change management
 
