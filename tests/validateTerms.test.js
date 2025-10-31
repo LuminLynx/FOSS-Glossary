@@ -157,7 +157,7 @@ test('validateTerms: detects slug changes with base terms efficiently', () => {
   
   const result = runValidation(newTerms, baseTerms);
   assert.equal(result.success, false);
-  assert.match(result.output, /Slug for term .* changed from 'original-slug' to 'changed-slug'/);
+  assert.match(result.output, /Slug immutability violation.*changed from 'original-slug' to 'changed-slug'/);
 });
 
 test('validateTerms: handles base comparison with many terms efficiently', () => {

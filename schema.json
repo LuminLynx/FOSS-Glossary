@@ -5,6 +5,17 @@
   "required": ["terms"],
   "additionalProperties": false,
   "properties": {
+    "redirects": {
+      "type": "object",
+      "description": "Map of old slugs to current slugs for renamed or merged terms",
+      "patternProperties": {
+        "^[a-z0-9]+(?:-[a-z0-9]+)*$": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        }
+      },
+      "additionalProperties": false
+    },
     "terms": {
       "type": "array",
       "items": {

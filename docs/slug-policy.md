@@ -31,7 +31,42 @@ If normalization produces fewer than three characters, append a descriptive qual
 ## Immutability
 
 - Once merged into `main`, a slug is considered permanent. Renaming slugs breaks URLs, cached exports, and historical references.
-- Corrections require a follow-up migration plan, explicit maintainer approval, and updates to any downstream systems that reference the slug.
+- Validation enforces slug immutability by detecting when a term's slug changes from the base branch.
+- If a slug must change, use the **redirects** mechanism instead of renaming.
+
+## Redirects
+
+When a term needs to be renamed, merged, or replaced, use the `redirects` mapping to preserve old URLs and references.
+
+### Adding a Redirect
+
+Add a redirect entry in `terms.yaml` at the root level:
+
+```yaml
+terms:
+  - slug: new-slug
+    term: "New Term Name"
+    definition: "..."
+
+redirects:
+  old-slug: new-slug
+  another-old-slug: new-slug
+```
+
+### Redirect Rules
+
+- **Old slug must not exist** as an active term (validation enforces this)
+- **New slug must exist** in the terms list (validation enforces this)
+- Redirects are permanent and should not be removed
+- Avoid redirect chains; always point to the final destination
+
+### When to Use Redirects
+
+- **Merging duplicate terms**: Point old slugs to the consolidated term
+- **Renaming for clarity**: Preserve old slug while using a better name
+- **Term evolution**: When a term's scope or meaning changes significantly
+
+See [deletion-policy.md](./deletion-policy.md) for complete guidance on managing term changes and deletions.
 
 ## Validation and enforcement
 
