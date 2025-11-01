@@ -5,9 +5,9 @@ const urlsToCache = [
   './',
   './index.html',
   './terms.json',
-  '../assets/logo.png',
   './pwa/assets/icons/icon-192.png',
-  './pwa/assets/icons/icon-512.png'
+  './pwa/assets/icons/icon-512.png',
+  './pwa/assets/icons/icon-180.png'
 ];
 
 // Install event - cache files
