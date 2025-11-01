@@ -650,3 +650,174 @@ body {
     page-break-inside: avoid;
   }
 }
+
+/* Update notification banner */
+.update-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1rem;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.update-banner-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.update-icon {
+  font-size: 1.5rem;
+  animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.update-text {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.update-btn {
+  background: white;
+  color: #667eea;
+  border: none;
+  padding: 0.5rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.update-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.update-btn:active {
+  transform: translateY(0);
+}
+
+.update-dismiss-btn {
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  color: white;
+  font-size: 1.2rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, border-color 0.2s;
+  padding: 0;
+  line-height: 1;
+}
+
+.update-dismiss-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: white;
+}
+
+/* App footer */
+.app-footer {
+  margin-top: 3rem;
+  padding: 2rem 1rem;
+  text-align: center;
+  border-top: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.footer-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.app-version {
+  font-family: 'Courier New', monospace;
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.footer-separator {
+  color: var(--border-color);
+}
+
+.footer-link {
+  color: var(--accent-color);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-link:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+
+/* Adjust main container to account for footer */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: calc(100vh - 200px);
+}
+
+/* Mobile responsiveness for update banner and footer */
+@media (max-width: 640px) {
+  .update-banner-content {
+    font-size: 0.875rem;
+    padding: 0.5rem;
+  }
+  
+  .update-text {
+    font-size: 0.875rem;
+  }
+  
+  .update-btn {
+    padding: 0.4rem 1rem;
+    font-size: 0.875rem;
+  }
+  
+  .footer-content {
+    font-size: 0.75rem;
+  }
+  
+  .app-footer {
+    margin-top: 2rem;
+    padding: 1.5rem 1rem;
+  }
+}

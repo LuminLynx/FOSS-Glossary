@@ -4,6 +4,7 @@
 const TERMS_API_BASE_URL = '../terms.json';
 const FAVORITES_KEY = 'foss-glossary-favorites';
 const THEME_KEY = 'foss-glossary-theme';
+const VERSION_KEY = 'foss-glossary-version';
 const MAX_RETRY_ATTEMPTS = 3;
 const RETRY_DELAY_MS = 2000;
 const SEARCH_DEBOUNCE_MS = 200; // Debounce delay in milliseconds (150-250ms range)
@@ -17,6 +18,8 @@ let currentView = 'all'; // 'all' or 'favorites'
 let expandedTerms = new Set();
 let termsVersion = null; // Store the version from terms.json
 let searchDebounceTimer = null;
+let appVersion = '1.0.0'; // Default version
+let serviceWorkerRegistration = null;
 
 // DOM Elements
 let searchInput;
@@ -25,15 +28,19 @@ let statsBar;
 let themeToggle;
 let favoritesToggle;
 let toast;
+let updateBanner;
+let appVersionElement;
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
   initializeDOM();
   initializeServiceWorker();
+  loadAppVersion();
   loadTheme();
   loadFavorites();
   loadTerms();
   setupEventListeners();
+  setupUpdateNotification();
 });
 
 // Initialize DOM references
@@ -44,6 +51,8 @@ function initializeDOM() {
   themeToggle = document.getElementById('theme-toggle');
   favoritesToggle = document.getElementById('favorites-toggle');
   toast = document.getElementById('toast');
+  updateBanner = document.getElementById('update-banner');
+  appVersionElement = document.getElementById('app-version');
 }
 
 // Register Service Worker
@@ -52,10 +61,112 @@ function initializeServiceWorker() {
     navigator.serviceWorker.register('./service-worker.js')
       .then((registration) => {
         console.log('Service Worker registered:', registration);
+        serviceWorkerRegistration = registration;
+        
+        // Check for updates on page load
+        registration.update();
+        
+        // Listen for updates
+        registration.addEventListener('updatefound', () => {
+          const newWorker = registration.installing;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              // New service worker is installed and waiting
+              showUpdateNotification();
+            }
+          });
+        });
       })
       .catch((error) => {
         console.error('Service Worker registration failed:', error);
       });
+    
+    // Listen for messages from service worker
+    navigator.serviceWorker.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'NEW_VERSION_AVAILABLE') {
+        showUpdateNotification();
+      }
+    });
+    
+    // Handle controller change (new SW activated)
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      // Only reload if we're expecting an update
+      if (window.swUpdatePending) {
+        window.location.reload();
+      }
+    });
+  }
+}
+
+// Load app version from version.json
+async function loadAppVersion() {
+  try {
+    const response = await fetch('./version.json');
+    if (response.ok) {
+      const versionData = await response.json();
+      appVersion = versionData.version;
+      
+      // Update version display
+      if (appVersionElement) {
+        appVersionElement.textContent = `v${appVersion}`;
+      }
+      
+      // Check if version has changed
+      const storedVersion = localStorage.getItem(VERSION_KEY);
+      if (storedVersion && storedVersion !== appVersion) {
+        console.log(`App updated from ${storedVersion} to ${appVersion}`);
+      }
+      
+      // Store current version
+      localStorage.setItem(VERSION_KEY, appVersion);
+    }
+  } catch (error) {
+    console.error('Error loading version:', error);
+  }
+}
+
+// Show update notification banner
+function showUpdateNotification() {
+  if (updateBanner) {
+    updateBanner.style.display = 'block';
+    
+    // Announce to screen readers
+    const announcement = document.createElement('div');
+    announcement.setAttribute('role', 'status');
+    announcement.setAttribute('aria-live', 'polite');
+    announcement.textContent = 'A new version of the app is available. Please reload to update.';
+    announcement.style.position = 'absolute';
+    announcement.style.left = '-10000px';
+    document.body.appendChild(announcement);
+    
+    setTimeout(() => {
+      document.body.removeChild(announcement);
+    }, 1000);
+  }
+}
+
+// Setup update notification handlers
+function setupUpdateNotification() {
+  const reloadBtn = document.getElementById('update-reload-btn');
+  const dismissBtn = document.getElementById('update-dismiss-btn');
+  
+  if (reloadBtn) {
+    reloadBtn.addEventListener('click', () => {
+      // Tell service worker to skip waiting
+      if (serviceWorkerRegistration && serviceWorkerRegistration.waiting) {
+        window.swUpdatePending = true;
+        serviceWorkerRegistration.waiting.postMessage({ type: 'SKIP_WAITING' });
+      } else {
+        // Force reload if no waiting worker
+        window.location.reload();
+      }
+    });
+  }
+  
+  if (dismissBtn) {
+    dismissBtn.addEventListener('click', () => {
+      updateBanner.style.display = 'none';
+    });
   }
 }
 

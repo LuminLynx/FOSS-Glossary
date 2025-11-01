@@ -1,6 +1,7 @@
 {
   "name": "FOSS Glossary - Progressive Web App",
   "short_name": "FOSS Glossary",
+  "version": "1.0.0",
   "description": "A gamified glossary of FOSS terms with humor. Search, favorite, and share terms offline.",
   "start_url": "./index.html",
   "display": "standalone",

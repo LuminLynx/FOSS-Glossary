@@ -1,4 +1,5 @@
-const CACHE_NAME = 'foss-glossary-v2';
+const APP_VERSION = '1.0.0';
+const CACHE_NAME = `foss-glossary-v${APP_VERSION}`;
 const TERMS_API_URL = '../terms.json';
 
 // List of URLs to cache on install
@@ -8,6 +9,7 @@ const urlsToCache = [
   './app.js',
   './styles/main.css',
   './manifest.json',
+  './version.json',
   './assets/icons/icon-192.png',
   './assets/icons/icon-512.png',
   '../../assets/logo.png',
@@ -83,4 +85,21 @@ self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
+  
+  if (event.data && event.data.type === 'GET_VERSION') {
+    event.ports[0].postMessage({ version: APP_VERSION });
+  }
+});
+
+// Notify clients when a new version is waiting
+self.addEventListener('controllerchange', () => {
+  // This event fires when a new service worker takes control
+  self.clients.matchAll().then(clients => {
+    clients.forEach(client => {
+      client.postMessage({
+        type: 'NEW_VERSION_AVAILABLE',
+        version: APP_VERSION
+      });
+    });
+  });
 });

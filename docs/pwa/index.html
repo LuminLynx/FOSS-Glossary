@@ -114,6 +114,17 @@
         <div id="terms-grid" class="terms-grid">
             <div class="loading">Loading terms...</div>
         </div>
+        
+        <!-- Footer with version -->
+        <footer class="app-footer">
+            <div class="footer-content">
+                <span id="app-version" class="app-version">v1.0.0</span>
+                <span class="footer-separator">•</span>
+                <a href="https://github.com/LuminLynx/FOSS-Glossary" target="_blank" rel="noopener noreferrer" class="footer-link">
+                    View on GitHub
+                </a>
+            </div>
+        </footer>
     </main>
 
     <!-- Share Modal -->
@@ -133,6 +144,16 @@
 
     <!-- Toast Notification -->
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    
+    <!-- Update Notification Banner -->
+    <div id="update-banner" class="update-banner" role="alert" aria-live="assertive" style="display: none;">
+        <div class="update-banner-content">
+            <span class="update-icon">🔄</span>
+            <span class="update-text">A new version is available!</span>
+            <button id="update-reload-btn" class="update-btn">Reload</button>
+            <button id="update-dismiss-btn" class="update-dismiss-btn" aria-label="Dismiss">✕</button>
+        </div>
+    </div>
 
     <!-- App Script -->
     <script src="./app.js"></script>
