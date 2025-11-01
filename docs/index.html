@@ -29,6 +29,16 @@
     <meta name="twitter:description" content="Score points, unlock achievements, and learn FOSS terms with humor! 1 terms and growing.">
     <meta name="twitter:image" content="https://raw.githubusercontent.com/LuminLynx/FOSS-Glossary/main/assets/twitter-card.png">
  
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#1a3a52">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="FOSS Glossary">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="apple-touch-icon" sizes="180x180" href="./pwa/assets/icons/icon-192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="./pwa/assets/icons/icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="./pwa/assets/icons/icon-512.png">
+    
     <!-- Favicon (optional - add later) -->
     <!-- <link rel="icon" type="image/png" href="assets/favicon.png"> -->
 
@@ -377,14 +387,29 @@
             </div>
 
             <p class="last-updated">
-                Last updated: Nov 1, 2025, 2:33 AM |
+                Last updated: Nov 1, 2025, 2:36 AM |
                 1 terms and growing! |
                 Made with 💙 by the FOSS community
             </p>
         </div>
     </div>
     <script>
-        window.__TERMS_JSON_URL = './terms.json?ver=9100d82';
+        window.__TERMS_JSON_URL = './terms.json?ver=f8674b1';
+    </script>
+    
+    <!-- Service Worker Registration for PWA -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registered:', registration.scope);
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed:', err);
+                    });
+            });
+        }
     </script>
 </body>
 </html>
