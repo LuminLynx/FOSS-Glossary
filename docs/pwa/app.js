@@ -81,13 +81,6 @@ function initializeServiceWorker() {
         console.error('Service Worker registration failed:', error);
       });
     
-    // Listen for messages from service worker
-    navigator.serviceWorker.addEventListener('message', (event) => {
-      if (event.data && event.data.type === 'NEW_VERSION_AVAILABLE') {
-        showUpdateNotification();
-      }
-    });
-    
     // Handle controller change (new SW activated)
     navigator.serviceWorker.addEventListener('controllerchange', () => {
       // Only reload if we're expecting an update
@@ -129,19 +122,6 @@ async function loadAppVersion() {
 function showUpdateNotification() {
   if (updateBanner) {
     updateBanner.style.display = 'block';
-    
-    // Announce to screen readers
-    const announcement = document.createElement('div');
-    announcement.setAttribute('role', 'status');
-    announcement.setAttribute('aria-live', 'polite');
-    announcement.textContent = 'A new version of the app is available. Please reload to update.';
-    announcement.style.position = 'absolute';
-    announcement.style.left = '-10000px';
-    document.body.appendChild(announcement);
-    
-    setTimeout(() => {
-      document.body.removeChild(announcement);
-    }, 1000);
   }
 }
 

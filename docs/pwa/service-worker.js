@@ -90,16 +90,3 @@ self.addEventListener('message', (event) => {
     event.ports[0].postMessage({ version: APP_VERSION });
   }
 });
-
-// Notify clients when a new version is waiting
-self.addEventListener('controllerchange', () => {
-  // This event fires when a new service worker takes control
-  self.clients.matchAll().then(clients => {
-    clients.forEach(client => {
-      client.postMessage({
-        type: 'NEW_VERSION_AVAILABLE',
-        version: APP_VERSION
-      });
-    });
-  });
-});
