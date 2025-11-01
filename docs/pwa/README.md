@@ -96,9 +96,10 @@ https://luminlynx.github.io/FOSS-Glossary/pwa/
 ```
 docs/pwa/
 ├── index.html              # Main entry point
-├── manifest.json           # PWA manifest (app metadata)
-├── service-worker.js       # Offline caching & support
+├── manifest.json           # PWA manifest (app metadata + version)
+├── service-worker.js       # Offline caching & update detection
 ├── app.js                  # Main application logic
+├── version.json            # Version tracking file
 ├── styles/
 │   └── main.css           # All styles (dark/light modes)
 ├── assets/
@@ -148,7 +149,92 @@ docs/pwa/
 ✅ Mobile-responsive design (320px to 1920px)  
 ✅ Dark mode toggle with persistence  
 ✅ Installable on mobile devices  
-✅ Lighthouse PWA score: 90+ (expected)
+✅ Lighthouse PWA score: 90+ (expected)  
+✅ Version tracking and update notifications
+
+## Versioning and Updates
+
+### Version Management
+
+The PWA uses a semantic versioning system (e.g., `1.0.0`) to track releases:
+
+- **version.json**: Contains the current app version, build date, and description
+- **manifest.json**: Includes version field for app metadata
+- **service-worker.js**: Cache names include version for automatic invalidation
+- **Footer display**: Shows current version to users (e.g., `v1.0.0`)
+
+### Update Notifications
+
+When a new version is deployed:
+
+1. **Service Worker detects** the new version during update check
+2. **Update banner appears** at the top of the page with a rotating icon
+3. **User can choose**:
+   - Click "Reload" to activate the new version immediately
+   - Click "✕" to dismiss and continue with current version
+4. **After reload**, the new service worker takes control and updates the app
+
+### How It Works
+
+```javascript
+// Service worker checks for updates on page load
+registration.update();
+
+// Listens for new service worker installation
+registration.addEventListener('updatefound', () => {
+  // Shows update notification when new version is waiting
+  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+    showUpdateNotification();
+  }
+});
+```
+
+### Update Process for Developers
+
+When releasing a new version:
+
+1. **Update version.json**:
+   ```json
+   {
+     "version": "1.1.0",
+     "buildDate": "2025-11-01T12:00:00.000Z",
+     "description": "Bug fixes and performance improvements"
+   }
+   ```
+
+2. **Update manifest.json**:
+   ```json
+   {
+     "version": "1.1.0",
+     ...
+   }
+   ```
+
+3. **Update service-worker.js** (if needed):
+   ```javascript
+   const APP_VERSION = '1.1.0';
+   const CACHE_NAME = `foss-glossary-v${APP_VERSION}`;
+   ```
+
+4. **Commit and push** changes to trigger GitHub Pages deployment
+
+5. **Users will automatically see** the update notification on their next visit
+
+### Version Display
+
+The current version is displayed in the footer of every page:
+- Format: `v1.0.0`
+- Located at: Bottom of page, next to GitHub link
+- Style: Monospace font with tag-like appearance
+- Clickable: Links to release notes (optional)
+
+### Best Practices
+
+- **Semantic versioning**: Use MAJOR.MINOR.PATCH format
+- **Cache busting**: Service worker automatically clears old caches
+- **Non-intrusive UX**: Update banner can be dismissed
+- **User control**: Users choose when to reload
+- **Accessibility**: Update banner uses ARIA alerts for screen readers
 
 ## Browser Support
 
