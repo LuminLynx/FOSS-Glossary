@@ -1,6 +1,6 @@
 # Schema Hardening & Type Safety
 
-This document describes the schema validation, TypeScript type generation, and YAML formatting rules implemented in PR #2.
+This document describes the schema validation, TypeScript type generation, and YAML formatting rules for the FOSS Glossary.
 
 ## Overview
 

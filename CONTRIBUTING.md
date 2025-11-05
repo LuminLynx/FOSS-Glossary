@@ -111,7 +111,7 @@ tags: ['foss', 'gpl', 'mixed-case']
 
 ### Tag Formatting Rules
 
-Starting with PR #2, tags **must** use lowercase kebab-case format:
+Tags **must** use lowercase kebab-case format:
 
 - ✅ Valid: `foss`, `open-source`, `pull-requests`, `gpl`
 - ❌ Invalid: `FOSS`, `Open Source`, `pull_requests`, `GPL`
