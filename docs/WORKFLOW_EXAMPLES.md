@@ -16,12 +16,14 @@ This document provides practical examples of using the Issue Task PR Automation 
 **Scenario:** You have an issue that needs automation
 
 **Steps:**
+
 1. Navigate to the issue
 2. On the right sidebar, click "Assignees"
 3. Select `my-codex-bot` (or your configured bot)
 4. Wait for the workflow to run (usually takes 30-60 seconds)
 
 **Expected Result:**
+
 - Branch created: `task/123-issue-title-1729276800000`
 - File created: `tasks/123/issue-title-1729276800000.md`
 - PR opened with link in issue comment
@@ -31,12 +33,14 @@ This document provides practical examples of using the Issue Task PR Automation 
 **Scenario:** Use labels instead of assignment
 
 **Steps:**
+
 1. Navigate to the issue
 2. On the right sidebar, click "Labels"
 3. Add the `codex` or `ready-for-codex` label
 4. Wait for the workflow to run
 
 **Expected Result:**
+
 - Same as Example 1
 - Works even if issue is not assigned to bot
 
@@ -45,11 +49,13 @@ This document provides practical examples of using the Issue Task PR Automation 
 **Scenario:** Maximum visibility
 
 **Steps:**
+
 1. Assign issue to bot
 2. Add `codex` label
 3. Add other labels like `high-priority`, `enhancement`
 
 **Expected Result:**
+
 - Workflow triggers on first action (assignment or label)
 - Task created with all context
 
@@ -60,6 +66,7 @@ This document provides practical examples of using the Issue Task PR Automation 
 **Scenario:** Create issue and task via web interface
 
 **Steps:**
+
 1. Go to Actions tab
 2. Click "Issue Task PR Automation" workflow
 3. Click "Run workflow" button
@@ -73,6 +80,7 @@ This document provides practical examples of using the Issue Task PR Automation 
 5. Click "Run workflow"
 
 **Expected Result:**
+
 - Issue #X created
 - Task automation runs automatically
 - Slack notification sent (if configured)
@@ -82,6 +90,7 @@ This document provides practical examples of using the Issue Task PR Automation 
 **Scenario:** Create from command line
 
 **Command:**
+
 ```bash
 gh workflow run issue-task-pr.yml \
   --ref main \
@@ -92,6 +101,7 @@ gh workflow run issue-task-pr.yml \
 ```
 
 **Expected Result:**
+
 - Issue created with provided details
 - Automation runs automatically
 - Slack notification sent
@@ -101,6 +111,7 @@ gh workflow run issue-task-pr.yml \
 **Scenario:** Integrate with external systems
 
 **cURL Command:**
+
 ```bash
 curl -X POST \
   -H "Accept: application/vnd.github+json" \
@@ -119,6 +130,7 @@ curl -X POST \
 ```
 
 **Expected Result:**
+
 - Issue created via API
 - Workflow runs automatically
 - No Slack notification (disabled)
@@ -128,11 +140,12 @@ curl -X POST \
 **Scenario:** Automate issue creation from your application
 
 **Script:**
+
 ```javascript
 const { Octokit } = require('@octokit/rest');
 
 const octokit = new Octokit({
-  auth: process.env.GITHUB_TOKEN
+  auth: process.env.GITHUB_TOKEN,
 });
 
 async function createTaskIssue(title, body, labels) {
@@ -145,10 +158,10 @@ async function createTaskIssue(title, body, labels) {
       title,
       body,
       labels: labels.join(','),
-      notify_slack: 'true'
-    }
+      notify_slack: 'true',
+    },
   });
-  
+
   console.log('Workflow dispatched:', result.status);
 }
 
@@ -167,6 +180,7 @@ createTaskIssue(
 **Scenario:** Use a different bot account
 
 **Configuration:**
+
 1. Go to Settings → Secrets and variables → Actions → Variables
 2. Click "New repository variable"
 3. Name: `CODEX_BOT_LOGIN`
@@ -174,6 +188,7 @@ createTaskIssue(
 5. Click "Add variable"
 
 **Usage:**
+
 - Now assign issues to `my-custom-bot-name` instead
 - Workflow will use this username in comments and PRs
 
@@ -182,6 +197,7 @@ createTaskIssue(
 **Scenario:** Use project-specific labels
 
 **Configuration:**
+
 1. Go to Settings → Secrets and variables → Actions → Variables
 2. Click "New repository variable"
 3. Name: `TRIGGER_LABELS`
@@ -189,6 +205,7 @@ createTaskIssue(
 5. Click "Add variable"
 
 **Usage:**
+
 - Add any of these labels to trigger automation
 - Multiple labels can trigger the same workflow
 
@@ -197,6 +214,7 @@ createTaskIssue(
 **Scenario:** Get notified in Slack when automation runs
 
 **Configuration:**
+
 1. Create Slack webhook:
    - Go to https://api.slack.com/apps
    - Create app → "From scratch"
@@ -216,6 +234,7 @@ createTaskIssue(
    - Click "Add secret"
 
 **Usage:**
+
 - Notifications sent automatically on workflow completion
 - Shows issue number, status, PR link
 - Can be enabled manually via `notify_slack` input
@@ -227,11 +246,13 @@ createTaskIssue(
 **Use Case:** New bugs need immediate attention
 
 **Setup:**
+
 1. Label template: Create `bug` and `codex` labels
 2. Configure trigger labels to include `bug`
 3. Set up Slack notifications
 
 **Process:**
+
 1. User reports bug → Issue created
 2. Maintainer adds `bug` and `codex` labels
 3. Workflow creates task branch and PR
@@ -240,6 +261,7 @@ createTaskIssue(
 6. PR reviewed and merged
 
 **Benefits:**
+
 - Immediate action on bugs
 - No manual branch/PR creation
 - Team stays informed via Slack
@@ -249,11 +271,13 @@ createTaskIssue(
 **Use Case:** Organize feature requests into actionable tasks
 
 **Setup:**
+
 1. Create `feature-request` and `approved` labels
 2. Configure: `TRIGGER_LABELS=codex,approved`
 3. Assign bot to auto-handle approved features
 
 **Process:**
+
 1. User submits feature request
 2. Team reviews and adds `approved` label
 3. Workflow creates task automatically
@@ -261,6 +285,7 @@ createTaskIssue(
 5. PR includes original issue context
 
 **Benefits:**
+
 - Clear approval workflow
 - Automatic task creation
 - Traceability from request to implementation
@@ -270,11 +295,13 @@ createTaskIssue(
 **Use Case:** Automated recurring maintenance
 
 **Setup:**
+
 1. Create separate automation repo or script
 2. Configure cron job or scheduled workflow
 3. Use workflow_dispatch to create issues
 
 **Script Example:**
+
 ```bash
 #!/bin/bash
 # weekly-maintenance.sh
@@ -293,6 +320,7 @@ gh workflow run issue-task-pr.yml \
 ```
 
 **Process:**
+
 1. Cron job runs script every Monday
 2. Issues created automatically
 3. Workflow creates task branches
@@ -300,6 +328,7 @@ gh workflow run issue-task-pr.yml \
 5. Tasks completed during the week
 
 **Benefits:**
+
 - No manual task creation
 - Consistent maintenance schedule
 - Clear tracking of recurring tasks
@@ -309,11 +338,13 @@ gh workflow run issue-task-pr.yml \
 **Use Case:** Features need approval before automation
 
 **Setup:**
+
 1. Create labels: `needs-review`, `approved`, `codex`
 2. Configure trigger for `approved` only
 3. Require manual label change after review
 
 **Process:**
+
 1. Feature request submitted
 2. Add `needs-review` label
 3. Team discusses in issue
@@ -322,6 +353,7 @@ gh workflow run issue-task-pr.yml \
 6. Task created automatically
 
 **Benefits:**
+
 - Prevents premature automation
 - Clear approval gates
 - Team discussion preserved
@@ -331,21 +363,24 @@ gh workflow run issue-task-pr.yml \
 **Use Case:** Integrate with project management tools
 
 **Setup:**
+
 1. Configure webhook in PM tool (Jira, Asana, etc.)
 2. Create middleware service
 3. Use GitHub API to dispatch workflow
 
 **Flow:**
+
 ```
 PM Tool → Webhook → Middleware → GitHub API → Workflow → Task Created
 ```
 
 **Middleware Example:**
+
 ```javascript
 // Express.js webhook handler
 app.post('/jira-webhook', async (req, res) => {
   const issue = req.body.issue;
-  
+
   if (issue.fields.status.name === 'Ready for Dev') {
     await octokit.actions.createWorkflowDispatch({
       owner: 'OWNER',
@@ -356,16 +391,17 @@ app.post('/jira-webhook', async (req, res) => {
         title: `[JIRA-${issue.key}] ${issue.fields.summary}`,
         body: issue.fields.description,
         labels: 'jira,external',
-        notify_slack: 'true'
-      }
+        notify_slack: 'true',
+      },
     });
   }
-  
+
   res.sendStatus(200);
 });
 ```
 
 **Benefits:**
+
 - Seamless tool integration
 - Single source of truth
 - Automated task creation from external systems
@@ -388,6 +424,7 @@ app.post('/jira-webhook', async (req, res) => {
 ### Problem: Workflow doesn't trigger
 
 **Example:**
+
 ```
 Issue #123 assigned to my-codex-bot
 Labels: bug, high-priority
@@ -395,6 +432,7 @@ No workflow run
 ```
 
 **Solution:**
+
 ```bash
 # Check if bot username matches
 gh variable get CODEX_BOT_LOGIN
@@ -409,12 +447,14 @@ gh issue edit 123 --add-label codex
 ### Problem: PR creation fails
 
 **Example:**
+
 ```
 Error: Request failed with status code 422
 ```
 
 **Solution:**
 Check workflow logs for specific error. Common issues:
+
 - PR already exists (workflow will reuse it)
 - Branch name conflicts (timestamp prevents this)
 - Permissions issue (check PAT scopes)
@@ -422,11 +462,13 @@ Check workflow logs for specific error. Common issues:
 ### Problem: Slack notifications not working
 
 **Example:**
+
 ```
 Workflow succeeds but no Slack message
 ```
 
 **Solution:**
+
 ```bash
 # Check if secret exists
 gh secret list | grep SLACK

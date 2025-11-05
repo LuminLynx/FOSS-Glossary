@@ -14,6 +14,7 @@
 N/A
 **Out of scope (not allowed):**
 N/A
+
 ---
 
 ## 2) Repository Truths
@@ -40,6 +41,7 @@ Agents should watch these labels to decide actions:
 **Mentions:** `@codex-bot` means: subscribe to the issue and acknowledge with a comment.
 
 **Acknowledgement comment template:**
+
 > Subscribed and standing by. I will propose a PR on branch `<prefix>/<slug>` and update this issue when ready.
 
 ---
@@ -51,6 +53,7 @@ Agents should watch these labels to decide actions:
 **PR title:** short & imperative (e.g., `Validation: enforce strict terms.yaml & publish docs/terms.json`).
 
 **PR body must include:**
+
 - Context summary (1–3 lines).
 - Files modified list with bullets.
 - Checklist of acceptance criteria.
@@ -58,6 +61,7 @@ Agents should watch these labels to decide actions:
 - "Fixes #<ISSUE_NUMBER>" to auto-close on merge.
 
 **Do not include in PR:**
+
 - `docs/terms.json` (post‑merge artifact).
 - Unrelated refactors or formatting noise.
 
@@ -66,14 +70,17 @@ Agents should watch these labels to decide actions:
 ## 5) Validation & Schema Rules (What Agents Enforce)
 
 **Root shape (strict):**
+
 - YAML root must be an object with **exactly** one key: `terms`.
 - Top‑level: `additionalProperties: false`.
 
 **`terms` array (strict):**
+
 - `terms` must be an array.
 - Every item must be an object (no strings/numbers/booleans).
 
 **Term object (strict):**
+
 - Required: `slug`, `term`, `definition`.
 - `additionalProperties: false`.
 - `slug` pattern: `^[a-z0-9]+(?:-[a-z0-9]+)*$` and length 3–48.
@@ -81,6 +88,7 @@ Agents should watch these labels to decide actions:
 - Duplicate guards: case‑ and punctuation‑insensitive across `term` and all `aliases`.
 
 **Failure behavior:**
+
 - The validate step exits non‑zero and blocks downstream steps (`score`, `stats`).
 - The PR must show clear error messages (index + reason).
 
@@ -93,6 +101,7 @@ Agents should watch these labels to decide actions:
 **Guard:** Only run export if new slugs were added (`npm run export:new`).
 
 **Action:** write `docs/terms.json` with metadata fields:
+
 - `version` (short commit SHA)
 - `generated_at` (ISO timestamp)
 - `terms_count`
@@ -106,6 +115,7 @@ Agents should watch these labels to decide actions:
 ## 7) Issue Intake — What Codex Should Do
 
 When an issue with label `ready-for-codex` arrives:
+
 1. **Acknowledge** with the template comment and subscribe.
 2. **Restate** the task in 2–4 bullet points to confirm scope.
 3. **Propose a Diff Plan** (files + bullets) before committing any changes.
@@ -120,17 +130,20 @@ If information is missing, add `needs-info` and ask one precise question.
 ## 8) Playbooks
 
 ### 8.1 Tighten Validation Rules
+
 - Modify `schema.json` per Section 5.
 - Update `scripts/validateTerms.js` to validate the **root** document and to fail non‑zero on violations and duplicates.
 - Ensure `.github/workflows/pr-complete.yml` gates `score`/`stats` on validate success.
 - Add/confirm negative tests in PR description.
 
 ### 8.2 Add Post‑Merge Export Job
+
 - If missing, create a workflow on push to `main` to run `npm run export:new`.
 - Ensure it writes to `docs/terms.json` only when a new term (new slug) exists.
 - Do not commit `docs/terms.json` in PRs.
 
 ### 8.3 Investigate Missing File References (e.g., `Agents.md`)
+
 - Run `git grep -n "Agents.md"`.
 - If obsolete, update or remove references; otherwise create the doc in the referenced path.
 
@@ -178,6 +191,7 @@ If information is missing, add `needs-info` and ask one precise question.
 ## 14) Quick Reference Checklists
 
 **New Validation Work:**
+
 - [ ] Root requires `terms`; no other top‑level keys.
 - [ ] `terms` is array; items are objects; unknown keys denied.
 - [ ] `slug` regex + length; `definition` min length.
@@ -185,12 +199,14 @@ If information is missing, add `needs-info` and ask one precise question.
 - [ ] CI `score`/`stats` gated on validation success.
 
 **Post‑Merge Export:**
+
 - [ ] Trigger on push to `main` when `terms.yaml` changed.
 - [ ] Only if new slug(s) added (`export:new`).
 - [ ] Output `docs/terms.json` with metadata.
 - [ ] Landing Page fetches `./terms.json`.
 
 **PR Quality:**
+
 - [ ] Small, focused diffs.
 - [ ] Clear PR body with checklist and negative tests.
 - [ ] No artifacts or unrelated changes.
@@ -247,5 +263,4 @@ git revert --no-commit SHA1^..SHA2  # Revert range
 
 ---
 
-*This document is guidance for agents and automation. GitHub does not provide an `AGENTS.md` by default — this file is project‑specific.*
-
+_This document is guidance for agents and automation. GitHub does not provide an `AGENTS.md` by default — this file is project‑specific._

@@ -1,4 +1,5 @@
 # 🚀 FOSS Glossary
+
 [![GitHub Pages](https://img.shields.io/badge/GitHub-Pages-blue)](https://luminlynx.github.io/FOSS-Glossary/)
 [![PWA Ready](https://img.shields.io/badge/PWA-Ready-purple)](https://luminlynx.github.io/FOSS-Glossary/pwa/)
 [![Terms Count](https://img.shields.io/badge/Terms-28-orange)](./terms.yaml)
@@ -12,7 +13,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![CI](https://github.com/LuminLynx/FOSS-Glossary/actions/workflows/readme-stats.yml/badge.svg)](https://github.com/LuminLynx/FOSS-Glossary/actions)
 
-## A community-driven glossary of FOSS terms with humor, sarcasm, and honest truths 
+## A community-driven glossary of FOSS terms with humor, sarcasm, and honest truths
+
 about open source culture.
 
 ---
@@ -105,6 +107,7 @@ Our automated pipeline ensures quality and keeps the glossary up-to-date:
 ---
 
 <!-- STATS-START -->
+
 ## 📊 Glossary Stats
 
 **Total Terms:** 28 | **Contributors:** 4 | **Terms with Humor:** 28 (100%)
@@ -114,7 +117,9 @@ Our automated pipeline ensures quality and keeps the glossary up-to-date:
 **Recent additions:** `PEBKAC`, `Pullpocalypse`, `Commitfog`
 
 ### 🎮 Top Contributors
+
 🥇 John Portley | 🥈 Joao Portela | 🥉 Aditya Kumar Singh | 🌟 Joe Port
+
 <!-- STATS-END -->
 
 ## 🎮 How to Contribute
@@ -128,6 +133,7 @@ Our automated pipeline ensures quality and keeps the glossary up-to-date:
 ## 📊 Scoring System
 
 Every term is scored out of 100 points:
+
 - **Base Definition**: 20 points
 - **Humor**: Up to 30 points (be funny!)
 - **Explanation**: 20 points
@@ -142,16 +148,17 @@ Every term is scored out of 100 points:
 - **📜 Historian** - Add historical context
 
 ## Example Term
+
 ```yaml
 - slug: git
-  term: "Git"
+  term: 'Git'
   definition: "A distributed version control system that lets teams branch, merge, and rewind project history so collaboration happens without overwriting each other's work."
-  explanation: "Git snapshots every commit locally, syncs through remotes, and helps keep parallel experiments manageable when they eventually converge."
-  humor: "Like a time machine for code that mostly works—until you run `git push --force` and become the office supervillain."
-  tags: ["vcs", "tools", "collaboration"]
-  see_also: ["GitHub", "GitLab", "Mercurial"]
-  aliases: ["git-scm", "version-control"]
-  controversy_level: "medium"
+  explanation: 'Git snapshots every commit locally, syncs through remotes, and helps keep parallel experiments manageable when they eventually converge.'
+  humor: 'Like a time machine for code that mostly works—until you run `git push --force` and become the office supervillain.'
+  tags: ['vcs', 'tools', 'collaboration']
+  see_also: ['GitHub', 'GitLab', 'Mercurial']
+  aliases: ['git-scm', 'version-control']
+  controversy_level: 'medium'
 ```
 
 ## 🌐 [Visit our Documentation](https://luminlynx.github.io/FOSS-Glossary/)

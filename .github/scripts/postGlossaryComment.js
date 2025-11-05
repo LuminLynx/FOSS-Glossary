@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /**
  * Post or update the glossary validation comment on a PR.
- * 
+ *
  * This script handles posting validation results to PRs, with support for:
  * - Fork PRs using a PAT token (COMMENT_TOKEN secret) when available
  * - Repository PRs using the default GITHUB_TOKEN
- * 
+ *
  * Environment variables required:
  * - GITHUB_TOKEN: Default GitHub Actions token (always available)
  * - COMMENT_TOKEN: (Optional) PAT for fork PR comments
@@ -35,7 +35,7 @@ function getEventContext() {
   try {
     const eventData = JSON.parse(fs.readFileSync(eventPath, 'utf8'));
     const prNumber = eventData.pull_request?.number;
-    
+
     if (!prNumber) {
       console.error('❌ Pull request number not found in event data');
       process.exit(1);
@@ -89,7 +89,9 @@ function getAuthToken(isFork) {
   if (commentToken) {
     console.log('ℹ️  Using COMMENT_TOKEN for authentication');
   } else if (isFork) {
-    console.log('⚠️  Using GITHUB_TOKEN for fork PR (may fail - consider adding COMMENT_TOKEN secret)');
+    console.log(
+      '⚠️  Using GITHUB_TOKEN for fork PR (may fail - consider adding COMMENT_TOKEN secret)'
+    );
   } else {
     console.log('ℹ️  Using GITHUB_TOKEN for authentication');
   }
@@ -116,36 +118,36 @@ function buildCommentBody() {
   if (passed) {
     const badgeList = badges
       .split(',')
-      .map(b => b.trim())
+      .map((b) => b.trim())
       .filter(Boolean);
-    
+
     body += `- Status: **Passed** – schema, duplicates, and slug checks succeeded.\n`;
-    
+
     if (termName || termSlug) {
       const slugPart = termSlug ? ` (${termSlug})` : '';
       const namePart = termName ? `\`${termName}\`` : 'Latest entry';
       body += `- Latest term: ${namePart}${slugPart}\n`;
     }
-    
+
     if (score) {
       body += `- Score: ${score}/100\n`;
     }
-    
+
     const badgeDisplay = badgeList.length > 0 ? badgeList.join(', ') : 'None';
     body += `- Badges: ${badgeDisplay}\n\n`;
   } else {
     body += `- Status: **Failed** – please address the errors below.\n\n`;
-    
+
     if (validationOutput) {
       const trimmed = validationOutput
         .split('\n')
-        .map(line => line.trimEnd())
+        .map((line) => line.trimEnd())
         .filter(Boolean)
         .slice(0, 20)
         .join('\n');
       body += '```\n' + trimmed + '\n```\n\n';
     }
-    
+
     body += `Scoring was skipped because validation did not succeed.\n\n`;
   }
 
@@ -178,7 +180,7 @@ async function postComment() {
 
     const marker = '<!-- glossary-check -->';
     const existingComment = comments.find(
-      comment => comment.body && comment.body.includes(marker)
+      (comment) => comment.body && comment.body.includes(marker)
     );
 
     if (existingComment) {
@@ -204,18 +206,18 @@ async function postComment() {
     }
   } catch (error) {
     console.error('❌ Failed to post comment:', error.message);
-    
+
     if (error.status === 403 || error.status === 401) {
       console.error('\n💡 This may be a fork PR requiring a PAT token.');
       console.error('   See docs/REPOSITORY_REVIEW.md for setup instructions.');
     }
-    
+
     process.exit(1);
   }
 }
 
 // Run the script
-postComment().catch(error => {
+postComment().catch((error) => {
   console.error('❌ Unexpected error:', error);
   process.exit(1);
 });

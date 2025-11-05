@@ -18,29 +18,29 @@ function runFullPipeline(termsData, options = {}) {
   const tmpTermsPath = path.join(tmpDir, 'terms.yaml');
   const tmpSchemaPath = path.join(tmpDir, 'schema.json');
   const tmpOutputPath = path.join(tmpDir, 'output.json');
-  
+
   fs.writeFileSync(tmpTermsPath, yaml.dump(termsData));
   fs.copyFileSync(SCHEMA_PATH, tmpSchemaPath);
-  
+
   const results = {
     validation: null,
     scoring: null,
-    export: null
+    export: null,
   };
-  
+
   try {
     // Step 1: Validation
     const validationResult = spawnSync('node', [VALIDATE_SCRIPT], {
       cwd: tmpDir,
       encoding: 'utf8',
-      stdio: 'pipe'
+      stdio: 'pipe',
     });
     results.validation = {
       success: validationResult.status === 0,
       output: validationResult.stdout || validationResult.stderr,
-      exitCode: validationResult.status
+      exitCode: validationResult.status,
     };
-    
+
     // Only continue if validation passed (unless testing failure path)
     if (results.validation.success || options.continueOnError) {
       // Step 2: Scoring (use first term if available)
@@ -49,15 +49,15 @@ function runFullPipeline(termsData, options = {}) {
         const scoringResult = spawnSync('node', [SCORE_SCRIPT, firstSlug], {
           cwd: tmpDir,
           encoding: 'utf8',
-          stdio: 'pipe'
+          stdio: 'pipe',
         });
         results.scoring = {
           success: scoringResult.status === 0,
           output: scoringResult.stdout || scoringResult.stderr,
-          exitCode: scoringResult.status
+          exitCode: scoringResult.status,
         };
       }
-      
+
       // Step 3: Export
       const exportArgs = [EXPORT_SCRIPT, '--out', tmpOutputPath];
       if (options.checkMode) {
@@ -66,14 +66,14 @@ function runFullPipeline(termsData, options = {}) {
       const exportResult = spawnSync('node', exportArgs, {
         cwd: tmpDir,
         encoding: 'utf8',
-        stdio: 'pipe'
+        stdio: 'pipe',
       });
       results.export = {
         success: exportResult.status === 0,
         output: exportResult.stdout || exportResult.stderr,
-        exitCode: exportResult.status
+        exitCode: exportResult.status,
       };
-      
+
       // Read exported file if it exists
       if (fs.existsSync(tmpOutputPath)) {
         try {
@@ -83,7 +83,7 @@ function runFullPipeline(termsData, options = {}) {
         }
       }
     }
-    
+
     return results;
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
@@ -93,19 +93,21 @@ function runFullPipeline(termsData, options = {}) {
 // Integration test: Valid minimal term passes all stages
 test('integration: valid minimal term passes full pipeline', () => {
   const termsData = {
-    terms: [{
-      slug: 'test-term',
-      term: 'Test Term',
-      definition: 'x'.repeat(80)
-    }]
+    terms: [
+      {
+        slug: 'test-term',
+        term: 'Test Term',
+        definition: 'x'.repeat(80),
+      },
+    ],
   };
-  
+
   const results = runFullPipeline(termsData);
-  
+
   assert.equal(results.validation.success, true, 'Validation should pass');
   assert.equal(results.scoring.success, true, 'Scoring should pass');
   assert.equal(results.export.success, true, 'Export should pass');
-  
+
   // Verify export contains the term
   assert.ok(results.export.data, 'Should have exported data');
   assert.ok(results.export.data.terms, 'Should have terms array');
@@ -116,15 +118,17 @@ test('integration: valid minimal term passes full pipeline', () => {
 // Integration test: Invalid term fails validation and stops pipeline
 test('integration: invalid term fails validation', () => {
   const termsData = {
-    terms: [{
-      slug: 'invalid',
-      term: 'Test',
-      definition: 'too short' // Less than 80 chars
-    }]
+    terms: [
+      {
+        slug: 'invalid',
+        term: 'Test',
+        definition: 'too short', // Less than 80 chars
+      },
+    ],
   };
-  
+
   const results = runFullPipeline(termsData);
-  
+
   assert.equal(results.validation.success, false, 'Validation should fail');
   assert.match(results.validation.output, /minLength|80/i, 'Should mention length requirement');
 });
@@ -134,12 +138,12 @@ test('integration: duplicate slugs fail validation', () => {
   const termsData = {
     terms: [
       { slug: 'same', term: 'First', definition: 'x'.repeat(80) },
-      { slug: 'same', term: 'Second', definition: 'x'.repeat(80) }
-    ]
+      { slug: 'same', term: 'Second', definition: 'x'.repeat(80) },
+    ],
   };
-  
+
   const results = runFullPipeline(termsData);
-  
+
   assert.equal(results.validation.success, false, 'Validation should fail');
   assert.match(results.validation.output, /duplicate/i, 'Should mention duplicates');
 });
@@ -149,12 +153,12 @@ test('integration: duplicate names fail validation', () => {
   const termsData = {
     terms: [
       { slug: 'term-1', term: 'FOSS', definition: 'x'.repeat(80) },
-      { slug: 'term-2', term: 'foss', definition: 'x'.repeat(80) }
-    ]
+      { slug: 'term-2', term: 'foss', definition: 'x'.repeat(80) },
+    ],
   };
-  
+
   const results = runFullPipeline(termsData);
-  
+
   assert.equal(results.validation.success, false, 'Validation should fail');
   assert.match(results.validation.output, /conflict/i, 'Should mention conflict');
 });
@@ -162,21 +166,23 @@ test('integration: duplicate names fail validation', () => {
 // Integration test: Term with all scoring components
 test('integration: fully populated term scores correctly', () => {
   const termsData = {
-    terms: [{
-      slug: 'full-term',
-      term: 'Full Term',
-      definition: 'x'.repeat(80),
-      explanation: 'x'.repeat(50),
-      humor: 'x'.repeat(150),
-      tags: ['tag1', 'tag2', 'tag3', 'tag4'],
-      see_also: ['ref1', 'ref2', 'ref3', 'ref4'],
-      aliases: ['Alias 1', 'Alias 2'],
-      controversy_level: 'high'
-    }]
+    terms: [
+      {
+        slug: 'full-term',
+        term: 'Full Term',
+        definition: 'x'.repeat(80),
+        explanation: 'x'.repeat(50),
+        humor: 'x'.repeat(150),
+        tags: ['tag1', 'tag2', 'tag3', 'tag4'],
+        see_also: ['ref1', 'ref2', 'ref3', 'ref4'],
+        aliases: ['Alias 1', 'Alias 2'],
+        controversy_level: 'high',
+      },
+    ],
   };
-  
+
   const results = runFullPipeline(termsData);
-  
+
   assert.equal(results.validation.success, true, 'Validation should pass');
   assert.equal(results.scoring.success, true, 'Scoring should pass');
   assert.match(results.scoring.output, /SCORE:(90|100)/, 'Should get high score');
@@ -186,12 +192,12 @@ test('integration: fully populated term scores correctly', () => {
 // Integration test: Empty terms array
 test('integration: empty terms array passes but exports nothing', () => {
   const termsData = { terms: [] };
-  
+
   const results = runFullPipeline(termsData);
-  
+
   assert.equal(results.validation.success, true, 'Validation should pass');
   assert.equal(results.export.success, true, 'Export should pass');
-  
+
   if (results.export.data) {
     assert.equal(results.export.data.terms.length, 0, 'Should have no terms');
   }
@@ -203,18 +209,18 @@ test('integration: multiple valid terms all exported', () => {
     terms: [
       { slug: 'term-a', term: 'Term A', definition: 'x'.repeat(80) },
       { slug: 'term-b', term: 'Term B', definition: 'x'.repeat(80) },
-      { slug: 'term-c', term: 'Term C', definition: 'x'.repeat(80) }
-    ]
+      { slug: 'term-c', term: 'Term C', definition: 'x'.repeat(80) },
+    ],
   };
-  
+
   const results = runFullPipeline(termsData);
-  
+
   assert.equal(results.validation.success, true, 'Validation should pass');
   assert.equal(results.export.success, true, 'Export should pass');
-  
+
   if (results.export.data) {
     assert.equal(results.export.data.terms.length, 3, 'Should export all terms');
-    const slugs = results.export.data.terms.map(t => t.slug);
+    const slugs = results.export.data.terms.map((t) => t.slug);
     assert.ok(slugs.includes('term-a'), 'Should include term-a');
     assert.ok(slugs.includes('term-b'), 'Should include term-b');
     assert.ok(slugs.includes('term-c'), 'Should include term-c');
@@ -224,9 +230,9 @@ test('integration: multiple valid terms all exported', () => {
 // Integration test: Invalid JSON structure
 test('integration: malformed YAML structure fails', () => {
   const termsData = { wrong_key: [] }; // Missing 'terms' key
-  
+
   const results = runFullPipeline(termsData);
-  
+
   assert.equal(results.validation.success, false, 'Validation should fail');
   assert.match(results.validation.output, /required|terms/i, 'Should mention missing terms');
 });
@@ -234,32 +240,40 @@ test('integration: malformed YAML structure fails', () => {
 // Integration test: Additional properties in term
 test('integration: additional properties fail validation', () => {
   const termsData = {
-    terms: [{
-      slug: 'test',
-      term: 'Test',
-      definition: 'x'.repeat(80),
-      extra_field: 'invalid'
-    }]
+    terms: [
+      {
+        slug: 'test',
+        term: 'Test',
+        definition: 'x'.repeat(80),
+        extra_field: 'invalid',
+      },
+    ],
   };
-  
+
   const results = runFullPipeline(termsData);
-  
+
   assert.equal(results.validation.success, false, 'Validation should fail');
-  assert.match(results.validation.output, /additional|unexpected/i, 'Should mention additional properties');
+  assert.match(
+    results.validation.output,
+    /additional|unexpected/i,
+    'Should mention additional properties'
+  );
 });
 
 // Integration test: Invalid slug format
 test('integration: invalid slug format fails validation', () => {
   const termsData = {
-    terms: [{
-      slug: 'Invalid_Slug',
-      term: 'Test',
-      definition: 'x'.repeat(80)
-    }]
+    terms: [
+      {
+        slug: 'Invalid_Slug',
+        term: 'Test',
+        definition: 'x'.repeat(80),
+      },
+    ],
   };
-  
+
   const results = runFullPipeline(termsData);
-  
+
   assert.equal(results.validation.success, false, 'Validation should fail');
   assert.match(results.validation.output, /pattern/i, 'Should mention pattern violation');
 });
@@ -267,59 +281,71 @@ test('integration: invalid slug format fails validation', () => {
 // Integration test: Missing required fields
 test('integration: missing slug fails validation', () => {
   const termsData = {
-    terms: [{
-      term: 'Test',
-      definition: 'x'.repeat(80)
-    }]
+    terms: [
+      {
+        term: 'Test',
+        definition: 'x'.repeat(80),
+      },
+    ],
   };
-  
+
   const results = runFullPipeline(termsData);
-  
+
   assert.equal(results.validation.success, false, 'Validation should fail');
   assert.match(results.validation.output, /required.*slug/i, 'Should mention missing slug');
 });
 
 test('integration: missing term name fails validation', () => {
   const termsData = {
-    terms: [{
-      slug: 'test',
-      definition: 'x'.repeat(80)
-    }]
+    terms: [
+      {
+        slug: 'test',
+        definition: 'x'.repeat(80),
+      },
+    ],
   };
-  
+
   const results = runFullPipeline(termsData);
-  
+
   assert.equal(results.validation.success, false, 'Validation should fail');
   assert.match(results.validation.output, /required.*term/i, 'Should mention missing term');
 });
 
 test('integration: missing definition fails validation', () => {
   const termsData = {
-    terms: [{
-      slug: 'test',
-      term: 'Test'
-    }]
+    terms: [
+      {
+        slug: 'test',
+        term: 'Test',
+      },
+    ],
   };
-  
+
   const results = runFullPipeline(termsData);
-  
+
   assert.equal(results.validation.success, false, 'Validation should fail');
-  assert.match(results.validation.output, /required.*definition/i, 'Should mention missing definition');
+  assert.match(
+    results.validation.output,
+    /required.*definition/i,
+    'Should mention missing definition'
+  );
 });
 
 // Integration test: Invalid controversy level
 test('integration: invalid controversy level fails validation', () => {
   const termsData = {
-    terms: [{
-      slug: 'test',
-      term: 'Test',
-      definition: 'x'.repeat(80),
-      controversy_level: 'extreme'
-    }]
+    terms: [
+      {
+        slug: 'test',
+        term: 'Test',
+        definition: 'x'.repeat(80),
+        controversy_level: 'extreme',
+      },
+    ],
   };
-  
+
   const results = runFullPipeline(termsData);
-  
+
   assert.equal(results.validation.success, false, 'Validation should fail');
   assert.match(results.validation.output, /enum|controversy/i, 'Should mention enum violation');
 });
@@ -333,16 +359,16 @@ test('integration: large dataset (50 terms) processes successfully', () => {
       term: `Term ${i}`,
       definition: `Definition ${i} - ${'x'.repeat(70)}`,
       tags: [`tag${i % 5}`],
-      see_also: i > 0 ? [`term-${i - 1}`] : []
+      see_also: i > 0 ? [`term-${i - 1}`] : [],
     });
   }
-  
+
   const termsData = { terms };
   const results = runFullPipeline(termsData);
-  
+
   assert.equal(results.validation.success, true, 'Validation should pass');
   assert.equal(results.export.success, true, 'Export should pass');
-  
+
   if (results.export.data) {
     assert.equal(results.export.data.terms.length, 50, 'Should export all 50 terms');
   }
@@ -351,19 +377,22 @@ test('integration: large dataset (50 terms) processes successfully', () => {
 // Integration test: Unicode handling throughout pipeline
 test('integration: Unicode terms handled correctly', () => {
   const termsData = {
-    terms: [{
-      slug: 'unicode-term',
-      term: 'Ελληνικά (Greek)',
-      definition: 'Definition with Ελληνικά Greek characters and emoji 🚀 that is long enough for validation',
-      humor: '😂 Funny Unicode 中文 humor'
-    }]
+    terms: [
+      {
+        slug: 'unicode-term',
+        term: 'Ελληνικά (Greek)',
+        definition:
+          'Definition with Ελληνικά Greek characters and emoji 🚀 that is long enough for validation',
+        humor: '😂 Funny Unicode 中文 humor',
+      },
+    ],
   };
-  
+
   const results = runFullPipeline(termsData);
-  
+
   assert.equal(results.validation.success, true, 'Validation should pass');
   assert.equal(results.export.success, true, 'Export should pass');
-  
+
   if (results.export.data) {
     assert.equal(results.export.data.terms[0].term, 'Ελληνικά (Greek)', 'Should preserve Unicode');
   }
@@ -372,16 +401,18 @@ test('integration: Unicode terms handled correctly', () => {
 // Integration test: Cross-references to non-existent terms (allowed)
 test('integration: cross-references to non-existent terms allowed', () => {
   const termsData = {
-    terms: [{
-      slug: 'test',
-      term: 'Test',
-      definition: 'x'.repeat(80),
-      see_also: ['non-existent-term', 'another-missing']
-    }]
+    terms: [
+      {
+        slug: 'test',
+        term: 'Test',
+        definition: 'x'.repeat(80),
+        see_also: ['non-existent-term', 'another-missing'],
+      },
+    ],
   };
-  
+
   const results = runFullPipeline(termsData);
-  
+
   // Cross-reference validation is not enforced in current implementation
   assert.equal(results.validation.success, true, 'Validation should pass');
   assert.equal(results.export.success, true, 'Export should pass');
@@ -395,30 +426,36 @@ test('integration: aliases properly normalized and checked for duplicates', () =
         slug: 'term-1',
         term: 'Term 1',
         definition: 'x'.repeat(80),
-        aliases: ['Open-Source', 'Open Source']
-      }
-    ]
+        aliases: ['Open-Source', 'Open Source'],
+      },
+    ],
   };
-  
+
   const results = runFullPipeline(termsData);
-  
+
   // Both aliases normalize to the same value, should be detected
-  assert.equal(results.validation.success, false, 'Should detect duplicate aliases within same term');
+  assert.equal(
+    results.validation.success,
+    false,
+    'Should detect duplicate aliases within same term'
+  );
   assert.match(results.validation.output, /conflict/i, 'Should mention conflict');
 });
 
 // Integration test: Case sensitivity in slugs
 test('integration: slug case sensitivity enforced', () => {
   const termsData = {
-    terms: [{
-      slug: 'Test-Slug',
-      term: 'Test',
-      definition: 'x'.repeat(80)
-    }]
+    terms: [
+      {
+        slug: 'Test-Slug',
+        term: 'Test',
+        definition: 'x'.repeat(80),
+      },
+    ],
   };
-  
+
   const results = runFullPipeline(termsData);
-  
+
   assert.equal(results.validation.success, false, 'Should reject uppercase in slug');
   assert.match(results.validation.output, /pattern|lowercase/i, 'Should mention pattern violation');
 });
@@ -426,30 +463,34 @@ test('integration: slug case sensitivity enforced', () => {
 // Integration test: Boundary value for definition length
 test('integration: definition exactly 80 chars passes all stages', () => {
   const termsData = {
-    terms: [{
-      slug: 'boundary-test',
-      term: 'Boundary Test',
-      definition: 'x'.repeat(80)
-    }]
+    terms: [
+      {
+        slug: 'boundary-test',
+        term: 'Boundary Test',
+        definition: 'x'.repeat(80),
+      },
+    ],
   };
-  
+
   const results = runFullPipeline(termsData);
-  
+
   assert.equal(results.validation.success, true, 'Validation should pass');
   assert.equal(results.export.success, true, 'Export should pass');
 });
 
 test('integration: definition with 79 chars fails validation', () => {
   const termsData = {
-    terms: [{
-      slug: 'boundary-test',
-      term: 'Boundary Test',
-      definition: 'x'.repeat(79)
-    }]
+    terms: [
+      {
+        slug: 'boundary-test',
+        term: 'Boundary Test',
+        definition: 'x'.repeat(79),
+      },
+    ],
   };
-  
+
   const results = runFullPipeline(termsData);
-  
+
   assert.equal(results.validation.success, false, 'Validation should fail');
   assert.match(results.validation.output, /80|minLength/i, 'Should mention length requirement');
 });
@@ -457,18 +498,20 @@ test('integration: definition with 79 chars fails validation', () => {
 // Integration test: Empty optional fields handled correctly
 test('integration: empty arrays in optional fields handled', () => {
   const termsData = {
-    terms: [{
-      slug: 'empty-fields',
-      term: 'Empty Fields',
-      definition: 'x'.repeat(80),
-      tags: [],
-      see_also: [],
-      aliases: []
-    }]
+    terms: [
+      {
+        slug: 'empty-fields',
+        term: 'Empty Fields',
+        definition: 'x'.repeat(80),
+        tags: [],
+        see_also: [],
+        aliases: [],
+      },
+    ],
   };
-  
+
   const results = runFullPipeline(termsData);
-  
+
   assert.equal(results.validation.success, true, 'Validation should pass');
   assert.equal(results.export.success, true, 'Export should pass');
 });
@@ -476,31 +519,36 @@ test('integration: empty arrays in optional fields handled', () => {
 // Integration test: Scoring non-existent term
 test('integration: scoring non-existent term fails gracefully', () => {
   const termsData = {
-    terms: [{
-      slug: 'exists',
-      term: 'Exists',
-      definition: 'x'.repeat(80)
-    }]
+    terms: [
+      {
+        slug: 'exists',
+        term: 'Exists',
+        definition: 'x'.repeat(80),
+      },
+    ],
   };
-  
+
   const tmpDir = fs.mkdtempSync('/tmp/score-test-');
   const tmpTermsPath = path.join(tmpDir, 'terms.yaml');
   const tmpSchemaPath = path.join(tmpDir, 'schema.json');
-  
+
   fs.writeFileSync(tmpTermsPath, yaml.dump(termsData));
   fs.copyFileSync(SCHEMA_PATH, tmpSchemaPath);
-  
+
   try {
     const result = spawnSync('node', [SCORE_SCRIPT], {
       cwd: tmpDir,
       encoding: 'utf8',
       stdio: 'pipe',
-      env: { ...process.env, TARGET_SLUG: 'non-existent' }
+      env: { ...process.env, TARGET_SLUG: 'non-existent' },
     });
-    
+
     assert.equal(result.status, 1, 'Should exit with error code');
-    assert.match(result.stderr || result.stdout, /not found|No term found/i, 
-      'Should mention term not found');
+    assert.match(
+      result.stderr || result.stdout,
+      /not found|No term found/i,
+      'Should mention term not found'
+    );
   } finally {
     fs.rmSync(tmpDir, { recursive: true, force: true });
   }
@@ -509,18 +557,20 @@ test('integration: scoring non-existent term fails gracefully', () => {
 // Integration test: Export with metadata
 test('integration: exported JSON includes metadata', () => {
   const termsData = {
-    terms: [{
-      slug: 'meta-test',
-      term: 'Meta Test',
-      definition: 'x'.repeat(80)
-    }]
+    terms: [
+      {
+        slug: 'meta-test',
+        term: 'Meta Test',
+        definition: 'x'.repeat(80),
+      },
+    ],
   };
-  
+
   const results = runFullPipeline(termsData);
-  
+
   assert.equal(results.validation.success, true, 'Validation should pass');
   assert.equal(results.export.success, true, 'Export should pass');
-  
+
   if (results.export.data) {
     assert.ok(results.export.data.version, 'Should have version');
     assert.ok(results.export.data.generated_at, 'Should have timestamp');
@@ -535,14 +585,14 @@ test('integration: exported terms are sorted by slug', () => {
     terms: [
       { slug: 'zebra', term: 'Zebra', definition: 'x'.repeat(80) },
       { slug: 'alpha', term: 'Alpha', definition: 'x'.repeat(80) },
-      { slug: 'middle', term: 'Middle', definition: 'x'.repeat(80) }
-    ]
+      { slug: 'middle', term: 'Middle', definition: 'x'.repeat(80) },
+    ],
   };
-  
+
   const results = runFullPipeline(termsData);
-  
+
   if (results.export.data && results.export.data.terms) {
-    const slugs = results.export.data.terms.map(t => t.slug);
+    const slugs = results.export.data.terms.map((t) => t.slug);
     assert.deepEqual(slugs, ['alpha', 'middle', 'zebra'], 'Should be sorted alphabetically');
   }
 });
@@ -550,19 +600,22 @@ test('integration: exported terms are sorted by slug', () => {
 // Integration test: Pipeline handles special characters in text
 test('integration: special characters in text preserved', () => {
   const termsData = {
-    terms: [{
-      slug: 'special-chars',
-      term: 'Special & Chars < > "quotes"',
-      definition: 'Definition with & < > "quotes" and other special chars: @#$%^&*() that needs 80 chars total',
-      humor: 'Humor with \'single\' and "double" quotes'
-    }]
+    terms: [
+      {
+        slug: 'special-chars',
+        term: 'Special & Chars < > "quotes"',
+        definition:
+          'Definition with & < > "quotes" and other special chars: @#$%^&*() that needs 80 chars total',
+        humor: 'Humor with \'single\' and "double" quotes',
+      },
+    ],
   };
-  
+
   const results = runFullPipeline(termsData);
-  
+
   assert.equal(results.validation.success, true, 'Validation should pass');
   assert.equal(results.export.success, true, 'Export should pass');
-  
+
   if (results.export.data) {
     const term = results.export.data.terms[0];
     assert.ok(term.term.includes('&'), 'Should preserve ampersand');

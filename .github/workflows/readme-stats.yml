@@ -12,7 +12,7 @@ permissions:
 
 # Add this concurrency block
 concurrency:
-  group: "docs-updates"
+  group: 'docs-updates'
   cancel-in-progress: false
 
 jobs:
@@ -48,30 +48,3 @@ jobs:
           else
             echo "No README changes to commit."
           fi
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

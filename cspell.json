@@ -83,7 +83,9 @@
     "résumé",
     "sume",
     "rsum",
-    "Ελληνικά"
+    "Ελληνικά",
+    "pipefail",
+    "PIPESTATUS"
   ],
   "ignorePaths": [
     "node_modules/**",

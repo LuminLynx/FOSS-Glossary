@@ -58,14 +58,15 @@ function initializeDOM() {
 // Register Service Worker
 function initializeServiceWorker() {
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./service-worker.js')
+    navigator.serviceWorker
+      .register('./service-worker.js')
       .then((registration) => {
         console.log('Service Worker registered:', registration);
         serviceWorkerRegistration = registration;
-        
+
         // Check for updates on page load
         registration.update();
-        
+
         // Listen for updates
         registration.addEventListener('updatefound', () => {
           const newWorker = registration.installing;
@@ -80,7 +81,7 @@ function initializeServiceWorker() {
       .catch((error) => {
         console.error('Service Worker registration failed:', error);
       });
-    
+
     // Handle controller change (new SW activated)
     navigator.serviceWorker.addEventListener('controllerchange', () => {
       // Only reload if we're expecting an update
@@ -98,18 +99,18 @@ async function loadAppVersion() {
     if (response.ok) {
       const versionData = await response.json();
       appVersion = versionData.version;
-      
+
       // Update version display
       if (appVersionElement) {
         appVersionElement.textContent = `v${appVersion}`;
       }
-      
+
       // Check if version has changed
       const storedVersion = localStorage.getItem(VERSION_KEY);
       if (storedVersion && storedVersion !== appVersion) {
         console.log(`App updated from ${storedVersion} to ${appVersion}`);
       }
-      
+
       // Store current version
       localStorage.setItem(VERSION_KEY, appVersion);
     }
@@ -129,7 +130,7 @@ function showUpdateNotification() {
 function setupUpdateNotification() {
   const reloadBtn = document.getElementById('update-reload-btn');
   const dismissBtn = document.getElementById('update-dismiss-btn');
-  
+
   if (reloadBtn) {
     reloadBtn.addEventListener('click', () => {
       // Tell service worker to skip waiting
@@ -142,7 +143,7 @@ function setupUpdateNotification() {
       }
     });
   }
-  
+
   if (dismissBtn) {
     dismissBtn.addEventListener('click', () => {
       updateBanner.style.display = 'none';
@@ -202,41 +203,40 @@ function buildTermsUrl(version = null) {
 async function loadTerms(retryCount = 0) {
   try {
     termsGrid.innerHTML = '<div class="loading">Loading terms...</div>';
-    
+
     const url = buildTermsUrl();
     const response = await fetch(url);
-    
+
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
-    
+
     const data = await response.json();
-    
+
     // Validate data structure
     if (!data || typeof data !== 'object') {
       throw new Error('Invalid data format received');
     }
-    
+
     // Store version for cache busting
     if (data.version) {
       termsVersion = data.version;
     }
-    
+
     // Handle empty terms
     allTerms = data.terms || [];
-    
+
     if (allTerms.length === 0) {
       showEmptyState();
       return;
     }
-    
+
     filterTerms();
     updateStats();
     renderTerms();
-    
   } catch (error) {
     console.error('Error loading terms:', error);
-    
+
     // Show retry option if we haven't exhausted attempts
     if (retryCount < MAX_RETRY_ATTEMPTS) {
       showErrorStateWithRetry(error, retryCount);
@@ -267,7 +267,7 @@ function showEmptyState() {
 function showErrorStateWithRetry(error, retryCount) {
   const attemptsLeft = MAX_RETRY_ATTEMPTS - retryCount;
   const errorMessage = getErrorMessage(error);
-  
+
   termsGrid.innerHTML = `
     <div class="empty-state error-state">
       <div class="empty-state-icon">⚠️</div>
@@ -295,14 +295,14 @@ function showErrorStateWithRetry(error, retryCount) {
       </div>
     </div>
   `;
-  
+
   // Add retry button event listener
   const retryBtn = document.getElementById('retry-btn');
   if (retryBtn) {
     retryBtn.addEventListener('click', () => {
       retryBtn.disabled = true;
       retryBtn.textContent = '⏳ Retrying...';
-      
+
       // Wait before retrying
       setTimeout(() => {
         loadTerms(retryCount + 1);
@@ -314,7 +314,7 @@ function showErrorStateWithRetry(error, retryCount) {
 // Show final error state after all retries exhausted
 function showFinalErrorState(error) {
   const errorMessage = getErrorMessage(error);
-  
+
   termsGrid.innerHTML = `
     <div class="empty-state error-state">
       <div class="empty-state-icon">❌</div>
@@ -357,23 +357,23 @@ function getErrorMessage(error) {
   if (!navigator.onLine) {
     return 'You appear to be offline. Please check your internet connection.';
   }
-  
+
   if (error.message.includes('HTTP 404')) {
     return 'The terms file could not be found. The glossary may be temporarily unavailable.';
   }
-  
+
   if (error.message.includes('HTTP 500') || error.message.includes('HTTP 503')) {
     return 'The server is experiencing issues. Please try again in a few moments.';
   }
-  
+
   if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
     return 'Network error occurred. Please check your connection and try again.';
   }
-  
+
   if (error.message.includes('Invalid data format')) {
     return 'Received invalid data from server. The glossary may be updating.';
   }
-  
+
   return 'An unexpected error occurred while loading terms.';
 }
 
@@ -388,51 +388,51 @@ function getErrorMessage(error) {
 function fuzzyMatch(query, text) {
   if (!query) return 1; // Empty query matches everything
   if (!text) return 0;
-  
+
   query = query.toLowerCase();
   text = text.toLowerCase();
-  
+
   // Exact match gets highest score
   if (text === query) return 1;
   if (text.includes(query)) return 0.9;
-  
+
   let queryIndex = 0;
   let textIndex = 0;
   let score = 0;
   let consecutiveMatches = 0;
-  
+
   while (queryIndex < query.length && textIndex < text.length) {
     if (query[queryIndex] === text[textIndex]) {
       // Character matches
       score += 1;
       consecutiveMatches++;
-      
+
       // Bonus for consecutive matches (makes sequential matches rank higher)
       if (consecutiveMatches > 1) {
         score += consecutiveMatches * 0.5;
       }
-      
+
       // Bonus for matching at word boundaries
       if (textIndex === 0 || text[textIndex - 1] === ' ' || text[textIndex - 1] === '-') {
         score += 2;
       }
-      
+
       queryIndex++;
     } else {
       consecutiveMatches = 0;
     }
     textIndex++;
   }
-  
+
   // If we didn't match all query characters, it's not a match
   if (queryIndex < query.length) return 0;
-  
+
   // Normalize score based on query length and text length
   // Prefer shorter matches with same score
   const maxPossibleScore = query.length * FUZZY_MATCH_BONUS_MULTIPLIER;
   const normalizedScore = score / maxPossibleScore;
   const lengthPenalty = Math.min(1, query.length / text.length);
-  
+
   return normalizedScore * lengthPenalty;
 }
 
@@ -445,62 +445,62 @@ function fuzzyMatch(query, text) {
  */
 function fuzzySearchTerm(term, query) {
   if (!query) return 1; // Empty query matches everything
-  
+
   const fields = [
-    { text: term.term, weight: 3 },           // Term name is most important
-    { text: term.definition, weight: 2 },     // Definition is second
+    { text: term.term, weight: 3 }, // Term name is most important
+    { text: term.definition, weight: 2 }, // Definition is second
     { text: term.explanation || '', weight: 1.5 },
     { text: term.humor || '', weight: 1 },
     { text: (term.aliases || []).join(' '), weight: 2.5 }, // Aliases are important
-    { text: (term.tags || []).join(' '), weight: 1.5 }
+    { text: (term.tags || []).join(' '), weight: 1.5 },
   ];
-  
+
   let bestScore = 0;
-  
+
   for (const field of fields) {
     if (field.text) {
       const fieldScore = fuzzyMatch(query, field.text) * field.weight;
       bestScore = Math.max(bestScore, fieldScore);
     }
   }
-  
+
   return bestScore;
 }
 
 // Filter terms based on search query and current view
 function filterTerms() {
   const query = searchInput.value.toLowerCase().trim();
-  
+
   // First, filter by view (all or favorites)
-  let terms = currentView === 'favorites' 
-    ? allTerms.filter(term => favorites.has(term.slug))
-    : allTerms;
-  
+  let terms =
+    currentView === 'favorites' ? allTerms.filter((term) => favorites.has(term.slug)) : allTerms;
+
   // Then, filter by search query using fuzzy matching
   if (query) {
     // Score each term
-    const scoredTerms = terms.map(term => ({
+    const scoredTerms = terms.map((term) => ({
       term,
-      score: fuzzySearchTerm(term, query)
+      score: fuzzySearchTerm(term, query),
     }));
-    
+
     // Filter out terms with no match (score = 0) and sort by score descending
     terms = scoredTerms
-      .filter(item => item.score > 0)
+      .filter((item) => item.score > 0)
       .sort((a, b) => b.score - a.score)
-      .map(item => item.term);
+      .map((item) => item.term);
   }
-  
+
   filteredTerms = terms;
 }
 
 // Render terms to the grid
 function renderTerms() {
   if (filteredTerms.length === 0) {
-    const emptyMessage = currentView === 'favorites'
-      ? 'No favorites yet. Star some terms to see them here!'
-      : 'No terms found. Try a different search.';
-    
+    const emptyMessage =
+      currentView === 'favorites'
+        ? 'No favorites yet. Star some terms to see them here!'
+        : 'No terms found. Try a different search.';
+
     termsGrid.innerHTML = `
       <div class="empty-state">
         <div class="empty-state-icon">${currentView === 'favorites' ? '⭐' : '🔍'}</div>
@@ -510,34 +510,32 @@ function renderTerms() {
     `;
     return;
   }
-  
-  termsGrid.innerHTML = filteredTerms
-    .map(term => createTermCard(term))
-    .join('');
-  
+
+  termsGrid.innerHTML = filteredTerms.map((term) => createTermCard(term)).join('');
+
   // Add event listeners to cards
-  document.querySelectorAll('.term-card').forEach(card => {
+  document.querySelectorAll('.term-card').forEach((card) => {
     const slug = card.dataset.slug;
-    
+
     // Toggle expand on card click (but not on buttons)
     card.addEventListener('click', (e) => {
       if (!e.target.closest('.term-actions')) {
         toggleExpand(slug);
       }
     });
-    
+
     // Favorite button
     const favoriteBtn = card.querySelector('.favorite-btn');
     favoriteBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       toggleFavorite(slug);
     });
-    
+
     // Share button
     const shareBtn = card.querySelector('.share-btn');
     shareBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      const term = allTerms.find(t => t.slug === slug);
+      const term = allTerms.find((t) => t.slug === slug);
       if (term) {
         showShareModal(term);
       }
@@ -549,7 +547,7 @@ function renderTerms() {
 function createTermCard(term) {
   const isFavorite = favorites.has(term.slug);
   const isExpanded = expandedTerms.has(term.slug);
-  
+
   return `
     <div class="term-card ${isExpanded ? 'expanded' : ''}" data-slug="${term.slug}">
       <div class="term-header">
@@ -574,17 +572,25 @@ function createTermCard(term) {
       
       ${term.humor ? `<div class="term-humor">💡 ${escapeHtml(term.humor)}</div>` : ''}
       
-      ${term.tags && term.tags.length > 0 ? `
+      ${
+        term.tags && term.tags.length > 0
+          ? `
         <div class="term-tags">
-          ${term.tags.map(tag => `<span class="tag">#${escapeHtml(tag)}</span>`).join('')}
+          ${term.tags.map((tag) => `<span class="tag">#${escapeHtml(tag)}</span>`).join('')}
         </div>
-      ` : ''}
+      `
+          : ''
+      }
       
-      ${term.see_also && term.see_also.length > 0 ? `
+      ${
+        term.see_also && term.see_also.length > 0
+          ? `
         <div class="term-see-also">
-          <strong>See also:</strong> ${term.see_also.map(t => escapeHtml(t)).join(', ')}
+          <strong>See also:</strong> ${term.see_also.map((t) => escapeHtml(t)).join(', ')}
         </div>
-      ` : ''}
+      `
+          : ''
+      }
     </div>
   `;
 }
@@ -596,7 +602,7 @@ function toggleExpand(slug) {
   } else {
     expandedTerms.add(slug);
   }
-  
+
   const card = document.querySelector(`[data-slug="${slug}"]`);
   if (card) {
     card.classList.toggle('expanded');
@@ -610,10 +616,10 @@ function toggleFavorite(slug) {
   } else {
     favorites.add(slug);
   }
-  
+
   saveFavorites();
   updateStats();
-  
+
   // Update the button
   const card = document.querySelector(`[data-slug="${slug}"]`);
   if (card) {
@@ -624,7 +630,7 @@ function toggleFavorite(slug) {
     btn.setAttribute('aria-label', isFavorite ? 'Remove from favorites' : 'Add to favorites');
     btn.setAttribute('title', isFavorite ? 'Remove from favorites' : 'Add to favorites');
   }
-  
+
   // If in favorites view and removed, refresh
   if (currentView === 'favorites' && !favorites.has(slug)) {
     filterTerms();
@@ -636,7 +642,7 @@ function toggleFavorite(slug) {
 function toggleFavoritesView() {
   currentView = currentView === 'all' ? 'favorites' : 'all';
   favoritesToggle.textContent = currentView === 'favorites' ? '📖 All Terms' : '⭐ Favorites';
-  
+
   filterTerms();
   renderTerms();
 }
@@ -645,7 +651,7 @@ function toggleFavoritesView() {
 function updateStats() {
   const favCount = favorites.size;
   const totalCount = allTerms.length;
-  
+
   statsBar.innerHTML = `
     <div class="stat-item">
       <div class="stat-value">${totalCount}</div>
@@ -666,42 +672,42 @@ function updateStats() {
 function showShareModal(term) {
   const modal = document.getElementById('share-modal');
   const modalText = document.getElementById('share-modal-text');
-  
+
   const shareText = `${term.term}: ${term.definition}`;
   const shareUrl = `${window.location.origin}${window.location.pathname}#${term.slug}`;
-  
+
   modalText.textContent = shareText;
   modal.classList.add('show');
-  
+
   // Set up share buttons
   document.getElementById('share-copy').onclick = () => {
     copyToClipboard(shareUrl, term.term);
     modal.classList.remove('show');
   };
-  
+
   document.getElementById('share-twitter').onclick = () => {
     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
     window.open(twitterUrl, '_blank', 'width=550,height=420');
     modal.classList.remove('show');
     showToast('Opening Twitter...');
   };
-  
+
   document.getElementById('share-linkedin').onclick = () => {
     const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
     window.open(linkedInUrl, '_blank', 'width=550,height=420');
     modal.classList.remove('show');
     showToast('Opening LinkedIn...');
   };
-  
+
   document.getElementById('share-text').onclick = () => {
     copyToClipboard(shareText, term.term);
     modal.classList.remove('show');
   };
-  
+
   document.getElementById('close-share-modal').onclick = () => {
     modal.classList.remove('show');
   };
-  
+
   // Close on background click
   modal.onclick = (e) => {
     if (e.target === modal) {
@@ -738,7 +744,7 @@ async function copyToClipboard(text, termName) {
 function showToast(message) {
   toast.textContent = message;
   toast.classList.add('show');
-  
+
   setTimeout(() => {
     toast.classList.remove('show');
   }, 3000);
@@ -752,7 +758,7 @@ function setupEventListeners() {
     if (searchDebounceTimer) {
       clearTimeout(searchDebounceTimer);
     }
-    
+
     // Set new timer for debounced search
     searchDebounceTimer = setTimeout(() => {
       filterTerms();
@@ -760,13 +766,13 @@ function setupEventListeners() {
       renderTerms();
     }, SEARCH_DEBOUNCE_MS);
   });
-  
+
   // Theme toggle
   themeToggle.addEventListener('click', toggleTheme);
-  
+
   // Favorites toggle
   favoritesToggle.addEventListener('click', toggleFavoritesView);
-  
+
   // Handle deep links (hash navigation)
   window.addEventListener('hashchange', handleHashChange);
   handleHashChange(); // Check on load
@@ -777,10 +783,10 @@ function handleHashChange() {
   const hash = window.location.hash.slice(1);
   if (hash) {
     // Find and expand the term
-    const term = allTerms.find(t => t.slug === hash);
+    const term = allTerms.find((t) => t.slug === hash);
     if (term) {
       expandedTerms.add(hash);
-      
+
       // Scroll to term after a short delay to ensure rendering
       setTimeout(() => {
         const card = document.querySelector(`[data-slug="${hash}"]`);
@@ -807,7 +813,7 @@ document.addEventListener('keydown', (e) => {
     e.preventDefault();
     searchInput.focus();
   }
-  
+
   // Escape to clear search or close modal
   if (e.key === 'Escape') {
     const modal = document.getElementById('share-modal');
@@ -832,6 +838,6 @@ if (typeof window !== 'undefined') {
     allTerms,
     filteredTerms,
     favorites,
-    reloadTerms: () => loadTerms(0) // Explicitly start fresh with retry count 0
+    reloadTerms: () => loadTerms(0), // Explicitly start fresh with retry count 0
   };
 }

@@ -12,7 +12,7 @@ console.log('🧪 Testing workflow logic...\n');
  * Generate a URL-safe slug from an issue title
  * Converts title to lowercase, replaces non-alphanumeric with hyphens,
  * removes leading/trailing hyphens, and truncates to 35 characters
- * 
+ *
  * @param {string} title - Issue title to convert to slug
  * @param {number} issueNumber - Issue number to use as fallback
  * @returns {string} URL-safe slug (max 35 chars) or issue-{number} if empty
@@ -34,7 +34,10 @@ const testCases = [
   { title: '   Leading and trailing spaces   ', expected: 'leading-and-trailing-spaces' },
   { title: 'UPPERCASE TITLE', expected: 'uppercase-title' },
   { title: 'Title with 123 numbers', expected: 'title-with-123-numbers' },
-  { title: 'Very long title that exceeds the maximum character limit and should be truncated', expected: 'very-long-title-that-exceeds-the-ma' }
+  {
+    title: 'Very long title that exceeds the maximum character limit and should be truncated',
+    expected: 'very-long-title-that-exceeds-the-ma',
+  },
 ];
 
 testCases.forEach(({ title, expected }) => {
@@ -70,7 +73,7 @@ setTimeout(() => {
 /**
  * Retry an async function with exponential backoff
  * Attempts the function multiple times with increasing delays between attempts
- * 
+ *
  * @param {Function} fn - Async function to retry
  * @param {number} [maxRetries=3] - Maximum number of retry attempts
  * @param {number} [baseDelay=100] - Base delay in milliseconds (doubled each retry)
@@ -88,7 +91,7 @@ const retryWithBackoff = async (fn, maxRetries = 3, baseDelay = 100) => {
         throw error;
       }
       const delay = baseDelay * Math.pow(2, attempt - 1);
-      await new Promise(resolve => setTimeout(resolve, delay));
+      await new Promise((resolve) => setTimeout(resolve, delay));
     }
   }
 };
@@ -116,18 +119,12 @@ const maxRetries = 3;
 
   console.log('\nTest 6: Label matching');
   const triggerLabels = ['codex', 'ready-for-codex'];
-  const issueLabels = [
-    { name: 'enhancement' },
-    { name: 'codex' },
-    { name: 'high-priority' }
-  ];
-  
-  const hasTriggerLabel = issueLabels.some(l => 
-    triggerLabels.includes(l.name.toLowerCase())
-  );
-  
+  const issueLabels = [{ name: 'enhancement' }, { name: 'codex' }, { name: 'high-priority' }];
+
+  const hasTriggerLabel = issueLabels.some((l) => triggerLabels.includes(l.name.toLowerCase()));
+
   assert(hasTriggerLabel, 'Trigger label found');
-  console.log(`  ✅ Found trigger label in: ${issueLabels.map(l => l.name).join(', ')}`);
+  console.log(`  ✅ Found trigger label in: ${issueLabels.map((l) => l.name).join(', ')}`);
 
   console.log('\n✅ All tests passed!\n');
 })();

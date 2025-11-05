@@ -41,7 +41,7 @@ const validateExport = ajv.compile(exportSchema);
  * - --check: Validate without writing file
  * - --only-if-new: Only export if new terms detected
  * - --out <path> or --out=<path>: Custom output path
- * 
+ *
  * @param {string[]} argv - Command line arguments (typically process.argv.slice(2))
  * @returns {Object} Options object with outPath, pretty, check, and onlyIfNew properties
  * @throws {ExporterError} If unknown flag or missing value for --out
@@ -81,7 +81,7 @@ function parseArgs(argv) {
 
 /**
  * Read a file synchronously with UTF-8 encoding
- * 
+ *
  * @param {string} filePath - Path to the file to read
  * @returns {string} File contents as string
  */
@@ -91,7 +91,7 @@ function readFile(filePath) {
 
 /**
  * Read terms.yaml from HEAD (current working directory)
- * 
+ *
  * @returns {string} Contents of terms.yaml file
  */
 function readHeadYaml() {
@@ -101,7 +101,7 @@ function readHeadYaml() {
 /**
  * Read terms.yaml from previous Git commit (HEAD~1)
  * Used to detect if new terms were added since last commit
- * 
+ *
  * @returns {string|null} Contents of terms.yaml from previous commit, or null if not available
  */
 function readPrevYaml() {
@@ -115,7 +115,7 @@ function readPrevYaml() {
 /**
  * Sort terms array alphabetically by slug
  * Creates a new array without mutating the input
- * 
+ *
  * @param {Object[]} terms - Array of term objects
  * @returns {Object[]} New sorted array of terms
  */
@@ -126,7 +126,7 @@ function sortTerms(terms) {
 /**
  * Normalize a term with error handling
  * Wraps normalizeTerm to convert errors to ExporterError
- * 
+ *
  * @param {Object} rawTerm - Raw term object to normalize
  * @returns {Object} Normalized term object
  * @throws {ExporterError} If normalization fails
@@ -142,7 +142,7 @@ function normalizeTermWithError(rawTerm) {
 /**
  * Prepare terms array for export
  * Normalizes all terms and sorts them alphabetically by slug
- * 
+ *
  * @param {Object[]} rawTerms - Raw array of term objects from YAML
  * @returns {Object[]} Normalized and sorted array of terms
  * @throws {ExporterError} If rawTerms is not an array or normalization fails
@@ -160,7 +160,7 @@ function prepareTerms(rawTerms) {
  * Build export document with terms and metadata
  * Creates the final JSON structure with version, timestamp, count, and terms
  * Validates the document against export schema
- * 
+ *
  * @param {Object[]} terms - Array of normalized term objects
  * @param {Object} [metadata={}] - Metadata object with optional version and generatedAt
  * @param {string} [metadata.version] - Git SHA or version string
@@ -193,7 +193,7 @@ function buildDocument(terms, metadata = {}) {
 /**
  * Build export document from YAML text
  * Parses YAML, prepares terms, and builds complete export document
- * 
+ *
  * @param {string} yamlText - Raw YAML content from terms.yaml
  * @param {Object} [metadata] - Optional metadata for version and timestamp
  * @returns {Object} Complete export document ready for serialization
@@ -213,7 +213,7 @@ function buildExportDocumentFromYaml(yamlText, metadata) {
  * Serialize export document to JSON string
  * Optionally formats with indentation for readability
  * Always adds trailing newline
- * 
+ *
  * @param {Object} document - Export document to serialize
  * @param {Object} [options] - Serialization options
  * @param {boolean} [options.pretty=false] - Format with 2-space indentation
@@ -227,7 +227,7 @@ function serializeDocument(document, { pretty = false } = {}) {
 /**
  * Check if serialized JSON exceeds size threshold
  * Throws an error if document size exceeds SIZE_WARN_THRESHOLD_BYTES (2MB)
- * 
+ *
  * @param {string} serializedJson - Serialized JSON string
  * @param {Object} [options] - Options object
  * @param {Object} [options.logger=console] - Logger object with warn and error methods
@@ -239,10 +239,11 @@ function checkSizeLimit(serializedJson, options = {}) {
   const bytes = Buffer.byteLength(serializedJson, 'utf8');
   const sizeMB = (bytes / (1024 * 1024)).toFixed(2);
   const limitMB = (SIZE_WARN_THRESHOLD_BYTES / (1024 * 1024)).toFixed(2);
-  
+
   if (bytes > SIZE_WARN_THRESHOLD_BYTES) {
     const termsInfo = termsCount ? ` (${termsCount} terms)` : '';
-    const errorMsg = `❌ Error: Export size ${sizeMB} MB exceeds ${limitMB} MB limit.\n` +
+    const errorMsg =
+      `❌ Error: Export size ${sizeMB} MB exceeds ${limitMB} MB limit.\n` +
       `   Current size: ${bytes} bytes${termsInfo}\n` +
       `   Size limit: ${SIZE_WARN_THRESHOLD_BYTES} bytes\n` +
       `   \n` +
@@ -259,7 +260,7 @@ function checkSizeLimit(serializedJson, options = {}) {
  * Parses YAML and extracts normalized slugs from terms array
  * Returns empty array if parsing fails or structure is invalid
  * Logs warnings when failures occur to aid debugging
- * 
+ *
  * @param {string} yamlText - Raw YAML content
  * @returns {string[]} Array of normalized slug strings
  */
@@ -267,12 +268,12 @@ function extractSlugsFromYaml(yamlText) {
   try {
     const parsed = yaml.load(yamlText);
     if (!parsed || typeof parsed !== 'object' || !Array.isArray(parsed.terms)) {
-      console.warn('⚠️ Warning: extractSlugsFromYaml - Invalid YAML structure: missing or invalid "terms" array');
+      console.warn(
+        '⚠️ Warning: extractSlugsFromYaml - Invalid YAML structure: missing or invalid "terms" array'
+      );
       return [];
     }
-    return parsed.terms
-      .map((term) => normalizeString(term?.slug))
-      .filter(Boolean);
+    return parsed.terms.map((term) => normalizeString(term?.slug)).filter(Boolean);
   } catch (error) {
     console.warn(`⚠️ Warning: extractSlugsFromYaml - Failed to parse YAML: ${error.message}`);
     return [];
@@ -283,7 +284,7 @@ function extractSlugsFromYaml(yamlText) {
  * Check if current YAML has new terms compared to previous version
  * Compares slug sets between current and previous YAML
  * Returns true if any slug exists in current but not in previous
- * 
+ *
  * @param {string} currentYaml - Current terms.yaml content
  * @param {string} previousYaml - Previous terms.yaml content (or null)
  * @returns {boolean} True if new terms detected or previousYaml is null
@@ -309,7 +310,7 @@ function hasNewTerms(currentYaml, previousYaml) {
  * Main export function
  * Parses arguments, reads YAML, builds export document, and writes output
  * Supports --only-if-new flag to skip export if no new terms detected
- * 
+ *
  * @param {string[]} [argv=process.argv.slice(2)] - Command line arguments
  * @throws {ExporterError} If export process fails
  */

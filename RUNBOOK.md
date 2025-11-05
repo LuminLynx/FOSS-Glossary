@@ -20,18 +20,21 @@
 ## Quick Reference
 
 ### Key Workflow Files
+
 - **PR Validation**: `.github/workflows/pr-complete.yml` - Validates terms.yaml, runs scoring
 - **Landing Page Deploy**: `.github/workflows/update-landing-page.yml` - Builds and deploys to GitHub Pages
 - **Issue Automation**: `.github/workflows/issue-task-pr.yml` - Creates task branches and PRs
 - **Stats Update**: `.github/workflows/readme-stats.yml` - Updates README statistics
 
 ### Critical Scripts
+
 - `scripts/validateTerms.js` - Schema validation and duplicate detection
 - `scripts/exportTerms.js` - Exports docs/terms.json (post-merge only)
 - `scripts/generateLandingPage.js` - Generates docs/index.html
 - `scripts/quickScore.js` - Scores individual terms
 
 ### Essential Commands
+
 ```bash
 # Validate terms
 npm run validate
@@ -63,11 +66,13 @@ npm test
 #### Symptom: Schema validation fails
 
 **Error indicators:**
+
 - ❌ "Schema validation failed"
 - "additionalProperties" errors
 - "required property missing" errors
 
 **Diagnosis:**
+
 ```bash
 # Clone the PR branch locally
 git fetch origin pull/PR_NUMBER/head:pr-branch
@@ -78,12 +83,14 @@ npm run validate
 ```
 
 **Common causes:**
+
 1. Extra fields not in schema.json
 2. Missing required fields (slug, term, definition)
 3. Invalid slug format (must match `^[a-z0-9]+(?:-[a-z0-9]+)*$`)
 4. Definition too short (minimum 80 characters)
 
 **Fix:**
+
 - Review schema.json for allowed fields
 - Ensure all required fields are present
 - Fix slug format (lowercase, hyphens only, no trailing/leading hyphens)
@@ -92,11 +99,13 @@ npm run validate
 #### Symptom: Duplicate detection fails
 
 **Error indicators:**
+
 - "Duplicate slug detected"
 - "Duplicate term name detected"
 - "Duplicate alias detected"
 
 **Diagnosis:**
+
 ```bash
 # Check for duplicates
 npm run validate
@@ -106,6 +115,7 @@ grep -i "slug: term-name" terms.yaml
 ```
 
 **Fix:**
+
 - Remove or rename duplicate entries
 - Check aliases for conflicts
 - Verify case-insensitive uniqueness
@@ -113,21 +123,25 @@ grep -i "slug: term-name" terms.yaml
 #### Symptom: Scoring fails
 
 **Error indicators:**
+
 - "Term scoring failed"
 - "Cannot read property 'slug' of undefined"
 
 **Diagnosis:**
+
 ```bash
 # Run scoring locally
 npm run score
 ```
 
 **Common causes:**
+
 1. Malformed YAML in terms.yaml
 2. Missing required fields for scoring
 3. Invalid data types (arrays instead of strings)
 
 **Fix:**
+
 - Validate YAML syntax
 - Ensure all scored fields exist
 - Verify data types match schema
@@ -139,11 +153,13 @@ npm run score
 #### Symptom: Landing page generation fails
 
 **Error indicators:**
+
 - "Landing page generation failed"
 - "Cannot find module" errors
 - YAML parse errors
 
 **Diagnosis:**
+
 ```bash
 # Generate locally
 npm run generate:landing
@@ -153,11 +169,13 @@ npm run validate:landing
 ```
 
 **Common causes:**
+
 1. Malformed terms.yaml
 2. Missing dependencies
 3. Template errors in templates/landing-page.hbs
 
 **Fix:**
+
 ```bash
 # Reinstall dependencies
 npm ci
@@ -172,16 +190,19 @@ npm run validate:landing
 #### Symptom: Pages deployment fails
 
 **Error indicators:**
+
 - "Deploy to GitHub Pages failed"
 - 404 errors on GitHub Pages
 - Artifact upload errors
 
 **Diagnosis:**
+
 1. Check workflow logs in Actions tab
 2. Verify GitHub Pages settings: Settings → Pages → Source: GitHub Actions
 3. Check artifact size (must be < 10GB)
 
 **Fix:**
+
 1. Re-run failed deployment from Actions tab
 2. Verify Pages permissions: Settings → Actions → General → Workflow permissions: Read and write
 3. Check if Pages is enabled for the repository
@@ -193,11 +214,13 @@ npm run validate:landing
 #### Symptom: terms.json not generated
 
 **Error indicators:**
+
 - "Export terms failed"
 - "No new terms detected"
 - Size limit exceeded
 
 **Diagnosis:**
+
 ```bash
 # Check if new terms exist
 npm run export:new
@@ -207,11 +230,13 @@ npm run export
 ```
 
 **Common causes:**
+
 1. No new slugs added (export:new guard)
 2. terms.json exceeds 2MB size limit
 3. Invalid term data structure
 
 **Fix:**
+
 ```bash
 # If new terms exist, run full export
 npm run export
@@ -230,11 +255,13 @@ head -50 docs/terms.json
 #### Symptom: Branch creation fails
 
 **Error indicators:**
+
 - "Failed to create branch"
 - "Branch already exists"
 - "API rate limit exceeded"
 
 **Diagnosis:**
+
 ```bash
 # Check if branch exists
 git fetch origin
@@ -245,6 +272,7 @@ gh api rate_limit
 ```
 
 **Fix:**
+
 1. If branch exists, reuse it or delete: `git push origin --delete task/ISSUE_NUMBER-slug`
 2. Wait for rate limit reset (automatic retry should handle this)
 3. Check workflow permissions: contents: write
@@ -252,11 +280,13 @@ gh api rate_limit
 #### Symptom: PR creation fails
 
 **Error indicators:**
+
 - "Failed to create pull request"
 - "PR already exists"
 - "Validation failed"
 
 **Diagnosis:**
+
 ```bash
 # Check for existing PR
 gh pr list --head task/ISSUE_NUMBER-slug
@@ -266,6 +296,7 @@ gh pr checks PR_NUMBER
 ```
 
 **Fix:**
+
 1. If PR exists, close or update it
 2. Verify pull-requests: write permission
 3. Check branch protection rules
@@ -281,12 +312,14 @@ When the landing page deployment introduces errors or shows incorrect data.
 #### Quick Rollback
 
 **Using GitHub UI:**
+
 1. Go to Actions → "Build & Deploy Landing Page"
 2. Find the last successful workflow run
 3. Click "Re-run all jobs"
 4. Wait for deployment to complete (2-5 minutes)
 
 **Using GitHub CLI:**
+
 ```bash
 # List recent workflow runs
 gh run list --workflow=update-landing-page.yml --limit 10
@@ -463,16 +496,19 @@ git push origin TAG_NAME
 ### 1. Complete Site Outage
 
 **Symptoms:**
+
 - GitHub Pages returns 404
 - All pages inaccessible
 - "Site not found" errors
 
 **Immediate Actions:**
+
 1. Check GitHub Pages status: https://www.githubstatus.com/
 2. Verify Pages settings: Settings → Pages → Enabled
 3. Check latest deployment: Actions → "Build & Deploy Landing Page"
 
 **Recovery:**
+
 ```bash
 # Re-run latest successful deployment
 gh run list --workflow=update-landing-page.yml --limit 5
@@ -485,16 +521,19 @@ gh workflow run update-landing-page.yml
 ### 2. Data Corruption in terms.yaml
 
 **Symptoms:**
+
 - All workflows failing
 - Validation errors on main branch
 - Cannot parse YAML
 
 **Immediate Actions:**
+
 1. Identify the corrupting commit
 2. Revert immediately
 3. Notify contributors
 
 **Recovery:**
+
 ```bash
 # Find the last known good commit
 git log --oneline terms.yaml | head -20
@@ -517,11 +556,13 @@ git push origin main
 ### 3. Workflow Infinite Loop
 
 **Symptoms:**
+
 - Workflow runs continuously
 - Multiple runs queued
 - Rate limit errors
 
 **Immediate Actions:**
+
 ```bash
 # Cancel all running workflows
 gh run list --limit 50 | grep "in_progress" | awk '{print $7}' | xargs -I {} gh run cancel {}
@@ -536,17 +577,20 @@ gh run list --limit 50 | grep "in_progress" | awk '{print $7}' | xargs -I {} gh 
 ### 4. Leaked Secrets or Credentials
 
 **Symptoms:**
+
 - Security alert from GitHub
 - API tokens exposed in logs
 - Unauthorized access detected
 
 **Immediate Actions:**
+
 1. **STOP ALL WORKFLOWS IMMEDIATELY**
 2. Rotate all secrets: Settings → Secrets and variables → Actions
 3. Review all workflow runs for exposure
 4. Revoke compromised credentials at source (GitHub PAT, etc.)
 
 **Recovery:**
+
 ```bash
 # Cancel all running workflows
 gh run list --limit 100 | grep "in_progress" | awk '{print $7}' | xargs -I {} gh run cancel {}
@@ -587,16 +631,19 @@ gh run view RUN_ID --log
 ### Setting Up Alerts
 
 **GitHub Actions Email Notifications:**
+
 1. Go to https://github.com/settings/notifications
 2. Enable "Actions" notifications
 3. Choose notification frequency
 
 **Workflow Status Badge in README:**
+
 ```markdown
 [![CI](https://github.com/LuminLynx/FOSS-Glossary/actions/workflows/pr-complete.yml/badge.svg)](https://github.com/LuminLynx/FOSS-Glossary/actions)
 ```
 
 **Slack Integration (if configured):**
+
 - See docs/WORKFLOW_DOCUMENTATION.md for Slack webhook setup
 - Workflows send notifications on failure
 
@@ -609,6 +656,7 @@ gh run view RUN_ID --log
 **Cause:** Missing dependencies or npm cache issues
 
 **Solution:**
+
 ```bash
 # Clear npm cache
 npm cache clean --force
@@ -626,6 +674,7 @@ npm test
 **Cause:** Invalid YAML syntax in terms.yaml
 
 **Solution:**
+
 ```bash
 # Validate YAML syntax online: https://www.yamllint.com/
 # Or use local validator
@@ -643,6 +692,7 @@ npm run validate
 **Cause:** Branch or commit doesn't exist in remote
 
 **Solution:**
+
 ```bash
 # Fetch all refs
 git fetch origin
@@ -660,6 +710,7 @@ git push origin missing-branch
 **Cause:** Too many API calls to GitHub
 
 **Solution:**
+
 ```bash
 # Check current rate limit
 gh api rate_limit
@@ -677,6 +728,7 @@ gh api rate_limit
 **Cause:** Extra fields in terms.yaml not defined in schema.json
 
 **Solution:**
+
 ```bash
 # Identify invalid fields
 npm run validate
@@ -685,7 +737,7 @@ npm run validate
 node -e "const schema = require('./schema.json'); console.log(Object.keys(schema.properties.terms.items.properties));"
 
 # Remove or move extra fields to allowed locations
-# Valid fields: slug, term, definition, explanation, humor, tags, 
+# Valid fields: slug, term, definition, explanation, humor, tags,
 #               see_also, aliases, controversy_level, redirects
 ```
 

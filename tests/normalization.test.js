@@ -73,17 +73,21 @@ test('normalizeTerm: throws error for non-object', () => {
 test('normalizeTerm: throws error for missing required fields', () => {
   assert.throws(() => normalizeTerm({}), /Terms require slug, term, and definition/);
   assert.throws(() => normalizeTerm({ slug: 'test' }), /Terms require slug, term, and definition/);
-  assert.throws(() => normalizeTerm({ slug: 'test', term: 'Test' }), /Terms require slug, term, and definition/);
+  assert.throws(
+    () => normalizeTerm({ slug: 'test', term: 'Test' }),
+    /Terms require slug, term, and definition/
+  );
 });
 
 test('normalizeTerm: returns minimal term with only required fields', () => {
-  const definition = 'Test definition that meets the minimum length requirement of 80 characters for validation';
+  const definition =
+    'Test definition that meets the minimum length requirement of 80 characters for validation';
   const result = normalizeTerm({
     slug: 'test-slug',
     term: 'Test Term',
     definition,
   });
-  
+
   assert.deepEqual(result, {
     slug: 'test-slug',
     term: 'Test Term',
@@ -92,7 +96,8 @@ test('normalizeTerm: returns minimal term with only required fields', () => {
 });
 
 test('normalizeTerm: includes optional fields when present', () => {
-  const definition = 'Test definition that meets the minimum length requirement of 80 characters for validation';
+  const definition =
+    'Test definition that meets the minimum length requirement of 80 characters for validation';
   const result = normalizeTerm({
     slug: 'test-slug',
     term: 'Test Term',
@@ -104,7 +109,7 @@ test('normalizeTerm: includes optional fields when present', () => {
     aliases: ['alias1'],
     controversy_level: 'high',
   });
-  
+
   assert.deepEqual(result, {
     slug: 'test-slug',
     term: 'Test Term',
@@ -119,7 +124,8 @@ test('normalizeTerm: includes optional fields when present', () => {
 });
 
 test('normalizeTerm: omits empty optional fields', () => {
-  const definition = 'Test definition that meets the minimum length requirement of 80 characters for validation';
+  const definition =
+    'Test definition that meets the minimum length requirement of 80 characters for validation';
   const result = normalizeTerm({
     slug: 'test-slug',
     term: 'Test Term',
@@ -130,7 +136,7 @@ test('normalizeTerm: omits empty optional fields', () => {
     see_also: null,
     aliases: ['  '],
   });
-  
+
   assert.deepEqual(result, {
     slug: 'test-slug',
     term: 'Test Term',
@@ -142,15 +148,17 @@ test('normalizeTerm: normalizes array fields correctly', () => {
   const result = normalizeTerm({
     slug: 'test-slug',
     term: 'Test Term',
-    definition: 'Test definition that meets the minimum length requirement of 80 characters for validation',
+    definition:
+      'Test definition that meets the minimum length requirement of 80 characters for validation',
     tags: 'single-tag',
     see_also: ['ref1', '  ', null, 'ref2'],
   });
-  
+
   assert.deepEqual(result, {
     slug: 'test-slug',
     term: 'Test Term',
-    definition: 'Test definition that meets the minimum length requirement of 80 characters for validation',
+    definition:
+      'Test definition that meets the minimum length requirement of 80 characters for validation',
     tags: ['single-tag'],
     see_also: ['ref1', 'ref2'],
   });
@@ -159,66 +167,78 @@ test('normalizeTerm: normalizes array fields correctly', () => {
 // Tests for slug format validation
 test('normalizeTerm: validates slug format - rejects uppercase', () => {
   assert.throws(
-    () => normalizeTerm({
-      slug: 'Test-Slug',
-      term: 'Test Term',
-      definition: 'Test definition that meets the minimum length requirement of 80 characters for validation',
-    }),
+    () =>
+      normalizeTerm({
+        slug: 'Test-Slug',
+        term: 'Test Term',
+        definition:
+          'Test definition that meets the minimum length requirement of 80 characters for validation',
+      }),
     /Slug 'Test-Slug' must contain only lowercase letters, numbers, and hyphens/
   );
 });
 
 test('normalizeTerm: validates slug format - rejects special characters', () => {
   assert.throws(
-    () => normalizeTerm({
-      slug: 'test_slug',
-      term: 'Test Term',
-      definition: 'Test definition that meets the minimum length requirement of 80 characters for validation',
-    }),
+    () =>
+      normalizeTerm({
+        slug: 'test_slug',
+        term: 'Test Term',
+        definition:
+          'Test definition that meets the minimum length requirement of 80 characters for validation',
+      }),
     /must contain only lowercase letters, numbers, and hyphens/
   );
 });
 
 test('normalizeTerm: validates slug format - rejects spaces', () => {
   assert.throws(
-    () => normalizeTerm({
-      slug: 'test slug',
-      term: 'Test Term',
-      definition: 'Test definition that meets the minimum length requirement of 80 characters for validation',
-    }),
+    () =>
+      normalizeTerm({
+        slug: 'test slug',
+        term: 'Test Term',
+        definition:
+          'Test definition that meets the minimum length requirement of 80 characters for validation',
+      }),
     /must contain only lowercase letters, numbers, and hyphens/
   );
 });
 
 test('normalizeTerm: validates slug format - rejects leading hyphen', () => {
   assert.throws(
-    () => normalizeTerm({
-      slug: '-test-slug',
-      term: 'Test Term',
-      definition: 'Test definition that meets the minimum length requirement of 80 characters for validation',
-    }),
+    () =>
+      normalizeTerm({
+        slug: '-test-slug',
+        term: 'Test Term',
+        definition:
+          'Test definition that meets the minimum length requirement of 80 characters for validation',
+      }),
     /must contain only lowercase letters, numbers, and hyphens/
   );
 });
 
 test('normalizeTerm: validates slug format - rejects trailing hyphen', () => {
   assert.throws(
-    () => normalizeTerm({
-      slug: 'test-slug-',
-      term: 'Test Term',
-      definition: 'Test definition that meets the minimum length requirement of 80 characters for validation',
-    }),
+    () =>
+      normalizeTerm({
+        slug: 'test-slug-',
+        term: 'Test Term',
+        definition:
+          'Test definition that meets the minimum length requirement of 80 characters for validation',
+      }),
     /must contain only lowercase letters, numbers, and hyphens/
   );
 });
 
 test('normalizeTerm: validates slug format - rejects consecutive hyphens', () => {
   assert.throws(
-    () => normalizeTerm({
-      slug: 'test--slug',
-      term: 'Test Term',
-      definition: 'Test definition that meets the minimum length requirement of 80 characters for validation',
-    }),
+    () =>
+      normalizeTerm({
+        slug: 'test--slug',
+        term: 'Test Term',
+        definition:
+          'Test definition that meets the minimum length requirement of 80 characters for validation',
+      }),
     /must contain only lowercase letters, numbers, and hyphens/
   );
 });
@@ -227,9 +247,10 @@ test('normalizeTerm: validates slug format - accepts valid slug with numbers', (
   const result = normalizeTerm({
     slug: 'test-slug-123',
     term: 'Test Term',
-    definition: 'Test definition that meets the minimum length requirement of 80 characters for validation',
+    definition:
+      'Test definition that meets the minimum length requirement of 80 characters for validation',
   });
-  
+
   assert.equal(result.slug, 'test-slug-123');
 });
 
@@ -237,20 +258,23 @@ test('normalizeTerm: validates slug format - accepts valid slug without hyphens'
   const result = normalizeTerm({
     slug: 'testslug',
     term: 'Test Term',
-    definition: 'Test definition that meets the minimum length requirement of 80 characters for validation',
+    definition:
+      'Test definition that meets the minimum length requirement of 80 characters for validation',
   });
-  
+
   assert.equal(result.slug, 'testslug');
 });
 
 // Tests for slug length validation
 test('normalizeTerm: validates slug length - rejects slug shorter than 3 characters', () => {
   assert.throws(
-    () => normalizeTerm({
-      slug: 'ab',
-      term: 'Test Term',
-      definition: 'Test definition that meets the minimum length requirement of 80 characters for validation',
-    }),
+    () =>
+      normalizeTerm({
+        slug: 'ab',
+        term: 'Test Term',
+        definition:
+          'Test definition that meets the minimum length requirement of 80 characters for validation',
+      }),
     /Slug 'ab' must be at least 3 characters long/
   );
 });
@@ -259,19 +283,22 @@ test('normalizeTerm: validates slug length - accepts slug with exactly 3 charact
   const result = normalizeTerm({
     slug: 'abc',
     term: 'Test Term',
-    definition: 'Test definition that meets the minimum length requirement of 80 characters for validation',
+    definition:
+      'Test definition that meets the minimum length requirement of 80 characters for validation',
   });
-  
+
   assert.equal(result.slug, 'abc');
 });
 
 test('normalizeTerm: validates slug length - rejects slug longer than 48 characters', () => {
   assert.throws(
-    () => normalizeTerm({
-      slug: 'this-is-a-very-long-slug-that-exceeds-the-maximum-length-limit',
-      term: 'Test Term',
-      definition: 'Test definition that meets the minimum length requirement of 80 characters for validation',
-    }),
+    () =>
+      normalizeTerm({
+        slug: 'this-is-a-very-long-slug-that-exceeds-the-maximum-length-limit',
+        term: 'Test Term',
+        definition:
+          'Test definition that meets the minimum length requirement of 80 characters for validation',
+      }),
     /Slug 'this-is-a-very-long-slug-that-exceeds-the-maximum-length-limit' must be at most 48 characters long/
   );
 });
@@ -281,20 +308,22 @@ test('normalizeTerm: validates slug length - accepts slug with exactly 48 charac
   const result = normalizeTerm({
     slug: slug48,
     term: 'Test Term',
-    definition: 'Test definition that meets the minimum length requirement of 80 characters for validation',
+    definition:
+      'Test definition that meets the minimum length requirement of 80 characters for validation',
   });
-  
+
   assert.equal(result.slug, slug48);
 });
 
 // Tests for definition length validation
 test('normalizeTerm: validates definition length - rejects definition shorter than 80 characters', () => {
   assert.throws(
-    () => normalizeTerm({
-      slug: 'test-slug',
-      term: 'Test Term',
-      definition: 'This is too short',
-    }),
+    () =>
+      normalizeTerm({
+        slug: 'test-slug',
+        term: 'Test Term',
+        definition: 'This is too short',
+      }),
     /Definition for 'test-slug' must be at least 80 characters long/
   );
 });
@@ -306,30 +335,33 @@ test('normalizeTerm: validates definition length - accepts definition with exact
     term: 'Test Term',
     definition: def80,
   });
-  
+
   assert.equal(result.definition, def80);
 });
 
 test('normalizeTerm: validates definition length - accepts definition longer than 80 characters', () => {
-  const longDef = 'This is a very long definition that exceeds the minimum length requirement of 80 characters and should pass validation without any issues at all';
+  const longDef =
+    'This is a very long definition that exceeds the minimum length requirement of 80 characters and should pass validation without any issues at all';
   const result = normalizeTerm({
     slug: 'test-slug',
     term: 'Test Term',
     definition: longDef,
   });
-  
+
   assert.equal(result.definition, longDef);
 });
 
 // Tests for controversy_level validation
 test('normalizeTerm: validates controversy_level - rejects invalid value', () => {
   assert.throws(
-    () => normalizeTerm({
-      slug: 'test-slug',
-      term: 'Test Term',
-      definition: 'Test definition that meets the minimum length requirement of 80 characters for validation',
-      controversy_level: 'extreme',
-    }),
+    () =>
+      normalizeTerm({
+        slug: 'test-slug',
+        term: 'Test Term',
+        definition:
+          'Test definition that meets the minimum length requirement of 80 characters for validation',
+        controversy_level: 'extreme',
+      }),
     /Controversy level 'extreme' for 'test-slug' must be one of: low, medium, high/
   );
 });
@@ -338,10 +370,11 @@ test('normalizeTerm: validates controversy_level - accepts "low"', () => {
   const result = normalizeTerm({
     slug: 'test-slug',
     term: 'Test Term',
-    definition: 'Test definition that meets the minimum length requirement of 80 characters for validation',
+    definition:
+      'Test definition that meets the minimum length requirement of 80 characters for validation',
     controversy_level: 'low',
   });
-  
+
   assert.equal(result.controversy_level, 'low');
 });
 
@@ -349,10 +382,11 @@ test('normalizeTerm: validates controversy_level - accepts "medium"', () => {
   const result = normalizeTerm({
     slug: 'test-slug',
     term: 'Test Term',
-    definition: 'Test definition that meets the minimum length requirement of 80 characters for validation',
+    definition:
+      'Test definition that meets the minimum length requirement of 80 characters for validation',
     controversy_level: 'medium',
   });
-  
+
   assert.equal(result.controversy_level, 'medium');
 });
 
@@ -360,10 +394,11 @@ test('normalizeTerm: validates controversy_level - accepts "high"', () => {
   const result = normalizeTerm({
     slug: 'test-slug',
     term: 'Test Term',
-    definition: 'Test definition that meets the minimum length requirement of 80 characters for validation',
+    definition:
+      'Test definition that meets the minimum length requirement of 80 characters for validation',
     controversy_level: 'high',
   });
-  
+
   assert.equal(result.controversy_level, 'high');
 });
 
@@ -404,14 +439,18 @@ test('normalizeName: handles Unicode normalization - NFC and NFD forms produce s
   const nfc = 'café';
   // café with decomposed e + combining acute accent (NFD form)
   const nfd = 'cafe\u0301';
-  
-  assert.equal(normalizeName(nfc), normalizeName(nfd), 'NFC and NFD forms should normalize to the same value');
+
+  assert.equal(
+    normalizeName(nfc),
+    normalizeName(nfd),
+    'NFC and NFD forms should normalize to the same value'
+  );
 });
 
 test('normalizeName: handles Unicode normalization - removes accents consistently', () => {
   const nfc = 'café';
   const nfd = 'cafe\u0301';
-  
+
   // Both should normalize to 'caf' (accented e is removed as non-alphanumeric)
   assert.equal(normalizeName(nfc), 'caf');
   assert.equal(normalizeName(nfd), 'caf');
@@ -427,7 +466,7 @@ test('normalizeName: handles various Unicode accented characters', () => {
 test('normalizeName: handles Unicode normalization with mixed case', () => {
   const nfc = 'Café';
   const nfd = 'Cafe\u0301';
-  
+
   assert.equal(normalizeName(nfc), normalizeName(nfd));
   assert.equal(normalizeName(nfc), 'caf');
 });

@@ -69,7 +69,10 @@ test('prepareTerms sorts by slug', () => {
     { slug: 'm-slug', term: 'M', definition: makeDefinition('m') },
   ]);
 
-  assert.deepEqual(prepared.map((term) => term.slug), ['a-slug', 'm-slug', 'z-slug']);
+  assert.deepEqual(
+    prepared.map((term) => term.slug),
+    ['a-slug', 'm-slug', 'z-slug']
+  );
 });
 
 test('sortTerms returns new sorted array without mutating input', () => {
@@ -79,8 +82,14 @@ test('sortTerms returns new sorted array without mutating input', () => {
   ];
   const sorted = sortTerms(terms);
 
-  assert.deepEqual(sorted.map((t) => t.slug), ['a', 'b']);
-  assert.deepEqual(terms.map((t) => t.slug), ['b', 'a']);
+  assert.deepEqual(
+    sorted.map((t) => t.slug),
+    ['a', 'b']
+  );
+  assert.deepEqual(
+    terms.map((t) => t.slug),
+    ['b', 'a']
+  );
 });
 
 test('buildDocument handles large term counts', () => {
@@ -101,16 +110,19 @@ test('buildDocument handles large term counts', () => {
 });
 
 test('serializeDocument respects pretty flag and ensures newline', () => {
-  const document = buildDocument([
+  const document = buildDocument(
+    [
+      {
+        slug: 'example',
+        term: 'Example',
+        definition: makeDefinition('example'),
+      },
+    ],
     {
-      slug: 'example',
-      term: 'Example',
-      definition: makeDefinition('example'),
-    },
-  ], {
-    version: 'v',
-    generatedAt: new Date('2024-01-01T00:00:00.000Z'),
-  });
+      version: 'v',
+      generatedAt: new Date('2024-01-01T00:00:00.000Z'),
+    }
+  );
 
   const pretty = serializeDocument(document, { pretty: true });
   const compact = serializeDocument(document, { pretty: false });
@@ -122,12 +134,14 @@ test('serializeDocument respects pretty flag and ensures newline', () => {
 });
 
 test('checkSizeLimit throws when exceeding threshold', () => {
-  const logger = { 
-    errorCalled: false, 
-    error() { this.errorCalled = true; } 
+  const logger = {
+    errorCalled: false,
+    error() {
+      this.errorCalled = true;
+    },
   };
   const largeContent = 'x'.repeat(SIZE_WARN_THRESHOLD_BYTES + 1);
-  
+
   assert.throws(
     () => checkSizeLimit(largeContent, { logger, termsCount: 1000 }),
     ExporterError,
@@ -137,9 +151,11 @@ test('checkSizeLimit throws when exceeding threshold', () => {
 });
 
 test('checkSizeLimit silent under threshold', () => {
-  const logger = { 
-    errorCalled: false, 
-    error() { this.errorCalled = true; } 
+  const logger = {
+    errorCalled: false,
+    error() {
+      this.errorCalled = true;
+    },
   };
   const content = 'x'.repeat(1024);
   const result = checkSizeLimit(content, { logger });
@@ -148,16 +164,16 @@ test('checkSizeLimit silent under threshold', () => {
 });
 
 test('checkSizeLimit error message includes size and limit information', () => {
-  const logger = { 
+  const logger = {
     errorCalled: false,
     lastError: null,
-    error(msg) { 
-      this.errorCalled = true; 
+    error(msg) {
+      this.errorCalled = true;
       this.lastError = msg;
-    } 
+    },
   };
   const largeContent = 'x'.repeat(SIZE_WARN_THRESHOLD_BYTES + 1);
-  
+
   try {
     checkSizeLimit(largeContent, { logger, termsCount: 500 });
     assert.fail('Should have thrown an error');
@@ -186,7 +202,11 @@ test('extractSlugsFromYaml normalizes entries', () => {
 
 test('extractSlugsFromYaml logs warning on YAML parse error', () => {
   const warnings = [];
-  const mockConsole = { warn(msg) { warnings.push(msg); } };
+  const mockConsole = {
+    warn(msg) {
+      warnings.push(msg);
+    },
+  };
   const originalWarn = console.warn;
   console.warn = mockConsole.warn.bind(mockConsole);
 
@@ -203,7 +223,11 @@ test('extractSlugsFromYaml logs warning on YAML parse error', () => {
 
 test('extractSlugsFromYaml logs warning on invalid structure', () => {
   const warnings = [];
-  const mockConsole = { warn(msg) { warnings.push(msg); } };
+  const mockConsole = {
+    warn(msg) {
+      warnings.push(msg);
+    },
+  };
   const originalWarn = console.warn;
   console.warn = mockConsole.warn.bind(mockConsole);
 
@@ -220,7 +244,11 @@ test('extractSlugsFromYaml logs warning on invalid structure', () => {
 
 test('extractSlugsFromYaml logs warning when terms is not an array', () => {
   const warnings = [];
-  const mockConsole = { warn(msg) { warnings.push(msg); } };
+  const mockConsole = {
+    warn(msg) {
+      warnings.push(msg);
+    },
+  };
   const originalWarn = console.warn;
   console.warn = mockConsole.warn.bind(mockConsole);
 
@@ -248,10 +276,7 @@ test('normalize helpers handle nullish values', () => {
 
 test('buildExportDocumentFromYaml throws on invalid input', () => {
   assert.throws(() => buildExportDocumentFromYaml('[]'), ExporterError);
-  assert.throws(
-    () => buildExportDocumentFromYaml('terms: 42'),
-    ExporterError,
-  );
+  assert.throws(() => buildExportDocumentFromYaml('terms: 42'), ExporterError);
 });
 
 test('serializeDocument with pretty flag produces deterministic order', () => {
@@ -261,9 +286,10 @@ test('serializeDocument with pretty flag produces deterministic order', () => {
     generatedAt: new Date('2024-01-01T00:00:00.000Z'),
   });
 
-  assert.deepEqual(document.terms.map((term) => Object.keys(term)), [
-    ['slug', 'term', 'definition', 'tags'],
-  ]);
+  assert.deepEqual(
+    document.terms.map((term) => Object.keys(term)),
+    [['slug', 'term', 'definition', 'tags']]
+  );
 });
 
 test('check mode validation passes without writing file', () => {

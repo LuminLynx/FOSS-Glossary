@@ -8,4 +8,5 @@
 - **Labels:** codex, Codex Watches, in-progress
 
 ### Details:
+
 Update the Example Term in README.md to match the new format defined in schema.json

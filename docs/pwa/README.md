@@ -5,18 +5,21 @@ A Progressive Web App (PWA) for the FOSS Glossary that works offline, allows use
 ## Features
 
 ### 🔍 Offline Search
+
 - Works completely offline after first load
 - Real-time search across term names, definitions, explanations, and tags
 - Instant filtering with no network delay
 - Service Worker caches all 28+ terms locally
 
 ### ⭐ Favorites/Bookmarks
+
 - Save favorite terms with a single click
 - Favorites persist across sessions using localStorage
 - Toggle between "All Terms" and "Favorites" view
 - Visual star indicator for favorited terms
 
 ### 📤 Share Functionality
+
 - Share individual terms via:
   - Copy link to clipboard
   - Twitter intent
@@ -26,12 +29,14 @@ A Progressive Web App (PWA) for the FOSS Glossary that works offline, allows use
 - Deep linking support (terms can be linked directly via #slug)
 
 ### 🌓 Dark Mode
+
 - Toggle between dark and light themes
 - Theme preference saved to localStorage
 - Smooth transitions between themes
 - Default dark theme matching the main glossary aesthetic
 
 ### 📱 Mobile Responsive
+
 - Optimized for all screen sizes (320px to 1920px+)
 - Touch-friendly interface
 - Sticky header for easy navigation
@@ -42,11 +47,13 @@ A Progressive Web App (PWA) for the FOSS Glossary that works offline, allows use
 ### For Users
 
 #### Desktop (Chrome/Edge)
+
 1. Visit the PWA at `https://luminlynx.github.io/FOSS-Glossary/pwa/`
 2. Click the install icon in the address bar (⊕ or +)
 3. Click "Install" in the popup
 
 #### Mobile (Chrome/Safari)
+
 1. Visit the PWA on your mobile browser
 2. **Android Chrome**: Tap the three-dot menu → "Add to Home screen"
 3. **iOS Safari**: Tap the Share button → "Add to Home Screen"
@@ -54,6 +61,7 @@ A Progressive Web App (PWA) for the FOSS Glossary that works offline, allows use
 ### For Developers
 
 #### Local Development
+
 ```bash
 # Clone the repository
 git clone https://github.com/LuminLynx/FOSS-Glossary.git
@@ -77,7 +85,9 @@ npx http-server docs/pwa -p 8000
 ```
 
 #### GitHub Pages Deployment
+
 The PWA is automatically deployed to GitHub Pages at:
+
 ```
 https://luminlynx.github.io/FOSS-Glossary/pwa/
 ```
@@ -113,18 +123,21 @@ docs/pwa/
 ## Usage
 
 ### Search
+
 - Type in the search bar to filter terms
 - Search across term names, definitions, explanations, and tags
 - Press `Ctrl+K` (or `Cmd+K` on Mac) to focus search
 - Press `Escape` to clear search
 
 ### Favorites
+
 - Click the star (☆) icon on any term to favorite it
 - Click again to unfavorite (⭐ → ☆)
 - Click "⭐ Favorites" button in header to view only favorites
 - Click "📖 All Terms" to return to all terms view
 
 ### Sharing
+
 - Click the share (📤) icon on any term
 - Choose from:
   - **Copy Link**: Copies direct link to term
@@ -133,11 +146,13 @@ docs/pwa/
   - **Copy Text**: Copies term name and definition
 
 ### Theme Toggle
+
 - Click "☀️ Light" to switch to light mode
 - Click "🌙 Dark" to switch to dark mode
 - Theme preference is saved automatically
 
 ### Expanding Terms
+
 - Click anywhere on a term card (except buttons) to expand/collapse
 - Expanded view shows full explanation, humor, and related terms
 
@@ -194,6 +209,7 @@ registration.addEventListener('updatefound', () => {
 When releasing a new version:
 
 1. **Update version.json**:
+
    ```json
    {
      "version": "1.1.0",
@@ -203,6 +219,7 @@ When releasing a new version:
    ```
 
 2. **Update manifest.json**:
+
    ```json
    {
      "version": "1.1.0",
@@ -211,6 +228,7 @@ When releasing a new version:
    ```
 
 3. **Update service-worker.js** (if needed):
+
    ```javascript
    const APP_VERSION = '1.1.0';
    const CACHE_NAME = `foss-glossary-v${APP_VERSION}`;
@@ -223,6 +241,7 @@ When releasing a new version:
 ### Version Display
 
 The current version is displayed in the footer of every page:
+
 - Format: `v1.0.0`
 - Located at: Bottom of page, next to GitHub link
 - Style: Monospace font with tag-like appearance
@@ -246,6 +265,7 @@ The current version is displayed in the footer of every page:
 ## Offline Functionality
 
 The PWA uses a Service Worker to cache:
+
 - All HTML, CSS, and JavaScript files
 - PWA manifest and icons
 - The terms.json data file

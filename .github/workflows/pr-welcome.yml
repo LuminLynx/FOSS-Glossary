@@ -33,31 +33,3 @@ jobs:
               repo: context.repo.repo,
               body: `## ${randomMsg}\n\n🤖 **Validation starting in 3... 2... 1...**`
             });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

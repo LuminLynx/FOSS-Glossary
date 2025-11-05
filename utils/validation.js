@@ -1,6 +1,6 @@
 /**
  * Shared validation utilities for FOSS Glossary
- * 
+ *
  * This module provides consistent validation and error formatting functions
  * used across multiple scripts to reduce code duplication.
  */
@@ -8,7 +8,7 @@
 /**
  * Format AJV validation errors into human-readable messages
  * Handles different error types (additionalProperties, required, minLength, etc.)
- * 
+ *
  * @param {Object|Array} errors - Single error object or array of AJV errors
  * @returns {string} Formatted error message
  */
@@ -23,7 +23,7 @@ function formatAjvError(errors) {
     const error = errors;
     const location = error.instancePath ? error.instancePath : '(root)';
     const message = error.message || 'validation error';
-    
+
     if (error.keyword === 'additionalProperties' && error.params?.additionalProperty) {
       return `${location} has unexpected property '${error.params.additionalProperty}'`;
     }
@@ -40,7 +40,7 @@ function formatAjvError(errors) {
   if (errors.length === 0) {
     return 'Unknown validation error';
   }
-  
+
   return errors
     .map((error) => {
       const location = error.instancePath || '(root)';

@@ -116,7 +116,7 @@ jobs:
           else
             echo "term_slug=" >> "$GITHUB_OUTPUT"
           fi
-          
+
           echo "exit_code=$EXIT" >> "$GITHUB_OUTPUT"
           exit $EXIT
 

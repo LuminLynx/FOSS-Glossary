@@ -7,12 +7,14 @@ The Issue Task PR Automation workflow automatically creates task branches, task 
 ## Features
 
 ### 1. Unique Branch and File Naming
+
 - **Branch naming:** `task/{issueNumber}-{slug}-{timestamp}`
 - **Task file naming:** `tasks/{issueNumber}/{slug}-{timestamp}.md`
 - Timestamps prevent naming conflicts when multiple tasks are created for the same issue
 - Task files are organized in subdirectories by issue number for better maintainability
 
 ### 2. Enhanced Error Handling
+
 - Automatic retry mechanism with exponential backoff for API calls
 - Retries up to 3 times for transient errors (500+ status codes, 429 rate limit, connection resets)
 - Detailed logging at each step for debugging
@@ -20,12 +22,14 @@ The Issue Task PR Automation workflow automatically creates task branches, task 
 - Job summaries showing success/failure status
 
 ### 3. Input Validation
+
 - Validates `workflow_dispatch` inputs for proper format
 - Title: Required, non-empty, max 256 characters
 - Labels: Alphanumeric with spaces, hyphens, and underscores, max 50 characters each
 - Validation runs before issue creation to prevent errors
 
 ### 4. Permission Minimization
+
 - Workflow permissions limited to:
   - `contents: write` - For creating branches and files
   - `pull-requests: write` - For creating PRs
@@ -33,6 +37,7 @@ The Issue Task PR Automation workflow automatically creates task branches, task 
 - No unnecessary permissions granted
 
 ### 5. Dynamic Assignee Handling
+
 - Supports both assignee-based and label-based triggers
 - Default trigger labels: `codex`, `ready-for-codex`
 - Configurable via repository variables:
@@ -40,6 +45,7 @@ The Issue Task PR Automation workflow automatically creates task branches, task 
   - `TRIGGER_LABELS` - Comma-separated list of trigger labels
 
 ### 6. Task File Organization
+
 - Task files organized in subdirectories: `tasks/{issueNumber}/`
 - Each task file includes:
   - Issue metadata (number, title, assignee, branch, timestamp)
@@ -48,12 +54,14 @@ The Issue Task PR Automation workflow automatically creates task branches, task 
   - Creation timestamp
 
 ### 7. Notification Mechanism
+
 - Optional Slack notifications for workflow execution
 - Notifies on both success and failure
 - Configure via `SLACK_WEBHOOK_URL` secret
 - Can be enabled for manual triggers via `notify_slack` input
 
 ### 8. Enhanced Logging
+
 - Emoji indicators for different operations (✅, ♻️, ℹ️, ❌)
 - Grouped console output for each major step
 - Detailed error messages with stack traces
@@ -64,10 +72,12 @@ The Issue Task PR Automation workflow automatically creates task branches, task 
 ### Automatic Trigger (Issue Assignment or Label)
 
 The workflow automatically runs when:
+
 1. An issue is assigned to the configured bot user (default: `my-codex-bot`)
 2. OR an issue receives one of the trigger labels (`codex` or `ready-for-codex`)
 
 **Steps:**
+
 1. Open or find an issue
 2. Either:
    - Assign it to the bot user, OR
@@ -83,6 +93,7 @@ The workflow automatically runs when:
 You can manually create an issue and trigger the automation:
 
 **Via GitHub UI:**
+
 1. Go to Actions → Issue Task PR Automation
 2. Click "Run workflow"
 3. Fill in the inputs:
@@ -92,6 +103,7 @@ You can manually create an issue and trigger the automation:
    - **Notify Slack** (optional): Check to send Slack notification
 
 **Via GitHub CLI:**
+
 ```bash
 gh workflow run issue-task-pr.yml \
   -f title="Add new feature" \
@@ -101,6 +113,7 @@ gh workflow run issue-task-pr.yml \
 ```
 
 **Via API:**
+
 ```bash
 curl -X POST \
   -H "Accept: application/vnd.github+json" \
@@ -123,21 +136,21 @@ curl -X POST \
 
 Set these in Settings → Secrets and variables → Actions → Variables:
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `CODEX_BOT_LOGIN` | Username of the bot that triggers automation | `my-codex-bot` |
-| `TRIGGER_LABELS` | Comma-separated labels that trigger automation | `codex,ready-for-codex` |
+| Variable          | Description                                    | Default                 |
+| ----------------- | ---------------------------------------------- | ----------------------- |
+| `CODEX_BOT_LOGIN` | Username of the bot that triggers automation   | `my-codex-bot`          |
+| `TRIGGER_LABELS`  | Comma-separated labels that trigger automation | `codex,ready-for-codex` |
 
 ### Repository Secrets
 
 Set these in Settings → Secrets and variables → Actions → Secrets:
 
-| Secret | Description | Required |
-|--------|-------------|----------|
-| `SLACK_WEBHOOK_URL` | Slack webhook URL for notifications | Optional |
-| `CODEX_FOSS_TOK` | Fine-grained PAT for bot actions | Optional* |
+| Secret              | Description                         | Required   |
+| ------------------- | ----------------------------------- | ---------- |
+| `SLACK_WEBHOOK_URL` | Slack webhook URL for notifications | Optional   |
+| `CODEX_FOSS_TOK`    | Fine-grained PAT for bot actions    | Optional\* |
 
-*Required if the bot needs to act across repositories
+\*Required if the bot needs to act across repositories
 
 ### Slack Notifications
 
@@ -190,11 +203,13 @@ timestamp: 1234567890
 ### Workflow doesn't trigger on issue assignment
 
 **Possible causes:**
+
 1. Issue not assigned to the configured bot user
 2. Bot username doesn't match `CODEX_BOT_LOGIN` variable
 3. No trigger label applied
 
 **Solutions:**
+
 - Verify the bot username in repository variables
 - Check that the issue is assigned to the correct user
 - Add a trigger label (`codex` or `ready-for-codex`)
@@ -202,21 +217,25 @@ timestamp: 1234567890
 ### Workflow doesn't trigger on label
 
 **Possible causes:**
+
 1. Label name doesn't match configured trigger labels
 2. `TRIGGER_LABELS` variable is incorrectly configured
 
 **Solutions:**
+
 - Check the label name matches one in `TRIGGER_LABELS`
 - Verify `TRIGGER_LABELS` variable format (comma-separated, no spaces)
 
 ### Branch creation fails
 
 **Possible causes:**
+
 1. Branch already exists
 2. Insufficient permissions
 3. API rate limit exceeded
 
 **Solutions:**
+
 - Check if branch already exists (workflow will reuse it)
 - Verify `GITHUB_TOKEN` has `contents: write` permission
 - Wait for rate limit reset (automatic retry will handle this)
@@ -224,11 +243,13 @@ timestamp: 1234567890
 ### PR creation fails
 
 **Possible causes:**
+
 1. PR already exists for this branch
 2. Insufficient permissions
 3. API rate limit exceeded
 
 **Solutions:**
+
 - Check if PR already exists (workflow will reuse it)
 - Verify `GITHUB_TOKEN` has `pull-requests: write` permission
 - Wait for rate limit reset (automatic retry will handle this)
@@ -236,11 +257,13 @@ timestamp: 1234567890
 ### Task file not created
 
 **Possible causes:**
+
 1. Branch doesn't exist
 2. Insufficient permissions
 3. Path conflicts
 
 **Solutions:**
+
 - Verify branch was created successfully
 - Check workflow logs for specific error
 - Ensure `contents: write` permission
@@ -248,11 +271,13 @@ timestamp: 1234567890
 ### Slack notifications not sent
 
 **Possible causes:**
+
 1. `SLACK_WEBHOOK_URL` secret not configured
 2. Webhook URL is invalid or expired
 3. Network issues
 
 **Solutions:**
+
 - Verify `SLACK_WEBHOOK_URL` secret exists and is correct
 - Test webhook URL manually
 - Check workflow logs for specific error
@@ -260,11 +285,13 @@ timestamp: 1234567890
 ### Input validation fails
 
 **Possible causes:**
+
 1. Title is empty or too long (>256 characters)
 2. Labels contain invalid characters
 3. Label is too long (>50 characters)
 
 **Solutions:**
+
 - Ensure title is provided and within length limit
 - Use only alphanumeric characters, spaces, hyphens, and underscores in labels
 - Keep individual labels under 50 characters
@@ -273,11 +300,11 @@ timestamp: 1234567890
 
 The `handle-issue-assignment` job provides the following outputs:
 
-| Output | Description | Example |
-|--------|-------------|---------|
-| `pr-url` | URL of the created/updated PR | `https://github.com/owner/repo/pull/123` |
-| `branch-name` | Name of the task branch | `task/123-issue-title-1234567890` |
-| `success` | Whether the workflow succeeded | `true` or `false` |
+| Output        | Description                    | Example                                  |
+| ------------- | ------------------------------ | ---------------------------------------- |
+| `pr-url`      | URL of the created/updated PR  | `https://github.com/owner/repo/pull/123` |
+| `branch-name` | Name of the task branch        | `task/123-issue-title-1234567890`        |
+| `success`     | Whether the workflow succeeded | `true` or `false`                        |
 
 These outputs can be used by subsequent jobs or workflows.
 
@@ -304,6 +331,7 @@ These outputs can be used by subsequent jobs or workflows.
 **Scenario:** Add a new feature to the project
 
 **Steps:**
+
 1. Create issue with title "Add dark mode support"
 2. Add label `enhancement` and `codex`
 3. Workflow creates:
@@ -316,6 +344,7 @@ These outputs can be used by subsequent jobs or workflows.
 **Scenario:** Fix a critical bug
 
 **Steps:**
+
 1. Create issue with title "Fix login authentication error"
 2. Add labels `bug`, `high-priority`
 3. Assign to `my-codex-bot`
@@ -327,6 +356,7 @@ These outputs can be used by subsequent jobs or workflows.
 **Scenario:** Create issue and task via API
 
 **Steps:**
+
 ```bash
 gh workflow run issue-task-pr.yml \
   -f title="Update documentation for API v2" \
@@ -336,6 +366,7 @@ gh workflow run issue-task-pr.yml \
 ```
 
 Result:
+
 - Issue created: #67
 - Branch: `task/67-update-documentation-for-api-v2-1729276800000`
 - File: `tasks/67/update-documentation-for-api-v2-1729276800000.md`
@@ -345,6 +376,7 @@ Result:
 ## Support
 
 For issues or questions:
+
 1. Check troubleshooting section above
 2. Review workflow run logs in Actions tab
 3. Check job summaries for detailed error information
@@ -353,6 +385,7 @@ For issues or questions:
 ## Changelog
 
 ### Version 2.0.0 (Current)
+
 - Added unique timestamps to branch and file names
 - Implemented retry mechanism with exponential backoff
 - Added input validation for workflow_dispatch
@@ -364,6 +397,7 @@ For issues or questions:
 - Added comprehensive documentation
 
 ### Version 1.0.0
+
 - Initial version
 - Basic issue assignment automation
 - Simple branch and PR creation

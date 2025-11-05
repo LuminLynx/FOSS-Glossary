@@ -1,6 +1,7 @@
 # Open Issues
 
 ## Issue #51
+
 - **Title:** FIX Example Term IN README.md
 - **URL:** [Link to Issue #51](https://github.com/LuminLynx/FOSS-Glossary/issues/51)
 - **Assigned to:** my-codex-bot
