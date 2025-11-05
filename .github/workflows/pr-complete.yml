@@ -54,6 +54,41 @@ jobs:
           } >> "$GITHUB_OUTPUT"
           exit $EXIT
 
+      - name: Check TypeScript types are up to date
+        id: types
+        if: steps.validate.outputs.exit_code == '0'
+        continue-on-error: true
+        run: |
+          node scripts/generateTypes.js --check
+          EXIT=$?
+          echo "exit_code=$EXIT" >> "$GITHUB_OUTPUT"
+          exit $EXIT
+
+      - name: Check YAML is sorted
+        id: yaml_sort
+        if: steps.validate.outputs.exit_code == '0'
+        continue-on-error: true
+        run: |
+          # Create a sorted copy for comparison
+          cp terms.yaml terms.yaml.backup
+          node scripts/sortYaml.js
+          
+          # Check if there are differences
+          if ! diff -q terms.yaml.backup terms.yaml > /dev/null; then
+            echo "❌ Error: terms.yaml is not sorted"
+            echo "   Run: npm run sort:yaml"
+            echo "exit_code=1" >> "$GITHUB_OUTPUT"
+            # Restore original
+            mv terms.yaml.backup terms.yaml
+            exit 1
+          fi
+          
+          echo "✅ YAML is properly sorted"
+          echo "exit_code=0" >> "$GITHUB_OUTPUT"
+          # Clean up
+          rm terms.yaml.backup
+          exit 0
+
       - name: Dry-run exporter schema check
         id: exporter
         if: steps.validate.outputs.exit_code == '0'
@@ -134,11 +169,17 @@ jobs:
         run: node .github/scripts/postGlossaryComment.js
 
       - name: Fail if any check failed
-        if: always() && (steps.validate.outputs.exit_code != '0' || (steps.exporter.outputs.exit_code != '' && steps.exporter.outputs.exit_code != '0') || (steps.score.outputs.exit_code != '' && steps.score.outputs.exit_code != '0'))
+        if: always() && (steps.validate.outputs.exit_code != '0' || (steps.types.outputs.exit_code != '' && steps.types.outputs.exit_code != '0') || (steps.yaml_sort.outputs.exit_code != '' && steps.yaml_sort.outputs.exit_code != '0') || (steps.exporter.outputs.exit_code != '' && steps.exporter.outputs.exit_code != '0') || (steps.score.outputs.exit_code != '' && steps.score.outputs.exit_code != '0'))
         run: |
           echo "❌ CI validation failed:"
           if [ -n "${{ steps.validate.outputs.exit_code }}" ] && [ "${{ steps.validate.outputs.exit_code }}" != "0" ]; then
             echo "  - Schema/duplicate validation failed"
+          fi
+          if [ -n "${{ steps.types.outputs.exit_code }}" ] && [ "${{ steps.types.outputs.exit_code }}" != "0" ]; then
+            echo "  - TypeScript types are out of sync"
+          fi
+          if [ -n "${{ steps.yaml_sort.outputs.exit_code }}" ] && [ "${{ steps.yaml_sort.outputs.exit_code }}" != "0" ]; then
+            echo "  - YAML is not properly sorted"
           fi
           if [ -n "${{ steps.exporter.outputs.exit_code }}" ] && [ "${{ steps.exporter.outputs.exit_code }}" != "0" ]; then
             echo "  - Export schema check failed"

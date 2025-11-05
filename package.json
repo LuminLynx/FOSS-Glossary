@@ -5,11 +5,15 @@
   "scripts": {
     "validate": "node scripts/validateTerms.js",
     "validate:landing": "node scripts/validateLandingPage.js",
+    "validate:types": "node scripts/generateTypes.js --check",
     "generate:landing": "node scripts/generateLandingPage.js",
+    "generate:types": "node scripts/generateTypes.js",
     "score": "node scripts/quickScore.js",
     "stats": "node scripts/updateReadmeStats.js",
     "export": "node scripts/exportTerms.js",
     "export:new": "node scripts/exportTerms.js --only-if-new",
+    "sort:yaml": "node scripts/sortYaml.js",
+    "fix:tags": "node scripts/fixTags.js",
     "test": "npm run validate && npm run score && node --test",
     "lint": "npm run lint:prettier && npm run lint:markdown && npm run lint:spell",
     "lint:prettier": "prettier --check .",
@@ -30,6 +34,7 @@
     "ajv-formats": "^3.0.1",
     "cspell": "^9.2.2",
     "husky": "^9.1.7",
+    "json-schema-to-typescript": "^15.0.4",
     "lint-staged": "^16.2.6",
     "markdownlint-cli": "^0.45.0",
     "prettier": "^3.6.2",
@@ -48,13 +53,10 @@
   "license": "CC0",
   "lint-staged": {
     "*.{js,json,yaml,yml,md}": [
-      "prettier --write"
+      "cspell --no-must-find-files"
     ],
     "*.md": [
       "markdownlint --fix"
-    ],
-    "*.{js,json,yaml,yml,md}": [
-      "cspell --no-must-find-files"
     ]
   }
 }

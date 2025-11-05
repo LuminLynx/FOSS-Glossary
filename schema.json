@@ -54,8 +54,11 @@
           },
           "tags": {
             "type": "array",
-            "items": { "type": "string" },
-            "description": "Categories"
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+            },
+            "description": "Categories (kebab-case: lowercase with hyphens)"
           },
           "aliases": {
             "type": "array",
