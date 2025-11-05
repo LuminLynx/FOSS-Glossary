@@ -526,7 +526,7 @@ function prepareCTAButtonsData(stats) {
     },
     {
       text: `📝 View All ${stats.totalTerms} Terms`,
-      href: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/terms.yaml',
+      href: 'https://luminlynx.github.io/FOSS-Glossary/pwa/',
       className: 'button button-secondary',
     },
   ];
