@@ -131,10 +131,7 @@ terms:
   try {
     execSync(`node ${SCRIPT_PATH}`, { cwd: tmpDir, encoding: 'utf8' });
     const sorted = fs.readFileSync(termsFile, 'utf8');
-    assert.ok(
-      sorted.startsWith('# FOSS Glossary'),
-      'Header comment should be preserved'
-    );
+    assert.ok(sorted.startsWith('# FOSS Glossary'), 'Header comment should be preserved');
   } finally {
     fs.rmSync(tmpDir, { recursive: true });
   }

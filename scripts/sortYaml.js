@@ -39,7 +39,7 @@ function parseArgs() {
 function loadTermsYaml() {
   try {
     const content = fs.readFileSync(TERMS_FILE, 'utf8');
-    
+
     // Extract header comment (lines starting with # before the first YAML key)
     const lines = content.split('\n');
     const headerLines = [];
@@ -51,7 +51,7 @@ function loadTermsYaml() {
         break;
       }
     }
-    
+
     const data = yaml.load(content);
     return {
       data,
