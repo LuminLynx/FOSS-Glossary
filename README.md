@@ -107,10 +107,9 @@ Our automated pipeline ensures quality and keeps the glossary up-to-date:
 ---
 
 <!-- STATS-START -->
-
 ## 📊 Glossary Stats
 
-**Total Terms:** 28 | **Contributors:** 4 | **Terms with Humor:** 28 (100%)
+**Total Terms:** 28 | **Contributors:** 5 | **Terms with Humor:** 28 (100%)
 
 **🏆 Current Champion:** `License Proliferation` with ~98/100 points!
 
@@ -118,8 +117,7 @@ Our automated pipeline ensures quality and keeps the glossary up-to-date:
 
 ### 🎮 Top Contributors
 
-🥇 John Portley | 🥈 Joao Portela | 🥉 Aditya Kumar Singh | 🌟 Joe Port
-
+🥇 copilot-swe-agent[bot] | 🥈 John Portley | 🥉 Joao Portela | 🌟 Aditya Kumar Singh | 🌟 Joe Port
 <!-- STATS-END -->
 
 ## 🎮 How to Contribute
