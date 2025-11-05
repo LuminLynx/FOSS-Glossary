@@ -40,12 +40,15 @@ body.light-mode {
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   line-height: 1.6;
   color: var(--text-primary);
   background: var(--bg-primary);
   min-height: 100vh;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
 /* Header */
@@ -103,7 +106,8 @@ body {
   align-items: center;
 }
 
-.theme-toggle, .favorites-toggle {
+.theme-toggle,
+.favorites-toggle {
   background: var(--accent-color);
   color: white;
   border: none;
@@ -115,7 +119,8 @@ body {
   transition: background-color 0.2s;
 }
 
-.theme-toggle:hover, .favorites-toggle:hover {
+.theme-toggle:hover,
+.favorites-toggle:hover {
   background: var(--accent-hover);
 }
 
@@ -210,7 +215,9 @@ body {
   border: 2px solid var(--border-color);
   border-radius: 12px;
   padding: 1.5rem;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
   cursor: pointer;
 }
 
@@ -362,9 +369,17 @@ body {
 }
 
 @keyframes dots {
-  0%, 20% { content: '.'; }
-  40% { content: '..'; }
-  60%, 100% { content: '...'; }
+  0%,
+  20% {
+    content: '.';
+  }
+  40% {
+    content: '..';
+  }
+  60%,
+  100% {
+    content: '...';
+  }
 }
 
 /* Error state enhancements */
@@ -621,7 +636,8 @@ body {
     font-size: 1.25rem;
   }
 
-  .theme-toggle, .favorites-toggle {
+  .theme-toggle,
+  .favorites-toggle {
     font-size: 0.75rem;
     padding: 0.5rem 0.75rem;
   }
@@ -711,7 +727,9 @@ body {
   border-radius: 6px;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 }
 
 .update-btn:hover {
@@ -735,7 +753,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s, border-color 0.2s;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s;
   padding: 0;
   line-height: 1;
 }
@@ -802,20 +822,20 @@ body {
     font-size: 0.875rem;
     padding: 0.5rem;
   }
-  
+
   .update-text {
     font-size: 0.875rem;
   }
-  
+
   .update-btn {
     padding: 0.4rem 1rem;
     font-size: 0.875rem;
   }
-  
+
   .footer-content {
     font-size: 0.75rem;
   }
-  
+
   .app-footer {
     margin-top: 2rem;
     padding: 1.5rem 1rem;

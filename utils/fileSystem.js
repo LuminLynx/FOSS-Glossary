@@ -1,6 +1,6 @@
 /**
  * File system utility functions for FOSS Glossary
- * 
+ *
  * This module provides consistent file system operations used across
  * multiple scripts to reduce code duplication.
  */
@@ -12,7 +12,7 @@ const yaml = require('js-yaml');
 /**
  * Ensure that the directory for a given file path exists
  * Creates parent directories recursively if they don't exist
- * 
+ *
  * @param {string} filePath - Path to the file
  */
 function ensureDirectoryForFile(filePath) {
@@ -24,7 +24,7 @@ function ensureDirectoryForFile(filePath) {
 
 /**
  * Load and parse a YAML file
- * 
+ *
  * @param {string} filePath - Path to the YAML file
  * @returns {*} Parsed YAML content
  * @throws {Error} If file cannot be read or parsed
@@ -40,7 +40,7 @@ function loadYaml(filePath) {
 
 /**
  * Load and parse a JSON file
- * 
+ *
  * @param {string} filePath - Path to the JSON file
  * @returns {*} Parsed JSON content
  * @throws {Error} If file cannot be read or parsed
@@ -57,7 +57,7 @@ function loadJson(filePath) {
 /**
  * Load terms from terms.yaml with comprehensive error handling
  * This is a specialized loader for the terms.yaml file used by generateLandingPage
- * 
+ *
  * @returns {Array} Array of term objects
  * @throws {Error} Exits process if file cannot be loaded or is invalid
  */

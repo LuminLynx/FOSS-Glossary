@@ -45,8 +45,8 @@ Add a redirect entry in `terms.yaml` at the root level:
 ```yaml
 terms:
   - slug: new-slug
-    term: "New Term Name"
-    definition: "..."
+    term: 'New Term Name'
+    definition: '...'
 
 redirects:
   old-slug: new-slug
@@ -76,10 +76,10 @@ See [deletion-policy.md](./deletion-policy.md) for complete guidance on managing
 
 ## Examples
 
-| Term title | Derived slug | Notes |
-| --- | --- | --- |
-| `Bus Factor` | `bus-factor` | Simple space-to-hyphen conversion. |
-| `RTFM!!!` | `rtfm` | Punctuation removed after normalization. |
-| `CI/CD Pipeline` | `ci-cd-pipeline` | Slash replaced with hyphen; duplicates collapsed. |
-| `AI` | `ai-term` | Qualifier added to satisfy minimum length. |
-| `OAuth 2.0` | `oauth-2-0` | Numeric punctuation preserved as hyphen-separated tokens. |
+| Term title       | Derived slug     | Notes                                                     |
+| ---------------- | ---------------- | --------------------------------------------------------- |
+| `Bus Factor`     | `bus-factor`     | Simple space-to-hyphen conversion.                        |
+| `RTFM!!!`        | `rtfm`           | Punctuation removed after normalization.                  |
+| `CI/CD Pipeline` | `ci-cd-pipeline` | Slash replaced with hyphen; duplicates collapsed.         |
+| `AI`             | `ai-term`        | Qualifier added to satisfy minimum length.                |
+| `OAuth 2.0`      | `oauth-2-0`      | Numeric punctuation preserved as hyphen-separated tokens. |

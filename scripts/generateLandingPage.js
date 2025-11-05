@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 /**
  * Landing Page Generator with Handlebars Template Engine
- * 
+ *
  * This script generates the FOSS Glossary landing page (docs/index.html) using:
  * - Handlebars template engine for better maintainability and readability
  * - Separation of concerns: data preparation vs. presentation
  * - Automatic HTML escaping for XSS protection (Handlebars built-in)
- * 
+ *
  * Architecture:
  * 1. Load and validate terms.yaml
  * 2. Calculate statistics (total terms, humor rate, etc.)
@@ -14,7 +14,7 @@
  * 4. Load and compile Handlebars template from templates/landing-page.hbs
  * 5. Render HTML by passing data to template
  * 6. Write output to docs/index.html
- * 
+ *
  * Security:
  * - Handlebars automatically escapes HTML content to prevent XSS attacks
  * - CSS styles use triple-braces {{{ }}} in template to remain unescaped
@@ -39,25 +39,28 @@ let stats;
 function initializeData() {
   artifactVersion = getGitSha('dev');
   terms = loadTermsYaml();
-  
+
   // Calculate statistics
   stats = {
     totalTerms: terms.length,
-    termsWithHumor: terms.filter(t => t.humor).length,
-    termsWithExplanation: terms.filter(t => t.explanation).length,
-    totalTags: new Set(terms.flatMap(t => t.tags || [])).size,
-    recentTerms: terms.slice(-3).reverse().map(t => t.term),
-    topScorers: [] // We'll calculate this when we have contributor data
+    termsWithHumor: terms.filter((t) => t.humor).length,
+    termsWithExplanation: terms.filter((t) => t.explanation).length,
+    totalTags: new Set(terms.flatMap((t) => t.tags || [])).size,
+    recentTerms: terms
+      .slice(-3)
+      .reverse()
+      .map((t) => t.term),
+    topScorers: [], // We'll calculate this when we have contributor data
   };
 }
 
 /**
  * Escape HTML special characters to prevent XSS attacks
  * Converts &, <, >, ", and ' to their HTML entity equivalents
- * 
+ *
  * Note: This function is kept for backward compatibility but Handlebars
  * handles escaping automatically. Only use this for pre-processing if needed.
- * 
+ *
  * @param {string} text - Text to escape
  * @returns {string} HTML-escaped text
  */
@@ -81,7 +84,7 @@ Handlebars.registerHelper('escapeHtml', escapeHtml);
  * - 80+: Cyan (#00d4e4)
  * - 60-79: Bright cyan (#00f0ff)
  * - <60: Yellow (#ffd93d)
- * 
+ *
  * @param {number} score - Score value (0-100)
  * @returns {string} Hex color code
  */
@@ -95,7 +98,7 @@ function getScoreColor(score) {
  * Prepare a single term card data object for template rendering
  * Calculates score, determines color, and structures all term properties
  * Returns a plain object with term data that Handlebars will auto-escape
- * 
+ *
  * @param {Object} term - Term object from terms.yaml
  * @param {string} term.term - Term name
  * @param {string} term.definition - Term definition
@@ -106,16 +109,17 @@ function getScoreColor(score) {
 function prepareTermCardData(term) {
   const { score } = scoreTerm(term);
   const scoreColor = getScoreColor(score);
-  
+
   return {
-    term: term.term,  // Handlebars auto-escapes
+    term: term.term, // Handlebars auto-escapes
     score,
-    scoreColor,  // Color codes are safe, not escaped
-    definition: term.definition,  // Handlebars auto-escapes
-    humor: term.humor || null,  // Handlebars auto-escapes
-    tags: (term.tags && term.tags.length > 0) 
-      ? term.tags  // Handlebars auto-escapes each tag
-      : []
+    scoreColor, // Color codes are safe, not escaped
+    definition: term.definition, // Handlebars auto-escapes
+    humor: term.humor || null, // Handlebars auto-escapes
+    tags:
+      term.tags && term.tags.length > 0
+        ? term.tags // Handlebars auto-escapes each tag
+        : [],
   };
 }
 
@@ -123,24 +127,26 @@ function prepareTermCardData(term) {
  * Validate if a term is displayable
  * Checks that term has required fields (term and definition)
  * and that they are non-empty strings
- * 
+ *
  * @param {Object} term - Term object to validate
  * @returns {boolean} True if term is valid for display
  */
 function isValidTerm(term) {
-  return term &&
+  return (
+    term &&
     term.term &&
     typeof term.term === 'string' &&
     term.term.trim() !== '' &&
     term.definition &&
     typeof term.definition === 'string' &&
-    term.definition.trim() !== '';
+    term.definition.trim() !== ''
+  );
 }
 
 /**
  * Prepare term cards data for landing page
  * Filters valid terms and returns the most recent ones in reverse order
- * 
+ *
  * @param {number} [count=6] - Number of recent terms to display
  * @returns {Object[]} Array of prepared term card data objects
  */
@@ -153,39 +159,50 @@ function prepareTermCardsData(count = 6) {
 /**
  * Prepare meta tags data for HTML head
  * Creates structured meta tag objects for primary, Open Graph, and Twitter Card tags
- * 
+ *
  * @param {Object} stats - Statistics object with totalTerms and other metrics
  * @returns {Object} Meta tags organized by type (primary, og, twitter)
  */
 function prepareMetaTags(stats) {
   const description = `A gamified glossary of FOSS terms with humor. ${stats.totalTerms} terms defined by the community! Score points, unlock achievements, and learn with fun.`;
   const url = 'https://luminlynx.github.io/FOSS-Glossary/';
-  const imageUrl = 'https://raw.githubusercontent.com/LuminLynx/FOSS-Glossary/main/assets/twitter-card.png';
-  
+  const imageUrl =
+    'https://raw.githubusercontent.com/LuminLynx/FOSS-Glossary/main/assets/twitter-card.png';
+
   return {
     primary: [
       { name: 'title', content: 'FOSS Glossary - Gamified Open Source Terms' },
       { name: 'description', content: description },
-      { name: 'keywords', content: 'FOSS, open source, glossary, gamification, github, programming, developer, community' },
-      { name: 'author', content: 'LuminLynx' }
+      {
+        name: 'keywords',
+        content:
+          'FOSS, open source, glossary, gamification, github, programming, developer, community',
+      },
+      { name: 'author', content: 'LuminLynx' },
     ],
     og: [
       { property: 'og:type', content: 'website' },
       { property: 'og:url', content: url },
       { property: 'og:title', content: 'FOSS Glossary - Gamified Open Source Terms' },
-      { property: 'og:description', content: `Score points, unlock achievements, and learn FOSS terms with humor! ${stats.totalTerms} terms and growing.` },
+      {
+        property: 'og:description',
+        content: `Score points, unlock achievements, and learn FOSS terms with humor! ${stats.totalTerms} terms and growing.`,
+      },
       { property: 'og:image', content: imageUrl },
       { property: 'og:image:width', content: '1200' },
       { property: 'og:image:height', content: '628' },
-      { property: 'og:site_name', content: 'FOSS Glossary' }
+      { property: 'og:site_name', content: 'FOSS Glossary' },
     ],
     twitter: [
       { name: 'twitter:card', content: 'summary_large_image' },
       { name: 'twitter:url', content: url },
       { name: 'twitter:title', content: 'FOSS Glossary - Gamified Open Source Terms' },
-      { name: 'twitter:description', content: `Score points, unlock achievements, and learn FOSS terms with humor! ${stats.totalTerms} terms and growing.` },
-      { name: 'twitter:image', content: imageUrl }
-    ]
+      {
+        name: 'twitter:description',
+        content: `Score points, unlock achievements, and learn FOSS terms with humor! ${stats.totalTerms} terms and growing.`,
+      },
+      { name: 'twitter:image', content: imageUrl },
+    ],
   };
 }
 
@@ -459,7 +476,7 @@ const CSS_STYLES = `
 /**
  * Prepare stat cards data for statistics section
  * Creates array of stat card objects with numbers and labels
- * 
+ *
  * @param {Object} stats - Statistics object
  * @param {number} stats.totalTerms - Total number of terms
  * @param {number} stats.termsWithHumor - Number of terms with humor field
@@ -468,19 +485,19 @@ const CSS_STYLES = `
  */
 function prepareStatCardsData(stats) {
   const humorPercentage = Math.round((stats.termsWithHumor / stats.totalTerms) * 100);
-  
+
   return [
     { number: String(stats.totalTerms), label: 'Total Terms' },
     { number: String(stats.termsWithHumor), label: 'Funny Terms' },
     { number: `${humorPercentage}%`, label: 'Humor Rate' },
-    { number: String(stats.totalTags), label: 'Categories' }
+    { number: String(stats.totalTags), label: 'Categories' },
   ];
 }
 
 /**
  * Prepare scoring items data for scoring section
  * Creates array of scoring criteria with emoji, description, and points
- * 
+ *
  * @returns {Object[]} Array of scoring item objects with emoji, text, and points
  */
 function prepareScoringItemsData() {
@@ -489,14 +506,14 @@ function prepareScoringItemsData() {
     { emoji: '😂', text: 'Humor', points: 'Up to 30 points (be funny!)' },
     { emoji: '📝', text: 'Explanation', points: '20 points' },
     { emoji: '🔗', text: 'Cross-references', points: 'Up to 20 points' },
-    { emoji: '🏷️', text: 'Tags', points: '10 points' }
+    { emoji: '🏷️', text: 'Tags', points: '10 points' },
   ];
 }
 
 /**
  * Prepare CTA (Call to Action) buttons data
  * Creates array of button objects with text, href, and CSS class
- * 
+ *
  * @param {Object} stats - Statistics object with totalTerms
  * @returns {Object[]} Array of button objects with text, href, and className
  */
@@ -505,25 +522,25 @@ function prepareCTAButtonsData(stats) {
     {
       text: '🎮 Contribute on GitHub',
       href: 'https://github.com/LuminLynx/FOSS-Glossary',
-      className: 'button'
+      className: 'button',
     },
     {
       text: `📝 View All ${stats.totalTerms} Terms`,
       href: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/terms.yaml',
-      className: 'button button-secondary'
-    }
+      className: 'button button-secondary',
+    },
   ];
 }
 
 /**
  * Load and compile the Handlebars template
- * 
+ *
  * Reads the landing page template from templates/landing-page.hbs
  * and compiles it for use with data. The template uses:
  * - {{variable}} for HTML-escaped output
  * - {{{variable}}} for unescaped output (used for CSS styles)
  * - {{#if}}, {{#each}} for conditionals and loops
- * 
+ *
  * @returns {Function} Compiled Handlebars template function
  */
 function loadTemplate() {
@@ -539,37 +556,37 @@ function loadTemplate() {
 
 /**
  * Generate HTML using Handlebars template
- * 
+ *
  * Prepares all data structures and passes them to the compiled template.
  * Data preparation functions ensure proper structure while Handlebars
  * handles HTML escaping automatically.
- * 
+ *
  * @param {Object} stats - Statistics object with term counts and metadata
  * @param {string} artifactVersion - Git commit SHA for cache-busting
  * @returns {string} Complete HTML document as string
  */
 function generateHTML(stats, artifactVersion) {
   const template = loadTemplate();
-  
+
   // Prepare all data for the template
   const templateData = {
     title: `FOSS Glossary - ${stats.totalTerms} Terms and Growing!`,
     canonicalUrl: 'https://luminlynx.github.io/FOSS-Glossary/',
     metaTags: prepareMetaTags(stats),
-    styles: CSS_STYLES,  // Use triple-braces in template for unescaped CSS
+    styles: CSS_STYLES, // Use triple-braces in template for unescaped CSS
     statCards: prepareStatCardsData(stats),
-    recentTermsList: stats.recentTerms.join(', '),  // Handlebars auto-escapes
+    recentTermsList: stats.recentTerms.join(', '), // Handlebars auto-escapes
     termCards: prepareTermCardsData(),
     scoringItems: prepareScoringItemsData(),
     ctaButtons: prepareCTAButtonsData(stats),
     lastUpdated: new Date().toLocaleString('en-US', {
       dateStyle: 'medium',
-      timeStyle: 'short'
+      timeStyle: 'short',
     }),
     stats,
-    artifactVersion
+    artifactVersion,
   };
-  
+
   return template(templateData);
 }
 
@@ -577,7 +594,7 @@ function generateHTML(stats, artifactVersion) {
  * Write generated HTML to output file
  * Ensures docs directory exists and writes docs/index.html
  * Logs statistics about the generation
- * 
+ *
  * @param {string} html - Generated HTML content
  * @throws {Error} Exits process with code 1 if file write fails
  */
@@ -590,7 +607,9 @@ function writeOutputFile(html) {
 
     fs.writeFileSync('docs/index.html', html);
     console.log(`✅ Generated landing page with ${stats.totalTerms} terms!`);
-    console.log(`📊 Stats: ${stats.termsWithHumor}/${stats.totalTerms} terms have humor (${Math.round((stats.termsWithHumor/stats.totalTerms)*100)}%)`);
+    console.log(
+      `📊 Stats: ${stats.termsWithHumor}/${stats.totalTerms} terms have humor (${Math.round((stats.termsWithHumor / stats.totalTerms) * 100)}%)`
+    );
     console.log(`🆕 Recent: ${stats.recentTerms.join(', ')}`);
   } catch (error) {
     console.error('❌ Error writing landing page file:', error.message);
@@ -605,10 +624,10 @@ function writeOutputFile(html) {
 function main() {
   // Initialize data fresh on each run to avoid caching issues
   initializeData();
-  
+
   // Generate HTML with current data
   const html = generateHTML(stats, artifactVersion);
-  
+
   // Write output file
   writeOutputFile(html);
 }

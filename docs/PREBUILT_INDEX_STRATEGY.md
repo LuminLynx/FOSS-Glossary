@@ -7,11 +7,13 @@ When `terms.json` exceeds the **2 MB size threshold**, the repository will block
 ## Why the 2 MB Limit?
 
 The `terms.json` file is currently loaded entirely by client applications (landing page, PWA) for:
+
 - Real-time search across all terms
 - Filtering by tags and categories
 - Cross-reference navigation
 
 At **2 MB**, the payload remains:
+
 - Fast to download on mobile networks (< 1s on 3G)
 - Quick to parse in JavaScript (< 100ms)
 - Efficient for in-memory search operations
@@ -34,6 +36,7 @@ function checkSizeLimit(serializedJson, options = {}) {
 ```
 
 When the limit is exceeded:
+
 - **Pull requests will fail** validation in CI
 - **Merges are blocked** until the issue is resolved
 - **Error message** directs maintainers to this document
@@ -65,6 +68,7 @@ docs/
 ```
 
 **Benefits:**
+
 - Landing page loads only `index.json` (< 500 KB)
 - Full term details loaded on-demand
 - Search can use optimized inverted indices
@@ -80,6 +84,7 @@ Update client applications to:
 4. **Search:** Use prebuilt `search/full-text.json` index
 
 Example flow:
+
 ```javascript
 // 1. Load index on page load
 const index = await fetch('/terms.json'); // Now < 500 KB
@@ -115,6 +120,7 @@ Generate a prebuilt inverted index for full-text search:
 ```
 
 **Search implementation:**
+
 1. Load `search/full-text.json` (once, cached)
 2. Tokenize user query
 3. Lookup tokens in inverted index → get matching slugs
@@ -124,6 +130,7 @@ Generate a prebuilt inverted index for full-text search:
 ### Phase 4: CDN & Caching (Optional)
 
 For further optimization:
+
 - Serve individual term files via CDN (GitHub Pages already does this)
 - Set aggressive cache headers (immutable, versioned URLs)
 - Generate compressed `.br` or `.gz` versions at build time
@@ -136,27 +143,22 @@ When the 2 MB threshold is reached:
   - Generate `index.json` (lightweight term list)
   - Generate individual `terms/{slug}.json` files
   - Generate search indices in `search/`
-  
 - [ ] **Update landing page (`docs/index.html`):**
   - Fetch `index.json` instead of `terms.json`
   - Implement lazy loading for term details
   - Update search to use prebuilt index
-  
 - [ ] **Update PWA (`docs/pwa/`):**
   - Modify service worker to cache index separately
   - Implement on-demand term loading
   - Prefetch popular terms for offline use
-  
 - [ ] **Update documentation:**
   - `docs/terms-json-spec.md` → document new structure
   - `README.md` → update API endpoints
   - `CONTRIBUTING.md` → explain new export process
-  
 - [ ] **Update tests:**
   - Test index generation
   - Test lazy loading in integration tests
   - Verify search index correctness
-  
 - [ ] **Performance validation:**
   - Measure initial page load (should be < 2s on 3G)
   - Measure time-to-interactive

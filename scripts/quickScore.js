@@ -8,7 +8,7 @@ const { scoreTerm, getScoreBreakdown } = require('./scoring');
  * Scores either the term specified by TARGET_SLUG environment variable
  * or the latest term (last in the array)
  * Outputs score, badges, breakdown, and GitHub Actions compatible variables
- * 
+ *
  * @throws {Error} Exits process with code 1 if terms.yaml is invalid or term not found
  */
 function main() {
@@ -25,7 +25,7 @@ function main() {
     let termToScore = null;
 
     if (targetSlug) {
-      termToScore = termsData.terms.find(term => term && term.slug === targetSlug);
+      termToScore = termsData.terms.find((term) => term && term.slug === targetSlug);
       if (!termToScore) {
         console.error(`❌ Error: No term found with slug "${targetSlug}".`);
         process.exit(1);
@@ -62,7 +62,9 @@ function main() {
     console.log(`- Humor: ${breakdown.humor}/${breakdown.maxScores.humor}`);
     console.log(`- Explanation: ${breakdown.explanation}/${breakdown.maxScores.explanation}`);
     console.log(`- Tags: ${breakdown.tags}/${breakdown.maxScores.tags}`);
-    console.log(`- Cross-references: ${breakdown.crossReferences}/${breakdown.maxScores.crossReferences}`);
+    console.log(
+      `- Cross-references: ${breakdown.crossReferences}/${breakdown.maxScores.crossReferences}`
+    );
 
     console.log(`\nTotal: ${score}/100`);
 
@@ -77,7 +79,6 @@ function main() {
     } else {
       console.log('\n🌱 Thanks for contributing! Add more details to boost your score!');
     }
-    
   } catch (error) {
     console.error('❌ Error processing terms:', error.message);
     process.exit(1);

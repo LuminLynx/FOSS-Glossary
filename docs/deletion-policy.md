@@ -31,21 +31,23 @@ If a term needs to be merged with another or renamed:
 - Keep the target term active
 
 Example:
+
 ```yaml
 terms:
   - slug: continuous-integration
-    term: "Continuous Integration"
-    definition: "A practice where developers frequently merge code changes..."
+    term: 'Continuous Integration'
+    definition: 'A practice where developers frequently merge code changes...'
     # ... rest of term definition
 
 redirects:
-  ci-cd: continuous-integration  # Old slug redirects to new one
-  ci: continuous-integration     # Alternate slug also redirects
+  ci-cd: continuous-integration # Old slug redirects to new one
+  ci: continuous-integration # Alternate slug also redirects
 ```
 
 ### 2. Edit and Improve
 
 If a term has quality issues:
+
 - Edit the definition to improve accuracy
 - Add missing context or examples
 - Update tags or cross-references
@@ -54,6 +56,7 @@ If a term has quality issues:
 ### 3. Mark as Deprecated (Not Implemented)
 
 For obsolete but historically important terms:
+
 - Keep the term but add a note about deprecation in the explanation
 - Update the definition to indicate current status
 - Add cross-references to replacement terms
@@ -65,6 +68,7 @@ If deletion is unavoidable, follow these steps:
 ### 1. Document the Reason
 
 Open an issue explaining:
+
 - Which term is being removed (slug and term name)
 - Why deletion is necessary
 - Why alternatives (redirects, edits) are insufficient
@@ -79,6 +83,7 @@ Open an issue explaining:
 ### 3. Create a Redirect First (If Applicable)
 
 If the term is being merged or has a replacement:
+
 - Add a redirect entry mapping the old slug to the replacement
 - Test the redirect in a PR before deletion
 - Keep the redirect indefinitely
@@ -93,6 +98,7 @@ If the term is being merged or has a replacement:
 ### 5. Update Documentation
 
 After merge:
+
 - Update any documentation that referenced the deleted term
 - Add an entry to a changelog if maintained
 - Notify affected contributors if appropriate
@@ -129,6 +135,7 @@ redirects:
 - Update existing redirects if a target term is itself renamed
 
 Example of fixing a chain:
+
 ```yaml
 # Before (has a chain):
 redirects:
@@ -167,9 +174,9 @@ Two similar terms exist: `ci-cd` and `continuous-integration`. Merge them:
 ```yaml
 terms:
   - slug: continuous-integration
-    term: "Continuous Integration"
-    definition: "A practice where developers frequently merge code..."
-    aliases: ["CI", "CI/CD"]
+    term: 'Continuous Integration'
+    definition: 'A practice where developers frequently merge code...'
+    aliases: ['CI', 'CI/CD']
 
 redirects:
   ci-cd: continuous-integration
@@ -182,8 +189,8 @@ A term slug needs to change from `git-workflow` to `gitflow`:
 ```yaml
 terms:
   - slug: gitflow
-    term: "Gitflow"
-    definition: "A branching model for Git..."
+    term: 'Gitflow'
+    definition: 'A branching model for Git...'
 
 redirects:
   git-workflow: gitflow
@@ -209,6 +216,7 @@ A term contains offensive content and has no suitable replacement:
 ## Questions?
 
 If you're unsure whether to delete a term or need guidance:
+
 - Open an issue describing the situation
 - Tag maintainers for review
 - Consider alternatives first

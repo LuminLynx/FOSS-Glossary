@@ -1,161 +1,236 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="FOSS Glossary - A gamified glossary of FOSS terms with humor. Search, favorite, and share terms offline.">
-    <meta name="keywords" content="FOSS, open source, glossary, PWA, offline, progressive web app">
-    <meta name="author" content="LuminLynx">
-    <meta name="theme-color" content="#1a3a52">
-    
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-title" content="FOSS Glossary">
-    
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="FOSS Glossary - A gamified glossary of FOSS terms with humor. Search, favorite, and share terms offline."
+    />
+    <meta
+      name="keywords"
+      content="FOSS, open source, glossary, PWA, offline, progressive web app"
+    />
+    <meta name="author" content="LuminLynx" />
+    <meta name="theme-color" content="#1a3a52" />
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="FOSS Glossary" />
+
     <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="FOSS Glossary - Progressive Web App">
-    <meta property="og:description" content="Search, favorite, and share FOSS terms offline. A gamified glossary with humor!">
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="FOSS Glossary - Progressive Web App" />
+    <meta
+      property="og:description"
+      content="Search, favorite, and share FOSS terms offline. A gamified glossary with humor!"
+    />
     <!-- TODO: Replace [YOUR-DOMAIN] with actual deployment URL before production -->
-    <meta property="og:image" content="https://[YOUR-DOMAIN]/docs/pwa/assets/preview/social-preview.png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    
+    <meta
+      property="og:image"
+      content="https://[YOUR-DOMAIN]/docs/pwa/assets/preview/social-preview.png"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
     <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="FOSS Glossary - Progressive Web App">
-    <meta name="twitter:description" content="Search, favorite, and share FOSS terms offline. A gamified glossary with humor!">
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="FOSS Glossary - Progressive Web App" />
+    <meta
+      name="twitter:description"
+      content="Search, favorite, and share FOSS terms offline. A gamified glossary with humor!"
+    />
     <!-- TODO: Replace [YOUR-DOMAIN] with actual deployment URL before production -->
-    <meta name="twitter:image" content="https://[YOUR-DOMAIN]/docs/pwa/assets/preview/social-preview.png">
-    
+    <meta
+      name="twitter:image"
+      content="https://[YOUR-DOMAIN]/docs/pwa/assets/preview/social-preview.png"
+    />
+
     <!-- Apple Touch Icon -->
-    <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/icon-180.png">
-    
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/icon-180.png" />
+
     <!-- Manifest -->
-    <link rel="manifest" href="./manifest.json">
-    
+    <link rel="manifest" href="./manifest.json" />
+
     <!-- Favicons -->
-    <link rel="icon" type="image/png" sizes="32x32" href="./assets/icons/favicon-32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="./assets/icons/favicon-16.png">
-    <link rel="icon" type="image/svg+xml" href="./assets/icons/favicon.svg">
-    
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/icons/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="./assets/icons/favicon-16.png" />
+    <link rel="icon" type="image/svg+xml" href="./assets/icons/favicon.svg" />
+
     <title>FOSS Glossary - PWA</title>
-    
+
     <!-- Styles -->
-    <link rel="stylesheet" href="./styles/main.css">
-    
+    <link rel="stylesheet" href="./styles/main.css" />
+
     <!-- iOS splash screens -->
-    <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="./assets/splash/splash-1170x2532.png">
-    <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="./assets/splash/splash-1179x2556.png">
-    <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="./assets/splash/splash-1284x2778.png">
-    <link rel="apple-touch-startup-image" media="(device-width: 834px) and (device-height: 1194px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 2)" href="./assets/splash/splash-1668x2388.png">
-    <link rel="apple-touch-startup-image" media="(device-width: 1024px) and (device-height: 1366px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 2)" href="./assets/splash/splash-2048x2732.png">
-</head>
-<body>
+    <link
+      rel="apple-touch-startup-image"
+      media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"
+      href="./assets/splash/splash-1170x2532.png"
+    />
+    <link
+      rel="apple-touch-startup-image"
+      media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"
+      href="./assets/splash/splash-1179x2556.png"
+    />
+    <link
+      rel="apple-touch-startup-image"
+      media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)"
+      href="./assets/splash/splash-1284x2778.png"
+    />
+    <link
+      rel="apple-touch-startup-image"
+      media="(device-width: 834px) and (device-height: 1194px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 2)"
+      href="./assets/splash/splash-1668x2388.png"
+    />
+    <link
+      rel="apple-touch-startup-image"
+      media="(device-width: 1024px) and (device-height: 1366px) and (orientation: portrait) and (-webkit-device-pixel-ratio: 2)"
+      href="./assets/splash/splash-2048x2732.png"
+    />
+  </head>
+  <body>
     <!-- Fallback for non-JS users -->
     <noscript>
-        <div style="padding: 2rem; text-align: center; background: #fff3cd; color: #856404; border: 1px solid #ffeaa7;">
-            <strong>JavaScript Required:</strong> This app requires JavaScript to load and display terms. Please enable JavaScript in your browser settings.
-        </div>
+      <div
+        style="
+          padding: 2rem;
+          text-align: center;
+          background: #fff3cd;
+          color: #856404;
+          border: 1px solid #ffeaa7;
+        "
+      >
+        <strong>JavaScript Required:</strong> This app requires JavaScript to load and display
+        terms. Please enable JavaScript in your browser settings.
+      </div>
     </noscript>
 
     <!-- Header -->
     <header class="header">
-        <div class="header-content">
-            <div class="header-top">
-                <div class="logo-section">
-                    <img src="./assets/icons/icon-512.png" alt="FOSS Glossary Logo" class="logo">
-                    <div>
-                        <h1 class="title">FOSS Glossary</h1>
-                        <p class="subtitle">Search, Learn, and Share Offline</p>
-                    </div>
-                </div>
-                <div class="header-controls">
-                    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme" aria-pressed="false">
-                        ☀️ Light
-                    </button>
-                    <button id="favorites-toggle" class="favorites-toggle" aria-label="Toggle favorites view" aria-pressed="false">
-                        ⭐ Favorites
-                    </button>
-                </div>
+      <div class="header-content">
+        <div class="header-top">
+          <div class="logo-section">
+            <img src="./assets/icons/icon-512.png" alt="FOSS Glossary Logo" class="logo" />
+            <div>
+              <h1 class="title">FOSS Glossary</h1>
+              <p class="subtitle">Search, Learn, and Share Offline</p>
             </div>
-            <div class="search-section">
-                <input 
-                    type="search" 
-                    id="search-input" 
-                    class="search-box" 
-                    placeholder="Search terms, definitions, tags... (Ctrl+K)"
-                    autocomplete="off"
-                    role="searchbox"
-                    aria-label="Search terms"
-                >
-            </div>
+          </div>
+          <div class="header-controls">
+            <button
+              id="theme-toggle"
+              class="theme-toggle"
+              aria-label="Toggle theme"
+              aria-pressed="false"
+            >
+              ☀️ Light
+            </button>
+            <button
+              id="favorites-toggle"
+              class="favorites-toggle"
+              aria-label="Toggle favorites view"
+              aria-pressed="false"
+            >
+              ⭐ Favorites
+            </button>
+          </div>
         </div>
+        <div class="search-section">
+          <input
+            type="search"
+            id="search-input"
+            class="search-box"
+            placeholder="Search terms, definitions, tags... (Ctrl+K)"
+            autocomplete="off"
+            role="searchbox"
+            aria-label="Search terms"
+          />
+        </div>
+      </div>
     </header>
 
     <!-- Main Content -->
     <main class="container">
-        <!-- Stats Bar -->
-        <div id="stats-bar" class="stats-bar">
-            <div class="stat-item">
-                <div class="stat-value" aria-live="polite">0</div>
-                <div class="stat-label">Total Terms</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value" aria-live="polite">0</div>
-                <div class="stat-label">Favorites</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-value" aria-live="polite">0</div>
-                <div class="stat-label">Showing</div>
-            </div>
+      <!-- Stats Bar -->
+      <div id="stats-bar" class="stats-bar">
+        <div class="stat-item">
+          <div class="stat-value" aria-live="polite">0</div>
+          <div class="stat-label">Total Terms</div>
         </div>
+        <div class="stat-item">
+          <div class="stat-value" aria-live="polite">0</div>
+          <div class="stat-label">Favorites</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" aria-live="polite">0</div>
+          <div class="stat-label">Showing</div>
+        </div>
+      </div>
 
-        <!-- Terms Grid -->
-        <div id="terms-grid" class="terms-grid">
-            <div class="loading">Loading terms...</div>
+      <!-- Terms Grid -->
+      <div id="terms-grid" class="terms-grid">
+        <div class="loading">Loading terms...</div>
+      </div>
+
+      <!-- Footer with version -->
+      <footer class="app-footer">
+        <div class="footer-content">
+          <span id="app-version" class="app-version">v1.0.0</span>
+          <span class="footer-separator">•</span>
+          <a
+            href="https://github.com/LuminLynx/FOSS-Glossary"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="footer-link"
+          >
+            View on GitHub
+          </a>
         </div>
-        
-        <!-- Footer with version -->
-        <footer class="app-footer">
-            <div class="footer-content">
-                <span id="app-version" class="app-version">v1.0.0</span>
-                <span class="footer-separator">•</span>
-                <a href="https://github.com/LuminLynx/FOSS-Glossary" target="_blank" rel="noopener noreferrer" class="footer-link">
-                    View on GitHub
-                </a>
-            </div>
-        </footer>
+      </footer>
     </main>
 
     <!-- Share Modal -->
-    <div id="share-modal" class="share-modal" role="dialog" aria-modal="true" aria-labelledby="share-modal-title" aria-hidden="true">
-        <div class="share-modal-content">
-            <h3 id="share-modal-title" class="share-modal-title">Share This Term</h3>
-            <div id="share-modal-text" class="share-modal-text"></div>
-            <div class="share-buttons">
-                <button id="share-copy" class="share-btn-modal">📋 Copy Link</button>
-                <button id="share-twitter" class="share-btn-modal">🐦 Twitter</button>
-                <button id="share-linkedin" class="share-btn-modal">💼 LinkedIn</button>
-                <button id="share-text" class="share-btn-modal">📝 Copy Text</button>
-            </div>
-            <button id="close-share-modal" class="close-modal">Close</button>
+    <div
+      id="share-modal"
+      class="share-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="share-modal-title"
+      aria-hidden="true"
+    >
+      <div class="share-modal-content">
+        <h3 id="share-modal-title" class="share-modal-title">Share This Term</h3>
+        <div id="share-modal-text" class="share-modal-text"></div>
+        <div class="share-buttons">
+          <button id="share-copy" class="share-btn-modal">📋 Copy Link</button>
+          <button id="share-twitter" class="share-btn-modal">🐦 Twitter</button>
+          <button id="share-linkedin" class="share-btn-modal">💼 LinkedIn</button>
+          <button id="share-text" class="share-btn-modal">📝 Copy Text</button>
         </div>
+        <button id="close-share-modal" class="close-modal">Close</button>
+      </div>
     </div>
 
     <!-- Toast Notification -->
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
-    
+
     <!-- Update Notification Banner -->
-    <div id="update-banner" class="update-banner" role="alert" aria-live="assertive" style="display: none;">
-        <div class="update-banner-content">
-            <span class="update-icon">🔄</span>
-            <span class="update-text">A new version is available!</span>
-            <button id="update-reload-btn" class="update-btn">Reload</button>
-            <button id="update-dismiss-btn" class="update-dismiss-btn" aria-label="Dismiss">✕</button>
-        </div>
+    <div
+      id="update-banner"
+      class="update-banner"
+      role="alert"
+      aria-live="assertive"
+      style="display: none"
+    >
+      <div class="update-banner-content">
+        <span class="update-icon">🔄</span>
+        <span class="update-text">A new version is available!</span>
+        <button id="update-reload-btn" class="update-btn">Reload</button>
+        <button id="update-dismiss-btn" class="update-dismiss-btn" aria-label="Dismiss">✕</button>
+      </div>
     </div>
 
     <!-- App Script -->
     <script src="./app.js"></script>
-</body>
+  </body>
 </html>

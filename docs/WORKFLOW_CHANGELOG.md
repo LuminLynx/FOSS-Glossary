@@ -11,17 +11,20 @@ This document summarizes the enhancements made to the Issue Task PR Automation w
 **Problem:** Multiple tasks for the same issue could create naming conflicts, causing branch and file creation failures.
 
 **Solution:**
+
 - Added timestamp to branch names: `task/{issueNumber}-{slug}-{timestamp}`
 - Added timestamp to file names: `tasks/{issueNumber}/{slug}-{timestamp}.md`
 - Reduced slug length from 40 to 35 characters to accommodate timestamp
 
 **Benefits:**
+
 - Prevents naming conflicts
 - Enables multiple task branches per issue
 - Provides chronological ordering
 - Unique identifiers for tracking
 
 **Example:**
+
 ```
 Before: task/123-add-feature
 After:  task/123-add-feature-1729276800000
@@ -32,32 +35,36 @@ After:  task/123-add-feature-1729276800000
 **Problem:** Transient API failures (network issues, rate limits) caused workflow failures without recovery.
 
 **Solution:**
+
 - Implemented `retryWithBackoff()` function
 - Automatic retry up to 3 times with exponential backoff
 - Retries for status codes 500+, 429 (rate limit), and connection resets
 - Base delay: 1000ms, exponential multiplier: 2x per attempt
 
 **Benefits:**
+
 - Handles transient failures gracefully
 - Reduces false failures
 - Improves reliability
 - Self-healing for common issues
 
 **Implementation:**
+
 ```javascript
 const retryWithBackoff = async (fn, maxRetries = 3, baseDelay = 1000) => {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       return await fn();
     } catch (error) {
-      const isRetryable = error.status >= 500 || error.status === 429 || error.code === 'ECONNRESET';
+      const isRetryable =
+        error.status >= 500 || error.status === 429 || error.code === 'ECONNRESET';
       if (attempt === maxRetries || !isRetryable) {
         core.error(`Failed after ${attempt} attempts: ${error.message}`);
         throw error;
       }
       const delay = baseDelay * Math.pow(2, attempt - 1);
       core.warning(`Attempt ${attempt} failed: ${error.message}. Retrying in ${delay}ms...`);
-      await new Promise(resolve => setTimeout(resolve, delay));
+      await new Promise((resolve) => setTimeout(resolve, delay));
     }
   }
 };
@@ -68,18 +75,21 @@ const retryWithBackoff = async (fn, maxRetries = 3, baseDelay = 1000) => {
 **Problem:** Invalid workflow_dispatch inputs caused cryptic errors during issue creation.
 
 **Solution:**
+
 - Added validation step before issue creation
 - Validates title: non-empty, max 256 characters
 - Validates labels: alphanumeric with spaces/hyphens/underscores, max 50 chars each
 - Fails fast with clear error messages
 
 **Benefits:**
+
 - Prevents invalid data from reaching API
 - Clear error messages for users
 - Saves API quota
 - Better user experience
 
 **Validation Rules:**
+
 - Title: Required, 1-256 characters
 - Labels: Optional, alphanumeric + spaces/hyphens/underscores, max 50 chars each
 - Format: comma-separated, trimmed
@@ -89,6 +99,7 @@ const retryWithBackoff = async (fn, maxRetries = 3, baseDelay = 1000) => {
 **Problem:** Workflow had broad permissions that violated least-privilege principle.
 
 **Solution:**
+
 - Reviewed required permissions
 - Kept only essential permissions:
   - `contents: write` - For creating branches and files
@@ -97,12 +108,14 @@ const retryWithBackoff = async (fn, maxRetries = 3, baseDelay = 1000) => {
 - Removed any unnecessary permissions
 
 **Benefits:**
+
 - Improved security posture
 - Reduced blast radius of potential issues
 - Follows best practices
 - Compliance with security standards
 
 **Before:**
+
 ```yaml
 permissions:
   contents: write
@@ -111,11 +124,12 @@ permissions:
 ```
 
 **After:**
+
 ```yaml
 permissions:
-  contents: write      # Required for branches/files
+  contents: write # Required for branches/files
   pull-requests: write # Required for PRs
-  issues: write        # Required for comments
+  issues: write # Required for comments
 ```
 
 ### 5. Dynamic Assignee Handling ✅
@@ -123,18 +137,21 @@ permissions:
 **Problem:** Workflow only triggered on bot assignment, limiting flexibility.
 
 **Solution:**
+
 - Added support for label-based triggers
 - Default trigger labels: `codex`, `ready-for-codex`
 - Configurable via `TRIGGER_LABELS` variable
 - Works with assignment OR labels (flexible triggering)
 
 **Benefits:**
+
 - More flexible automation
 - Can trigger without bot assignment
 - Supports project-specific workflows
 - Better integration with other systems
 
 **Configuration:**
+
 ```yaml
 env:
   BOT_USERNAME: ${{ vars.CODEX_BOT_LOGIN || 'my-codex-bot' }}
@@ -142,9 +159,10 @@ env:
 ```
 
 **Logic:**
+
 ```javascript
-const assignedToBot = assignees.some(a => a.login === BOT_USERNAME);
-const hasTriggerLabel = labels.some(l => TRIGGER_LABELS.includes(l.name.toLowerCase()));
+const assignedToBot = assignees.some((a) => a.login === BOT_USERNAME);
+const hasTriggerLabel = labels.some((l) => TRIGGER_LABELS.includes(l.name.toLowerCase()));
 
 if (!assignedToBot && !hasTriggerLabel) {
   core.info('Issue not assigned to bot and no trigger label found. Skipping.');
@@ -157,18 +175,21 @@ if (!assignedToBot && !hasTriggerLabel) {
 **Problem:** All task files in flat `tasks/` directory became hard to manage.
 
 **Solution:**
+
 - Organized task files by issue number: `tasks/{issueNumber}/{slug}-{timestamp}.md`
 - Each issue gets its own subdirectory
 - Maintains chronological ordering within issue
 - Easier to find related tasks
 
 **Benefits:**
+
 - Better organization
 - Easier navigation
 - Clearer relationships
 - Scalable structure
 
 **Before:**
+
 ```
 tasks/
   123-add-feature.md
@@ -177,6 +198,7 @@ tasks/
 ```
 
 **After:**
+
 ```
 tasks/
   123/
@@ -191,35 +213,41 @@ tasks/
 **Problem:** No visibility into workflow execution status outside GitHub UI.
 
 **Solution:**
+
 - Added Slack notification support
 - Configurable via `SLACK_WEBHOOK_URL` secret
 - Sends notifications on success and failure
 - Optional for manual triggers via `notify_slack` input
 
 **Benefits:**
+
 - Real-time notifications
 - Team visibility
 - Faster response to failures
 - Integration with existing tools
 
 **Configuration:**
+
 1. Create Slack webhook
 2. Add `SLACK_WEBHOOK_URL` secret
 3. Notifications sent automatically
 
 **Notification Format:**
+
 ```json
 {
-  "attachments": [{
-    "color": "good",
-    "title": "✅ Issue Task PR Automation - Success",
-    "fields": [
-      { "title": "Issue", "value": "#123" },
-      { "title": "Repository", "value": "owner/repo" },
-      { "title": "PR", "value": "https://..." },
-      { "title": "Branch", "value": "task/123-..." }
-    ]
-  }]
+  "attachments": [
+    {
+      "color": "good",
+      "title": "✅ Issue Task PR Automation - Success",
+      "fields": [
+        { "title": "Issue", "value": "#123" },
+        { "title": "Repository", "value": "owner/repo" },
+        { "title": "PR", "value": "https://..." },
+        { "title": "Branch", "value": "task/123-..." }
+      ]
+    }
+  ]
 }
 ```
 
@@ -228,6 +256,7 @@ tasks/
 **Problem:** Difficult to debug workflow issues due to minimal logging.
 
 **Solution:**
+
 - Added emoji indicators (✅, ♻️, ℹ️, ❌) for visual clarity
 - Grouped console output with `core.startGroup()` / `core.endGroup()`
 - Detailed job summaries showing key information
@@ -235,6 +264,7 @@ tasks/
 - Progress indicators at each step
 
 **Benefits:**
+
 - Easier debugging
 - Better visibility
 - Clear status indicators
@@ -242,6 +272,7 @@ tasks/
 - Faster issue resolution
 
 **Example Output:**
+
 ```
 Creating branch
   ✅ Created branch task/123-add-feature-1729276800000 from main.
@@ -290,6 +321,7 @@ Created three comprehensive documentation files:
    - Development guide
 
 **Benefits:**
+
 - Easy onboarding
 - Self-service troubleshooting
 - Reduced support burden
@@ -301,6 +333,7 @@ Created three comprehensive documentation files:
 **Problem:** No way to validate workflow logic without running in GitHub Actions.
 
 **Solution:**
+
 - Created `scripts/test-workflow-logic.js`
 - Tests slug generation
 - Tests branch naming
@@ -310,6 +343,7 @@ Created three comprehensive documentation files:
 - Runs locally without API calls
 
 **Benefits:**
+
 - Faster iteration
 - Offline testing
 - Validates logic before deployment
@@ -317,6 +351,7 @@ Created three comprehensive documentation files:
 - CI/CD integration possible
 
 **Test Results:**
+
 ```
 🧪 Testing workflow logic...
 
@@ -339,7 +374,9 @@ Test 3: File path with subdirectory
 ## Additional Improvements
 
 ### Job Outputs
+
 Added outputs to `handle-issue-assignment` job:
+
 - `pr-url`: URL of created/updated PR
 - `branch-name`: Name of task branch
 - `success`: Whether workflow succeeded
@@ -347,7 +384,9 @@ Added outputs to `handle-issue-assignment` job:
 These can be used by subsequent jobs or workflows.
 
 ### Enhanced PR Body
+
 Improved PR description with:
+
 - Structured markdown sections
 - Issue context
 - Checklist items
@@ -355,7 +394,9 @@ Improved PR description with:
 - Clear attribution
 
 ### Enhanced Issue Comment
+
 Improved issue comment with:
+
 - Emoji indicator
 - Structured information
 - PR link
@@ -364,13 +405,17 @@ Improved issue comment with:
 - Clear call to action
 
 ### Input Additions
+
 Added `notify_slack` input to `workflow_dispatch`:
+
 - Optional boolean
 - Default: false
 - Allows manual control over notifications
 
 ### Task File Enhancements
+
 Task files now include:
+
 - Issue metadata
 - Creation timestamp
 - Unix timestamp
@@ -382,6 +427,7 @@ Task files now include:
 ### None! 🎉
 
 All changes are backward compatible:
+
 - Existing configurations work without changes
 - Default values preserve existing behavior
 - New features are opt-in
@@ -390,6 +436,7 @@ All changes are backward compatible:
 ### Optional Migrations
 
 For best experience, consider:
+
 1. Adding `TRIGGER_LABELS` variable for label-based triggers
 2. Adding `SLACK_WEBHOOK_URL` secret for notifications
 3. Reviewing and updating bot username via `CODEX_BOT_LOGIN`
@@ -403,11 +450,13 @@ For best experience, consider:
 **Recommended:**
 
 1. **Add trigger labels variable (optional):**
+
    ```bash
    gh variable set TRIGGER_LABELS -b "codex,ready-for-codex,automation"
    ```
 
 2. **Configure Slack notifications (optional):**
+
    ```bash
    # After creating webhook at https://api.slack.com/apps
    gh secret set SLACK_WEBHOOK_URL
@@ -437,9 +486,11 @@ For best experience, consider:
 ## Files Changed
 
 ### Modified
+
 - `.github/workflows/issue-task-pr.yml` - Main workflow file with all enhancements
 
 ### Added
+
 - `docs/WORKFLOW_DOCUMENTATION.md` - Complete documentation
 - `docs/WORKFLOW_EXAMPLES.md` - Practical examples
 - `docs/WORKFLOW_CHANGELOG.md` - This file
@@ -447,6 +498,7 @@ For best experience, consider:
 - `scripts/test-workflow-logic.js` - Testing script
 
 ### Removed
+
 - None
 
 ## Metrics
@@ -460,6 +512,7 @@ For best experience, consider:
 ## Future Enhancements
 
 Potential future improvements:
+
 1. Email notifications in addition to Slack
 2. Microsoft Teams webhook support
 3. Configurable retry attempts and delays
@@ -474,6 +527,7 @@ Potential future improvements:
 ## Support
 
 For issues or questions:
+
 1. Review [documentation](./WORKFLOW_DOCUMENTATION.md)
 2. Check [examples](./WORKFLOW_EXAMPLES.md)
 3. Run [test script](../scripts/test-workflow-logic.js)
@@ -483,6 +537,7 @@ For issues or questions:
 ## Contributors
 
 This enhancement was developed to address the requirements specified in the issue:
+
 - Unique naming to prevent conflicts
 - Retry mechanisms for reliability
 - Input validation for safety

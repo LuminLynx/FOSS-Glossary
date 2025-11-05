@@ -14,12 +14,12 @@ This document defines the contract for the `docs/terms.json` artifact consumed b
 
 `terms.json` is a UTF-8 encoded JSON document with the following required fields:
 
-| Field | Type | Required | Description | Example |
-| --- | --- | --- | --- | --- |
-| `version` | `string` | ✅ | Short Git commit SHA of the export. Fallbacks to `unknown` only if Git metadata is unavailable. | `4f2c9ab` |
-| `generated_at` | `string` | ✅ | ISO-8601 timestamp for when the export was created (UTC). | `2024-07-12T18:43:21.913Z` |
-| `terms_count` | `number` | ✅ | Count of term objects present in `terms`. Must match `terms.length`. | `42` |
-| `terms` | `array<object>` | ✅ | Array of term definitions (see below). Order mirrors `terms.yaml`. | `[{...}]` |
+| Field          | Type            | Required | Description                                                                                     | Example                    |
+| -------------- | --------------- | -------- | ----------------------------------------------------------------------------------------------- | -------------------------- |
+| `version`      | `string`        | ✅       | Short Git commit SHA of the export. Fallbacks to `unknown` only if Git metadata is unavailable. | `4f2c9ab`                  |
+| `generated_at` | `string`        | ✅       | ISO-8601 timestamp for when the export was created (UTC).                                       | `2024-07-12T18:43:21.913Z` |
+| `terms_count`  | `number`        | ✅       | Count of term objects present in `terms`. Must match `terms.length`.                            | `42`                       |
+| `terms`        | `array<object>` | ✅       | Array of term definitions (see below). Order mirrors `terms.yaml`.                              | `[{...}]`                  |
 
 No additional top-level properties are emitted. Clients should treat unknown properties as forward-compatible extensions should they ever appear.
 
@@ -27,18 +27,18 @@ No additional top-level properties are emitted. Clients should treat unknown pro
 
 Each entry in `terms` maps 1:1 with the canonical record in `terms.yaml`. The schema follows [`schema.json`](../schema.json) and rejects additional properties. Field summaries:
 
-| Field | Type | Required | Notes |
-| --- | --- | --- | --- |
-| `slug` | `string` | ✅ | Stable identifier. Must follow the [slug policy](./slug-policy.md) and match the regex `^[a-z0-9]+(?:-[a-z0-9]+)*$`. Length: 3–48 characters. |
-| `term` | `string` | ✅ | Human-readable label for the concept. Case-preserving. |
-| `definition` | `string` | ✅ | Concise definition; minimum 80 characters. |
-| `explanation` | `string` | optional | Deeper dive or story. Free-form text. |
-| `humor` | `string` | optional | Sarcastic or humorous flavor text. |
-| `tags` | `string[]` | optional | Zero or more categorical tags. Strings are lowercase kebab-case where possible. |
-| `see_also` | `string[]` | optional | Related terms or cross-references. |
-| `aliases` | `string[]` | optional | Alternate spellings or nicknames. Must be unique per term. |
-| `controversy_level` | `"low" \| "medium" \| "high"` | optional | Qualitative heat check. |
-| `updated_at` | `string` | optional | ISO-8601 timestamp for future updates. Not currently emitted but reserved for backwards-compatible evolution. |
+| Field               | Type                          | Required | Notes                                                                                                                                         |
+| ------------------- | ----------------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `slug`              | `string`                      | ✅       | Stable identifier. Must follow the [slug policy](./slug-policy.md) and match the regex `^[a-z0-9]+(?:-[a-z0-9]+)*$`. Length: 3–48 characters. |
+| `term`              | `string`                      | ✅       | Human-readable label for the concept. Case-preserving.                                                                                        |
+| `definition`        | `string`                      | ✅       | Concise definition; minimum 80 characters.                                                                                                    |
+| `explanation`       | `string`                      | optional | Deeper dive or story. Free-form text.                                                                                                         |
+| `humor`             | `string`                      | optional | Sarcastic or humorous flavor text.                                                                                                            |
+| `tags`              | `string[]`                    | optional | Zero or more categorical tags. Strings are lowercase kebab-case where possible.                                                               |
+| `see_also`          | `string[]`                    | optional | Related terms or cross-references.                                                                                                            |
+| `aliases`           | `string[]`                    | optional | Alternate spellings or nicknames. Must be unique per term.                                                                                    |
+| `controversy_level` | `"low" \| "medium" \| "high"` | optional | Qualitative heat check.                                                                                                                       |
+| `updated_at`        | `string`                      | optional | ISO-8601 timestamp for future updates. Not currently emitted but reserved for backwards-compatible evolution.                                 |
 
 All strings are UTF-8. Arrays are emitted empty (`[]`) when present with no values. `null` is never emitted—fields are either omitted or populated.
 

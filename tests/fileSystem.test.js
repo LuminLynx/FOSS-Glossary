@@ -13,16 +13,16 @@ const {
 test('ensureDirectoryForFile: creates directory for file', () => {
   const testDir = '/tmp/test-fs-utils';
   const testFile = path.join(testDir, 'subdir', 'test.txt');
-  
+
   // Clean up first
   if (fs.existsSync(testDir)) {
     fs.rmSync(testDir, { recursive: true });
   }
-  
+
   ensureDirectoryForFile(testFile);
-  
+
   assert.ok(fs.existsSync(path.dirname(testFile)));
-  
+
   // Clean up
   fs.rmSync(testDir, { recursive: true });
 });
@@ -36,16 +36,16 @@ test('ensureDirectoryForFile: handles file in current directory', () => {
 test('ensureDirectoryForFile: creates nested directories', () => {
   const testDir = '/tmp/test-fs-nested';
   const testFile = path.join(testDir, 'a', 'b', 'c', 'test.txt');
-  
+
   // Clean up first
   if (fs.existsSync(testDir)) {
     fs.rmSync(testDir, { recursive: true });
   }
-  
+
   ensureDirectoryForFile(testFile);
-  
+
   assert.ok(fs.existsSync(path.dirname(testFile)));
-  
+
   // Clean up
   fs.rmSync(testDir, { recursive: true });
 });
@@ -90,7 +90,7 @@ test('loadTermsYaml: loads terms.yaml successfully', () => {
 
 test('loadTermsYaml: returns array of term objects', () => {
   const terms = loadTermsYaml();
-  terms.forEach(term => {
+  terms.forEach((term) => {
     assert.ok(typeof term === 'object');
     assert.ok(term.slug);
     assert.ok(term.term);

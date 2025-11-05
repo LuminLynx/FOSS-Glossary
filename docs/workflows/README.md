@@ -11,11 +11,13 @@ Welcome to the FOSS Glossary workflow documentation!
 ## 🚀 Quick Start
 
 ### Automatic Trigger
+
 1. Assign issue to bot OR add trigger label (`codex`)
 2. Wait 30-60 seconds
 3. Check issue for PR link
 
 ### Manual Trigger
+
 ```bash
 gh workflow run issue-task-pr.yml \
   -f title="Your issue title" \

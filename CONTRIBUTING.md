@@ -5,14 +5,15 @@ First off, **thank you!** 🎉 We're excited to have you contribute to making FO
 ## 🌟 Hall of Fame
 
 ### First Contributors
+
 - **@Axestein** - Pioneer! Added [It's a Feature, LGTM] - Our very first community contribution! 🎉
 
 First off, **thank you!** 🎉 We're excited to have you contribute...
 
-
 ## 🎮 How It Works
 
 When you add a term to our glossary, you'll receive:
+
 - **Instant validation** (within 30 seconds)
 - **Quality score** out of 100 points
 - **Achievement badges** for exceptional contributions
@@ -29,12 +30,12 @@ Click the "Fork" button at the top right of this page.
 Open `terms.yaml` and add your term following this structure:
 
 ```yaml
-- term: "Your Term"
-  definition: "A clear, concise definition"
-  explanation: "Optional: More context about when/why this term is used"
-  humor: "Optional: A funny take, sarcastic comment, or honest truth"
-  tags: ["category1", "category2"]
-  see_also: ["Related Term 1", "Related Term 2"]
+- term: 'Your Term'
+  definition: 'A clear, concise definition'
+  explanation: 'Optional: More context about when/why this term is used'
+  humor: 'Optional: A funny take, sarcastic comment, or honest truth'
+  tags: ['category1', 'category2']
+  see_also: ['Related Term 1', 'Related Term 2']
 ```
 
 ### Step 3: Understanding the Scoring System
@@ -117,6 +118,7 @@ definition: "Missing indent"
 ## 📜 Code of Conduct
 
 Be excellent to each other:
+
 - Be welcoming to newcomers
 - Be patient with questions
 - Be constructive with feedback
@@ -154,6 +156,7 @@ npm run score
 ### Slug Immutability
 
 Once a term is merged, its slug (URL identifier) is **permanent**. This ensures:
+
 - External links don't break
 - Bookmarks continue to work
 - Search engines maintain proper references
@@ -167,8 +170,8 @@ If a term needs to be renamed or merged, use the `redirects` mapping instead of 
 ```yaml
 terms:
   - slug: new-term-name
-    term: "New Term"
-    definition: "..."
+    term: 'New Term'
+    definition: '...'
 
 redirects:
   old-term-name: new-term-name
@@ -177,6 +180,7 @@ redirects:
 ### Deletion Policy
 
 Terms should rarely be deleted. Before removing a term, consider:
+
 - Using redirects to merge with another term
 - Editing to improve quality
 - Marking as deprecated in the explanation

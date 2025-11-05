@@ -30,11 +30,13 @@ This design keeps the page lightweight while showcasing recent contributions.
 ### When Changes Are Pushed to Main
 
 The `update-landing-page.yml` workflow automatically runs when:
+
 - `terms.yaml` is modified
 - Landing page generator script is updated
 - Any file in `docs/` changes
 
 **Workflow steps:**
+
 1. Checks out the repository
 2. Installs dependencies
 3. Runs `generateLandingPage.js` to regenerate HTML
@@ -45,6 +47,7 @@ The `update-landing-page.yml` workflow automatically runs when:
 ### When PRs Are Created
 
 The `pr-complete.yml` workflow includes an informational check:
+
 - Validates terms.yaml schema and content
 - Checks if landing page needs regeneration (informational only)
 - Does not fail the PR if out of sync (will be fixed on merge)
@@ -54,11 +57,13 @@ The `pr-complete.yml` workflow includes an informational check:
 To prevent the landing page from becoming outdated:
 
 ### 1. Automated Regeneration
+
 - **Trigger**: Any push to `main` branch that modifies `terms.yaml`
 - **Action**: Workflow automatically regenerates and deploys HTML
 - **Verification**: Built-in validation ensures sync after generation
 
 ### 2. Validation Script
+
 - **Script**: `scripts/validateLandingPage.js`
 - **Usage**: `npm run validate:landing`
 - **Checks**:
@@ -67,6 +72,7 @@ To prevent the landing page from becoming outdated:
   - Recent term cards are present (not just test card)
 
 ### 3. NPM Scripts
+
 ```bash
 # Generate landing page
 npm run generate:landing
@@ -76,6 +82,7 @@ npm run validate:landing
 ```
 
 ### 4. CI/CD Integration
+
 - Landing page validation runs after generation in the deployment workflow
 - Informational check in PR workflow warns if regeneration needed
 - Prevents deployment of out-of-sync HTML
@@ -102,22 +109,26 @@ npm run validate:landing
 ### Landing Page Shows Old Data
 
 **Symptoms:**
+
 - Statistics show incorrect term count
 - Latest additions shows "Test & &lt;Title&gt;..." placeholder
 - Only 1 term card displayed instead of 6
 
 **Solution:**
+
 ```bash
 npm run generate:landing
 ```
 
 **Why it happens:**
+
 - The landing page is generated during deployment, not stored in the repository
 - If you need to view it locally, run `npm run generate:landing`
 
 ### Validation Fails
 
 **Error message:**
+
 ```
 ❌ Error: Total terms mismatch
    Expected: 28 terms (from terms.yaml)
@@ -131,12 +142,14 @@ Follow the suggestion in the error message and regenerate the landing page.
 ### Workflow Doesn't Run
 
 **Check:**
+
 1. Does the commit modify `terms.yaml` or files in the trigger paths?
 2. Is the workflow enabled in the repository settings?
 3. Check GitHub Actions logs for errors
 
 **Manual trigger:**
 You can manually trigger the workflow from the Actions tab:
+
 1. Go to Actions → "Build & Deploy Landing Page"
 2. Click "Run workflow"
 3. Select the `main` branch and click "Run workflow"
@@ -160,6 +173,7 @@ GitHub Pages (deployment)
 ### Template System
 
 The generator uses Handlebars templates:
+
 - **Template**: `templates/landing-page.hbs`
 - **Data preparation**: `scripts/generateLandingPage.js`
 - **Auto-escaping**: HTML entities are automatically escaped for security

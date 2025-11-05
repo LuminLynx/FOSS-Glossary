@@ -1,7 +1,7 @@
 /**
  * Unified scoring module for FOSS Glossary terms
  * This module provides consistent scoring logic across all scripts
- * 
+ *
  * Scoring Formula:
  * - Base Score: 20 points (requires both term.term and term.definition)
  * - Humor: min(30, floor(humor.length / 5)) points
@@ -9,7 +9,7 @@
  * - Tags: min(10, tags.length × 3) points
  * - Cross-references: min(20, see_also.length × 5) points
  * - Total: min(100, sum of all components)
- * 
+ *
  * Achievement Badges:
  * - 😂 Comedy Gold: humor length > 100 characters
  * - 🔥 Flame Warrior: controversy_level = 'high'
@@ -34,38 +34,38 @@
 function scoreTerm(term) {
   let score = 0;
   let badges = [];
-  
+
   // Base score for having required fields (20 points)
   if (term.term && term.definition) {
     score += 20;
   }
-  
+
   // Humor (up to 30 points)
   if (term.humor) {
     const humorLength = term.humor.length;
     const humorPoints = Math.min(30, Math.floor(humorLength / 5));
     score += humorPoints;
-    
+
     if (humorLength > 100) {
       badges.push('😂 Comedy Gold');
     }
   }
-  
+
   // Explanation (20 points)
   if (term.explanation && term.explanation.length > 20) {
     score += 20;
   }
-  
+
   // Tags (10 points)
   if (term.tags && Array.isArray(term.tags) && term.tags.length > 0) {
     score += Math.min(10, term.tags.length * 3);
   }
-  
+
   // See also / cross-references (up to 20 points)
   if (term.see_also && Array.isArray(term.see_also)) {
     score += Math.min(20, term.see_also.length * 5);
   }
-  
+
   // Controversy bonus
   if (term.controversy_level) {
     if (term.controversy_level === 'high') {
@@ -74,7 +74,7 @@ function scoreTerm(term) {
       badges.push('🌶️ Spicy Take');
     }
   }
-  
+
   // Achievement badges based on score
   if (score >= 90) {
     badges.push('💯 Perfectionist');
@@ -83,7 +83,7 @@ function scoreTerm(term) {
   } else if (score >= 70) {
     badges.push('💪 Strong Entry');
   }
-  
+
   return { score: Math.min(100, score), badges };
 }
 
@@ -91,7 +91,7 @@ function scoreTerm(term) {
  * Get a detailed breakdown of scoring components for a term
  * This function returns the individual score components and their maximum possible values,
  * useful for displaying scoring details to contributors.
- * 
+ *
  * @param {Object} term - The term object to analyze
  * @param {string} term.term - The term name
  * @param {string} term.definition - The term definition
@@ -119,39 +119,39 @@ function getScoreBreakdown(term) {
       humor: 30,
       explanation: 20,
       tags: 10,
-      crossReferences: 20
-    }
+      crossReferences: 20,
+    },
   };
-  
+
   // Base definition
   if (term.term && term.definition) {
     breakdown.base = 20;
   }
-  
+
   // Humor
   if (term.humor) {
     breakdown.humor = Math.min(30, Math.floor(term.humor.length / 5));
   }
-  
+
   // Explanation
   if (term.explanation && term.explanation.length > 20) {
     breakdown.explanation = 20;
   }
-  
+
   // Tags
   if (term.tags && Array.isArray(term.tags) && term.tags.length > 0) {
     breakdown.tags = Math.min(10, term.tags.length * 3);
   }
-  
+
   // Cross-references
   if (term.see_also && Array.isArray(term.see_also)) {
     breakdown.crossReferences = Math.min(20, term.see_also.length * 5);
   }
-  
+
   return breakdown;
 }
 
 module.exports = {
   scoreTerm,
-  getScoreBreakdown
+  getScoreBreakdown,
 };

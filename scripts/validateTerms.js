@@ -10,7 +10,7 @@ const { loadJson } = require('../utils/fileSystem');
 
 /**
  * Load and parse a YAML file with user-friendly error handling
- * 
+ *
  * @param {string} filePath - Path to the YAML file
  * @returns {*} Parsed YAML content
  * @throws {Error} Exits process with code 1 if file cannot be read or parsed
@@ -24,24 +24,24 @@ function loadYamlWithFriendlyErrors(filePath) {
     if (error.name === 'YAMLException' && error.mark) {
       const line = error.mark.line + 1;
       const col = error.mark.column + 1;
-      
+
       // Read file lines for context
       const lines = fs.readFileSync(filePath, 'utf8').split(/\r?\n/);
       const startLine = Math.max(0, line - 2);
       const endLine = Math.min(lines.length, line + 2);
       const contextLines = [];
-      
+
       for (let i = startLine; i < endLine; i++) {
         const lineNum = i + 1;
-        const marker = (lineNum === line) ? '→' : ' ';
+        const marker = lineNum === line ? '→' : ' ';
         contextLines.push(`${marker} ${lineNum}: ${lines[i]}`);
       }
-      
+
       const context = contextLines.join('\n');
-      
+
       // Extract the main error message
       const mainError = error.message.split('\n')[0];
-      
+
       // Create user-friendly validation output
       const output = [
         `Validation failed: YAML parse error in ${filePath}`,
@@ -56,15 +56,15 @@ function loadYamlWithFriendlyErrors(filePath) {
         'Ensure keys (term, definition, etc.) are properly indented under "- slug:".',
         'YAML requires consistent spacing - use spaces (not tabs) for indentation.',
       ].join('\n');
-      
+
       // Write to validation-output.txt for CI workflows
       fs.writeFileSync('validation-output.txt', output);
-      
+
       // Print to stderr for immediate visibility
       console.error(output);
       process.exit(1);
     }
-    
+
     // Handle other file read errors
     console.error(`❌ Error: Failed to read ${filePath}:`, error.message);
     process.exit(1);
@@ -75,7 +75,7 @@ function loadYamlWithFriendlyErrors(filePath) {
  * Resolve the base terms path from command line arguments or environment variable
  * Supports both --base flag and BASE_TERMS_PATH environment variable
  * Validates that the resolved path exists and warns if not found
- * 
+ *
  * @returns {string|null} Absolute path to base terms file, or null if not specified or invalid
  */
 function resolveBasePathFromArgs() {
@@ -103,7 +103,9 @@ function resolveBasePathFromArgs() {
 
   const resolved = path.resolve(basePath);
   if (!fs.existsSync(resolved)) {
-    console.warn(`⚠️ Warning: Base glossary file not found at ${resolved}; skipping slug change checks`);
+    console.warn(
+      `⚠️ Warning: Base glossary file not found at ${resolved}; skipping slug change checks`
+    );
     return null;
   }
 
@@ -117,7 +119,7 @@ function resolveBasePathFromArgs() {
  * - Duplicate slug detection
  * - Duplicate term/alias name detection (normalized)
  * - Slug change detection (when base terms file is provided)
- * 
+ *
  * @throws {Error} Exits process with code 1 if validation fails
  */
 function main() {
@@ -177,7 +179,7 @@ function main() {
     addName(term.term, 'term');
 
     if (Array.isArray(term.aliases)) {
-      term.aliases.forEach(alias => addName(alias, 'alias'));
+      term.aliases.forEach((alias) => addName(alias, 'alias'));
     }
   });
 
@@ -195,7 +197,7 @@ function main() {
       if (typeof slug !== 'string' || !slug) {
         continue;
       }
-      
+
       // Inline name collection to avoid function call overhead
       const names = [];
       if (typeof term.term === 'string') {
@@ -208,7 +210,7 @@ function main() {
           }
         }
       }
-      
+
       // Process names with early duplicate detection
       for (const name of names) {
         const key = normalizeName(name);
@@ -233,7 +235,7 @@ function main() {
       if (typeof slug !== 'string' || !slug) {
         continue;
       }
-      
+
       // Inline name collection to avoid function call overhead
       const names = [];
       if (typeof term.term === 'string') {
@@ -246,25 +248,25 @@ function main() {
           }
         }
       }
-      
+
       // Process names and check for slug changes simultaneously
       for (const name of names) {
         const key = normalizeName(name);
         if (!key) {
           continue;
         }
-        
+
         // Check for slug change while building the map
         if (baseNameMap.has(key)) {
           const baseInfo = baseNameMap.get(key);
           if (baseInfo.slug !== slug) {
             errors.push(
               `Slug immutability violation: Term '${baseInfo.term}' slug changed from '${baseInfo.slug}' to '${slug}'. ` +
-              `Use redirects instead: add 'redirects: { "${baseInfo.slug}": "${slug}" }' to preserve the old URL.`
+                `Use redirects instead: add 'redirects: { "${baseInfo.slug}": "${slug}" }' to preserve the old URL.`
             );
           }
         }
-        
+
         // Only add to newNameMap if not already present
         if (!newNameMap.has(key)) {
           newNameMap.set(key, {
@@ -291,7 +293,7 @@ function main() {
 
   if (errors.length > 0) {
     console.error('❌ Error: Validation failed\n');
-    errors.forEach(err => console.error(`  - ${err}`));
+    errors.forEach((err) => console.error(`  - ${err}`));
     process.exit(1);
   }
 

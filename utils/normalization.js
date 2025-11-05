@@ -1,6 +1,6 @@
 /**
  * Shared normalization utilities for FOSS Glossary
- * 
+ *
  * This module provides consistent normalization functions used across
  * multiple scripts to reduce code duplication and ensure consistent
  * data processing throughout the application.
@@ -9,7 +9,7 @@
 /**
  * Normalize a string value by trimming whitespace
  * Returns undefined for null, undefined, or empty strings
- * 
+ *
  * @param {*} value - Value to normalize
  * @returns {string|undefined} Normalized string or undefined
  */
@@ -25,7 +25,7 @@ function normalizeString(value) {
  * Normalize an array value by trimming and filtering empty entries
  * Converts single values to arrays
  * Returns undefined for null, undefined, or empty arrays
- * 
+ *
  * @param {*} value - Value to normalize (array or single value)
  * @returns {string[]|undefined} Normalized array or undefined
  */
@@ -51,7 +51,7 @@ function normalizeArray(value) {
  * Normalize a glossary term object
  * Required fields: slug, term, definition
  * Optional fields: explanation, humor, tags, see_also, aliases, controversy_level
- * 
+ *
  * @param {Object} rawTerm - Raw term object to normalize
  * @returns {Object} Normalized term object
  * @throws {Error} If required fields are missing or invalid
@@ -72,7 +72,9 @@ function normalizeTerm(rawTerm) {
   // Validate slug format: must be lowercase alphanumeric with hyphens
   const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
   if (!slugPattern.test(slug)) {
-    throw new Error(`Slug '${slug}' must contain only lowercase letters, numbers, and hyphens (pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$)`);
+    throw new Error(
+      `Slug '${slug}' must contain only lowercase letters, numbers, and hyphens (pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$)`
+    );
   }
 
   // Validate slug length
@@ -85,7 +87,9 @@ function normalizeTerm(rawTerm) {
 
   // Validate definition length
   if (definition.length < 80) {
-    throw new Error(`Definition for '${slug}' must be at least 80 characters long (current: ${definition.length})`);
+    throw new Error(
+      `Definition for '${slug}' must be at least 80 characters long (current: ${definition.length})`
+    );
   }
 
   const normalized = {
@@ -124,7 +128,9 @@ function normalizeTerm(rawTerm) {
     // Validate controversy_level enum values
     const validControversyLevels = ['low', 'medium', 'high'];
     if (!validControversyLevels.includes(controversy)) {
-      throw new Error(`Controversy level '${controversy}' for '${slug}' must be one of: ${validControversyLevels.join(', ')}`);
+      throw new Error(
+        `Controversy level '${controversy}' for '${slug}' must be one of: ${validControversyLevels.join(', ')}`
+      );
     }
     normalized.controversy_level = controversy;
   }
@@ -135,13 +141,16 @@ function normalizeTerm(rawTerm) {
 /**
  * Normalize a name for duplicate detection
  * Applies Unicode normalization (NFC), converts to lowercase, and removes all non-alphanumeric characters
- * 
+ *
  * @param {*} value - Value to normalize
  * @returns {string} Normalized name (empty string if invalid)
  */
 function normalizeName(value) {
   if (typeof value !== 'string') return '';
-  return value.normalize('NFC').toLowerCase().replace(/[^a-z0-9]+/g, '');
+  return value
+    .normalize('NFC')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '');
 }
 
 module.exports = {
