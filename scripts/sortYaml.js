@@ -43,14 +43,14 @@ function sortYamlKeys() {
 
       // Add keys in defined order
       keyOrder.forEach((key) => {
-        if (term.hasOwnProperty(key)) {
+        if (Object.prototype.hasOwnProperty.call(term, key)) {
           sorted[key] = term[key];
         }
       });
 
       // Add any additional keys not in the defined order (shouldn't happen with strict schema)
       Object.keys(term).forEach((key) => {
-        if (!sorted.hasOwnProperty(key)) {
+        if (!Object.prototype.hasOwnProperty.call(sorted, key)) {
           sorted[key] = term[key];
         }
       });

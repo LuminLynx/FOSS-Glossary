@@ -53,10 +53,13 @@
   "license": "CC0",
   "lint-staged": {
     "*.{js,json,yaml,yml,md}": [
-      "cspell --no-must-find-files"
+      "prettier --write"
     ],
     "*.md": [
       "markdownlint --fix"
+    ],
+    "*.{js,json,yaml,yml,md}": [
+      "cspell --no-must-find-files"
     ]
   }
 }

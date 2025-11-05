@@ -105,7 +105,9 @@ test('YAML sorting: term keys are in correct order', () => {
   if (data.terms.length > 0) {
     const firstTerm = data.terms[0];
     const actualKeys = Object.keys(firstTerm);
-    const expectedKeys = expectedOrder.filter((key) => firstTerm.hasOwnProperty(key));
+    const expectedKeys = expectedOrder.filter((key) =>
+      Object.prototype.hasOwnProperty.call(firstTerm, key)
+    );
 
     assert.deepEqual(actualKeys, expectedKeys, 'Term keys should be in the correct order');
   }
@@ -113,7 +115,6 @@ test('YAML sorting: term keys are in correct order', () => {
 
 test('tag fixing: fixTags script converts to kebab-case', () => {
   const yaml = require('js-yaml');
-  const fs = require('fs');
 
   // Create test file
   const testData = {
@@ -132,7 +133,6 @@ test('tag fixing: fixTags script converts to kebab-case', () => {
 
   try {
     // Run fixTags on test file
-    const { execSync } = require('child_process');
     const script = `
       const fs = require('fs');
       const yaml = require('js-yaml');
