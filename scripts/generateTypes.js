@@ -6,7 +6,7 @@ const { compile } = require('json-schema-to-typescript');
 /**
  * Generate TypeScript types from schema.json
  * This ensures type safety and catches schema changes at compile time
- * 
+ *
  * Usage:
  *   node scripts/generateTypes.js         # Generate types
  *   node scripts/generateTypes.js --check # Check if types are up to date
@@ -16,10 +16,10 @@ async function generateTypes() {
     const checkMode = process.argv.includes('--check');
     const schemaPath = path.join(__dirname, '..', 'schema.json');
     const outputPath = path.join(__dirname, '..', 'types', 'terms.d.ts');
-    
+
     // Read schema
     const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
-    
+
     // Generate TypeScript types
     const ts = await compile(schema, 'FOSSGlossaryTerms', {
       bannerComment: '',
@@ -32,7 +32,7 @@ async function generateTypes() {
         trailingComma: 'es5',
       },
     });
-    
+
     if (checkMode) {
       // Check mode: verify types are up to date
       if (!fs.existsSync(outputPath)) {
@@ -40,14 +40,14 @@ async function generateTypes() {
         console.error('   Run: npm run generate:types');
         process.exit(1);
       }
-      
+
       const existingTypes = fs.readFileSync(outputPath, 'utf8');
       if (existingTypes !== ts) {
         console.error('❌ Error: TypeScript types are out of sync with schema.json');
         console.error('   Run: npm run generate:types');
         process.exit(1);
       }
-      
+
       console.log('✅ TypeScript types are up to date');
     } else {
       // Generate mode: write types file
@@ -55,7 +55,7 @@ async function generateTypes() {
       if (!fs.existsSync(typesDir)) {
         fs.mkdirSync(typesDir, { recursive: true });
       }
-      
+
       fs.writeFileSync(outputPath, ts);
       console.log('✅ TypeScript types generated successfully:', outputPath);
     }

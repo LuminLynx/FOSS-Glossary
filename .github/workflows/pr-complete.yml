@@ -72,7 +72,7 @@ jobs:
           # Create a sorted copy for comparison
           cp terms.yaml terms.yaml.backup
           node scripts/sortYaml.js
-          
+
           # Check if there are differences
           if ! diff -q terms.yaml.backup terms.yaml > /dev/null; then
             echo "❌ Error: terms.yaml is not sorted"
@@ -82,7 +82,7 @@ jobs:
             mv terms.yaml.backup terms.yaml
             exit 1
           fi
-          
+
           echo "✅ YAML is properly sorted"
           echo "exit_code=0" >> "$GITHUB_OUTPUT"
           # Clean up

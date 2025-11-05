@@ -152,7 +152,7 @@ terms:
     term: LGTM
     definition: Looks Good To Me — the classic approval signal in code reviews indicating the reviewer saw nothing alarming enough to block the change.
     explanation: The standard approval comment in code reviews, indicating the reviewer has no major objections to the changes
-    humor: 'Translation: I skimmed this for 30 seconds and didn''t see anything on fire. Ship it!'
+    humor: "Translation: I skimmed this for 30 seconds and didn't see anything on fire. Ship it!"
     see_also:
       - It's a Feature
       - Works On My Machine
@@ -263,7 +263,7 @@ terms:
     term: PTW
     definition: Patches Welcome — a standard open-source response inviting contributors to submit code if they want a change, reminding requesters that collaboration beats complaints.
     explanation: 'A common open‑source response meaning: if you want a feature or fix, contribute the code yourself.'
-    humor: 'The polite way of saying: ''Yes, that’s a problem. No, I’m not fixing it for you.'''
+    humor: "The polite way of saying: 'Yes, that’s a problem. No, I’m not fixing it for you.'"
     see_also:
       - RTFS
       - WONTFIX

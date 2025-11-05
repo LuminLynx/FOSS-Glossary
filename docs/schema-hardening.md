@@ -90,9 +90,9 @@ const data: FOSSGlossaryTerms = {
       slug: 'rtfm',
       term: 'RTFM',
       definition: 'Read The F***ing Manual...',
-      tags: ['documentation', 'support']
-    }
-  ]
+      tags: ['documentation', 'support'],
+    },
+  ],
 };
 ```
 
@@ -258,7 +258,7 @@ redirects:
 
 terms:
   - slug: new-slug
-    term: "New Term Name"
+    term: 'New Term Name'
     # ...
 ```
 
