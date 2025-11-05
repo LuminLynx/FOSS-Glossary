@@ -2,6 +2,8 @@
 
 This document describes the schema validation, TypeScript type generation, and YAML formatting rules implemented in PR #2.
 
+> **Note:** This PR has been merged with main branch. The sortYaml.js script from main (with --check mode) is now used instead of the initial implementation.
+
 ## Overview
 
 The FOSS Glossary now enforces strict schema validation with the following features:
