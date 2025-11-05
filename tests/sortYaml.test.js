@@ -2,31 +2,10 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 const { execSync } = require('child_process');
 
 const SCRIPT_PATH = path.join(__dirname, '..', 'scripts', 'sortYaml.js');
-
-// Helper to create a temporary YAML file
-function createTempYaml(content) {
-  const tmpFile = `/tmp/test-terms-${Date.now()}.yaml`;
-  fs.writeFileSync(tmpFile, content, 'utf8');
-  return tmpFile;
-}
-
-// Helper to run sortYaml.js script
-function runSort(yamlPath, checkMode = false) {
-  const args = checkMode ? '--check' : '';
-  try {
-    const output = execSync(`node ${SCRIPT_PATH} ${args}`, {
-      cwd: path.dirname(yamlPath),
-      env: { ...process.env, TERMS_FILE: yamlPath },
-      encoding: 'utf8',
-    });
-    return { success: true, output, exitCode: 0 };
-  } catch (error) {
-    return { success: false, output: error.stdout || '', exitCode: error.status };
-  }
-}
 
 test('sortYaml: sorts terms alphabetically by slug', () => {
   const unsorted = `# Header comment
@@ -39,41 +18,36 @@ terms:
     term: Middle
 `;
 
-  const tmpFile = createTempYaml(unsorted);
-  
+  const tmpDir = path.join(os.tmpdir(), `test-sort-yaml-${Date.now()}`);
+  if (fs.existsSync(tmpDir)) {
+    fs.rmSync(tmpDir, { recursive: true });
+  }
+  fs.mkdirSync(tmpDir);
+  const termsFile = path.join(tmpDir, 'terms.yaml');
+  fs.writeFileSync(termsFile, unsorted, 'utf8');
+
   try {
-    // Change to temp directory and create the file there
-    const tmpDir = '/tmp/test-sort-yaml';
-    if (fs.existsSync(tmpDir)) {
-      fs.rmSync(tmpDir, { recursive: true });
-    }
-    fs.mkdirSync(tmpDir);
-    const termsFile = path.join(tmpDir, 'terms.yaml');
-    fs.writeFileSync(termsFile, unsorted, 'utf8');
-    
     // Run sort
     execSync(`node ${SCRIPT_PATH}`, { cwd: tmpDir, encoding: 'utf8' });
-    
+
     // Read sorted file
     const sorted = fs.readFileSync(termsFile, 'utf8');
-    
+
     // Verify header is preserved
     assert.ok(sorted.startsWith('# Header comment'), 'Header comment should be preserved');
-    
+
     // Verify terms are sorted
     const lines = sorted.split('\n');
     const slugLine1 = lines.findIndex((l) => l.includes('slug: apple'));
     const slugLine2 = lines.findIndex((l) => l.includes('slug: middle'));
     const slugLine3 = lines.findIndex((l) => l.includes('slug: zebra'));
-    
+
     assert.ok(slugLine1 < slugLine2, 'apple should come before middle');
     assert.ok(slugLine2 < slugLine3, 'middle should come before zebra');
-    
-    // Clean up
-    fs.rmSync(tmpDir, { recursive: true });
   } finally {
-    if (fs.existsSync(tmpFile)) {
-      fs.unlinkSync(tmpFile);
+    // Clean up
+    if (fs.existsSync(tmpDir)) {
+      fs.rmSync(tmpDir, { recursive: true });
     }
   }
 });
@@ -86,7 +60,7 @@ test('sortYaml: check mode detects unsorted terms', () => {
     term: Apple
 `;
 
-  const tmpDir = '/tmp/test-sort-check';
+  const tmpDir = path.join(os.tmpdir(), `test-sort-check-${Date.now()}`);
   if (fs.existsSync(tmpDir)) {
     fs.rmSync(tmpDir, { recursive: true });
   }
@@ -118,7 +92,7 @@ test('sortYaml: check mode passes for sorted terms', () => {
     term: Zebra
 `;
 
-  const tmpDir = '/tmp/test-sort-check-pass';
+  const tmpDir = path.join(os.tmpdir(), `test-sort-check-pass-${Date.now()}`);
   if (fs.existsSync(tmpDir)) {
     fs.rmSync(tmpDir, { recursive: true });
   }
@@ -146,7 +120,7 @@ terms:
     term: Apple
 `;
 
-  const tmpDir = '/tmp/test-sort-header';
+  const tmpDir = path.join(os.tmpdir(), `test-sort-header-${Date.now()}`);
   if (fs.existsSync(tmpDir)) {
     fs.rmSync(tmpDir, { recursive: true });
   }
@@ -173,7 +147,7 @@ test('sortYaml: handles strings with apostrophes correctly', () => {
     humor: "This doesn't fail"
 `;
 
-  const tmpDir = '/tmp/test-sort-quotes';
+  const tmpDir = path.join(os.tmpdir(), `test-sort-quotes-${Date.now()}`);
   if (fs.existsSync(tmpDir)) {
     fs.rmSync(tmpDir, { recursive: true });
   }
