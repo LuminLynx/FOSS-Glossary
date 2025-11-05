@@ -169,7 +169,15 @@ jobs:
         run: node .github/scripts/postGlossaryComment.js
 
       - name: Fail if any check failed
-        if: always() && (steps.validate.outputs.exit_code != '0' || (steps.types.outputs.exit_code != '' && steps.types.outputs.exit_code != '0') || (steps.yaml_sort.outputs.exit_code != '' && steps.yaml_sort.outputs.exit_code != '0') || (steps.exporter.outputs.exit_code != '' && steps.exporter.outputs.exit_code != '0') || (steps.score.outputs.exit_code != '' && steps.score.outputs.exit_code != '0'))
+        if: >
+          always() &&
+          (
+            steps.validate.outputs.exit_code != '0' ||
+            (steps.types.outputs.exit_code != '' && steps.types.outputs.exit_code != '0') ||
+            (steps.yaml_sort.outputs.exit_code != '' && steps.yaml_sort.outputs.exit_code != '0') ||
+            (steps.exporter.outputs.exit_code != '' && steps.exporter.outputs.exit_code != '0') ||
+            (steps.score.outputs.exit_code != '' && steps.score.outputs.exit_code != '0')
+          )
         run: |
           echo "❌ CI validation failed:"
           if [ -n "${{ steps.validate.outputs.exit_code }}" ] && [ "${{ steps.validate.outputs.exit_code }}" != "0" ]; then

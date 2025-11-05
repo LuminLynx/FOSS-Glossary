@@ -26,7 +26,6 @@ function fixTags() {
         return;
       }
 
-      const originalTags = [...term.tags];
       term.tags = term.tags.map((tag) => {
         // Convert to lowercase, trim spaces, and replace internal spaces/underscores with hyphens
         const fixed = tag
