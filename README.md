@@ -116,11 +116,11 @@ Our automated pipeline ensures quality and keeps the glossary up-to-date:
 
 **🏆 Current Champion:** `License Proliferation` with ~98/100 points!
 
-**Recent additions:** `PEBKAC`, `Pullpocalypse`, `Commitfog`
+**Recent additions:** `Zombie Dependencies`, `YOLO Deploy`, `Yak Shaving`
 
 ### 🎮 Top Contributors
 
-🥇 copilot-swe-agent[bot] | 🥈 John Portley | 🥉 Joao Portela | 🌟 Aditya Kumar Singh | 🌟 Joe Port
+🥇 John Portley | 🥈 copilot-swe-agent[bot] | 🥉 Joao Portela | 🌟 Aditya Kumar Singh | 🌟 Joe Port
 
 <!-- STATS-END -->
 
