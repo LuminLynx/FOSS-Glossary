@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Build outputs
+dist/
+build/
+*.min.js
+*.min.css
+
+# Generated files
+docs/index.html
+docs/terms.json
+.terms-slugs.txt
+
+# Temporary files
+*.tmp
+*.temp
+/tmp/
+
+# Git
+.git/
+
+# Coverage
+coverage/
+*.lcov
+
+# Logs
+*.log
+npm-debug.log*
