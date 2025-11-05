@@ -81,6 +81,65 @@ function sortTerms(terms) {
 }
 
 /**
+ * Sort keys within each term according to canonical order
+ * @param {Array} terms - Array of term objects
+ * @returns {Array} Terms with keys in canonical order
+ */
+function sortTermKeys(terms) {
+  const keyOrder = [
+    'slug',
+    'term',
+    'definition',
+    'explanation',
+    'humor',
+    'see_also',
+    'tags',
+    'aliases',
+    'controversy_level',
+  ];
+
+  return terms.map((term) => {
+    const sorted = {};
+
+    // Add keys in defined order
+    keyOrder.forEach((key) => {
+      if (Object.prototype.hasOwnProperty.call(term, key)) {
+        sorted[key] = term[key];
+      }
+    });
+
+    // Add any additional keys not in the defined order
+    Object.keys(term).forEach((key) => {
+      if (!Object.prototype.hasOwnProperty.call(sorted, key)) {
+        sorted[key] = term[key];
+      }
+    });
+
+    return sorted;
+  });
+}
+
+/**
+ * Sort redirects alphabetically by key
+ * @param {Object} redirects - Redirects object
+ * @returns {Object} Sorted redirects object
+ */
+function sortRedirects(redirects) {
+  if (!redirects || typeof redirects !== 'object') {
+    return redirects;
+  }
+
+  const sorted = {};
+  Object.keys(redirects)
+    .sort()
+    .forEach((key) => {
+      sorted[key] = redirects[key];
+    });
+
+  return sorted;
+}
+
+/**
  * Serialize YAML data to string with consistent formatting
  * @param {Object} data - YAML data to serialize
  * @returns {string} Formatted YAML string
@@ -110,12 +169,19 @@ function main() {
     process.exit(1);
   }
 
-  // Sort the terms
+  // Sort the terms by slug and sort keys within each term
   const originalTerms = data.terms;
-  const sortedTerms = sortTerms(originalTerms);
+  const sortedTerms = sortTermKeys(sortTerms(originalTerms));
 
-  // Create sorted data
-  const sortedData = { ...data, terms: sortedTerms };
+  // Sort redirects if present
+  const sortedRedirects = sortRedirects(data.redirects);
+
+  // Build output object with consistent key order
+  const sortedData = {};
+  if (sortedRedirects) {
+    sortedData.redirects = sortedRedirects;
+  }
+  sortedData.terms = sortedTerms;
 
   // Serialize both versions for comparison
   const originalYaml = serializeYaml(data);
@@ -150,6 +216,8 @@ if (require.main === module) {
 
 module.exports = {
   sortTerms,
+  sortTermKeys,
+  sortRedirects,
   serializeYaml,
   loadTermsYaml,
   parseArgs,

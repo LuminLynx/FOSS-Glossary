@@ -101,7 +101,41 @@ definition: "Missing indent"
 # ✅ Correct - 2 spaces for indentation
 - term: "Example"
   definition: "Proper indent"
+
+# ❌ Wrong - uppercase or mixed-case tags
+tags: ['FOSS', 'GPL', 'Mixed Case']
+
+# ✅ Correct - lowercase kebab-case tags
+tags: ['foss', 'gpl', 'mixed-case']
 ```
+
+### Tag Formatting Rules
+
+Starting with PR #2, tags **must** use lowercase kebab-case format:
+
+- ✅ Valid: `foss`, `open-source`, `pull-requests`, `gpl`
+- ❌ Invalid: `FOSS`, `Open Source`, `pull_requests`, `GPL`
+
+If you have tags that don't match this pattern, run:
+
+```bash
+npm run fix:tags
+```
+
+### YAML Sorting
+
+To ensure stable diffs and consistent formatting, terms should be:
+
+1. Sorted alphabetically by slug
+2. Have keys in the proper order (slug, term, definition, explanation, humor, see_also, tags, aliases, controversy_level)
+
+Before submitting your PR, run:
+
+```bash
+npm run sort:yaml
+```
+
+The CI will fail if your YAML is not properly sorted.
 
 ## 🐛 Found a Bug or Issue?
 
@@ -149,7 +183,31 @@ npm run validate
 
 # Check your score
 npm run score
+
+# Fix tag formatting (if needed)
+npm run fix:tags
+
+# Sort YAML (required before PR)
+npm run sort:yaml
+
+# Generate TypeScript types (if schema changed)
+npm run generate:types
+
+# Validate TypeScript types are up to date
+npm run validate:types
 ```
+
+### Available Scripts
+
+- `npm run validate` - Validate terms.yaml against schema
+- `npm run validate:types` - Check if TypeScript types are up to date
+- `npm run validate:landing` - Validate landing page
+- `npm run generate:types` - Generate TypeScript types from schema
+- `npm run generate:landing` - Generate landing page HTML
+- `npm run sort:yaml` - Sort terms.yaml alphabetically
+- `npm run fix:tags` - Convert tags to kebab-case format
+- `npm run score` - Score the latest term
+- `npm test` - Run all validation and tests
 
 ## 📚 Governance & Policies
 

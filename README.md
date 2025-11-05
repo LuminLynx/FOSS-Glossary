@@ -49,10 +49,12 @@ Our automated pipeline ensures quality and keeps the glossary up-to-date:
          │   pr-complete.yml (PR Validation)     │
          ├───────────────────────────────────────┤
          │  1. ✓ Schema validation               │
-         │  2. ✓ Duplicate detection             │
-         │  3. ✓ Exporter schema check           │
-         │  4. ✓ Score new term (0-100)          │
-         │  5. ✓ Post comment with results       │
+         │  2. ✓ TypeScript types check          │
+         │  3. ✓ YAML sorting check              │
+         │  4. ✓ Duplicate detection             │
+         │  5. ✓ Exporter schema check           │
+         │  6. ✓ Score new term (0-100)          │
+         │  7. ✓ Post comment with results       │
          └───────────────┬───────────────────────┘
                          │
                     Pass │ Fail
@@ -107,6 +109,7 @@ Our automated pipeline ensures quality and keeps the glossary up-to-date:
 ---
 
 <!-- STATS-START -->
+
 ## 📊 Glossary Stats
 
 **Total Terms:** 28 | **Contributors:** 5 | **Terms with Humor:** 28 (100%)
@@ -118,6 +121,7 @@ Our automated pipeline ensures quality and keeps the glossary up-to-date:
 ### 🎮 Top Contributors
 
 🥇 John Portley | 🥈 copilot-swe-agent[bot] | 🥉 Joao Portela | 🌟 Aditya Kumar Singh | 🌟 Joe Port
+
 <!-- STATS-END -->
 
 ## 🎮 How to Contribute
