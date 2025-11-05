@@ -107,6 +107,7 @@ Our automated pipeline ensures quality and keeps the glossary up-to-date:
 ---
 
 <!-- STATS-START -->
+
 ## 📊 Glossary Stats
 
 **Total Terms:** 28 | **Contributors:** 5 | **Terms with Humor:** 28 (100%)
@@ -118,6 +119,7 @@ Our automated pipeline ensures quality and keeps the glossary up-to-date:
 ### 🎮 Top Contributors
 
 🥇 John Portley | 🥈 copilot-swe-agent[bot] | 🥉 Joao Portela | 🌟 Aditya Kumar Singh | 🌟 Joe Port
+
 <!-- STATS-END -->
 
 ## 🎮 How to Contribute
