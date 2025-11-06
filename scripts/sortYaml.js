@@ -2,7 +2,8 @@
 /**
  * YAML Sorter for FOSS Glossary
  *
- * This script sorts terms in terms.yaml alphabetically by slug.
+ * This script sorts terms in terms.yaml alphabetically by slug and normalizes
+ * the key order within each term object for consistency.
  * It supports two modes:
  * 1. Default mode: Reads terms.yaml, sorts it, and writes back to disk
  * 2. Check mode (--check): Validates that terms.yaml is sorted without modifying it
@@ -64,20 +65,62 @@ function loadTermsYaml() {
 }
 
 /**
- * Sort terms alphabetically by slug
+ * Canonical order for term keys (for consistent formatting)
+ */
+const TERM_KEY_ORDER = [
+  'slug',
+  'term',
+  'definition',
+  'explanation',
+  'humor',
+  'see_also',
+  'tags',
+  'aliases',
+  'controversy_level',
+];
+
+/**
+ * Sort keys in a term object according to canonical order
+ * @param {Object} term - Term object
+ * @returns {Object} Term object with sorted keys
+ */
+function sortTermKeys(term) {
+  const sorted = {};
+  
+  // Add keys in canonical order
+  for (const key of TERM_KEY_ORDER) {
+    if (key in term) {
+      sorted[key] = term[key];
+    }
+  }
+  
+  // Add any unexpected keys at the end (shouldn't happen with schema validation)
+  for (const key of Object.keys(term)) {
+    if (!(key in sorted)) {
+      sorted[key] = term[key];
+    }
+  }
+  
+  return sorted;
+}
+
+/**
+ * Sort terms alphabetically by slug and normalize key order
  * @param {Array} terms - Array of term objects
- * @returns {Array} Sorted array of terms
+ * @returns {Array} Sorted array of terms with normalized keys
  */
 function sortTerms(terms) {
   if (!Array.isArray(terms)) {
     console.error('❌ Error: terms must be an array');
     process.exit(1);
   }
-  return [...terms].sort((a, b) => {
-    const slugA = String(a.slug || '');
-    const slugB = String(b.slug || '');
-    return slugA.localeCompare(slugB);
-  });
+  return [...terms]
+    .map(sortTermKeys)
+    .sort((a, b) => {
+      const slugA = String(a.slug || '');
+      const slugB = String(b.slug || '');
+      return slugA.localeCompare(slugB);
+    });
 }
 
 /**
@@ -135,7 +178,7 @@ function main() {
     try {
       const output = headerComment + sortedYaml;
       fs.writeFileSync(TERMS_FILE, output, 'utf8');
-      console.log(`✅ YAML keys sorted successfully`);
+      console.log(`✅ YAML terms and keys sorted successfully`);
       process.exit(0);
     } catch (error) {
       console.error(`❌ Error: Failed to write ${TERMS_FILE}:`, error.message);
@@ -150,6 +193,7 @@ if (require.main === module) {
 
 module.exports = {
   sortTerms,
+  sortTermKeys,
   serializeYaml,
   loadTermsYaml,
   parseArgs,
