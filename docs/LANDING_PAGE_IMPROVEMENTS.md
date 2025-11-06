@@ -13,6 +13,7 @@ This document provides guided suggestions to improve the landing page generation
 **Location**: `scripts/generateLandingPage.js`
 
 **Suggested Fix**:
+
 ```javascript
 function validateGeneratorData() {
   // Validate terms
@@ -22,16 +23,18 @@ function validateGeneratorData() {
   }
 
   // Validate minimum term requirements
-  const invalidTerms = terms.filter(t => !isValidTerm(t));
+  const invalidTerms = terms.filter((t) => !isValidTerm(t));
   if (invalidTerms.length > 0) {
     console.error(`❌ Error: ${invalidTerms.length} invalid terms found`);
-    console.error('   Invalid terms:', invalidTerms.map(t => t.term || 'undefined').join(', '));
+    console.error('   Invalid terms:', invalidTerms.map((t) => t.term || 'undefined').join(', '));
     process.exit(1);
   }
 
   // Validate we have enough terms to display
   if (terms.length < 6) {
-    console.warn(`⚠️  Warning: Only ${terms.length} terms available. Need at least 6 for optimal display.`);
+    console.warn(
+      `⚠️  Warning: Only ${terms.length} terms available. Need at least 6 for optimal display.`
+    );
   }
 
   console.log(`✅ Data validation passed: ${terms.length} valid terms`);
@@ -40,7 +43,7 @@ function validateGeneratorData() {
 // Call in main() after initializeData()
 function main() {
   initializeData();
-  validateGeneratorData();  // Add this line
+  validateGeneratorData(); // Add this line
   const html = generateHTML(stats, artifactVersion);
   writeOutputFile(html);
 }
@@ -61,6 +64,7 @@ function main() {
 **Location**: `scripts/generateLandingPage.js`
 
 **Problematic Code**:
+
 ```javascript
 // Module-level variables
 let artifactVersion;
@@ -68,18 +72,19 @@ let terms;
 let stats;
 
 function prepareTermCardsData(count = 6) {
-  const validTerms = terms.filter(isValidTerm);  // Hidden dependency
+  const validTerms = terms.filter(isValidTerm); // Hidden dependency
   // ...
 }
 ```
 
 **Suggested Fix**:
+
 ```javascript
 // Option 1: Pass data explicitly
 function prepareTermCardsData(terms, count = 6) {
   const validTerms = terms.filter(isValidTerm);
   const displayTerms = validTerms.slice(-count).reverse();
-  return displayTerms.map(term => prepareTermCardData(term));
+  return displayTerms.map((term) => prepareTermCardData(term));
 }
 
 // Update call site in generateHTML()
@@ -87,7 +92,7 @@ function generateHTML(terms, stats, artifactVersion) {
   const template = loadTemplate();
   const templateData = {
     // ...
-    termCards: prepareTermCardsData(terms, 6),  // Pass terms explicitly
+    termCards: prepareTermCardsData(terms, 6), // Pass terms explicitly
     // ...
   };
   return template(templateData);
@@ -124,6 +129,7 @@ function prepareTermCardsData(context, count = 6) {
 **Location**: `scripts/generateLandingPage.js` - `writeOutputFile()` function
 
 **Suggested Fix**:
+
 ```javascript
 function writeOutputFile(html) {
   try {
@@ -145,15 +151,18 @@ function writeOutputFile(html) {
     const fileSize = Buffer.byteLength(html, 'utf8');
     const minExpectedSize = 10000; // 10KB minimum
     if (fileSize < minExpectedSize) {
-      throw new Error(`Generated file is too small (${fileSize} bytes). Expected at least ${minExpectedSize} bytes.`);
+      throw new Error(
+        `Generated file is too small (${fileSize} bytes). Expected at least ${minExpectedSize} bytes.`
+      );
     }
 
     // Success - log statistics
     console.log(`✅ Generated landing page with ${stats.totalTerms} terms!`);
-    console.log(`📊 Stats: ${stats.termsWithHumor}/${stats.totalTerms} terms have humor (${Math.round((stats.termsWithHumor / stats.totalTerms) * 100)}%)`);
+    console.log(
+      `📊 Stats: ${stats.termsWithHumor}/${stats.totalTerms} terms have humor (${Math.round((stats.termsWithHumor / stats.totalTerms) * 100)}%)`
+    );
     console.log(`🆕 Recent: ${stats.recentTerms.join(', ')}`);
     console.log(`📦 File size: ${(fileSize / 1024).toFixed(2)} KB`);
-
   } catch (error) {
     console.error('❌ Error writing landing page file:', error.message);
     process.exit(1);
@@ -176,6 +185,7 @@ function writeOutputFile(html) {
 **Current Issue**: Some errors don't provide enough context for debugging.
 
 **Suggested Fix**:
+
 ```javascript
 function loadTemplate() {
   try {
@@ -207,24 +217,25 @@ function loadTemplate() {
 **Current Issue**: Some functions lack comprehensive documentation.
 
 **Suggested Fix**:
+
 ```javascript
 /**
  * Validate if a term is displayable on the landing page
- * 
+ *
  * A valid term must have:
  * - A non-empty term name (string)
  * - A non-empty definition (string)
- * 
+ *
  * Optional fields (humor, tags, explanation) are not required for validity
  * but enhance the term's display and score.
- * 
+ *
  * @param {Object} term - Term object to validate
  * @param {string} term.term - Term name/title
  * @param {string} term.definition - Term definition
  * @param {string} [term.humor] - Optional humorous description
  * @param {string[]} [term.tags] - Optional category tags
  * @returns {boolean} True if term has all required fields and they are non-empty
- * 
+ *
  * @example
  * isValidTerm({ term: 'Git', definition: 'Version control system' }) // true
  * isValidTerm({ term: '', definition: 'Empty name' }) // false
@@ -250,6 +261,7 @@ function isValidTerm(term) {
 **Current Issue**: Numbers like `6` (term cards) are hardcoded.
 
 **Suggested Fix**:
+
 ```javascript
 // At the top of the file, add constants
 const CONFIG = {
@@ -306,6 +318,7 @@ function main() {
 ```
 
 **Usage**:
+
 ```bash
 # Normal mode
 node scripts/generateLandingPage.js
@@ -336,6 +349,7 @@ function writeOutputFile(html) {
 ```
 
 **Usage**:
+
 ```bash
 # Test generation without writing
 node scripts/generateLandingPage.js --dry-run
@@ -366,11 +380,13 @@ describe('generateLandingPage', () => {
   });
 
   it('should prepare correct number of term cards', () => {
-    const mockTerms = Array(10).fill(null).map((_, i) => ({
-      term: `Term ${i}`,
-      definition: `Definition ${i}`,
-    }));
-    
+    const mockTerms = Array(10)
+      .fill(null)
+      .map((_, i) => ({
+        term: `Term ${i}`,
+        definition: `Definition ${i}`,
+      }));
+
     const cards = prepareTermCardsData(mockTerms, 6);
     assert.strictEqual(cards.length, 6);
   });
@@ -398,9 +414,9 @@ const { execSync } = require('child_process');
 describe('Landing Page Integration', () => {
   it('should generate valid HTML', () => {
     // Generate landing page
-    execSync('node scripts/generateLandingPage.js', { 
+    execSync('node scripts/generateLandingPage.js', {
       stdio: 'inherit',
-      cwd: process.cwd() 
+      cwd: process.cwd(),
     });
 
     // Verify file exists
@@ -416,7 +432,7 @@ describe('Landing Page Integration', () => {
   it('should pass validation after generation', () => {
     const result = execSync('node scripts/validateLandingPage.js', {
       encoding: 'utf8',
-      cwd: process.cwd()
+      cwd: process.cwd(),
     });
     assert(result.includes('✅ Landing page is in sync'));
   });

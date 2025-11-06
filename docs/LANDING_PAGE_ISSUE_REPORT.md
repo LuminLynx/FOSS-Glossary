@@ -65,6 +65,7 @@ The landing page HTML file contained **stale test data** from development/testin
 The `generateLandingPage.js` script has an architectural inconsistency:
 
 **Current State:**
+
 ```javascript
 // Some functions receive data as parameters
 function generateHTML(stats, artifactVersion) { ... }
@@ -84,6 +85,7 @@ function prepareTermCardsData(count = 6) {
 
 **Recommendation**:
 Refactor to pass data explicitly:
+
 ```javascript
 function prepareTermCardsData(terms, count = 6) {
   const validTerms = terms.filter(isValidTerm);
@@ -91,7 +93,7 @@ function prepareTermCardsData(terms, count = 6) {
 }
 
 // Then call it as:
-termCards: prepareTermCardsData(terms, 6)
+termCards: prepareTermCardsData(terms, 6);
 ```
 
 This change would:
@@ -116,6 +118,7 @@ This change would:
 #### 1. Git Hook Enhancement
 
 Add to `.husky/pre-commit`:
+
 ```bash
 # Validate landing page is in sync with terms.yaml
 if git diff --cached --name-only | grep -q "docs/index.html"; then
@@ -143,6 +146,7 @@ Update `docs/landing-page-maintenance.md` to include:
 #### 4. Automated Regeneration
 
 Consider adding a git hook that automatically regenerates the landing page when `terms.yaml` changes:
+
 ```bash
 # .husky/pre-commit addition
 if git diff --cached --name-only | grep -q "terms.yaml"; then
