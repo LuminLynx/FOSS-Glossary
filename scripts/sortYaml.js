@@ -86,21 +86,21 @@ const TERM_KEY_ORDER = [
  */
 function sortTermKeys(term) {
   const sorted = {};
-  
+
   // Add keys in canonical order
   for (const key of TERM_KEY_ORDER) {
     if (key in term) {
       sorted[key] = term[key];
     }
   }
-  
+
   // Add any unexpected keys at the end (shouldn't happen with schema validation)
   for (const key of Object.keys(term)) {
     if (!(key in sorted)) {
       sorted[key] = term[key];
     }
   }
-  
+
   return sorted;
 }
 
@@ -114,13 +114,11 @@ function sortTerms(terms) {
     console.error('❌ Error: terms must be an array');
     process.exit(1);
   }
-  return [...terms]
-    .map(sortTermKeys)
-    .sort((a, b) => {
-      const slugA = String(a.slug || '');
-      const slugB = String(b.slug || '');
-      return slugA.localeCompare(slugB);
-    });
+  return [...terms].map(sortTermKeys).sort((a, b) => {
+    const slugA = String(a.slug || '');
+    const slugB = String(b.slug || '');
+    return slugA.localeCompare(slugB);
+  });
 }
 
 /**
