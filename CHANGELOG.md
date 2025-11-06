@@ -156,7 +156,7 @@ N/A - Initial release
 🥈 John Portley  
 🥉 Joao Portela  
 🌟 Aditya Kumar Singh  
-🌟 Joe Port  
+🌟 Joe Port
 
 Special mention: **@Axestein** for the first community contribution!
 

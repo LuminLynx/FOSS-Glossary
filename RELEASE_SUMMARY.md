@@ -64,27 +64,32 @@ The content below is ready to paste into GitHub Releases. It meets all acceptanc
 ## Internals
 
 **Data & Validation:**
+
 - JSON Schema v7 validation with duplicate detection (case/punctuation-insensitive)
 - 269 comprehensive tests covering edge cases and full pipeline integration
 - TypeScript type generation from schema
 
 **Automation & Scoring:**
+
 - Multi-dimensional scoring: humor (30pt), explanation (20pt), cross-refs (20pt), definition (20pt), tags (10pt)
 - Automated stats updates and contributor leaderboard
 - PR validation with instant feedback comments
 
 **Site & Frontend:**
+
 - Handlebars-based landing page generator
 - Responsive design with dark/light themes
 - PWA at `/docs/pwa/` with service worker and offline caching
 - SEO optimized with Open Graph/Twitter Card metadata
 
 **CI/Publishing:**
+
 - PR workflow: validation → TypeScript check → YAML sort check → scoring → comment
 - Post-merge: landing page regeneration → terms.json export → Pages deployment
 - Additional workflows: stats updates, issue automation, contributor welcome
 
 **Guidelines:**
+
 - CONTRIBUTING.md with clear scoring explanation
 - CODE_OF_CONDUCT.md for community standards
 - AGENTS.md automation playbook (100% compliant)
