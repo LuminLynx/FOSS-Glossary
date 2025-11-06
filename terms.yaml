@@ -89,7 +89,7 @@ terms:
     term: Dependency Hell
     definition: A situation where software dependencies become so tangled, outdated, or incompatible that progress grinds to a halt because every attempted upgrade introduces new conflicts.
     explanation: You try to install a package, but it needs a newer version of another package, which conflicts with a third package, which depends on a deprecated library that only works on an older OS you no longer have. Every fix breaks something else.
-    humor: 'Like a soap opera for code: everyone’s connected, nobody’s happy, and you’re stuck watching the drama unfold while your build fails.'
+    humor: "Like a soap opera for code: everyone’s connected, nobody’s happy, and you’re stuck watching the drama unfold while your build fails."
     see_also:
       - Version Pinning
       - DLL Hell
@@ -102,7 +102,7 @@ terms:
   - slug: fork
     term: Fork
     definition: When developers copy an open-source project’s codebase to start their own version—sometimes to innovate, sometimes to escape endless mailing list debates and governance stalemates.
-    humor: 'Warning: excessive forking may lead to family drama in the GitHub tree'
+    humor: "Warning: excessive forking may lead to family drama in the GitHub tree"
     tags:
       - foss
       - open-source
@@ -262,7 +262,7 @@ terms:
   - slug: ptw
     term: PTW
     definition: Patches Welcome — a standard open-source response inviting contributors to submit code if they want a change, reminding requesters that collaboration beats complaints.
-    explanation: 'A common open‑source response meaning: if you want a feature or fix, contribute the code yourself.'
+    explanation: "A common open‑source response meaning: if you want a feature or fix, contribute the code yourself."
     humor: "The polite way of saying: 'Yes, that’s a problem. No, I’m not fixing it for you.'"
     see_also:
       - RTFS
@@ -323,7 +323,7 @@ terms:
   - slug: works-on-my-machine
     term: Works on My Machine
     definition: The developer's eternal defense when code fails in production, implying the environment is to blame and quietly shifting responsibility back to operations.
-    humor: 'Certification program coming soon: WOMM Certified Developer™'
+    humor: "Certification program coming soon: WOMM Certified Developer™"
     tags:
       - debugging
       - classic
