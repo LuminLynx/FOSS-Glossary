@@ -14,6 +14,7 @@
     "export:new": "node scripts/exportTerms.js --only-if-new",
     "sort:yaml": "node scripts/sortYaml.js",
     "fix:tags": "node scripts/fixTags.js",
+    "release:create": "node scripts/createRelease.js",
     "test": "npm run validate && npm run score && node --test",
     "lint": "npm run lint:prettier && npm run lint:markdown && npm run lint:spell",
     "lint:prettier": "prettier --check .",

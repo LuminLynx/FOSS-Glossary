@@ -33,3 +33,5 @@ assets/demo.html
 # File Structure
 File Structure
 
+# Release info
+.release-info.json

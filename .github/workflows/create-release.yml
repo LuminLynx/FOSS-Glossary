@@ -1,0 +1,84 @@
+name: Create Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag (e.g., v1.0.0)'
+        required: true
+        type: string
+      draft:
+        description: 'Create as draft'
+        required: false
+        type: boolean
+        default: false
+      prerelease:
+        description: 'Mark as prerelease'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify tag exists
+        env:
+          TAG: ${{ inputs.tag }}
+        run: |
+          # Validate tag format
+          if ! echo "$TAG" | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?$'; then
+            echo "❌ Error: Tag must follow semantic versioning (e.g., v1.0.0)"
+            exit 1
+          fi
+
+          # Check if tag exists
+          if ! git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "❌ Error: Tag $TAG does not exist"
+            echo "Please create the tag first:"
+            echo "  git tag $TAG"
+            echo "  git push origin $TAG"
+            exit 1
+          fi
+          echo "✅ Tag $TAG exists"
+
+      - name: Read release body
+        id: release-body
+        env:
+          TAG: ${{ inputs.tag }}
+        run: |
+          RELEASE_FILE="RELEASE_BODY_${TAG}.md"
+          if [ ! -f "$RELEASE_FILE" ]; then
+            echo "❌ Error: $RELEASE_FILE not found"
+            exit 1
+          fi
+
+          # Read file and set as output (handling multiline)
+          {
+            echo 'BODY<<EOF'
+            cat "$RELEASE_FILE"
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.tag }}
+          name: FOSS Glossary ${{ inputs.tag }}
+          body: ${{ steps.release-body.outputs.BODY }}
+          draft: ${{ inputs.draft }}
+          prerelease: ${{ inputs.prerelease }}
+
+      - name: Release created
+        env:
+          TAG: ${{ inputs.tag }}
+          REPO: ${{ github.repository }}
+        run: |
+          echo "✅ Release $TAG created successfully!"
+          echo "View it at: https://github.com/$REPO/releases/tag/$TAG"
