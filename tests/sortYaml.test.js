@@ -162,3 +162,76 @@ test('sortYaml: handles strings with apostrophes correctly', () => {
     fs.rmSync(tmpDir, { recursive: true });
   }
 });
+
+test('sortYaml: normalizes key order within terms', () => {
+  const unsortedKeys = `terms:
+  - tags:
+      - test
+    humor: Funny
+    slug: test-term
+    definition: This is a test term with at least eighty characters to meet the minimum length requirement.
+    term: Test Term
+    explanation: Extra info
+`;
+
+  const tmpDir = path.join(os.tmpdir(), `test-sort-keys-${Date.now()}`);
+  if (fs.existsSync(tmpDir)) {
+    fs.rmSync(tmpDir, { recursive: true });
+  }
+  fs.mkdirSync(tmpDir);
+  const termsFile = path.join(tmpDir, 'terms.yaml');
+  fs.writeFileSync(termsFile, unsortedKeys, 'utf8');
+
+  try {
+    execSync(`node ${SCRIPT_PATH}`, { cwd: tmpDir, encoding: 'utf8' });
+    const sorted = fs.readFileSync(termsFile, 'utf8');
+    
+    // Verify canonical key order: slug, term, definition, explanation, humor, see_also, tags, aliases, controversy_level
+    const lines = sorted.split('\n');
+    const slugIdx = lines.findIndex((l) => l.trim().startsWith('slug:'));
+    const termIdx = lines.findIndex((l) => l.trim().startsWith('term:'));
+    const definitionIdx = lines.findIndex((l) => l.trim().startsWith('definition:'));
+    const explanationIdx = lines.findIndex((l) => l.trim().startsWith('explanation:'));
+    const humorIdx = lines.findIndex((l) => l.trim().startsWith('humor:'));
+    const tagsIdx = lines.findIndex((l) => l.trim().startsWith('tags:'));
+
+    assert.ok(slugIdx < termIdx, 'slug should come before term');
+    assert.ok(termIdx < definitionIdx, 'term should come before definition');
+    assert.ok(definitionIdx < explanationIdx, 'definition should come before explanation');
+    assert.ok(explanationIdx < humorIdx, 'explanation should come before humor');
+    assert.ok(humorIdx < tagsIdx, 'humor should come before tags');
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true });
+  }
+});
+
+test('sortYaml: check mode detects unsorted keys', () => {
+  const unsortedKeys = `terms:
+  - definition: This is a test term with at least eighty characters to meet the minimum length requirement.
+    slug: test-term
+    term: Test Term
+`;
+
+  const tmpDir = path.join(os.tmpdir(), `test-check-keys-${Date.now()}`);
+  if (fs.existsSync(tmpDir)) {
+    fs.rmSync(tmpDir, { recursive: true });
+  }
+  fs.mkdirSync(tmpDir);
+  const termsFile = path.join(tmpDir, 'terms.yaml');
+  fs.writeFileSync(termsFile, unsortedKeys, 'utf8');
+
+  try {
+    // Run check mode - should fail because keys are not in canonical order
+    execSync(`node ${SCRIPT_PATH} --check`, { cwd: tmpDir, encoding: 'utf8' });
+    assert.fail('Check mode should have failed for unsorted keys');
+  } catch (error) {
+    assert.strictEqual(error.status, 1, 'Should exit with code 1');
+    const output = error.stdout || error.stderr || '';
+    assert.ok(
+      output.includes('not sorted') || output.includes('Run: npm run sort:yaml'),
+      'Should indicate YAML is not sorted'
+    );
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true });
+  }
+});
