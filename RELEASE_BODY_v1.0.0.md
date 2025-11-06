@@ -1,51 +1,40 @@
-# FOSS Glossary v1.0.0 - First Stable Release 🎉
+# FOSS Glossary v1.0.0 🎉
 
-**A community-driven, gamified glossary of FOSS terms with humor and honest truths about open source culture.**
+**A community-driven, gamified glossary of FOSS terms with humor and honest truths.**
 
 ## What's New
 
-- **28 curated terms** with definitions, humor, explanations, and cross-references
-- **Gamified scoring system**: Contributors earn 0-100 points and achievement badges
-- **Progressive Web App** with offline support and installable on all platforms
-- **Automated CI/CD**: Instant PR validation, scoring, and GitHub Pages deployment
-- **Developer API**: JSON endpoint at `/terms.json` for integrations
+- 28 curated terms with definitions, humor, and cross-references
+- Gamified scoring (0-100 points) and achievement badges
+- Progressive Web App with offline support, installable on all platforms
+- Automated CI/CD: instant PR validation, scoring, GitHub Pages deployment
+- Developer API: `/terms.json` endpoint
 
 ## Internals
 
-**Data & Validation:**
+**Data & Validation:** JSON Schema v7 with duplicate detection, 271 tests, TypeScript type generation from [schema.json](https://github.com/LuminLynx/FOSS-Glossary/blob/main/schema.json) via [validateTerms.js](https://github.com/LuminLynx/FOSS-Glossary/blob/main/scripts/validateTerms.js).
 
-- JSON Schema v7 validation with duplicate detection (case/punctuation-insensitive)
-- 269 comprehensive tests covering edge cases and full pipeline integration
-- TypeScript type generation from schema
+**Scoring & Automation:** Multi-dimensional scoring (humor 30pt, explanation 20pt, cross-refs 20pt, definition 20pt, tags 10pt) via [quickScore.js](https://github.com/LuminLynx/FOSS-Glossary/blob/main/scripts/quickScore.js). Automated stats updates and contributor leaderboard.
 
-**Automation & Scoring:**
+**Site & Frontend:** Handlebars-based [landing page generator](https://github.com/LuminLynx/FOSS-Glossary/blob/main/scripts/generateLandingPage.js), responsive design with dark/light themes, PWA with service worker ([index.html](https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/index.html), [404.html](https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/404.html)).
 
-- Multi-dimensional scoring: humor (30pt), explanation (20pt), cross-refs (20pt), definition (20pt), tags (10pt)
-- Automated stats updates and contributor leaderboard
-- PR validation with instant feedback comments
+**CI/Publishing:** PR workflow (validation → TypeScript → YAML → scoring → comment). Post-merge: landing page rebuild → terms.json export → Pages deployment. See [WORKFLOW_DOCUMENTATION.md](https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/WORKFLOW_DOCUMENTATION.md).
 
-**Site & Frontend:**
+**Guidelines:** [CONTRIBUTING.md](https://github.com/LuminLynx/FOSS-Glossary/blob/main/CONTRIBUTING.md), [CODE_OF_CONDUCT.md](https://github.com/LuminLynx/FOSS-Glossary/blob/main/CODE_OF_CONDUCT.md), [AGENTS.md](https://github.com/LuminLynx/FOSS-Glossary/blob/main/AGENTS.md) automation playbook. See also [slug-policy.md](https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/slug-policy.md), [deletion-policy.md](https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/deletion-policy.md).
 
-- Handlebars-based landing page generator
-- Responsive design with dark/light themes
-- PWA at `/docs/pwa/` with service worker and offline caching
-- SEO optimized with Open Graph/Twitter Card metadata
+**Current Stats:** 28 terms, 5 contributors, 100% humor rate. Champion: "License Proliferation" (98/100).
 
-**CI/Publishing:**
+## Documentation
 
-- PR workflow: validation → TypeScript check → YAML sort check → scoring → comment
-- Post-merge: landing page regeneration → terms.json export → Pages deployment
-- Additional workflows: stats updates, issue automation, contributor welcome
+**Overview:** [README.md](https://github.com/LuminLynx/FOSS-Glossary/blob/main/README.md) · **Full Docs:** See links above in Internals section
 
-**Guidelines:**
+## Thanks
 
-- CONTRIBUTING.md with clear scoring explanation
-- CODE_OF_CONDUCT.md for community standards
-- AGENTS.md automation playbook (100% compliant)
-- RUNBOOK.md for operations troubleshooting
+🥇 copilot-swe-agent[bot] | 🥈 John Portley | 🥉 Joao Portela | 🌟 Aditya Kumar Singh | 🌟 Joe Port
 
-**Current Index:** 28 terms, 5 contributors, 100% humor rate. Champion: "License Proliferation" (98/100).
+Special mention: **@Axestein** for the first community contribution!
 
 ---
 
+**Compare:** [v0.1.0-mvp...v1.0.0](https://github.com/LuminLynx/FOSS-Glossary/compare/v0.1.0-mvp...v1.0.0) (when tag is created)  
 **Deploy:** [Landing Page](https://luminlynx.github.io/FOSS-Glossary/) | [PWA](https://luminlynx.github.io/FOSS-Glossary/pwa/) | [API](https://luminlynx.github.io/FOSS-Glossary/terms.json)
