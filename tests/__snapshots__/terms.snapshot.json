@@ -15,7 +15,7 @@
     "definition": "The tendency to accumulate large amounts of code, libraries, or tools—often unused—under the belief they might be useful someday, even when they add clutter and maintenance overhead.",
     "explanation": "You clone dozens of GitHub repos, bookmark obscure CLI tools, and write half-finished scripts for problems you haven’t encountered yet. Your project folder resembles a digital attic more than a workspace.",
     "humor": "Like stocking up on canned beans for a zombie apocalypse that never comes—except the beans are Python scripts and the zombies are edge cases.",
-    "tags": ["developer-habits", "tooling", "overengineering", "FOMO"],
+    "tags": ["developer-habits", "tooling", "overengineering", "fomo"],
     "see_also": ["Overengineering", "Not Invented Here", "Premature Optimization"],
     "controversy_level": "low"
   },
@@ -25,7 +25,7 @@
     "definition": "The gradual decline in a codebase’s quality and maintainability over time, even without active changes, as dependencies, environments, and expectations move on.",
     "explanation": "As dependencies evolve, environments shift, and original authors move on, code that once worked perfectly can become brittle, outdated, or incompatible. Left unchecked, code rot makes systems harder to maintain, more bug-prone, and resistant to new features.",
     "humor": "Like leaving a sandwich in the fridge for six months—technically it’s still there, but you probably don’t want to touch it.",
-    "tags": [" maintenance", "technical-debt", "software-aging", "fragility"],
+    "tags": ["maintenance", "technical-debt", "software-aging", "fragility"],
     "see_also": ["Bit Rot", "Technical Debt", "Legacy Code"],
     "controversy_level": "low"
   },
@@ -44,7 +44,7 @@
     "definition": "A licensing principle that requires derivative works to be distributed under the same license as the original so downstream users retain the same freedoms to modify and share.",
     "explanation": "Coined by Richard Stallman, 'copyleft' flips the idea of copyright on its head. Instead of restricting sharing, it ensures that freedoms to use, modify, and redistribute software are preserved in all future versions. The GNU General Public License (GPL) is the most famous example of a copyleft license. This principle is central to many FOSS projects because it guarantees that improvements remain free and open for the community.",
     "humor": "Think of it as copyright’s rebellious cousin who insists on sharing the family recipes with everyone at the potluck.",
-    "tags": ["licensing", "FOSS", "GPL", "freedom"],
+    "tags": ["licensing", "foss", "gpl", "freedom"],
     "see_also": ["Permissive License", "GNU General Public License", "Free Software"],
     "controversy_level": "high"
   },
@@ -72,7 +72,7 @@
     "term": "Fork",
     "definition": "When developers copy an open-source project’s codebase to start their own version—sometimes to innovate, sometimes to escape endless mailing list debates and governance stalemates.",
     "humor": "Warning: excessive forking may lead to family drama in the GitHub tree",
-    "tags": ["FOSS", "open-source", "git", "community"]
+    "tags": ["foss", "open-source", "git", "community"]
   },
   {
     "slug": "forkprint",
@@ -98,7 +98,7 @@
     "definition": "The art of rebranding a bug so profound and inexplicable that fixing it would break the universe, so teams frame it as intentional behavior.",
     "explanation": "When a bug becomes so deeply integrated into user workflows that fixing it would cause more problems than it solves, so it gets documented as intentional behavior",
     "humor": "Not a bug, it's a surprise mechanic for enhanced user engagement",
-    "tags": ["classic", "excuse", "documentation", "meme", "FOSS"],
+    "tags": ["classic", "excuse", "documentation", "meme", "foss"],
     "see_also": ["LGTM", "Fork"]
   },
   {
@@ -107,7 +107,7 @@
     "definition": "Looks Good To Me — the classic approval signal in code reviews indicating the reviewer saw nothing alarming enough to block the change.",
     "explanation": "The standard approval comment in code reviews, indicating the reviewer has no major objections to the changes",
     "humor": "Translation: I skimmed this for 30 seconds and didn't see anything on fire. Ship it!",
-    "tags": ["code-review", "approval", "acronym", "FOSS"],
+    "tags": ["code-review", "approval", "acronym", "foss"],
     "see_also": ["It's a Feature", "Works On My Machine"]
   },
   {
@@ -183,7 +183,7 @@
     "definition": "Patches Welcome — a standard open-source response inviting contributors to submit code if they want a change, reminding requesters that collaboration beats complaints.",
     "explanation": "A common open‑source response meaning: if you want a feature or fix, contribute the code yourself.",
     "humor": "The polite way of saying: 'Yes, that’s a problem. No, I’m not fixing it for you.'",
-    "tags": ["FOSS", "contribution", "community", "development"],
+    "tags": ["foss", "contribution", "community", "development"],
     "see_also": ["RTFS", "WONTFIX", "scratch-your-own-itch"]
   },
   {
@@ -192,7 +192,7 @@
     "definition": "The overwhelming flood of open pull requests that threatens to drown maintainers, creating backlog, merge conflicts, and frustrated contributors.",
     "explanation": "Occurs when contributors open more pull requests than the project team can reasonably review or merge, leading to backlog, merge conflicts, and contributor frustration",
     "humor": "Like trying to bail out a sinking ship with a coffee mug during a thunderstorm",
-    "tags": ["pull requests", "maintenance", "overload", "anti-pattern"],
+    "tags": ["pull-requests", "maintenance", "overload", "anti-pattern"],
     "see_also": ["Issue Avalanche", "Yakstack", "Commitfog"]
   },
   {
@@ -217,7 +217,7 @@
     "definition": "Will Not Fix — an issue tracker resolution meaning the reported bug or feature request will remain unresolved, often due to scope, philosophy, or maintenance trade-offs.",
     "explanation": "A resolution tag in issue trackers indicating that a reported bug or feature request will not be addressed, often due to philosophy, scope, or maintainability concerns.",
     "humor": "The open‑source equivalent of 'working as intended' — even when it clearly isn’t.",
-    "tags": ["FOSS", "issue-tracking", "development", "community"],
+    "tags": ["foss", "issue-tracking", "development", "community"],
     "see_also": ["PTW", "RTFS", "scratch-your-own-itch"]
   },
   {
