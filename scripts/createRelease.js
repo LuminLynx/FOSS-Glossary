@@ -33,6 +33,14 @@ async function createRelease() {
     process.exit(1);
   }
 
+  // Validate tag format (semantic versioning)
+  const tagPattern = /^v[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?$/;
+  if (!tagPattern.test(tag)) {
+    console.error('❌ Error: Tag must follow semantic versioning (e.g., v1.0.0)');
+    console.error(`   Received: ${tag}`);
+    process.exit(1);
+  }
+
   // Check for GitHub token
   const token = process.env.GITHUB_TOKEN;
   if (!token) {
@@ -41,8 +49,9 @@ async function createRelease() {
     process.exit(1);
   }
 
-  // Read release body
-  const releaseBodyPath = path.join(__dirname, '..', `RELEASE_BODY_${tag}.md`);
+  // Read release body with sanitized path
+  const sanitizedTag = tag.replace(/[^a-zA-Z0-9.-]/g, '');
+  const releaseBodyPath = path.join(__dirname, '..', `RELEASE_BODY_${sanitizedTag}.md`);
   let releaseBody;
 
   try {
@@ -56,8 +65,25 @@ async function createRelease() {
   // Initialize Octokit
   const octokit = new Octokit({ auth: token });
 
-  // Get repository information
-  const [owner, repo] = ['LuminLynx', 'FOSS-Glossary'];
+  // Get repository information from package.json or environment
+  const packageJson = require(path.join(__dirname, '..', 'package.json'));
+  let owner, repo;
+
+  if (packageJson.repository && packageJson.repository.url) {
+    // Extract from package.json repository URL
+    const match = packageJson.repository.url.match(/github\.com[/:]([\w-]+)\/([\w-]+)/);
+    if (match) {
+      [, owner, repo] = match;
+      // Remove .git suffix if present
+      repo = repo.replace(/\.git$/, '');
+    }
+  }
+
+  // Fallback to environment or hardcoded values
+  if (!owner || !repo) {
+    owner = process.env.GITHUB_REPOSITORY_OWNER || 'LuminLynx';
+    repo = process.env.GITHUB_REPOSITORY_NAME || 'FOSS-Glossary';
+  }
 
   console.log(`\n📦 Creating GitHub Release`);
   console.log(`   Repository: ${owner}/${repo}`);
