@@ -1,0 +1,72 @@
+name: Create Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag (e.g., v1.0.0)'
+        required: true
+        type: string
+      draft:
+        description: 'Create as draft'
+        required: false
+        type: boolean
+        default: false
+      prerelease:
+        description: 'Mark as prerelease'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify tag exists
+        run: |
+          if ! git rev-parse "${{ inputs.tag }}" >/dev/null 2>&1; then
+            echo "❌ Error: Tag ${{ inputs.tag }} does not exist"
+            echo "Please create the tag first:"
+            echo "  git tag ${{ inputs.tag }}"
+            echo "  git push origin ${{ inputs.tag }}"
+            exit 1
+          fi
+          echo "✅ Tag ${{ inputs.tag }} exists"
+
+      - name: Read release body
+        id: release-body
+        run: |
+          RELEASE_FILE="RELEASE_BODY_${{ inputs.tag }}.md"
+          if [ ! -f "$RELEASE_FILE" ]; then
+            echo "❌ Error: $RELEASE_FILE not found"
+            exit 1
+          fi
+
+          # Read file and set as output (handling multiline)
+          {
+            echo 'BODY<<EOF'
+            cat "$RELEASE_FILE"
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ inputs.tag }}
+          release_name: FOSS Glossary ${{ inputs.tag }}
+          body: ${{ steps.release-body.outputs.BODY }}
+          draft: ${{ inputs.draft }}
+          prerelease: ${{ inputs.prerelease }}
+
+      - name: Release created
+        run: |
+          echo "✅ Release ${{ inputs.tag }} created successfully!"
+          echo "View it at: https://github.com/${{ github.repository }}/releases/tag/${{ inputs.tag }}"
