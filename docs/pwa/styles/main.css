@@ -775,6 +775,41 @@ body {
   font-size: 0.875rem;
 }
 
+.footer-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.footer-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  background: var(--accent-color);
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px var(--shadow);
+}
+
+.footer-btn:hover {
+  background: var(--accent-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px var(--shadow);
+}
+
+.footer-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px var(--shadow);
+}
+
 .footer-content {
   display: flex;
   align-items: center;
@@ -830,6 +865,17 @@ body {
   .update-btn {
     padding: 0.4rem 1rem;
     font-size: 0.875rem;
+  }
+
+  .footer-buttons {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.75rem;
+  }
+
+  .footer-btn {
+    width: 100%;
+    max-width: 300px;
   }
 
   .footer-content {
