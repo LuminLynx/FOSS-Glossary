@@ -178,7 +178,7 @@ function main() {
     try {
       const output = headerComment + sortedYaml;
       fs.writeFileSync(TERMS_FILE, output, 'utf8');
-      console.log(`✅ YAML keys sorted successfully`);
+      console.log(`✅ YAML terms and keys sorted successfully`);
       process.exit(0);
     } catch (error) {
       console.error(`❌ Error: Failed to write ${TERMS_FILE}:`, error.message);
