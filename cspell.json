@@ -85,7 +85,10 @@
     "rsum",
     "Ελληνικά",
     "pipefail",
-    "PIPESTATUS"
+    "PIPESTATUS",
+    "didn",
+    "typegen",
+    "kebab"
   ],
   "ignorePaths": [
     "node_modules/**",
