@@ -153,7 +153,7 @@ If the release script fails:
 
 ### Features
 
-- 28 curated FOSS terms with definitions, humor, and cross-references
+- 28 curated FOSS terms (as of v1.0.0) with definitions, humor, and cross-references
 - Gamified scoring system (0-100 points with achievement badges)
 - Progressive Web App with offline support
 - Automated CI/CD pipeline with instant PR validation

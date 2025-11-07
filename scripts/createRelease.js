@@ -109,7 +109,7 @@ async function createRelease() {
 
     // Save release info
     const releaseInfo = {
-      tag: tag,
+      tag,
       url: response.data.html_url,
       id: response.data.id,
       created_at: response.data.created_at,
