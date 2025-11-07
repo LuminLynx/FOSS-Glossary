@@ -27,6 +27,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history including tags
 
       - name: Verify tag exists
         env:
@@ -53,7 +55,13 @@ jobs:
         env:
           TAG: ${{ inputs.tag }}
         run: |
-          RELEASE_FILE="RELEASE_BODY_${TAG}.md"
+          # Sanitize TAG to prevent path traversal
+          SAFE_TAG=$(echo "$TAG" | grep -oE '^v[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?$')
+          if [ -z "$SAFE_TAG" ]; then
+            echo "❌ Error: Invalid tag format after sanitization"
+            exit 1
+          fi
+          RELEASE_FILE="RELEASE_BODY_${SAFE_TAG}.md"
           if [ ! -f "$RELEASE_FILE" ]; then
             echo "❌ Error: $RELEASE_FILE not found"
             exit 1
