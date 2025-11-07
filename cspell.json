@@ -89,7 +89,9 @@
     "didn",
     "typegen",
     "kebab",
-    "softprops"
+    "softprops",
+    "rgba",
+    "minmax"
   ],
   "ignorePaths": [
     "node_modules/**",
