@@ -91,7 +91,8 @@
     "kebab",
     "softprops",
     "rgba",
-    "minmax"
+    "minmax",
+    "blockquotes"
   ],
   "ignorePaths": [
     "node_modules/**",
