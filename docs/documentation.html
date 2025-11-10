@@ -261,6 +261,55 @@
         }
       }
 
+      .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+        margin: 2rem 0;
+        flex-wrap: wrap;
+      }
+
+      .pagination-button {
+        background: rgba(0, 212, 228, 0.2);
+        color: #00d4e4;
+        padding: 0.5rem 1rem;
+        border: 2px solid #00d4e4;
+        border-radius: 25px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .pagination-button:hover:not(:disabled) {
+        background: rgba(0, 212, 228, 0.4);
+        transform: translateY(-2px);
+      }
+
+      .pagination-button:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+
+      .pagination-button.active {
+        background: #00d4e4;
+        color: #0d1f2d;
+      }
+
+      .page-info {
+        color: #00d4e4;
+        font-weight: bold;
+      }
+
+      .loading {
+        text-align: center;
+        padding: 2rem;
+        color: #00d4e4;
+        font-size: 1.2rem;
+      }
+
       @media (max-width: 768px) {
         h1 {
           font-size: 2rem;
@@ -273,6 +322,32 @@
         }
         .doc-grid {
           grid-template-columns: 1fr;
+        }
+      }
+
+      /* Light theme pagination styles */
+      @media (prefers-color-scheme: light) {
+        .pagination-button {
+          background: white;
+          color: #00a3b8;
+          border-color: #00d4e4;
+        }
+
+        .pagination-button:hover:not(:disabled) {
+          background: #e0f7fa;
+        }
+
+        .pagination-button.active {
+          background: linear-gradient(135deg, #00d4e4 0%, #00a3b8 100%);
+          color: white;
+        }
+
+        .page-info {
+          color: #00a3b8;
+        }
+
+        .loading {
+          color: #00a3b8;
         }
       }
     </style>
@@ -288,286 +363,14 @@
           <a href="./index.html" class="button button-secondary">← Back to Glossary</a>
         </div>
 
-        <!-- Getting Started -->
-        <div class="doc-category">
-          <h2>🚀 Getting Started</h2>
-          <div class="doc-grid">
-            <a href="https://github.com/LuminLynx/FOSS-Glossary#readme" class="doc-card">
-              <div class="doc-card-header">
-                <div class="doc-icon">📖</div>
-                <h3>README</h3>
-              </div>
-              <p class="doc-description">
-                Project overview, quick links, and CI/CD pipeline documentation. Start here to
-                understand the project structure.
-              </p>
-              <div class="doc-tags">
-                <span class="tag">overview</span>
-                <span class="tag">quickstart</span>
-              </div>
-            </a>
+        <!-- Pagination Controls (Top) -->
+        <div id="pagination-top" class="pagination"></div>
 
-            <a
-              href="https://github.com/LuminLynx/FOSS-Glossary/blob/main/CONTRIBUTING.md"
-              class="doc-card"
-            >
-              <div class="doc-card-header">
-                <div class="doc-icon">✍️</div>
-                <h3>Contributing Guide</h3>
-              </div>
-              <p class="doc-description">
-                Learn how to add terms, submit PRs, and earn points. Complete guide for contributors
-                with examples.
-              </p>
-              <div class="doc-tags">
-                <span class="tag">contributing</span>
-                <span class="tag">guide</span>
-              </div>
-            </a>
+        <!-- Document Container -->
+        <div id="documents-container"></div>
 
-            <a href="https://luminlynx.github.io/FOSS-Glossary/pwa/" class="doc-card">
-              <div class="doc-card-header">
-                <div class="doc-icon">📱</div>
-                <h3>PWA Application</h3>
-              </div>
-              <p class="doc-description">
-                Full glossary Progressive Web App with offline support. Browse all terms, search,
-                and install on your device.
-              </p>
-              <div class="doc-tags">
-                <span class="tag">app</span>
-                <span class="tag">offline</span>
-              </div>
-            </a>
-          </div>
-        </div>
-
-        <!-- Automation & Workflows -->
-        <div class="doc-category">
-          <h2>🤖 Automation & Workflows</h2>
-          <div class="doc-grid">
-            <a
-              href="https://github.com/LuminLynx/FOSS-Glossary/blob/main/AGENTS.md"
-              class="doc-card"
-            >
-              <div class="doc-card-header">
-                <div class="doc-icon">🤖</div>
-                <h3>AGENTS.md</h3>
-              </div>
-              <p class="doc-description">
-                Complete automation playbook for maintainers and bot agents. Covers issues, labels,
-                PRs, validation, and publishing.
-              </p>
-              <div class="doc-tags">
-                <span class="tag">automation</span>
-                <span class="tag">bots</span>
-                <span class="tag">100%</span>
-              </div>
-            </a>
-
-            <a
-              href="https://github.com/LuminLynx/FOSS-Glossary/blob/main/RUNBOOK.md"
-              class="doc-card"
-            >
-              <div class="doc-card-header">
-                <div class="doc-icon">⚙️</div>
-                <h3>RUNBOOK</h3>
-              </div>
-              <p class="doc-description">
-                Operations guide for maintainers. Troubleshooting, deployment procedures, and
-                maintenance tasks.
-              </p>
-              <div class="doc-tags">
-                <span class="tag">ops</span>
-                <span class="tag">maintenance</span>
-              </div>
-            </a>
-
-            <a href="https://github.com/LuminLynx/FOSS-Glossary/actions" class="doc-card">
-              <div class="doc-card-header">
-                <div class="doc-icon">🔄</div>
-                <h3>GitHub Actions</h3>
-              </div>
-              <p class="doc-description">
-                View CI/CD status, workflow runs, and automation logs. Monitor the health of the
-                project.
-              </p>
-              <div class="doc-tags">
-                <span class="tag">ci/cd</span>
-                <span class="tag">status</span>
-              </div>
-            </a>
-          </div>
-        </div>
-
-        <!-- Project Policies -->
-        <div class="doc-category">
-          <h2>📋 Project Policies</h2>
-          <div class="doc-grid">
-            <a
-              href="https://github.com/LuminLynx/FOSS-Glossary/blob/main/CODE_OF_CONDUCT.md"
-              class="doc-card"
-            >
-              <div class="doc-card-header">
-                <div class="doc-icon">🤝</div>
-                <h3>Code of Conduct</h3>
-              </div>
-              <p class="doc-description">
-                Community guidelines and expected behavior. Creating a welcoming environment for all
-                contributors.
-              </p>
-              <div class="doc-tags">
-                <span class="tag">community</span>
-                <span class="tag">conduct</span>
-              </div>
-            </a>
-
-            <a
-              href="https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/slug-policy.md"
-              class="doc-card"
-            >
-              <div class="doc-card-header">
-                <div class="doc-icon">🔗</div>
-                <h3>Slug Policy</h3>
-              </div>
-              <p class="doc-description">
-                Guidelines for term slug naming and management. Ensure consistency across the
-                glossary.
-              </p>
-              <div class="doc-tags">
-                <span class="tag">policy</span>
-                <span class="tag">naming</span>
-              </div>
-            </a>
-
-            <a
-              href="https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/deletion-policy.md"
-              class="doc-card"
-            >
-              <div class="doc-card-header">
-                <div class="doc-icon">🗑️</div>
-                <h3>Deletion Policy</h3>
-              </div>
-              <p class="doc-description">
-                Process for removing or archiving terms. When and how to handle term deletions.
-              </p>
-              <div class="doc-tags">
-                <span class="tag">policy</span>
-                <span class="tag">removal</span>
-              </div>
-            </a>
-          </div>
-        </div>
-
-        <!-- Technical Documentation -->
-        <div class="doc-category">
-          <h2>🔧 Technical Documentation</h2>
-          <div class="doc-grid">
-            <a
-              href="https://github.com/LuminLynx/FOSS-Glossary/blob/main/schema.json"
-              class="doc-card"
-            >
-              <div class="doc-card-header">
-                <div class="doc-icon">📐</div>
-                <h3>Schema Reference</h3>
-              </div>
-              <p class="doc-description">
-                JSON Schema for terms.yaml validation. Defines structure, types, and validation
-                rules for all terms.
-              </p>
-              <div class="doc-tags">
-                <span class="tag">schema</span>
-                <span class="tag">validation</span>
-              </div>
-            </a>
-
-            <a href="https://luminlynx.github.io/FOSS-Glossary/terms.json" class="doc-card">
-              <div class="doc-card-header">
-                <div class="doc-icon">🔌</div>
-                <h3>Terms JSON API</h3>
-              </div>
-              <p class="doc-description">
-                Developer-friendly JSON endpoint with all glossary terms. Use for integrations and
-                third-party apps.
-              </p>
-              <div class="doc-tags">
-                <span class="tag">api</span>
-                <span class="tag">json</span>
-              </div>
-            </a>
-
-            <a
-              href="https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/terms-json-spec.md"
-              class="doc-card"
-            >
-              <div class="doc-card-header">
-                <div class="doc-icon">📄</div>
-                <h3>Terms JSON Spec</h3>
-              </div>
-              <p class="doc-description">
-                Specification for the terms.json export format. Structure, metadata, and usage
-                guidelines.
-              </p>
-              <div class="doc-tags">
-                <span class="tag">spec</span>
-                <span class="tag">format</span>
-              </div>
-            </a>
-          </div>
-        </div>
-
-        <!-- Additional Resources -->
-        <div class="doc-category">
-          <h2>📚 Additional Resources</h2>
-          <div class="doc-grid">
-            <a
-              href="https://github.com/LuminLynx/FOSS-Glossary/blob/main/CHANGELOG.md"
-              class="doc-card"
-            >
-              <div class="doc-card-header">
-                <div class="doc-icon">📝</div>
-                <h3>Changelog</h3>
-              </div>
-              <p class="doc-description">
-                Project history and version updates. Track features, fixes, and improvements over
-                time.
-              </p>
-              <div class="doc-tags">
-                <span class="tag">history</span>
-                <span class="tag">releases</span>
-              </div>
-            </a>
-
-            <a href="https://github.com/LuminLynx/FOSS-Glossary/issues" class="doc-card">
-              <div class="doc-card-header">
-                <div class="doc-icon">🐛</div>
-                <h3>Issues & Requests</h3>
-              </div>
-              <p class="doc-description">
-                Report bugs, suggest features, or ask questions. Browse open issues and contribute
-                solutions.
-              </p>
-              <div class="doc-tags">
-                <span class="tag">issues</span>
-                <span class="tag">support</span>
-              </div>
-            </a>
-
-            <a href="https://github.com/LuminLynx/FOSS-Glossary" class="doc-card">
-              <div class="doc-card-header">
-                <div class="doc-icon">⭐</div>
-                <h3>GitHub Repository</h3>
-              </div>
-              <p class="doc-description">
-                View source code, star the project, and fork for your own use. Join the community!
-              </p>
-              <div class="doc-tags">
-                <span class="tag">source</span>
-                <span class="tag">github</span>
-              </div>
-            </a>
-          </div>
-        </div>
+        <!-- Pagination Controls (Bottom) -->
+        <div id="pagination-bottom" class="pagination"></div>
 
         <!-- Bottom Navigation -->
         <div class="nav-back">
@@ -578,5 +381,491 @@
         </div>
       </div>
     </div>
+
+    <script>
+      // Documentation data - all markdown files in the repository
+      const DOCUMENTATION_DATA = [
+        {
+          title: '🚀 FOSS Glossary',
+          description:
+            'Project overview, quick links, and CI/CD pipeline documentation. Start here to understand the project structure.',
+          category: 'Getting Started',
+          icon: '📖',
+          tags: ['overview', 'quickstart'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary#readme',
+        },
+        {
+          title: 'Contributing Guide',
+          description:
+            'Learn how to add terms, submit PRs, and earn points. Complete guide for contributors with examples.',
+          category: 'Getting Started',
+          icon: '✍️',
+          tags: ['contributing', 'guide'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/CONTRIBUTING.md',
+        },
+        {
+          title: 'PWA Application',
+          description:
+            'Full glossary Progressive Web App with offline support. Browse all terms, search, and install on your device.',
+          category: 'Getting Started',
+          icon: '📱',
+          tags: ['app', 'offline'],
+          url: 'https://luminlynx.github.io/FOSS-Glossary/pwa/',
+        },
+        {
+          title: 'GitHub Actions Workflows',
+          description:
+            'Automated workflows for the FOSS Glossary repository. CI/CD pipelines, validation, and deployment automation.',
+          category: 'Getting Started',
+          icon: '📖',
+          tags: ['overview', 'workflows'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/.github/workflows/README.md',
+        },
+        {
+          title: 'Workflow Documentation Hub',
+          description:
+            'Welcome to the FOSS Glossary workflow documentation! Comprehensive guides for understanding our CI/CD workflows.',
+          category: 'Getting Started',
+          icon: '📖',
+          tags: ['overview', 'workflows'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/workflows/README.md',
+        },
+        {
+          title: 'AGENTS.md — Automation Playbook',
+          description:
+            'Complete automation playbook for maintainers and bot agents. Covers issues, labels, PRs, validation, and publishing.',
+          category: 'Automation & Workflows',
+          icon: '🤖',
+          tags: ['automation', 'bots', '100%'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/AGENTS.md',
+        },
+        {
+          title: 'Operations Runbook',
+          description:
+            'Operations guide for maintainers. Troubleshooting, deployment procedures, and maintenance tasks.',
+          category: 'Automation & Workflows',
+          icon: '⚙️',
+          tags: ['ops', 'maintenance'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/RUNBOOK.md',
+        },
+        {
+          title: 'GitHub Actions Status',
+          description:
+            'View CI/CD status, workflow runs, and automation logs. Monitor the health of the project.',
+          category: 'Automation & Workflows',
+          icon: '🔄',
+          tags: ['ci/cd', 'status'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/actions',
+        },
+        {
+          title: 'Code of Conduct',
+          description:
+            'Community guidelines and expected behavior. Creating a welcoming environment for all contributors.',
+          category: 'Project Policies',
+          icon: '🤝',
+          tags: ['community', 'conduct'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/CODE_OF_CONDUCT.md',
+        },
+        {
+          title: 'Slug Policy',
+          description:
+            'Guidelines for term slug naming and management. Ensure consistency across the glossary.',
+          category: 'Project Policies',
+          icon: '🔗',
+          tags: ['policy', 'naming'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/slug-policy.md',
+        },
+        {
+          title: 'Deletion Policy',
+          description:
+            'Process for removing or archiving terms. When and how to handle term deletions.',
+          category: 'Project Policies',
+          icon: '🗑️',
+          tags: ['policy', 'removal'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/deletion-policy.md',
+        },
+        {
+          title: 'Schema Reference',
+          description:
+            'JSON Schema for terms.yaml validation. Defines structure, types, and validation rules for all terms.',
+          category: 'Technical Documentation',
+          icon: '📐',
+          tags: ['schema', 'validation'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/schema.json',
+        },
+        {
+          title: 'Terms JSON API',
+          description:
+            'Developer-friendly JSON endpoint with all glossary terms. Use for integrations and third-party apps.',
+          category: 'Technical Documentation',
+          icon: '🔌',
+          tags: ['api', 'json'],
+          url: 'https://luminlynx.github.io/FOSS-Glossary/terms.json',
+        },
+        {
+          title: 'Terms JSON Spec',
+          description:
+            'Specification for the terms.json export format. Structure, metadata, and usage guidelines.',
+          category: 'Technical Documentation',
+          icon: '📄',
+          tags: ['spec', 'format'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/terms-json-spec.md',
+        },
+        {
+          title: 'Terms JSON Deploy Guide',
+          description:
+            'Deployment guide for terms.json export. How the JSON export is generated and published automatically.',
+          category: 'Technical Documentation',
+          icon: '🚀',
+          tags: ['deployment', 'automation'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/terms-json-deploy.md',
+        },
+        {
+          title: 'Schema Hardening Guide',
+          description:
+            'Guide to schema validation improvements and hardening strategies for data integrity.',
+          category: 'Technical Documentation',
+          icon: '🔒',
+          tags: ['schema', 'security'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/schema-hardening.md',
+        },
+        {
+          title: 'Prebuilt Index Strategy',
+          description:
+            'Strategy for prebuilt search indexes to improve performance and search functionality.',
+          category: 'Technical Documentation',
+          icon: '🔍',
+          tags: ['search', 'performance'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/PREBUILT_INDEX_STRATEGY.md',
+        },
+        {
+          title: 'Landing Page Maintenance',
+          description:
+            'Maintenance guide for the landing page. How to update, deploy, and troubleshoot the main glossary page.',
+          category: 'Technical Documentation',
+          icon: '🎨',
+          tags: ['maintenance', 'landing'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/landing-page-maintenance.md',
+        },
+        {
+          title: 'Workflow Changelog Guide',
+          description:
+            'Guide to maintaining the workflow changelog. Track changes to CI/CD workflows and automation.',
+          category: 'Workflow Documentation',
+          icon: '🔄',
+          tags: ['workflow', 'changelog'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/WORKFLOW_CHANGELOG.md',
+        },
+        {
+          title: 'Workflow Documentation Guide',
+          description:
+            'Comprehensive guide for documenting workflows. Best practices and templates for workflow documentation.',
+          category: 'Workflow Documentation',
+          icon: '🔄',
+          tags: ['workflow', 'documentation'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/WORKFLOW_DOCUMENTATION.md',
+        },
+        {
+          title: 'Workflow Examples',
+          description: 'Collection of workflow examples and common patterns for CI/CD automation.',
+          category: 'Workflow Documentation',
+          icon: '🔄',
+          tags: ['workflow', 'examples'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/WORKFLOW_EXAMPLES.md',
+        },
+        {
+          title: 'PWA Test Checklist',
+          description:
+            'Comprehensive testing checklist for the Progressive Web App. Verify functionality and offline support.',
+          category: 'Testing & Quality',
+          icon: '✅',
+          tags: ['testing', 'pwa'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/PWA_TEST_CHECKLIST.md',
+        },
+        {
+          title: 'PWA Testing Documentation',
+          description:
+            'Detailed PWA testing procedures and requirements. Ensure the app works correctly across browsers.',
+          category: 'Testing & Quality',
+          icon: '✅',
+          tags: ['testing', 'pwa'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/pwa/PWA_TEST_CHECKLIST.md',
+        },
+        {
+          title: 'Test Coverage Summary',
+          description:
+            'Overview of test coverage across the project. Track testing completeness and identify gaps.',
+          category: 'Testing & Quality',
+          icon: '✅',
+          tags: ['testing', 'coverage'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/TEST_COVERAGE_SUMMARY.md',
+        },
+        {
+          title: 'Release Process Guide',
+          description:
+            'Complete guide for creating releases. Step-by-step instructions for version management and publishing.',
+          category: 'Release Documentation',
+          icon: '🚀',
+          tags: ['release', 'process'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/RELEASE_PROCESS.md',
+        },
+        {
+          title: 'Release Instructions',
+          description:
+            'Quick reference for release procedures. Essential steps for preparing and publishing releases.',
+          category: 'Release Documentation',
+          icon: '🚀',
+          tags: ['release', 'guide'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/RELEASE_INSTRUCTIONS.md',
+        },
+        {
+          title: 'Release Notes v1.0.0',
+          description: 'Release notes for version 1.0.0. Features, improvements, and bug fixes.',
+          category: 'Release Documentation',
+          icon: '🚀',
+          tags: ['release', 'v1.0.0'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/RELEASE_NOTES_v1.0.0.md',
+        },
+        {
+          title: 'Release Instructions v1.0.0',
+          description:
+            'Detailed release instructions for v1.0.0. Step-by-step guide for this specific release.',
+          category: 'Release Documentation',
+          icon: '🚀',
+          tags: ['release', 'v1.0.0'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/RELEASE_INSTRUCTIONS_v1.0.0.md',
+        },
+        {
+          title: 'Release Body v1.0.0',
+          description:
+            'Release announcement body for v1.0.0. Formatted content for the GitHub release.',
+          category: 'Release Documentation',
+          icon: '🚀',
+          tags: ['release', 'v1.0.0'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/RELEASE_BODY_v1.0.0.md',
+        },
+        {
+          title: 'Release Summary',
+          description:
+            'Summary of the release process and outcomes. Post-release review and metrics.',
+          category: 'Release Documentation',
+          icon: '🚀',
+          tags: ['release', 'summary'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/RELEASE_SUMMARY.md',
+        },
+        {
+          title: 'Release Preparation Summary',
+          description:
+            'Pre-release preparation checklist and summary. Ensure all requirements are met before release.',
+          category: 'Release Documentation',
+          icon: '🚀',
+          tags: ['release', 'preparation'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/RELEASE_PREPARATION_SUMMARY.md',
+        },
+        {
+          title: 'Release Completion Summary',
+          description:
+            'Post-release completion summary. Review of release activities and next steps.',
+          category: 'Release Documentation',
+          icon: '🚀',
+          tags: ['release', 'completion'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/RELEASE_COMPLETION_SUMMARY.md',
+        },
+        {
+          title: 'Changelog',
+          description:
+            'Project history and version updates. Track features, fixes, and improvements over time.',
+          category: 'Additional Resources',
+          icon: '📝',
+          tags: ['history', 'releases'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/CHANGELOG.md',
+        },
+        {
+          title: 'Consolidation Summary',
+          description:
+            'Summary of documentation consolidation efforts. Organizing and streamlining project docs.',
+          category: 'Additional Resources',
+          icon: '📚',
+          tags: ['documentation', 'summary'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/CONSOLIDATION_SUMMARY.md',
+        },
+        {
+          title: 'Repository Review',
+          description:
+            'Comprehensive review of the repository structure, organization, and best practices.',
+          category: 'Additional Resources',
+          icon: '📚',
+          tags: ['review', 'documentation'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/REPOSITORY_REVIEW.md',
+        },
+        {
+          title: 'Landing Page Improvements',
+          description:
+            'Proposed and implemented improvements to the landing page. UI/UX enhancements and new features.',
+          category: 'Additional Resources',
+          icon: '📚',
+          tags: ['landing', 'improvements'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/LANDING_PAGE_IMPROVEMENTS.md',
+        },
+        {
+          title: 'Landing Page Issue Report',
+          description:
+            'Known issues and bug reports for the landing page. Tracking problems and their resolutions.',
+          category: 'Additional Resources',
+          icon: '📚',
+          tags: ['landing', 'issues'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/LANDING_PAGE_ISSUE_REPORT.md',
+        },
+        {
+          title: 'Sidebar Implementation Options',
+          description:
+            'Different approaches for implementing sidebar navigation. Comparison of design options.',
+          category: 'Additional Resources',
+          icon: '📚',
+          tags: ['ui', 'design'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/SIDEBAR_IMPLEMENTATION_OPTIONS.md',
+        },
+        {
+          title: 'Issues & Requests',
+          description:
+            'Report bugs, suggest features, or ask questions. Browse open issues and contribute solutions.',
+          category: 'Additional Resources',
+          icon: '🐛',
+          tags: ['issues', 'support'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary/issues',
+        },
+        {
+          title: 'GitHub Repository',
+          description:
+            'View source code, star the project, and fork for your own use. Join the community!',
+          category: 'Additional Resources',
+          icon: '⭐',
+          tags: ['source', 'github'],
+          url: 'https://github.com/LuminLynx/FOSS-Glossary',
+        },
+      ];
+
+      // Pagination settings
+      const ITEMS_PER_PAGE = 20;
+      let currentPage = 1;
+
+      /**
+       * Group documents by category
+       */
+      function groupByCategory(documents) {
+        const grouped = {};
+        documents.forEach((doc) => {
+          if (!grouped[doc.category]) {
+            grouped[doc.category] = [];
+          }
+          grouped[doc.category].push(doc);
+        });
+        return grouped;
+      }
+
+      /**
+       * Create a document card HTML
+       */
+      function createDocCard(doc) {
+        const tagsHTML = doc.tags.map((tag) => `<span class="tag">${tag}</span>`).join('');
+
+        return `
+          <a href="${doc.url}" class="doc-card" target="_blank" rel="noopener noreferrer">
+            <div class="doc-card-header">
+              <div class="doc-icon">${doc.icon}</div>
+              <h3>${doc.title}</h3>
+            </div>
+            <p class="doc-description">${doc.description}</p>
+            <div class="doc-tags">${tagsHTML}</div>
+          </a>
+        `;
+      }
+
+      /**
+       * Render documents for current page
+       */
+      function renderDocuments(page) {
+        const container = document.getElementById('documents-container');
+        const startIndex = (page - 1) * ITEMS_PER_PAGE;
+        const endIndex = startIndex + ITEMS_PER_PAGE;
+        const pageDocuments = DOCUMENTATION_DATA.slice(startIndex, endIndex);
+
+        // Group documents by category
+        const grouped = groupByCategory(pageDocuments);
+
+        // Build HTML
+        let html = '';
+        Object.keys(grouped).forEach((category) => {
+          const docs = grouped[category];
+          const categoryIcon = docs[0].icon === '📖' ? '🚀' : docs[0].icon;
+
+          html += `
+            <div class="doc-category">
+              <h2>${category}</h2>
+              <div class="doc-grid">
+                ${docs.map((doc) => createDocCard(doc)).join('')}
+              </div>
+            </div>
+          `;
+        });
+
+        container.innerHTML = html;
+
+        // Update pagination
+        renderPagination(page);
+
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      /**
+       * Render pagination controls
+       */
+      function renderPagination(page) {
+        const totalPages = Math.ceil(DOCUMENTATION_DATA.length / ITEMS_PER_PAGE);
+        const totalDocs = DOCUMENTATION_DATA.length;
+        const startDoc = (page - 1) * ITEMS_PER_PAGE + 1;
+        const endDoc = Math.min(page * ITEMS_PER_PAGE, totalDocs);
+
+        const paginationHTML = `
+          <button 
+            class="pagination-button" 
+            onclick="changePage(${page - 1})"
+            ${page === 1 ? 'disabled' : ''}
+          >
+            ← Previous
+          </button>
+          <span class="page-info">
+            Page ${page} of ${totalPages} (${startDoc}-${endDoc} of ${totalDocs} documents)
+          </span>
+          <button 
+            class="pagination-button" 
+            onclick="changePage(${page + 1})"
+            ${page === totalPages ? 'disabled' : ''}
+          >
+            Next →
+          </button>
+        `;
+
+        document.getElementById('pagination-top').innerHTML = paginationHTML;
+        document.getElementById('pagination-bottom').innerHTML = paginationHTML;
+      }
+
+      /**
+       * Change page
+       */
+      function changePage(newPage) {
+        const totalPages = Math.ceil(DOCUMENTATION_DATA.length / ITEMS_PER_PAGE);
+        if (newPage < 1 || newPage > totalPages) return;
+
+        currentPage = newPage;
+        renderDocuments(currentPage);
+      }
+
+      // Initialize on page load
+      document.addEventListener('DOMContentLoaded', () => {
+        renderDocuments(currentPage);
+      });
+    </script>
   </body>
 </html>
