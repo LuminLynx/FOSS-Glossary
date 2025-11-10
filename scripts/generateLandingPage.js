@@ -529,6 +529,11 @@ function prepareCTAButtonsData(stats) {
       href: 'https://luminlynx.github.io/FOSS-Glossary/pwa/',
       className: 'button button-secondary',
     },
+    {
+      text: '📚 View Documentation Hub',
+      href: './documentation.html',
+      className: 'button button-secondary',
+    },
   ];
 }
 

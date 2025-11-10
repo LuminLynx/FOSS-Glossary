@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FOSS Glossary Documentation Hub</title>
+
+    <!-- Primary Meta Tags -->
+    <meta name="title" content="FOSS Glossary Documentation Hub" />
+    <meta
+      name="description"
+      content="Comprehensive guides and documentation for the FOSS Glossary project. Learn how to contribute, use automation, and understand the project structure."
+    />
+    <meta
+      name="keywords"
+      content="FOSS, open source, glossary, documentation, contributing, guide"
+    />
+    <meta name="author" content="LuminLynx" />
+    <link rel="canonical" href="https://luminlynx.github.io/FOSS-Glossary/documentation.html" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:url"
+      content="https://luminlynx.github.io/FOSS-Glossary/documentation.html"
+    />
+    <meta property="og:title" content="FOSS Glossary Documentation Hub" />
+    <meta
+      property="og:description"
+      content="Comprehensive guides and documentation for the FOSS Glossary project."
+    />
+    <meta
+      property="og:image"
+      content="https://raw.githubusercontent.com/LuminLynx/FOSS-Glossary/main/assets/twitter-card.png"
+    />
+    <meta property="og:site_name" content="FOSS Glossary" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:url"
+      content="https://luminlynx.github.io/FOSS-Glossary/documentation.html"
+    />
+    <meta name="twitter:title" content="FOSS Glossary Documentation Hub" />
+    <meta
+      name="twitter:description"
+      content="Comprehensive guides and documentation for the FOSS Glossary project."
+    />
+    <meta
+      name="twitter:image"
+      content="https://raw.githubusercontent.com/LuminLynx/FOSS-Glossary/main/assets/twitter-card.png"
+    />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      /* DARK THEME (Default) */
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+        line-height: 1.6;
+        color: #f5f5f0;
+        background: #1a3a52;
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+      .card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        padding: 3rem;
+        border-radius: 15px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        margin-bottom: 2rem;
+        animation: slideUp 0.5s ease-out;
+        border: 1px solid rgba(0, 212, 228, 0.2);
+      }
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 3rem;
+        color: #00d4e4;
+        margin-bottom: 1rem;
+      }
+      h2 {
+        color: #00d4e4;
+        margin: 2rem 0 1rem 0;
+        font-size: 1.8rem;
+      }
+      .intro {
+        text-align: center;
+        font-size: 1.2rem;
+        margin-bottom: 3rem;
+        opacity: 0.9;
+      }
+
+      .doc-category {
+        margin-bottom: 3rem;
+      }
+
+      .doc-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 1.5rem;
+        margin: 1.5rem 0;
+      }
+
+      .doc-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 2px solid rgba(0, 212, 228, 0.3);
+        padding: 1.5rem;
+        border-radius: 10px;
+        transition: all 0.3s;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+      }
+
+      .doc-card:hover {
+        border-color: #00d4e4;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(0, 212, 228, 0.2);
+      }
+
+      .doc-card-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .doc-icon {
+        font-size: 2.5rem;
+        flex-shrink: 0;
+      }
+
+      .doc-card h3 {
+        color: #00d4e4;
+        margin: 0;
+        font-size: 1.3rem;
+      }
+
+      .doc-description {
+        color: #f5f5f0;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+      }
+
+      .doc-tags {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+      }
+
+      .tag {
+        background: rgba(0, 212, 228, 0.2);
+        color: #00d4e4;
+        padding: 0.2rem 0.6rem;
+        border-radius: 15px;
+        font-size: 0.8rem;
+      }
+
+      .nav-back {
+        text-align: center;
+        margin: 2rem 0;
+      }
+
+      .button {
+        display: inline-block;
+        background: #00d4e4;
+        color: #0d1f2d;
+        padding: 1rem 2.5rem;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: bold;
+        font-size: 1.1rem;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(0, 212, 228, 0.4);
+        margin: 0.5rem;
+      }
+
+      .button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 25px rgba(0, 212, 228, 0.6);
+        background: #00f0ff;
+        color: #0d1f2d;
+      }
+
+      .button-secondary {
+        background: transparent;
+        color: #00d4e4;
+        border: 2px solid #00d4e4;
+      }
+
+      /* LIGHT THEME - Auto-detects when user has light mode enabled */
+      @media (prefers-color-scheme: light) {
+        body {
+          color: #1a3a52;
+          background: #f0f4f8;
+        }
+        .card {
+          background: white;
+          box-shadow: 0 10px 40px rgba(26, 58, 82, 0.1);
+          border: 1px solid rgba(0, 212, 228, 0.2);
+        }
+        h1,
+        h2 {
+          color: #00a3b8;
+        }
+        .doc-card {
+          background: white;
+          border: 2px solid #e0e7ed;
+        }
+        .doc-card:hover {
+          border-color: #00d4e4;
+          box-shadow: 0 10px 30px rgba(0, 212, 228, 0.15);
+        }
+        .doc-card h3 {
+          color: #00a3b8;
+        }
+        .doc-description {
+          color: #2d3e50;
+        }
+        .tag {
+          background: #e0f7fa;
+          color: #00838f;
+          border: 1px solid #b2ebf2;
+        }
+        .button {
+          background: linear-gradient(135deg, #00d4e4 0%, #00a3b8 100%);
+          color: white;
+        }
+        .button:hover {
+          background: linear-gradient(135deg, #00f0ff 0%, #00d4e4 100%);
+          color: white;
+        }
+        .button-secondary {
+          background: white;
+          color: #00a3b8;
+          border-color: #00d4e4;
+        }
+        .button-secondary:hover {
+          background: #e0f7fa;
+        }
+      }
+
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 2rem;
+        }
+        .container {
+          padding: 1rem;
+        }
+        .card {
+          padding: 1.5rem;
+        }
+        .doc-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="card">
+        <h1>📚 Documentation Hub</h1>
+        <p class="intro">Comprehensive guides and documentation for the FOSS Glossary project.</p>
+
+        <!-- Navigation -->
+        <div class="nav-back">
+          <a href="./index.html" class="button button-secondary">← Back to Glossary</a>
+        </div>
+
+        <!-- Getting Started -->
+        <div class="doc-category">
+          <h2>🚀 Getting Started</h2>
+          <div class="doc-grid">
+            <a href="https://github.com/LuminLynx/FOSS-Glossary#readme" class="doc-card">
+              <div class="doc-card-header">
+                <div class="doc-icon">📖</div>
+                <h3>README</h3>
+              </div>
+              <p class="doc-description">
+                Project overview, quick links, and CI/CD pipeline documentation. Start here to
+                understand the project structure.
+              </p>
+              <div class="doc-tags">
+                <span class="tag">overview</span>
+                <span class="tag">quickstart</span>
+              </div>
+            </a>
+
+            <a
+              href="https://github.com/LuminLynx/FOSS-Glossary/blob/main/CONTRIBUTING.md"
+              class="doc-card"
+            >
+              <div class="doc-card-header">
+                <div class="doc-icon">✍️</div>
+                <h3>Contributing Guide</h3>
+              </div>
+              <p class="doc-description">
+                Learn how to add terms, submit PRs, and earn points. Complete guide for contributors
+                with examples.
+              </p>
+              <div class="doc-tags">
+                <span class="tag">contributing</span>
+                <span class="tag">guide</span>
+              </div>
+            </a>
+
+            <a href="https://luminlynx.github.io/FOSS-Glossary/pwa/" class="doc-card">
+              <div class="doc-card-header">
+                <div class="doc-icon">📱</div>
+                <h3>PWA Application</h3>
+              </div>
+              <p class="doc-description">
+                Full glossary Progressive Web App with offline support. Browse all terms, search,
+                and install on your device.
+              </p>
+              <div class="doc-tags">
+                <span class="tag">app</span>
+                <span class="tag">offline</span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Automation & Workflows -->
+        <div class="doc-category">
+          <h2>🤖 Automation & Workflows</h2>
+          <div class="doc-grid">
+            <a
+              href="https://github.com/LuminLynx/FOSS-Glossary/blob/main/AGENTS.md"
+              class="doc-card"
+            >
+              <div class="doc-card-header">
+                <div class="doc-icon">🤖</div>
+                <h3>AGENTS.md</h3>
+              </div>
+              <p class="doc-description">
+                Complete automation playbook for maintainers and bot agents. Covers issues, labels,
+                PRs, validation, and publishing.
+              </p>
+              <div class="doc-tags">
+                <span class="tag">automation</span>
+                <span class="tag">bots</span>
+                <span class="tag">100%</span>
+              </div>
+            </a>
+
+            <a
+              href="https://github.com/LuminLynx/FOSS-Glossary/blob/main/RUNBOOK.md"
+              class="doc-card"
+            >
+              <div class="doc-card-header">
+                <div class="doc-icon">⚙️</div>
+                <h3>RUNBOOK</h3>
+              </div>
+              <p class="doc-description">
+                Operations guide for maintainers. Troubleshooting, deployment procedures, and
+                maintenance tasks.
+              </p>
+              <div class="doc-tags">
+                <span class="tag">ops</span>
+                <span class="tag">maintenance</span>
+              </div>
+            </a>
+
+            <a href="https://github.com/LuminLynx/FOSS-Glossary/actions" class="doc-card">
+              <div class="doc-card-header">
+                <div class="doc-icon">🔄</div>
+                <h3>GitHub Actions</h3>
+              </div>
+              <p class="doc-description">
+                View CI/CD status, workflow runs, and automation logs. Monitor the health of the
+                project.
+              </p>
+              <div class="doc-tags">
+                <span class="tag">ci/cd</span>
+                <span class="tag">status</span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Project Policies -->
+        <div class="doc-category">
+          <h2>📋 Project Policies</h2>
+          <div class="doc-grid">
+            <a
+              href="https://github.com/LuminLynx/FOSS-Glossary/blob/main/CODE_OF_CONDUCT.md"
+              class="doc-card"
+            >
+              <div class="doc-card-header">
+                <div class="doc-icon">🤝</div>
+                <h3>Code of Conduct</h3>
+              </div>
+              <p class="doc-description">
+                Community guidelines and expected behavior. Creating a welcoming environment for all
+                contributors.
+              </p>
+              <div class="doc-tags">
+                <span class="tag">community</span>
+                <span class="tag">conduct</span>
+              </div>
+            </a>
+
+            <a
+              href="https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/slug-policy.md"
+              class="doc-card"
+            >
+              <div class="doc-card-header">
+                <div class="doc-icon">🔗</div>
+                <h3>Slug Policy</h3>
+              </div>
+              <p class="doc-description">
+                Guidelines for term slug naming and management. Ensure consistency across the
+                glossary.
+              </p>
+              <div class="doc-tags">
+                <span class="tag">policy</span>
+                <span class="tag">naming</span>
+              </div>
+            </a>
+
+            <a
+              href="https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/deletion-policy.md"
+              class="doc-card"
+            >
+              <div class="doc-card-header">
+                <div class="doc-icon">🗑️</div>
+                <h3>Deletion Policy</h3>
+              </div>
+              <p class="doc-description">
+                Process for removing or archiving terms. When and how to handle term deletions.
+              </p>
+              <div class="doc-tags">
+                <span class="tag">policy</span>
+                <span class="tag">removal</span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Technical Documentation -->
+        <div class="doc-category">
+          <h2>🔧 Technical Documentation</h2>
+          <div class="doc-grid">
+            <a
+              href="https://github.com/LuminLynx/FOSS-Glossary/blob/main/schema.json"
+              class="doc-card"
+            >
+              <div class="doc-card-header">
+                <div class="doc-icon">📐</div>
+                <h3>Schema Reference</h3>
+              </div>
+              <p class="doc-description">
+                JSON Schema for terms.yaml validation. Defines structure, types, and validation
+                rules for all terms.
+              </p>
+              <div class="doc-tags">
+                <span class="tag">schema</span>
+                <span class="tag">validation</span>
+              </div>
+            </a>
+
+            <a href="https://luminlynx.github.io/FOSS-Glossary/terms.json" class="doc-card">
+              <div class="doc-card-header">
+                <div class="doc-icon">🔌</div>
+                <h3>Terms JSON API</h3>
+              </div>
+              <p class="doc-description">
+                Developer-friendly JSON endpoint with all glossary terms. Use for integrations and
+                third-party apps.
+              </p>
+              <div class="doc-tags">
+                <span class="tag">api</span>
+                <span class="tag">json</span>
+              </div>
+            </a>
+
+            <a
+              href="https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/terms-json-spec.md"
+              class="doc-card"
+            >
+              <div class="doc-card-header">
+                <div class="doc-icon">📄</div>
+                <h3>Terms JSON Spec</h3>
+              </div>
+              <p class="doc-description">
+                Specification for the terms.json export format. Structure, metadata, and usage
+                guidelines.
+              </p>
+              <div class="doc-tags">
+                <span class="tag">spec</span>
+                <span class="tag">format</span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Additional Resources -->
+        <div class="doc-category">
+          <h2>📚 Additional Resources</h2>
+          <div class="doc-grid">
+            <a
+              href="https://github.com/LuminLynx/FOSS-Glossary/blob/main/CHANGELOG.md"
+              class="doc-card"
+            >
+              <div class="doc-card-header">
+                <div class="doc-icon">📝</div>
+                <h3>Changelog</h3>
+              </div>
+              <p class="doc-description">
+                Project history and version updates. Track features, fixes, and improvements over
+                time.
+              </p>
+              <div class="doc-tags">
+                <span class="tag">history</span>
+                <span class="tag">releases</span>
+              </div>
+            </a>
+
+            <a href="https://github.com/LuminLynx/FOSS-Glossary/issues" class="doc-card">
+              <div class="doc-card-header">
+                <div class="doc-icon">🐛</div>
+                <h3>Issues & Requests</h3>
+              </div>
+              <p class="doc-description">
+                Report bugs, suggest features, or ask questions. Browse open issues and contribute
+                solutions.
+              </p>
+              <div class="doc-tags">
+                <span class="tag">issues</span>
+                <span class="tag">support</span>
+              </div>
+            </a>
+
+            <a href="https://github.com/LuminLynx/FOSS-Glossary" class="doc-card">
+              <div class="doc-card-header">
+                <div class="doc-icon">⭐</div>
+                <h3>GitHub Repository</h3>
+              </div>
+              <p class="doc-description">
+                View source code, star the project, and fork for your own use. Join the community!
+              </p>
+              <div class="doc-tags">
+                <span class="tag">source</span>
+                <span class="tag">github</span>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="nav-back">
+          <a href="./index.html" class="button">← Back to Glossary</a>
+          <a href="https://github.com/LuminLynx/FOSS-Glossary" class="button button-secondary"
+            >🎮 Contribute on GitHub</a
+          >
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
