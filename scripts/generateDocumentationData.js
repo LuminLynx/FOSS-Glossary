@@ -136,7 +136,9 @@ function categorizeDocument(filePath, title, description) {
     fileName === 'AGENTS' ||
     fileName === 'RUNBOOK' ||
     relativePath.includes('workflows/') ||
-    relativePath.includes('.github/workflows')
+    relativePath.includes('.github/workflows') ||
+    relativePath.includes('.github/AGENTS') ||
+    relativePath.includes('.github/RUNBOOK')
   ) {
     return {
       category: 'Automation & Workflows',
@@ -164,7 +166,8 @@ function categorizeDocument(filePath, title, description) {
     fileName.includes('spec') ||
     fileName.includes('schema') ||
     fileName.includes('json') ||
-    fileName.includes('strategy')
+    fileName.includes('strategy') ||
+    relativePath.includes('docs/technical/')
   ) {
     return {
       category: 'Technical Documentation',
@@ -174,7 +177,11 @@ function categorizeDocument(filePath, title, description) {
   }
 
   // Release Documentation
-  if (fileName.includes('RELEASE') || fileName.includes('release')) {
+  if (
+    fileName.includes('RELEASE') ||
+    fileName.includes('release') ||
+    relativePath.includes('docs/releases/')
+  ) {
     return {
       category: 'Release Documentation',
       icon: '🚀',
@@ -201,11 +208,33 @@ function categorizeDocument(filePath, title, description) {
   }
 
   // Testing & Quality
-  if (fileName.includes('TEST') || fileName.includes('COVERAGE')) {
+  if (
+    fileName.includes('TEST') ||
+    fileName.includes('COVERAGE') ||
+    relativePath.includes('docs/testing/')
+  ) {
     return {
       category: 'Testing & Quality',
       icon: '✅',
       priority: 45,
+    };
+  }
+
+  // Landing Page Documentation
+  if (relativePath.includes('docs/landing-page/')) {
+    return {
+      category: 'Landing Page',
+      icon: '🏠',
+      priority: 15,
+    };
+  }
+
+  // Archive
+  if (relativePath.includes('docs/archive/')) {
+    return {
+      category: 'Archive',
+      icon: '📦',
+      priority: 60,
     };
   }
 

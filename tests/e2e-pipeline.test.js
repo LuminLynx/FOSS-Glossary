@@ -16,7 +16,7 @@ const yaml = require('js-yaml');
  * 5. Site serves new JSON with version metadata
  * 6. UI refreshes via ?ver=<shortSHA> parameter matching JSON version
  *
- * Purpose: Ensure the full pipeline works together as documented in AGENTS.md
+ * Purpose: Ensure the full pipeline works together as documented in .github/AGENTS.md
  */
 
 const VALIDATE_SCRIPT = path.join(__dirname, '..', 'scripts', 'validateTerms.js');

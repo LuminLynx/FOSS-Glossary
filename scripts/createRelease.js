@@ -4,7 +4,7 @@
  * Create GitHub Release
  *
  * This script creates a GitHub release using the GitHub API.
- * It reads the release body from RELEASE_BODY_v1.0.0.md
+ * It reads the release body from docs/releases/<tag>/RELEASE_BODY.md
  *
  * Usage:
  *   node scripts/createRelease.js <tag> [--draft] [--prerelease]
@@ -51,7 +51,14 @@ async function createRelease() {
 
   // Read release body with sanitized path
   const sanitizedTag = tag.replace(/[^a-zA-Z0-9.-]/g, '');
-  const releaseBodyPath = path.join(__dirname, '..', `RELEASE_BODY_${sanitizedTag}.md`);
+  const releaseBodyPath = path.join(
+    __dirname,
+    '..',
+    'docs',
+    'releases',
+    sanitizedTag,
+    'RELEASE_BODY.md'
+  );
   let releaseBody;
 
   try {

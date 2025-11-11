@@ -1,4 +1,4 @@
-# AGENTS.md — Automation & Codex Playbook [![AGENTS.md Compliance](https://img.shields.io/badge/AGENTS.md-100%25-brightgreen)](./AGENTS.md)
+# AGENTS.md — Automation & Codex Playbook [![AGENTS.md Compliance](https://img.shields.io/badge/AGENTS.md-100%25-brightgreen)](./.github/AGENTS.md)
 
 > **Audience:** Maintainers, contributors, and automation/bot agents ("Codex").
 >

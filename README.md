@@ -24,7 +24,7 @@ about open source culture.
 - 📖 **[Landing Page](https://luminlynx.github.io/FOSS-Glossary/)** — Browse the latest terms
 - 📱 **[PWA](https://luminlynx.github.io/FOSS-Glossary/pwa/)** — Full glossary with offline support & installable app
 - 📋 **[Terms Data (JSON API)](https://luminlynx.github.io/FOSS-Glossary/terms.json)** — Developer-friendly JSON endpoint (2 MB size limit)
-- 🤖 **[AGENTS.md](./AGENTS.md)** — Automation playbook (100% compliant)
+- 🤖 **[AGENTS.md](./.github/AGENTS.md)** — Automation playbook (100% compliant)
 - 📊 **[GitHub Actions](https://github.com/LuminLynx/FOSS-Glossary/actions)** — CI/CD status & workflows
 
 ---
@@ -104,7 +104,7 @@ Our automated pipeline ensures quality and keeps the glossary up-to-date:
 - **pr-comment.yml** - Handles PR comments for forked repositories
 - **pr-welcome.yml** - Welcomes new contributors
 
-📚 **[Detailed Pipeline Documentation](./docs/WORKFLOW_DOCUMENTATION.md)** | 🔧 **[Operations Runbook](./RUNBOOK.md)**
+📚 **[Detailed Pipeline Documentation](./docs/workflows/documentation.md)** | 🔧 **[Operations Runbook](./.github/RUNBOOK.md)**
 
 ---
 
