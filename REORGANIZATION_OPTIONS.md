@@ -10,22 +10,22 @@ The repository root contains **14 markdown files** (excluding README.md which mu
 
 ### Files in Repository Root
 
-| File                             | Size  | Category        | Status                        |
-| -------------------------------- | ----- | --------------- | ----------------------------- |
-| `AGENTS.md`                      | ~8KB  | Automation      | Active, frequently referenced |
-| `CHANGELOG.md`                   | ~4KB  | Project History | Active, standard location     |
-| `CODE_OF_CONDUCT.md`             | ~2KB  | Community       | Active, GitHub convention     |
-| `CONSOLIDATION_SUMMARY.md`       | ~3KB  | Historic        | Archive candidate             |
-| `CONTRIBUTING.md`                | ~5KB  | Community       | Active, GitHub convention     |
-| `ISSUE_COMMENT.md`               | ~2KB  | Template        | Already excluded from docs    |
-| `PWA_TEST_CHECKLIST.md`          | ~3KB  | Testing         | Duplicate (exists in docs/)   |
-| `README.md`                      | ~6KB  | Project         | **MUST STAY**                 |
-| `RELEASE_BODY_v1.0.0.md`         | ~2KB  | Release         | Archive candidate             |
-| `RELEASE_INSTRUCTIONS.md`        | ~4KB  | Release         | Active, possibly relocate     |
-| `RELEASE_NOTES_v1.0.0.md`        | ~7KB  | Release         | Archive candidate             |
-| `RELEASE_PREPARATION_SUMMARY.md` | ~5KB  | Release         | Archive candidate             |
-| `RELEASE_SUMMARY.md`             | ~3KB  | Release         | Archive candidate             |
-| `RUNBOOK.md`                     | ~6KB  | Operations      | Active, frequently referenced |
+| File                             | Size | Category        | Status                        |
+| -------------------------------- | ---- | --------------- | ----------------------------- |
+| `AGENTS.md`                      | ~8KB | Automation      | Active, frequently referenced |
+| `CHANGELOG.md`                   | ~4KB | Project History | Active, standard location     |
+| `CODE_OF_CONDUCT.md`             | ~2KB | Community       | Active, GitHub convention     |
+| `CONSOLIDATION_SUMMARY.md`       | ~3KB | Historic        | Archive candidate             |
+| `CONTRIBUTING.md`                | ~5KB | Community       | Active, GitHub convention     |
+| `ISSUE_COMMENT.md`               | ~2KB | Template        | Already excluded from docs    |
+| `PWA_TEST_CHECKLIST.md`          | ~3KB | Testing         | Duplicate (exists in docs/)   |
+| `README.md`                      | ~6KB | Project         | **MUST STAY**                 |
+| `RELEASE_BODY_v1.0.0.md`         | ~2KB | Release         | Archive candidate             |
+| `RELEASE_INSTRUCTIONS.md`        | ~4KB | Release         | Active, possibly relocate     |
+| `RELEASE_NOTES_v1.0.0.md`        | ~7KB | Release         | Archive candidate             |
+| `RELEASE_PREPARATION_SUMMARY.md` | ~5KB | Release         | Archive candidate             |
+| `RELEASE_SUMMARY.md`             | ~3KB | Release         | Archive candidate             |
+| `RUNBOOK.md`                     | ~6KB | Operations      | Active, frequently referenced |
 
 **Total clutter: 13 files** (excluding README.md)
 
@@ -54,13 +54,13 @@ The repository root contains **14 markdown files** (excluding README.md which mu
 
 ### Files That Reference Root Markdown Files
 
-| File Type      | Count | Examples                                     |
-| -------------- | ----- | -------------------------------------------- |
-| Markdown files | 40+   | README.md, CHANGELOG.md, all docs/\*.md      |
-| HTML files     | 1     | docs/documentation.html (67 GitHub URLs)     |
-| JavaScript     | 3     | scripts/\*.js                                |
-| Workflows      | 2     | .github/workflows/\*.yml                     |
-| Badges         | 1     | README.md shields.io badge for CONTRIBUTING  |
+| File Type      | Count | Examples                                    |
+| -------------- | ----- | ------------------------------------------- |
+| Markdown files | 40+   | README.md, CHANGELOG.md, all docs/\*.md     |
+| HTML files     | 1     | docs/documentation.html (67 GitHub URLs)    |
+| JavaScript     | 3     | scripts/\*.js                               |
+| Workflows      | 2     | .github/workflows/\*.yml                    |
+| Badges         | 1     | README.md shields.io badge for CONTRIBUTING |
 
 ---
 
@@ -310,17 +310,17 @@ Keep critical GitHub community files in root, move operational docs to `.github/
 
 ## Detailed Comparison Matrix
 
-| Criteria              | Option 1 (Minimal) | Option 2 (Aggressive) | Option 3 (Hybrid) ⭐ |
-| --------------------- | ------------------ | --------------------- | -------------------- |
-| Files in root         | 5                  | 2                     | 5                    |
-| Cleanup %             | 64%                | 86%                   | 64%                  |
-| GitHub conventions    | ✅ Preserved       | ❌ Broken             | ✅ Preserved         |
-| External link risk    | 🟡 Low-Medium      | 🔴 High               | 🟡 Low               |
-| Files to update       | 25-30              | 50-60                 | 25-35                |
-| Implementation time   | 2-3 hours          | 5-7 hours             | 3-4 hours            |
-| Rollback difficulty   | Easy               | Hard                  | Medium               |
-| Future maintenance    | Low                | Medium                | Low                  |
-| Automation impact     | Low                | High                  | Medium               |
+| Criteria            | Option 1 (Minimal) | Option 2 (Aggressive) | Option 3 (Hybrid) ⭐ |
+| ------------------- | ------------------ | --------------------- | -------------------- |
+| Files in root       | 5                  | 2                     | 5                    |
+| Cleanup %           | 64%                | 86%                   | 64%                  |
+| GitHub conventions  | ✅ Preserved       | ❌ Broken             | ✅ Preserved         |
+| External link risk  | 🟡 Low-Medium      | 🔴 High               | 🟡 Low               |
+| Files to update     | 25-30              | 50-60                 | 25-35                |
+| Implementation time | 2-3 hours          | 5-7 hours             | 3-4 hours            |
+| Rollback difficulty | Easy               | Hard                  | Medium               |
+| Future maintenance  | Low                | Medium                | Low                  |
+| Automation impact   | Low                | High                  | Medium               |
 
 ---
 

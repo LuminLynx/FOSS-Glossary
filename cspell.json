@@ -92,7 +92,8 @@
     "softprops",
     "rgba",
     "minmax",
-    "blockquotes"
+    "blockquotes",
+    "nojekyll"
   ],
   "ignorePaths": [
     "node_modules/**",

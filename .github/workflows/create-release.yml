@@ -61,7 +61,7 @@ jobs:
             echo "❌ Error: Invalid tag format after sanitization"
             exit 1
           fi
-          RELEASE_FILE="RELEASE_BODY_${SAFE_TAG}.md"
+          RELEASE_FILE="docs/releases/${SAFE_TAG}/RELEASE_BODY.md"
           if [ ! -f "$RELEASE_FILE" ]; then
             echo "❌ Error: $RELEASE_FILE not found"
             exit 1
