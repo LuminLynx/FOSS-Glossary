@@ -743,6 +743,34 @@ node -e "const schema = require('./schema.json'); console.log(Object.keys(schema
 
 ---
 
+## Repository Organization Best Practices
+
+To maintain a clean and professional repository structure:
+
+### Root Directory Guidelines
+
+- **Avoid placing files in the root directory to prevent clutter**
+- Keep only essential files in the root:
+  - Core documentation (README, CONTRIBUTING, CODE_OF_CONDUCT, CHANGELOG, LICENSE)
+  - Essential project files (package.json, package-lock.json, terms.yaml)
+  - IDE/system configuration files (.editorconfig, .gitignore)
+
+### File Organization
+
+- **Configuration files** → `config/` directory
+- **Documentation files** → `docs/` directory
+- **Template files** → `templates/` directory
+- **Workflow automation** → `.github/` directory
+
+### When Adding New Files
+
+1. Determine the appropriate directory based on file type
+2. Update relevant configuration files if needed (e.g., ignore lists)
+3. Document the file's purpose in relevant docs
+4. Keep the root directory minimal and organized
+
+---
+
 ## Related Documentation
 
 - [AGENTS.md](./AGENTS.md) - Automation playbook for agents

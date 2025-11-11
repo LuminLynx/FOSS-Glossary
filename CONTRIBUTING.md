@@ -245,6 +245,21 @@ Terms should rarely be deleted. Before removing a term, consider:
 
 See [docs/deletion-policy.md](docs/deletion-policy.md) for complete guidance.
 
+### Repository Organization
+
+To maintain a clean and professional repository structure:
+
+- **Avoid placing files in the root directory to prevent clutter**
+- Configuration files belong in the `config/` directory
+- Documentation files belong in the `docs/` directory
+- Template files belong in the `templates/` directory
+- Only essential project files should remain in the root:
+  - Core documentation (README, CONTRIBUTING, CODE_OF_CONDUCT, CHANGELOG, LICENSE)
+  - Essential project files (package.json, terms.yaml)
+  - IDE/system configuration files (.editorconfig, .gitignore)
+
+This organization ensures the repository remains easy to navigate and maintain.
+
 ## 💡 Pro Tips
 
 1. Check for duplicates before adding

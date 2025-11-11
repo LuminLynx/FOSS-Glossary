@@ -11,7 +11,7 @@ build/
 # Generated files
 docs/index.html
 docs/terms.json
-.terms-slugs.txt
+docs/.terms-slugs.txt
 
 # Templates (Handlebars templates should not be formatted as HTML)
 templates/

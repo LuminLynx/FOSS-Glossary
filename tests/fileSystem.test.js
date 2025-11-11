@@ -59,14 +59,14 @@ test('loadYaml: loads valid YAML file', () => {
 });
 
 test('loadYaml: loads schema.json as YAML', () => {
-  const result = loadYaml('schema.json');
+  const result = loadYaml('config/schema.json');
   assert.ok(result);
   assert.ok(typeof result === 'object');
 });
 
 // Tests for loadJson
 test('loadJson: loads valid JSON file', () => {
-  const result = loadJson('schema.json');
+  const result = loadJson('config/schema.json');
   assert.ok(result);
   assert.ok(typeof result === 'object');
 });

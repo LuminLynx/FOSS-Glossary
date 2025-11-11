@@ -124,7 +124,7 @@ function resolveBasePathFromArgs() {
  */
 function main() {
   const data = loadYamlWithFriendlyErrors('terms.yaml');
-  const schema = loadJson('schema.json');
+  const schema = loadJson('config/schema.json');
 
   const basePath = resolveBasePathFromArgs();
   let baseTerms = [];

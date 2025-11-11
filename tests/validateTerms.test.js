@@ -6,13 +6,14 @@ const path = require('path');
 const yaml = require('js-yaml');
 
 const TERMS_PATH = path.join(__dirname, '..', 'terms.yaml');
-const SCHEMA_PATH = path.join(__dirname, '..', 'schema.json');
+const SCHEMA_PATH = path.join(__dirname, '..', 'config', 'schema.json');
 const VALIDATE_SCRIPT = path.join(__dirname, '..', 'scripts', 'validateTerms.js');
 
 function runValidation(termsData, baseTermsData = null) {
   const tmpDir = fs.mkdtempSync('/tmp/validate-test-');
   const tmpTermsPath = path.join(tmpDir, 'terms.yaml');
-  const tmpSchemaPath = path.join(tmpDir, 'schema.json');
+  const tmpSchemaPath = path.join(tmpDir, 'config/schema.json');
+  fs.mkdirSync(path.join(tmpDir, 'config'), { recursive: true });
 
   fs.writeFileSync(tmpTermsPath, yaml.dump(termsData));
   fs.copyFileSync(SCHEMA_PATH, tmpSchemaPath);
@@ -276,7 +277,8 @@ test('validateTerms: allows different terms with similar Unicode characters', ()
 test('validateTerms: produces user-friendly error for YAML parse error', () => {
   const tmpDir = fs.mkdtempSync('/tmp/validate-yaml-error-');
   const tmpTermsPath = path.join(tmpDir, 'terms.yaml');
-  const tmpSchemaPath = path.join(tmpDir, 'schema.json');
+  const tmpSchemaPath = path.join(tmpDir, 'config/schema.json');
+  fs.mkdirSync(path.join(tmpDir, 'config'), { recursive: true });
 
   // Write invalid YAML with bad indentation
   const invalidYaml = `terms:
@@ -320,7 +322,8 @@ test('validateTerms: produces user-friendly error for YAML parse error', () => {
 
 test('validateTerms: handles missing file gracefully', () => {
   const tmpDir = fs.mkdtempSync('/tmp/validate-missing-');
-  const tmpSchemaPath = path.join(tmpDir, 'schema.json');
+  const tmpSchemaPath = path.join(tmpDir, 'config/schema.json');
+  fs.mkdirSync(path.join(tmpDir, 'config'), { recursive: true });
   fs.copyFileSync(SCHEMA_PATH, tmpSchemaPath);
 
   // Don't create terms.yaml - it's missing

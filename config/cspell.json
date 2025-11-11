@@ -104,7 +104,7 @@
     ".git/**",
     "*.min.js",
     "*.min.css",
-    ".terms-slugs.txt",
+    "docs/.terms-slugs.txt",
     "docs/terms.json",
     "docs/index.html",
     "tests/**/__snapshots__/**"

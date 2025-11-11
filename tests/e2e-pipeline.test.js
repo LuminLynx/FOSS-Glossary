@@ -22,7 +22,7 @@ const yaml = require('js-yaml');
 const VALIDATE_SCRIPT = path.join(__dirname, '..', 'scripts', 'validateTerms.js');
 const EXPORT_SCRIPT = path.join(__dirname, '..', 'scripts', 'exportTerms.js');
 const GENERATE_LANDING_SCRIPT = path.join(__dirname, '..', 'scripts', 'generateLandingPage.js');
-const SCHEMA_PATH = path.join(__dirname, '..', 'schema.json');
+const SCHEMA_PATH = path.join(__dirname, '..', 'config', 'schema.json');
 
 /**
  * Run the complete E2E pipeline in a temporary directory
@@ -34,7 +34,8 @@ const SCHEMA_PATH = path.join(__dirname, '..', 'schema.json');
 function runE2EPipeline() {
   const tmpDir = fs.mkdtempSync('/tmp/e2e-pipeline-');
   const tmpTermsPath = path.join(tmpDir, 'terms.yaml');
-  const tmpSchemaPath = path.join(tmpDir, 'schema.json');
+  const tmpSchemaPath = path.join(tmpDir, 'config/schema.json');
+  fs.mkdirSync(path.join(tmpDir, 'config'), { recursive: true });
   const tmpDocsPath = path.join(tmpDir, 'docs');
   const tmpTermsJsonPath = path.join(tmpDocsPath, 'terms.json');
   const tmpIndexPath = path.join(tmpDocsPath, 'index.html');
@@ -233,7 +234,8 @@ test('E2E: complete pipeline from merge to deployment', () => {
 test('E2E: pipeline handles validation failure gracefully', () => {
   const tmpDir = fs.mkdtempSync('/tmp/e2e-fail-');
   const tmpTermsPath = path.join(tmpDir, 'terms.yaml');
-  const tmpSchemaPath = path.join(tmpDir, 'schema.json');
+  const tmpSchemaPath = path.join(tmpDir, 'config/schema.json');
+  fs.mkdirSync(path.join(tmpDir, 'config'), { recursive: true });
 
   fs.copyFileSync(SCHEMA_PATH, tmpSchemaPath);
 

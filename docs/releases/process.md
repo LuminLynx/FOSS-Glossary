@@ -24,7 +24,7 @@ For each release, the following documentation files should be prepared:
 2. **`RELEASE_NOTES_vX.Y.Z.md`** - Detailed technical release notes
 3. **`RELEASE_BODY_vX.Y.Z.md`** - Concise GitHub release body (≤250 words)
 4. **`RELEASE_SUMMARY.md`** - Implementation summary and instructions
-5. **`ISSUE_COMMENT.md`** - Template for issue responses
+5. **`templates/ISSUE_COMMENT.md`** - Template for issue responses
 
 ## Creating a Release
 
