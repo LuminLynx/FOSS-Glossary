@@ -17,11 +17,11 @@
     "release:create": "node scripts/createRelease.js",
     "test": "npm run validate && npm run score && node --test",
     "lint": "npm run lint:prettier && npm run lint:markdown && npm run lint:spell",
-    "lint:prettier": "prettier --check .",
-    "lint:markdown": "markdownlint '**/*.md' --ignore node_modules",
-    "lint:spell": "cspell '**/*' --no-progress",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
+    "lint:prettier": "prettier --config config/prettierrc.json --ignore-path config/prettierignore --check .",
+    "lint:markdown": "markdownlint --config config/markdownlint.json '**/*.md' --ignore node_modules",
+    "lint:spell": "cspell --config config/cspell.json '**/*' --no-progress",
+    "format": "prettier --config config/prettierrc.json --ignore-path config/prettierignore --write .",
+    "format:check": "prettier --config config/prettierrc.json --ignore-path config/prettierignore --check .",
     "prepare": "husky"
   },
   "dependencies": {
@@ -54,13 +54,13 @@
   "license": "CC0",
   "lint-staged": {
     "*.{js,json,yaml,yml,md}": [
-      "prettier --write"
+      "prettier --config config/prettierrc.json --ignore-path config/prettierignore --write"
     ],
     "*.md": [
-      "markdownlint --fix"
+      "markdownlint --config config/markdownlint.json --fix"
     ],
     "*.{js,json,yaml,yml,md}": [
-      "cspell --no-must-find-files"
+      "cspell --config config/cspell.json --no-must-find-files"
     ]
   }
 }

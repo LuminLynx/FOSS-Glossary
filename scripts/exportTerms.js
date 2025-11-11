@@ -6,7 +6,7 @@ const yaml = require('js-yaml');
 const Ajv = require('ajv');
 const addFormats = require('ajv-formats');
 
-const yamlSchema = require('../schema.json');
+const yamlSchema = require('../config/schema.json');
 const { normalizeString, normalizeArray, normalizeTerm } = require('../utils/normalization');
 const { formatAjvError } = require('../utils/validation');
 const { getGitSha } = require('../utils/git');

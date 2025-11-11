@@ -8,7 +8,7 @@ test('schema: tags must match kebab-case pattern', () => {
   const invalidTags = ['FOSS', 'GPL', 'pull requests', 'Test Tag', 'snake_case'];
   const validTags = ['foss', 'gpl', 'pull-requests', 'test-tag', 'snake-case'];
 
-  const schema = JSON.parse(fs.readFileSync('schema.json', 'utf8'));
+  const schema = JSON.parse(fs.readFileSync('config/schema.json', 'utf8'));
   const tagPattern = schema.properties.terms.items.properties.tags.items.pattern;
 
   assert.ok(tagPattern, 'Tag pattern should be defined in schema');
@@ -25,7 +25,7 @@ test('schema: tags must match kebab-case pattern', () => {
 });
 
 test('schema: slug pattern is enforced', () => {
-  const schema = JSON.parse(fs.readFileSync('schema.json', 'utf8'));
+  const schema = JSON.parse(fs.readFileSync('config/schema.json', 'utf8'));
   const slugPattern = schema.properties.terms.items.properties.slug.pattern;
 
   assert.equal(slugPattern, '^[a-z0-9]+(?:-[a-z0-9]+)*$');

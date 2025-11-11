@@ -6,7 +6,7 @@ const path = require('path');
 const os = require('os');
 const yaml = require('js-yaml');
 
-const SCHEMA_PATH = path.join(__dirname, '..', 'schema.json');
+const SCHEMA_PATH = path.join(__dirname, '..', 'config', 'schema.json');
 const VALIDATE_SCRIPT = path.join(__dirname, '..', 'scripts', 'validateTerms.js');
 const SCORE_SCRIPT = path.join(__dirname, '..', 'scripts', 'quickScore.js');
 const EXPORT_SCRIPT = path.join(__dirname, '..', 'scripts', 'exportTerms.js');
@@ -19,7 +19,8 @@ function simulateWorkflow(termsData, baseTermsData = null) {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'workflow-test-'));
   const tmpTermsPath = path.join(tmpDir, 'terms.yaml');
   const tmpBaseTermsPath = path.join(tmpDir, 'terms.base.yaml');
-  const tmpSchemaPath = path.join(tmpDir, 'schema.json');
+  const tmpSchemaPath = path.join(tmpDir, 'config/schema.json');
+  fs.mkdirSync(path.join(tmpDir, 'config'), { recursive: true });
 
   fs.writeFileSync(tmpTermsPath, yaml.dump(termsData));
   fs.copyFileSync(SCHEMA_PATH, tmpSchemaPath);

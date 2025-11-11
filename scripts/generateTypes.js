@@ -14,7 +14,7 @@ const { compile } = require('json-schema-to-typescript');
 async function generateTypes() {
   try {
     const checkMode = process.argv.includes('--check');
-    const schemaPath = path.join(__dirname, '..', 'schema.json');
+    const schemaPath = path.join(__dirname, '..', 'config', 'schema.json');
     const outputPath = path.join(__dirname, '..', 'types', 'terms.d.ts');
 
     // Read schema
@@ -43,7 +43,7 @@ async function generateTypes() {
 
       const existingTypes = fs.readFileSync(outputPath, 'utf8');
       if (existingTypes !== ts) {
-        console.error('❌ Error: TypeScript types are out of sync with schema.json');
+        console.error('❌ Error: TypeScript types are out of sync with config/schema.json');
         console.error('   Run: npm run generate:types');
         process.exit(1);
       }
