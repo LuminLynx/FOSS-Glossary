@@ -24,7 +24,7 @@ const EXCLUDE_DIRS = [
 ];
 
 // Files to exclude
-const EXCLUDE_FILES = ['.terms-slugs.txt', 'ISSUE_COMMENT.md', 'pull_request_template.md'];
+const EXCLUDE_FILES = ['ISSUE_COMMENT.md', 'pull_request_template.md'];
 
 /**
  * Recursively find all markdown files in a directory
