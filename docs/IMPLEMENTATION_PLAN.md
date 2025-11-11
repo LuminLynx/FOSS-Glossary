@@ -420,6 +420,38 @@ git mv docs/REPOSITORY_REVIEW.md docs/archive/repository-review.md
 
 ---
 
+## Best Practices for Repository Organization
+
+Following the reorganization, these guidelines should be maintained:
+
+### Root Directory Guidelines
+
+- **Avoid placing files in the root directory to prevent clutter**
+- Keep only essential files in the root:
+  - Core documentation (README, CONTRIBUTING, CODE_OF_CONDUCT, CHANGELOG, LICENSE)
+  - Essential project files (package.json, package-lock.json, terms.yaml)
+  - IDE/system configuration files (.editorconfig, .gitignore)
+
+### File Organization Rules
+
+- **Configuration files** → `config/` directory
+- **Documentation files** → `docs/` directory (or appropriate subdirectory)
+- **Template files** → `templates/` directory
+- **Script files** → `scripts/` directory
+- **Test files** → `tests/` directory
+- **Type definitions** → `types/` directory
+- **Utility functions** → `utils/` directory
+
+### Benefits
+
+- Easier navigation and discovery
+- Professional repository appearance
+- Reduced cognitive load for contributors
+- Clear separation of concerns
+- Consistent with modern repository standards
+
+---
+
 ## Next Steps
 
 1. ✅ Get approval for combined plan
