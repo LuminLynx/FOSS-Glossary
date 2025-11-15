@@ -498,14 +498,20 @@ const CSS_STYLES = `
             font-weight: bold;
             cursor: pointer;
             border: 2px solid #00d4e4;
+            transition: background-color 0.3s, border-color 0.3s;
+            transform: none;
         }
         .release-banner a:hover {
             background: #00f0ff;
             border-color: #00f0ff;
             transform: none;
+<<<<<<< HEAD
         }
         .release-banner a:active {
             transform: none;
+=======
+            box-shadow: none;
+>>>>>>> a25e619 (N/A)
         }
         /* LIGHT THEME - Release Banner */
         @media (prefers-color-scheme: light) {
@@ -524,14 +530,20 @@ const CSS_STYLES = `
                 background: #00a3b8;
                 color: white;
                 border-color: #00a3b8;
+                transition: background-color 0.3s, border-color 0.3s;
+                transform: none;
             }
             .release-banner a:hover {
                 background: #00d4e4;
                 border-color: #00d4e4;
                 transform: none;
+<<<<<<< HEAD
             }
             .release-banner a:active {
                 transform: none;
+=======
+                box-shadow: none;
+>>>>>>> a25e619 (N/A)
             }
         }
 `;
