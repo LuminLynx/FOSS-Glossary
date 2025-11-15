@@ -63,6 +63,16 @@
             <h1>🚀 FOSS Glossary</h1>
             <p class="tagline" style="text-align: center; font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">A gamified glossary of Free and Open Source Software terms, with humor, sarcasm, and honest truths.</p>
             
+            <!-- RELEASE ANNOUNCEMENT -->
+            {{#if release}}
+            <div class="release-banner">
+                <p>🎉 Latest Release</p>
+                <h2>v{{release.version}}</h2>
+                <p>{{release.description}}</p>
+                <a href="{{release.releaseUrl}}">View Release Notes →</a>
+            </div>
+            {{/if}}
+            
             <!-- LIVE STATISTICS -->
             <div class="live-stats">
                 {{#each statCards}}

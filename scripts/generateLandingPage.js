@@ -471,6 +471,61 @@ const CSS_STYLES = `
             .card { padding: 1.5rem; }
             .term-grid { grid-template-columns: 1fr; }
         }
+        
+        .release-banner {
+            background: linear-gradient(135deg, rgba(0, 212, 228, 0.15) 0%, rgba(0, 240, 255, 0.1) 100%);
+            border: 2px solid #00d4e4;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 212, 228, 0.15);
+        }
+        .release-banner p {
+            color: #f5f5f0;
+        }
+        .release-banner h2 {
+            color: #00f0ff;
+        }
+        .release-banner a {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.5rem 1.5rem;
+            background: #00d4e4;
+            color: #0d1f2d;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            border: 2px solid #00d4e4;
+        }
+        .release-banner a:hover {
+            background: #00f0ff;
+            border-color: #00f0ff;
+        }
+        /* LIGHT THEME - Release Banner */
+        @media (prefers-color-scheme: light) {
+            .release-banner {
+                background: linear-gradient(135deg, #e0f7fa 0%, #b3e5fc 100%);
+                border-color: #00a3b8;
+                box-shadow: 0 4px 15px rgba(0,163,184, 0.15);
+            }
+            .release-banner p {
+                color: #1a3a52;
+            }
+            .release-banner h2 {
+                color: #00838f;
+            }
+            .release-banner a {
+                background: #00a3b8;
+                color: white;
+                border-color: #00a3b8;
+            }
+            .release-banner a:hover {
+                background: #00d4e4;
+                border-color: #00d4e4;
+            }
+        }
 `;
 
 /**
@@ -570,6 +625,21 @@ function loadTemplate() {
  * @param {string} artifactVersion - Git commit SHA for cache-busting
  * @returns {string} Complete HTML document as string
  */
+/**
+ * Prepare release information data
+ * Creates release announcement object with version and link
+ *
+ * @returns {Object} Release data with version, date, and link
+ */
+function prepareReleaseData() {
+  return {
+    version: '1.0.0',
+    releaseDate: 'November 15, 2025',
+    releaseUrl: 'https://github.com/LuminLynx/FOSS-Glossary/releases/tag/v1.0.0',
+    description: 'First stable release of FOSS Glossary with gamification features!'
+  };
+}
+
 function generateHTML(stats, artifactVersion) {
   const template = loadTemplate();
 
@@ -579,6 +649,7 @@ function generateHTML(stats, artifactVersion) {
     canonicalUrl: 'https://luminlynx.github.io/FOSS-Glossary/',
     metaTags: prepareMetaTags(stats),
     styles: CSS_STYLES, // Use triple-braces in template for unescaped CSS
+    release: prepareReleaseData(), // ADD THIS LINE
     statCards: prepareStatCardsData(stats),
     recentTermsList: stats.recentTerms.join(', '), // Handlebars auto-escapes
     termCards: prepareTermCardsData(),

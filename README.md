@@ -1,5 +1,6 @@
 # 🚀 FOSS Glossary
 
+[![Release v1.0.0](https://img.shields.io/badge/Release-v1.0.0-success)](https://github.com/LuminLynx/FOSS-Glossary/releases/tag/v1.0.0)
 [![GitHub Pages](https://img.shields.io/badge/GitHub-Pages-blue)](https://luminlynx.github.io/FOSS-Glossary/)
 [![PWA Ready](https://img.shields.io/badge/PWA-Ready-purple)](https://luminlynx.github.io/FOSS-Glossary/pwa/)
 [![Terms Count](https://img.shields.io/badge/Terms-28-orange)](./terms.yaml)
