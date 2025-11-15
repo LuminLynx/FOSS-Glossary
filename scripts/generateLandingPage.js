@@ -384,6 +384,30 @@ const CSS_STYLES = `
             color: #00d4e4;
             border: 2px solid #00d4e4;
         }
+        /* Release banner styles - prevent transform effects on links */
+        .release-banner {
+            background: rgba(0, 212, 228, 0.1);
+            border: 2px solid rgba(0, 212, 228, 0.3);
+            border-radius: 10px;
+            padding: 1rem 1.5rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+        .release-banner a {
+            color: #00d4e4;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            /* Explicitly prevent any transform effects */
+            transform: none !important;
+        }
+        .release-banner a:hover,
+        .release-banner a:active,
+        .release-banner a:focus {
+            color: #00f0ff;
+            /* Ensure no transform on any interactive states */
+            transform: none !important;
+        }
         .last-updated {
             text-align: center;
             color: #f5f5f0;
@@ -454,6 +478,18 @@ const CSS_STYLES = `
             }
             .button-secondary:hover {
                 background: #e0f7fa;
+            }
+            .release-banner {
+                background: #e0f7fa;
+                border-color: #b2ebf2;
+            }
+            .release-banner a {
+                color: #00838f;
+            }
+            .release-banner a:hover,
+            .release-banner a:active,
+            .release-banner a:focus {
+                color: #006064;
             }
             .last-updated {
                 color: #5a6c7d;
