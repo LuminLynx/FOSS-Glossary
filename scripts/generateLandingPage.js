@@ -502,6 +502,10 @@ const CSS_STYLES = `
         .release-banner a:hover {
             background: #00f0ff;
             border-color: #00f0ff;
+            transform: none;
+        }
+        .release-banner a:active {
+            transform: none;
         }
         /* LIGHT THEME - Release Banner */
         @media (prefers-color-scheme: light) {
@@ -524,6 +528,10 @@ const CSS_STYLES = `
             .release-banner a:hover {
                 background: #00d4e4;
                 border-color: #00d4e4;
+                transform: none;
+            }
+            .release-banner a:active {
+                transform: none;
             }
         }
 `;
@@ -636,7 +644,7 @@ function prepareReleaseData() {
     version: '1.0.0',
     releaseDate: 'November 15, 2025',
     releaseUrl: 'https://github.com/LuminLynx/FOSS-Glossary/releases/tag/v1.0.0',
-    description: 'First stable release of FOSS Glossary with gamification features!'
+    description: 'First stable release of FOSS Glossary with gamification features!',
   };
 }
 
