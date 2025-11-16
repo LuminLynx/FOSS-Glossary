@@ -28,7 +28,7 @@ terms:
 
   try {
     // Run sort
-    execSync(`node ${SCRIPT_PATH}`, { cwd: tmpDir, encoding: 'utf8' });
+    execFileSync('node', [SCRIPT_PATH], { cwd: tmpDir, encoding: 'utf8' });
 
     // Read sorted file
     const sorted = fs.readFileSync(termsFile, 'utf8');
@@ -222,7 +222,7 @@ test('sortYaml: check mode detects unsorted keys', () => {
 
   try {
     // Run check mode - should fail because keys are not in canonical order
-    execSync(`node ${SCRIPT_PATH} --check`, { cwd: tmpDir, encoding: 'utf8' });
+    execFileSync('node', [SCRIPT_PATH, '--check'], { cwd: tmpDir, encoding: 'utf8' });
     assert.fail('Check mode should have failed for unsorted keys');
   } catch (error) {
     assert.strictEqual(error.status, 1, 'Should exit with code 1');
