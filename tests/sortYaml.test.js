@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
-const { execSync } = require('child_process');
+const { execSync, execFileSync } = require('child_process');
 
 const SCRIPT_PATH = path.join(__dirname, '..', 'scripts', 'sortYaml.js');
 
@@ -70,7 +70,7 @@ test('sortYaml: check mode detects unsorted terms', () => {
 
   try {
     // Run check mode - should fail
-    execSync(`node ${SCRIPT_PATH} --check`, { cwd: tmpDir, encoding: 'utf8' });
+    execFileSync('node', [SCRIPT_PATH, '--check'], { cwd: tmpDir, encoding: 'utf8' });
     assert.fail('Check mode should have failed for unsorted terms');
   } catch (error) {
     assert.strictEqual(error.status, 1, 'Should exit with code 1');
