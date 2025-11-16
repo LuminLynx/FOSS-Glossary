@@ -99,15 +99,24 @@ jobs:
           echo "exit_code=$EXIT" >> "$GITHUB_OUTPUT"
           exit $EXIT
 
-      - name: Check landing page sync (informational)
+      - name: Validate landing page sync
+        id: landing_page
         if: steps.validate.outputs.exit_code == '0'
         continue-on-error: true
         run: |
-          echo "Checking if landing page needs regeneration..."
-          if ! node scripts/validateLandingPage.js; then
-            echo "⚠️  Warning: Landing page may need regeneration after merge"
-            echo "   This will be handled automatically by the update-landing-page workflow"
+          set -o pipefail
+          echo "Checking landing page HTML integrity..."
+          node scripts/validateLandingPage.js | tee landing-page-output.txt
+          EXIT=${PIPESTATUS[0]}
+          echo "exit_code=$EXIT" >> "$GITHUB_OUTPUT"
+
+          if [ $EXIT -ne 0 ]; then
+            echo "⚠️  Landing page will be regenerated after merge"
+            echo "   This is handled by the update-landing-page workflow"
+          else
+            echo "✅ Landing page is in sync with terms.yaml"
           fi
+          exit 0
 
       - name: Score latest term
         id: score

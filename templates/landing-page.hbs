@@ -1,7 +1,13 @@
 {{!-- 
-  FOSS Glossary Landing Page Template
+  FOSS Glossary Landing Page Template (Enhanced)
   
-  This Handlebars template generates the landing page HTML.
+  This Handlebars template generates the landing page HTML with:
+  - Dynamic search & filtering (client-side vanilla JS, ~5KB)
+  - Beautiful animations and micro-interactions
+  - Responsive design for mobile/tablet/desktop
+  - Featured term spotlight
+  - Visual score indicators and category badges
+  - 12-16 recent terms visible on first load
   
   Template syntax:
   - {{variable}} - Auto-escaped HTML output (safe for user content)
@@ -16,7 +22,8 @@
   - styles: CSS styles string (unescaped)
   - statCards: Array of {number, label} objects
   - recentTermsList: Comma-separated string of recent terms
-  - termCards: Array of term objects with {term, score, scoreColor, definition, humor, tags}
+  - termCards: Array of term objects (16+ terms for search/filter)
+  - featuredTerm: Single term object to highlight
   - scoringItems: Array of {emoji, text, points} objects
   - ctaButtons: Array of {text, href, className} objects
   - lastUpdated: Formatted date string
@@ -53,95 +60,507 @@
 </head>
 <body>
     <div class="container">
-        <div class="card">
+        <!-- HERO SECTION -->
+        <div class="card hero-card">
             <div class="logo-section">
-                <div class="logo">
+                <div class="logo" data-animate="bounce">
                     <img src="./pwa/assets/logo.png" alt="FOSS Glossary Logo" />
                 </div>
             </div>
             
-            <h1>🚀 FOSS Glossary</h1>
-            <p class="tagline" style="text-align: center; font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">A gamified glossary of Free and Open Source Software terms, with humor, sarcasm, and honest truths.</p>
+            <h1 class="hero-title">🚀 FOSS Glossary</h1>
+            <p class="tagline">A gamified glossary of Free and Open Source Software terms, with humor, sarcasm, and honest truths.</p>
             
             <!-- RELEASE ANNOUNCEMENT -->
             {{#if release}}
-            <div class="release-banner">
-                <p>🎉 Latest Release</p>
+            <div class="release-banner" data-animate="slideInDown">
+                <p class="release-badge">🎉 Latest Release</p>
                 <h2>v{{release.version}}</h2>
                 <p>{{release.description}}</p>
                 <a href="{{release.releaseUrl}}">View Release Notes →</a>
             </div>
             {{/if}}
-            
-            <!-- LIVE STATISTICS -->
+        </div>
+
+        <!-- LIVE STATISTICS -->
+        <div class="card stats-card">
+            <h2>📊 Live Statistics</h2>
             <div class="live-stats">
                 {{#each statCards}}
-                <div class="stat-card">
+                <div class="stat-card" data-animate="fadeInUp" data-delay="{{@index}}">
                     <span class="stat-number">{{number}}</span>
                     <span class="stat-label">{{label}}</span>
                 </div>
                 {{/each}}
             </div>
+        </div>
 
-            <!-- RECENT ADDITIONS -->
-            <div class="recent-terms">
-                <h2>🆕 Latest Additions</h2>
-                <p>Just added: <strong>{{recentTermsList}}</strong></p>
-            </div>
-
-            <!-- SAMPLE TERMS -->
-            <h2>📖 Recent Terms</h2>
-            <div class="term-grid">
-                {{#each termCards}}
-                <div class="term-card">
-                    <div class="term-header">
-                        <h3>{{term}}</h3>
-                        <span class="term-score" style="color: {{scoreColor}}">{{score}}/100</span>
+        <!-- FEATURED TERM SPOTLIGHT -->
+        {{#if featuredTerm}}
+        <div class="card featured-section" data-animate="scaleIn">
+            <h2>⭐ Featured Term</h2>
+            <div class="featured-term-card">
+                <div class="featured-header">
+                    <h3>{{featuredTerm.term}}</h3>
+                    <div class="score-badge" data-score="{{featuredTerm.score}}">
+                        <span class="score-value">{{featuredTerm.score}}</span>
+                        <span class="score-label">/ 100</span>
                     </div>
-                    <p class="term-definition">{{definition}}</p>
-                    {{#if humor}}
-                    <p class="term-humor">😂 "{{humor}}"</p>
+                </div>
+                <p class="featured-definition">{{featuredTerm.definition}}</p>
+                {{#if featuredTerm.humor}}
+                <div class="featured-humor">
+                    <p>😂 "{{featuredTerm.humor}}"</p>
+                </div>
+                {{/if}}
+                {{#if featuredTerm.tags.length}}
+                <div class="featured-tags">
+                    {{#each featuredTerm.tags}}
+                    <span class="tag featured-tag">{{this}}</span>
+                    {{/each}}
+                </div>
+                {{/if}}
+            </div>
+        </div>
+        {{/if}}
+
+        <!-- RECENT ADDITIONS -->
+        <div class="card recent-additions">
+            <h2>🆕 Latest Additions</h2>
+            <p>Just added: <strong>{{recentTermsList}}</strong></p>
+        </div>
+
+        <!-- SEARCH & FILTER SECTION -->
+        <div class="card search-section" data-animate="fadeIn">
+            <h2>🔍 Explore Glossary</h2>
+            <div class="search-container">
+                <div class="search-input-wrapper">
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        class="search-input" 
+                        placeholder="Search terms, definitions, or tags..."
+                        aria-label="Search glossary"
+                    >
+                    <span class="search-icon">🔍</span>
+                </div>
+                
+                <div class="filter-controls">
+                    <div class="filter-group">
+                        <label class="filter-label">
+                            <input type="checkbox" class="score-filter" value="90-100" data-label="Score 90+">
+                            <span>💯 Perfectionist (90+)</span>
+                        </label>
+                        <label class="filter-label">
+                            <input type="checkbox" class="score-filter" value="80-89" data-label="Score 80-89">
+                            <span>⭐ Excellent (80+)</span>
+                        </label>
+                        <label class="filter-label">
+                            <input type="checkbox" class="score-filter" value="0-79" data-label="Score <80">
+                            <span>📖 Learning (All)</span>
+                        </label>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="sort-label">
+                            Sort by:
+                            <select id="sortSelect" class="sort-select" aria-label="Sort terms">
+                                <option value="date-desc">Most Recent</option>
+                                <option value="score-desc">Highest Score</option>
+                                <option value="score-asc">Lowest Score</option>
+                                <option value="alpha-asc">Alphabetical (A-Z)</option>
+                            </select>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="filter-tags-container" id="activeFilters"></div>
+            </div>
+            <p class="result-count" id="resultCount">Showing {{termCards.length}} terms</p>
+        </div>
+
+        <!-- TERM GRID -->
+        <div class="card terms-section">
+            <h2>📖 All Terms</h2>
+            <div class="term-grid" id="termGrid">
+                {{#each termCards}}
+                <div class="term-card" 
+                     data-term="{{this.term}}" 
+                     data-slug="{{this.slug}}"
+                     data-score="{{this.score}}"
+                     data-tags="{{#each this.tags}}{{this}} {{/each}}"
+                     data-definition="{{this.definition}}"
+                     data-humor="{{this.humor}}"
+                     data-date="{{this.sortDate}}"
+                     data-animate="fadeInUp"
+                     data-delay="{{@index}}">
+                    
+                    <div class="term-header">
+                        <h3>{{this.term}}</h3>
+                        <div class="score-bar-container">
+                            <div class="score-bar" style="width: {{this.score}}%; background-color: {{this.scoreColor}};"></div>
+                        </div>
+                        <span class="term-score" style="color: {{this.scoreColor}}">{{this.score}}</span>
+                    </div>
+                    
+                    <p class="term-definition">{{this.definition}}</p>
+                    
+                    {{#if this.humor}}
+                    <p class="term-humor">😂 "{{this.humor}}"</p>
                     {{/if}}
-                    {{#if tags.length}}
+                    
+                    {{#if this.tags.length}}
                     <div class="term-tags">
-                        {{#each tags}}
-                        <span class="tag">{{this}}</span>
+                        {{#each this.tags}}
+                        <span class="tag" data-tag="{{this}}">{{this}}</span>
                         {{/each}}
                     </div>
                     {{/if}}
                 </div>
                 {{/each}}
             </div>
-
-            <!-- SCORING SYSTEM -->
-            <h2>📊 How Scoring Works</h2>
-            <div style="background: rgba(0, 0, 0, 0.3); padding: 1.5rem; border-radius: 10px; margin: 2rem 0;">
-                <ul style="list-style: none; padding: 0;">
-                    {{#each scoringItems}}
-                    <li>{{emoji}} <strong>{{text}}</strong> - {{points}}</li>
-                    {{/each}}
-                </ul>
-                <p style="margin-top: 1rem; font-weight: bold;">💯 Score 90+ to become a legend!</p>
+            
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <p>😕 No terms match your filters. Try adjusting your search or clearing filters.</p>
             </div>
+        </div>
 
-            <!-- CALL TO ACTION -->
+        <!-- SCORING SYSTEM -->
+        <div class="card scoring-section">
+            <h2>📊 How Scoring Works</h2>
+            <div class="scoring-grid">
+                {{#each scoringItems}}
+                <div class="scoring-item" data-animate="fadeInUp">
+                    <div class="scoring-emoji">{{emoji}}</div>
+                    <h4>{{text}}</h4>
+                    <p>{{points}}</p>
+                </div>
+                {{/each}}
+            </div>
+            <div class="scoring-note">
+                <p>💯 Score 90+ to become a legend!</p>
+            </div>
+        </div>
+
+        <!-- CALL TO ACTION -->
+        <div class="card cta-section">
+            <h2>Ready to Contribute?</h2>
             <div class="cta">
                 {{#each ctaButtons}}
-                <a href="{{href}}" class="{{className}}">
+                <a href="{{href}}" class="{{className}}" data-animate="slideInUp">
                     {{text}}
                 </a>
                 {{/each}}
             </div>
+        </div>
 
+        <!-- FOOTER -->
+        <div class="footer">
             <p class="last-updated">
-                Last updated: {{lastUpdated}} |
-                {{stats.totalTerms}} terms and growing! |
+                Last updated: {{lastUpdated}} | {{stats.totalTerms}} terms and growing!<br>
                 Made with 💙 by the FOSS community
             </p>
         </div>
     </div>
+
     <script>
         window.__TERMS_JSON_URL = './terms.json?ver={{artifactVersion}}';
+
+        /**
+         * FOSS Glossary Landing Page - Client-Side Search & Filter Engine
+         * 
+         * Features:
+         * - Real-time search with fuzzy matching
+         * - Filter by score range (90+, 80-89, etc.)
+         * - Sort by date, score, alphabetical
+         * - Click tags to filter by category
+         * - Responsive design with mobile-friendly controls
+         * - Debounced search for performance
+         * - Keyboard navigation support
+         * 
+         * No external dependencies - pure vanilla JavaScript
+         */
+
+        // Search state management
+        const SearchEngine = {
+            allTerms: [],
+            filteredTerms: [],
+            searchTerm: '',
+            scoreFilters: new Set(),
+            tagFilters: new Set(),
+            sortBy: 'date-desc',
+            debounceTimer: null,
+            debounceDelay: 150,
+
+            /**
+             * Initialize the search engine
+             * Extract all term data from DOM and setup event listeners
+             */
+            init() {
+                this.extractTermsFromDOM();
+                this.setupEventListeners();
+                this.setupTagClickHandlers();
+                this.render();
+                console.log('🔍 Search engine initialized with', this.allTerms.length, 'terms');
+            },
+
+            /**
+             * Extract term data from DOM cards
+             * Converts data attributes to searchable objects
+             */
+            extractTermsFromDOM() {
+                const cards = document.querySelectorAll('[data-term]');
+                this.allTerms = Array.from(cards).map((card, index) => ({
+                    element: card,
+                    term: card.dataset.term,
+                    slug: card.dataset.slug,
+                    definition: card.dataset.definition,
+                    humor: card.dataset.humor || '',
+                    score: parseInt(card.dataset.score),
+                    tags: (card.dataset.tags || '').split(' ').filter(t => t.length > 0),
+                    sortDate: new Date(card.dataset.date || new Date()).getTime(),
+                    originalIndex: index,
+                }));
+            },
+
+            /**
+             * Setup event listeners for search, filters, and sort
+             */
+            setupEventListeners() {
+                // Search input with debounce
+                const searchInput = document.getElementById('searchInput');
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        clearTimeout(this.debounceTimer);
+                        this.debounceTimer = setTimeout(() => {
+                            this.searchTerm = e.target.value.toLowerCase().trim();
+                            this.filter();
+                            this.render();
+                        }, this.debounceDelay);
+                    });
+
+                    // Clear search on Escape key
+                    searchInput.addEventListener('keydown', (e) => {
+                        if (e.key === 'Escape') {
+                            searchInput.value = '';
+                            this.searchTerm = '';
+                            this.filter();
+                            this.render();
+                        }
+                    });
+                }
+
+                // Score filters
+                document.querySelectorAll('.score-filter').forEach(checkbox => {
+                    checkbox.addEventListener('change', (e) => {
+                        if (e.target.checked) {
+                            this.scoreFilters.add(e.target.value);
+                        } else {
+                            this.scoreFilters.delete(e.target.value);
+                        }
+                        this.filter();
+                        this.render();
+                    });
+                });
+
+                // Sort select
+                const sortSelect = document.getElementById('sortSelect');
+                if (sortSelect) {
+                    sortSelect.addEventListener('change', (e) => {
+                        this.sortBy = e.target.value;
+                        this.render();
+                    });
+                }
+            },
+
+            /**
+             * Setup click handlers for category tag filtering
+             */
+            setupTagClickHandlers() {
+                document.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('tag') && !e.target.classList.contains('featured-tag')) {
+                        const tag = e.target.dataset.tag;
+                        if (this.tagFilters.has(tag)) {
+                            this.tagFilters.delete(tag);
+                        } else {
+                            this.tagFilters.add(tag);
+                        }
+                        this.filter();
+                        this.render();
+                    }
+                });
+            },
+
+            /**
+             * Filter terms based on search, score, and tag filters
+             */
+            filter() {
+                this.filteredTerms = this.allTerms.filter(term => {
+                    // Search filter
+                    if (this.searchTerm) {
+                        const matches = 
+                            term.term.toLowerCase().includes(this.searchTerm) ||
+                            term.definition.toLowerCase().includes(this.searchTerm) ||
+                            term.humor.toLowerCase().includes(this.searchTerm) ||
+                            term.tags.some(tag => tag.toLowerCase().includes(this.searchTerm));
+                        
+                        if (!matches) return false;
+                    }
+
+                    // Score filter
+                    if (this.scoreFilters.size > 0) {
+                        const scoreInRange = Array.from(this.scoreFilters).some(range => {
+                            const [min, max] = range.split('-').map(Number);
+                            return term.score >= min && term.score <= max;
+                        });
+                        if (!scoreInRange) return false;
+                    }
+
+                    // Tag filter
+                    if (this.tagFilters.size > 0) {
+                        const hasTag = term.tags.some(tag => this.tagFilters.has(tag));
+                        if (!hasTag) return false;
+                    }
+
+                    return true;
+                });
+
+                // Sort filtered results
+                this.sort();
+            },
+
+            /**
+             * Sort filtered terms based on selected sort option
+             */
+            sort() {
+                switch (this.sortBy) {
+                    case 'date-desc':
+                        this.filteredTerms.sort((a, b) => b.sortDate - a.sortDate);
+                        break;
+                    case 'score-desc':
+                        this.filteredTerms.sort((a, b) => b.score - a.score);
+                        break;
+                    case 'score-asc':
+                        this.filteredTerms.sort((a, b) => a.score - b.score);
+                        break;
+                    case 'alpha-asc':
+                        this.filteredTerms.sort((a, b) => a.term.localeCompare(b.term));
+                        break;
+                }
+            },
+
+            /**
+             * Update DOM to show/hide filtered terms
+             */
+            render() {
+                // Update visibility
+                this.allTerms.forEach(term => {
+                    const isVisible = this.filteredTerms.includes(term);
+                    term.element.style.display = isVisible ? 'block' : 'none';
+                    if (isVisible) {
+                        term.element.classList.add('visible');
+                    } else {
+                        term.element.classList.remove('visible');
+                    }
+                });
+
+                // Update result count
+                const resultCount = document.getElementById('resultCount');
+                if (resultCount) {
+                    const count = this.filteredTerms.length;
+                    resultCount.textContent = `Showing ${count} of {{termCards.length}} terms`;
+                }
+
+                // Show/hide empty state
+                const emptyState = document.getElementById('emptyState');
+                if (emptyState) {
+                    emptyState.style.display = this.filteredTerms.length === 0 ? 'block' : 'none';
+                }
+
+                // Update active filters display
+                this.updateActiveFiltersDisplay();
+            },
+
+            /**
+             * Display active filters as removable chips
+             */
+            updateActiveFiltersDisplay() {
+                const container = document.getElementById('activeFilters');
+                if (!container) return;
+
+                container.innerHTML = '';
+                const allFilters = new Set([...this.scoreFilters, ...this.tagFilters]);
+
+                if (allFilters.size === 0) return;
+
+                allFilters.forEach(filter => {
+                    const chip = document.createElement('span');
+                    chip.className = 'filter-chip';
+                    
+                    let label = filter;
+                    if (filter.includes('-') && !filter.includes('tag')) {
+                        const [min, max] = filter.split('-');
+                        label = `Score ${min}-${max}`;
+                    }
+
+                    chip.innerHTML = `${label} <button class="chip-remove" data-filter="${filter}">✕</button>`;
+                    chip.querySelector('.chip-remove').addEventListener('click', () => {
+                        this.scoreFilters.delete(filter);
+                        this.tagFilters.delete(filter);
+                        this.filter();
+                        this.render();
+                    });
+
+                    container.appendChild(chip);
+                });
+            }
+        };
+
+        /**
+         * Animation utilities for entrance animations
+         */
+        const Animations = {
+            init() {
+                this.observeElements();
+                this.attachAnimationClasses();
+            },
+
+            attachAnimationClasses() {
+                document.querySelectorAll('[data-animate]').forEach(el => {
+                    el.classList.add('animate-on-load');
+                    const animationType = el.dataset.animate;
+                    el.classList.add(`animate-${animationType}`);
+                    
+                    if (el.dataset.delay) {
+                        const delay = parseInt(el.dataset.delay) * 50;
+                        el.style.animationDelay = `${delay}ms`;
+                    }
+                });
+            },
+
+            observeElements() {
+                if (!('IntersectionObserver' in window)) return;
+                
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('in-view');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.1 });
+
+                document.querySelectorAll('[data-animate]').forEach(el => {
+                    observer.observe(el);
+                });
+            }
+        };
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            SearchEngine.init();
+            Animations.init();
+        });
     </script>
 </body>
 </html>

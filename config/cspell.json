@@ -93,7 +93,11 @@
     "rgba",
     "minmax",
     "blockquotes",
-    "nojekyll"
+    "nojekyll",
+    "morphism",
+    "WCAG",
+    "aren",
+    "jank"
   ],
   "ignorePaths": [
     "node_modules/**",
