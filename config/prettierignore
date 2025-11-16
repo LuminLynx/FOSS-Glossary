@@ -31,3 +31,7 @@ coverage/
 # Logs
 *.log
 npm-debug.log*
+
+# Configuration files
+.release-info.json
+.vscode/

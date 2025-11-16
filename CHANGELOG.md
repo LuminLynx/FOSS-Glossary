@@ -1,5 +1,74 @@
 # CHANGELOG
 
+## Version: v1.1.0
+
+**Date:** 2025-11-16  
+**Status:** Enhanced landing page with interactive features
+
+### Added
+
+- 🔍 **Real-Time Search**: Fuzzy search across term names, definitions, humor, and tags
+- 🎯 **Advanced Filtering**: Filter by score range (90+, 80-89, etc.) and category tags
+- 📊 **Dynamic Sorting**: Sort by date, score (high-to-low, low-to-high), or alphabetically
+- ⭐ **Featured Term Spotlight**: Automatically displays the highest-scoring term
+- 🎨 **Enhanced Animations**: 6 new CSS keyframes (slideUp, fadeInUp, fadeIn, slideInDown, scaleIn, bounce, shine)
+- 📈 **Visual Score Indicators**: Color-coded progress bars showing term quality scores
+- 💻 **Client-Side Engine**: ~5KB vanilla JavaScript with zero dependencies for search/filter/sort
+- 📱 **Improved Responsive Design**: Enhanced mobile layout with optimized breakpoints (768px, 480px)
+- 🎭 **Modern Visual Improvements**: Gradient backgrounds, glass-morphism effects, improved typography hierarchy
+- 📍 **16-Term Display**: Expanded from 6 to 16 visible terms (all searchable via client-side engine)
+- 🏷️ **Click-to-Filter Tags**: Select tags to instantly filter related terms
+- 🔢 **Result Counter**: Real-time feedback showing matching terms
+- ⌨️ **Keyboard Navigation**: Full keyboard support for search and filters
+- 🎯 **Empty State Handling**: Friendly messages when no terms match filters
+
+### Enhanced
+
+- **Landing Page Generator** (`generateLandingPage.js`):
+  - New `prepareFeaturedTermData()` function for featured term selection
+  - Enhanced `prepareTermCardData()` with slug and sortDate fields
+  - Expanded CSS from ~450 to ~1100+ lines with complete animation system
+  - Improved data structure for client-side filtering
+
+- **Landing Page Template** (`templates/landing-page.hbs`):
+  - Embedded SearchEngine JavaScript object with 8+ methods
+  - Embedded Animations JavaScript object with IntersectionObserver support
+  - New hero section with animated statistics
+  - New featured term spotlight section
+  - New search/filter UI with controls and chips
+  - Complete redesign with modern visual hierarchy
+
+- **PR Validation Workflow** (`.github/workflows/pr-complete.yml`):
+  - Added dedicated landing page validation step
+  - Enhanced error reporting for landing page sync issues
+  - Informational checks without blocking merge
+
+- **Documentation** (`docs/landing-page/maintenance.md`):
+  - Complete rewrite with search/filter feature documentation
+  - Architecture explanation for client-side SearchEngine
+  - Updated troubleshooting guide with new features
+  - Mobile responsiveness testing instructions
+  - Accessibility testing guidance
+
+### Performance
+
+- **Bundle Size**: Landing page HTML ~25KB (gzipped from ~1858 lines)
+- **Search Performance**: Debounced at 150ms for optimal responsiveness
+- **Dependencies**: Zero external dependencies (vanilla JavaScript)
+- **Animations**: GPU-accelerated CSS animations with IntersectionObserver optimization
+
+### Testing
+
+- All 80+ existing test cases in `generateLandingPage.test.js` pass with enhancements
+- XSS protection verified across all new dynamic content
+- Responsive design tested on mobile (480px), tablet (768px), and desktop
+- SearchEngine functionality verified in generated output
+
+### Breaking Changes
+
+- Landing page now requires JavaScript to be enabled (search/filter features)
+- Generated HTML size increased from ~800 to ~1858 lines (all client-side, no server calls)
+
 ## Version: v1.0.0
 
 **Date:** 2025-11-06  
