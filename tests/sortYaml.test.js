@@ -153,7 +153,7 @@ test('sortYaml: handles strings with apostrophes correctly', () => {
   fs.writeFileSync(termsFile, withApostrophe, 'utf8');
 
   try {
-    execSync(`node ${SCRIPT_PATH}`, { cwd: tmpDir, encoding: 'utf8' });
+    execFileSync('node', [SCRIPT_PATH], { cwd: tmpDir, encoding: 'utf8' });
     const sorted = fs.readFileSync(termsFile, 'utf8');
     // Should preserve apostrophes correctly (js-yaml handles quote escaping automatically)
     assert.ok(sorted.includes("doesn't"), 'Should preserve apostrophes correctly');
