@@ -1020,7 +1020,7 @@
                      data-tags="test "
                      data-definition="A test term with special &amp; characters like &gt; &lt; &quot; and &#x27;"
                      data-humor=""
-                     data-date="2025-11-16T22:37:23.714Z"
+                     data-date="2025-11-16T22:41:05.541Z"
                      data-animate="fadeInUp"
                      data-delay="0">
                     
@@ -1100,14 +1100,14 @@
         <!-- FOOTER -->
         <div class="footer">
             <p class="last-updated">
-                Last updated: Nov 16, 2025, 10:37 PM | 1 terms and growing!<br>
+                Last updated: Nov 16, 2025, 10:41 PM | 1 terms and growing!<br>
                 Made with 💙 by the FOSS community
             </p>
         </div>
     </div>
 
     <script>
-        window.__TERMS_JSON_URL = './terms.json?ver=22268cf';
+        window.__TERMS_JSON_URL = './terms.json?ver=804a5c2';
 
         /**
          * FOSS Glossary Landing Page - Client-Side Search & Filter Engine
@@ -1143,6 +1143,7 @@
                 this.extractTermsFromDOM();
                 this.setupEventListeners();
                 this.setupTagClickHandlers();
+                this.filter();
                 this.render();
                 console.log('🔍 Search engine initialized with', this.allTerms.length, 'terms');
             },
