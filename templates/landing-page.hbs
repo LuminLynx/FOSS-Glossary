@@ -300,6 +300,7 @@
                 this.extractTermsFromDOM();
                 this.setupEventListeners();
                 this.setupTagClickHandlers();
+                this.filter();
                 this.render();
                 console.log('🔍 Search engine initialized with', this.allTerms.length, 'terms');
             },

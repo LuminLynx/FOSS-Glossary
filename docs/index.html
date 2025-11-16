@@ -1,2187 +1,1858 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FOSS Glossary - 28 Terms and Growing!</title>
-
+    
     <!-- Primary Meta Tags -->
-    <meta name="title" content="FOSS Glossary - Gamified Open Source Terms" />
-    <meta
-      name="description"
-      content="A gamified glossary of FOSS terms with humor. 28 terms defined by the community! Score points, unlock achievements, and learn with fun."
-    />
-    <meta
-      name="keywords"
-      content="FOSS, open source, glossary, gamification, github, programming, developer, community"
-    />
-    <meta name="author" content="LuminLynx" />
-    <link rel="canonical" href="https://luminlynx.github.io/FOSS-Glossary/" />
-
+    <meta name="title" content="FOSS Glossary - Gamified Open Source Terms">
+    <meta name="description" content="A gamified glossary of FOSS terms with humor. 28 terms defined by the community! Score points, unlock achievements, and learn with fun.">
+    <meta name="keywords" content="FOSS, open source, glossary, gamification, github, programming, developer, community">
+    <meta name="author" content="LuminLynx">
+    <link rel="canonical" href="https://luminlynx.github.io/FOSS-Glossary/">
+    
     <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://luminlynx.github.io/FOSS-Glossary/" />
-    <meta property="og:title" content="FOSS Glossary - Gamified Open Source Terms" />
-    <meta
-      property="og:description"
-      content="Score points, unlock achievements, and learn FOSS terms with humor! 28 terms and growing."
-    />
-    <meta
-      property="og:image"
-      content="https://raw.githubusercontent.com/LuminLynx/FOSS-Glossary/main/assets/twitter-card.png"
-    />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="628" />
-    <meta property="og:site_name" content="FOSS Glossary" />
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://luminlynx.github.io/FOSS-Glossary/">
+    <meta property="og:title" content="FOSS Glossary - Gamified Open Source Terms">
+    <meta property="og:description" content="Score points, unlock achievements, and learn FOSS terms with humor! 28 terms and growing.">
+    <meta property="og:image" content="https://raw.githubusercontent.com/LuminLynx/FOSS-Glossary/main/assets/twitter-card.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="628">
+    <meta property="og:site_name" content="FOSS Glossary">
 
     <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="https://luminlynx.github.io/FOSS-Glossary/" />
-    <meta name="twitter:title" content="FOSS Glossary - Gamified Open Source Terms" />
-    <meta
-      name="twitter:description"
-      content="Score points, unlock achievements, and learn FOSS terms with humor! 28 terms and growing."
-    />
-    <meta
-      name="twitter:image"
-      content="https://raw.githubusercontent.com/LuminLynx/FOSS-Glossary/main/assets/twitter-card.png"
-    />
-
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://luminlynx.github.io/FOSS-Glossary/">
+    <meta name="twitter:title" content="FOSS Glossary - Gamified Open Source Terms">
+    <meta name="twitter:description" content="Score points, unlock achievements, and learn FOSS terms with humor! 28 terms and growing.">
+    <meta name="twitter:image" content="https://raw.githubusercontent.com/LuminLynx/FOSS-Glossary/main/assets/twitter-card.png">
+ 
     <!-- Favicon (optional - add later) -->
     <!-- <link rel="icon" type="image/png" href="assets/favicon.png"> -->
 
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      /* ANIMATIONS */
-      @keyframes slideUp {
-        from {
-          opacity: 0;
-          transform: translateY(30px);
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        /* ANIMATIONS */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        to {
-          opacity: 1;
-          transform: translateY(0);
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-      }
-      @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
-        to {
-          opacity: 1;
-          transform: translateY(0);
+        @keyframes slideInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-      }
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
         }
-        to {
-          opacity: 1;
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
-      }
-      @keyframes slideInDown {
-        from {
-          opacity: 0;
-          transform: translateY(-20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-      @keyframes scaleIn {
-        from {
-          opacity: 0;
-          transform: scale(0.95);
-        }
-        to {
-          opacity: 1;
-          transform: scale(1);
-        }
-      }
-      @keyframes bounce {
-        0%,
-        100% {
-          transform: translateY(0);
-        }
-        50% {
-          transform: translateY(-10px);
-        }
-      }
-
-      /* DARK THEME (Default) */
-      body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-        line-height: 1.6;
-        color: #f5f5f0;
-        background: linear-gradient(135deg, #1a3a52 0%, #0f2234 100%);
-        min-height: 100vh;
-        padding-bottom: 2rem;
-      }
-      .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 2rem;
-      }
-      .card {
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(10px);
-        padding: 3rem;
-        border-radius: 15px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        margin-bottom: 2rem;
-        border: 1px solid rgba(0, 212, 228, 0.2);
-        animation: slideUp 0.6s ease-out forwards;
-        opacity: 0;
-      }
-      .card:nth-child(1) {
-        animation-delay: 0ms;
-      }
-      .card:nth-child(2) {
-        animation-delay: 100ms;
-      }
-      .card:nth-child(3) {
-        animation-delay: 200ms;
-      }
-      .card:nth-child(4) {
-        animation-delay: 300ms;
-      }
-      .card:nth-child(5) {
-        animation-delay: 400ms;
-      }
-      .card:nth-child(n + 6) {
-        animation-delay: 500ms;
-      }
-
-      /* Animation class attachment */
-      [data-animate].animate-on-load {
-        animation: fadeInUp 0.6s ease-out forwards;
-        opacity: 0;
-      }
-      .animate-fadeInUp {
-        animation-name: fadeInUp;
-      }
-      .animate-fadeIn {
-        animation-name: fadeIn;
-      }
-      .animate-slideInDown {
-        animation-name: slideInDown;
-      }
-      .animate-scaleIn {
-        animation-name: scaleIn;
-      }
-      .animate-bounce {
-        animation-name: bounce;
-        animation-duration: 1s;
-      }
-
-      /* Hero Section */
-      .hero-card {
-        text-align: center;
-        background: linear-gradient(
-          135deg,
-          rgba(0, 212, 228, 0.1) 0%,
-          rgba(0, 240, 255, 0.05) 100%
-        );
-        border: 2px solid rgba(0, 212, 228, 0.3);
-        padding: 4rem 2rem;
-      }
-      .logo-section {
-        text-align: center;
-        margin-bottom: 2rem;
-      }
-      .logo {
-        width: 150px;
-        height: 150px;
-        margin: 0 auto 1rem;
-        border-radius: 20%;
-        box-shadow:
-          0 10px 40px rgba(0, 212, 228, 0.5),
-          inset 0 0 20px rgba(0, 212, 228, 0.2);
-        overflow: hidden;
-        border: 2px solid rgba(0, 212, 228, 0.4);
-        transition: all 0.3s ease;
-      }
-      .logo:hover {
-        box-shadow:
-          0 15px 50px rgba(0, 212, 228, 0.7),
-          inset 0 0 30px rgba(0, 212, 228, 0.3);
-        transform: scale(1.05);
-      }
-      .logo img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-
-      /* Typography */
-      h1,
-      .hero-title {
-        text-align: center;
-        font-size: 3rem;
-        color: #00d4e4;
-        margin-bottom: 1rem;
-        font-weight: 700;
-        letter-spacing: -0.5px;
-      }
-      h2 {
-        color: #00d4e4;
-        margin: 2rem 0 1rem 0;
-        font-weight: 600;
-        font-size: 1.8rem;
-      }
-      h3,
-      h4 {
-        margin-bottom: 0.5rem;
-      }
-      .tagline {
-        text-align: center;
-        font-size: 1.2rem;
-        margin-bottom: 2rem;
-        opacity: 0.9;
-        max-width: 700px;
-        margin-left: auto;
-        margin-right: auto;
-      }
-
-      /* Statistics Section */
-      .stats-card {
-        background: rgba(0, 212, 228, 0.05);
-        border: 1px solid rgba(0, 212, 228, 0.3);
-      }
-      .live-stats {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 1.5rem;
-        margin: 2rem 0;
-      }
-      .stat-card {
-        background: rgba(0, 212, 228, 0.1);
-        border: 2px solid #00d4e4;
-        color: #f5f5f0;
-        padding: 2rem 1.5rem;
-        border-radius: 12px;
-        text-align: center;
-        transition: all 0.3s ease;
-        cursor: default;
-      }
-      .stat-card:hover {
-        background: rgba(0, 212, 228, 0.15);
-        transform: translateY(-4px);
-        box-shadow: 0 8px 24px rgba(0, 212, 228, 0.2);
-      }
-      .stat-number {
-        font-size: 2.5rem;
-        font-weight: 700;
-        display: block;
-        color: #00f0ff;
-      }
-      .stat-label {
-        font-size: 0.95rem;
-        opacity: 0.85;
-        margin-top: 0.5rem;
-      }
-
-      /* Featured Term Section */
-      .featured-section {
-        background: linear-gradient(
-          135deg,
-          rgba(0, 240, 255, 0.1) 0%,
-          rgba(0, 212, 228, 0.05) 100%
-        );
-        border: 2px solid #00d4e4;
-        position: relative;
-        overflow: hidden;
-      }
-      .featured-section::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(0, 212, 228, 0.2), transparent);
-        animation: shine 3s infinite;
-      }
-      @keyframes shine {
-        0% {
-          left: -100%;
-        }
-        100% {
-          left: 100%;
-        }
-      }
-      .featured-term-card {
-        position: relative;
-        z-index: 1;
-      }
-      .featured-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 2rem;
-        margin-bottom: 1.5rem;
-        flex-wrap: wrap;
-      }
-      .featured-header h3 {
-        font-size: 1.8rem;
-        color: #00f0ff;
-        margin: 0;
-        flex: 1;
-      }
-      .score-badge {
-        background: linear-gradient(135deg, #00d4e4 0%, #00f0ff 100%);
-        color: #0d1f2d;
-        padding: 0.8rem 1.5rem;
-        border-radius: 50px;
-        font-weight: 700;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        box-shadow: 0 4px 15px rgba(0, 212, 228, 0.4);
-      }
-      .score-value {
-        font-size: 1.5rem;
-      }
-      .score-label {
-        font-size: 0.7rem;
-        opacity: 0.8;
-      }
-      .featured-definition {
-        font-size: 1.1rem;
-        line-height: 1.8;
-        margin-bottom: 1.5rem;
-        color: #f5f5f0;
-      }
-      .featured-humor {
-        background: rgba(255, 217, 61, 0.1);
-        border-left: 4px solid #ffd93d;
-        padding: 1rem;
-        border-radius: 8px;
-        margin-bottom: 1.5rem;
-      }
-      .featured-humor p {
-        color: #ffd93d;
-        font-style: italic;
-        margin: 0;
-      }
-      .featured-tags {
-        display: flex;
-        gap: 0.8rem;
-        flex-wrap: wrap;
-      }
-      .featured-tag {
-        background: rgba(0, 212, 228, 0.3);
-        border: 1px solid #00d4e4;
-        font-size: 0.9rem;
-      }
-
-      /* Recent Additions */
-      .recent-additions {
-        background: rgba(0, 0, 0, 0.3);
-        border: 1px solid rgba(0, 212, 228, 0.2);
-      }
-      .recent-additions p {
-        margin: 0;
-        font-size: 1.1rem;
-      }
-
-      /* Search & Filter Section */
-      .search-section {
-        background: rgba(0, 212, 228, 0.05);
-        border: 1px solid rgba(0, 212, 228, 0.3);
-      }
-      .search-container {
-        margin: 2rem 0;
-      }
-      .search-input-wrapper {
-        position: relative;
-        margin-bottom: 1.5rem;
-      }
-      .search-input {
-        width: 100%;
-        padding: 1rem 1.2rem 1rem 3rem;
-        background: rgba(0, 212, 228, 0.1);
-        border: 2px solid rgba(0, 212, 228, 0.3);
-        border-radius: 10px;
-        color: #f5f5f0;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-      }
-      .search-input::placeholder {
-        color: rgba(245, 245, 240, 0.5);
-      }
-      .search-input:focus {
-        outline: none;
-        border-color: #00d4e4;
-        background: rgba(0, 212, 228, 0.15);
-        box-shadow: 0 0 20px rgba(0, 212, 228, 0.2);
-      }
-      .search-icon {
-        position: absolute;
-        left: 1rem;
-        top: 50%;
-        transform: translateY(-50%);
-        opacity: 0.6;
-        pointer-events: none;
-      }
-      .filter-controls {
-        display: flex;
-        gap: 2rem;
-        flex-wrap: wrap;
-        margin-bottom: 1.5rem;
-        align-items: center;
-      }
-      .filter-group {
-        display: flex;
-        gap: 1rem;
-        flex-wrap: wrap;
-      }
-      .filter-label {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        cursor: pointer;
-        transition: color 0.2s;
-      }
-      .filter-label:hover {
-        color: #00f0ff;
-      }
-      .filter-label input[type='checkbox'] {
-        cursor: pointer;
-        width: 18px;
-        height: 18px;
-        accent-color: #00d4e4;
-      }
-      .sort-label {
-        display: flex;
-        align-items: center;
-        gap: 0.8rem;
-      }
-      .sort-select {
-        padding: 0.6rem 0.8rem;
-        background: rgba(0, 212, 228, 0.1);
-        border: 1px solid rgba(0, 212, 228, 0.3);
-        color: #f5f5f0;
-        border-radius: 6px;
-        font-size: 0.95rem;
-        cursor: pointer;
-        transition: all 0.2s;
-      }
-      .sort-select:hover,
-      .sort-select:focus {
-        border-color: #00d4e4;
-        background: rgba(0, 212, 228, 0.15);
-      }
-      .sort-select option {
-        background: #1a3a52;
-        color: #f5f5f0;
-      }
-      .filter-tags-container {
-        display: flex;
-        gap: 0.8rem;
-        flex-wrap: wrap;
-        margin-bottom: 1rem;
-      }
-      .filter-chip {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        background: rgba(0, 212, 228, 0.2);
-        border: 1px solid #00d4e4;
-        color: #00d4e4;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-size: 0.9rem;
-        animation: fadeInUp 0.3s ease;
-      }
-      .chip-remove {
-        background: none;
-        border: none;
-        color: #00d4e4;
-        cursor: pointer;
-        font-size: 1.1rem;
-        padding: 0;
-        opacity: 0.7;
-        transition: opacity 0.2s;
-      }
-      .chip-remove:hover {
-        opacity: 1;
-      }
-      .result-count {
-        color: rgba(245, 245, 240, 0.7);
-        font-size: 0.95rem;
-        margin-top: 1rem;
-      }
-
-      /* Term Grid & Cards */
-      .terms-section {
-        background: rgba(0, 212, 228, 0.03);
-      }
-      .term-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-        gap: 1.5rem;
-        margin: 2rem 0;
-      }
-      .term-card {
-        background: rgba(255, 255, 255, 0.05);
-        border: 2px solid rgba(0, 212, 228, 0.3);
-        padding: 1.5rem;
-        border-radius: 12px;
-        transition: all 0.3s ease;
-        opacity: 1;
-      }
-      .term-card.visible {
-        animation: fadeInUp 0.4s ease-out;
-      }
-      .term-card:hover {
-        border-color: #00d4e4;
-        transform: translateY(-4px);
-        box-shadow: 0 12px 36px rgba(0, 212, 228, 0.25);
-        background: rgba(255, 255, 255, 0.08);
-      }
-      .term-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 1rem;
-        margin-bottom: 1rem;
-        flex-wrap: wrap;
-      }
-      .term-header h3 {
-        color: #00d4e4;
-        margin: 0;
-        font-size: 1.3rem;
-        flex: 1;
-        word-break: break-word;
-      }
-      .score-bar-container {
-        width: 100px;
-        height: 6px;
-        background: rgba(0, 212, 228, 0.2);
-        border-radius: 3px;
-        overflow: hidden;
-        margin-bottom: 0.5rem;
-      }
-      .score-bar {
-        height: 100%;
-        border-radius: 3px;
-        transition: width 0.4s ease;
-        box-shadow: 0 0 8px currentColor;
-      }
-      .term-score {
-        font-weight: 700;
-        font-size: 1rem;
-        white-space: nowrap;
-      }
-      .term-definition {
-        color: #f5f5f0;
-        margin-bottom: 1rem;
-        line-height: 1.6;
-      }
-      .term-humor {
-        color: #ffd93d;
-        font-style: italic;
-        font-size: 0.95rem;
-        padding: 0.8rem;
-        background: rgba(255, 217, 61, 0.08);
-        border-left: 3px solid #ffd93d;
-        margin: 1rem 0;
-        border-radius: 4px;
-      }
-      .term-tags {
-        display: flex;
-        gap: 0.6rem;
-        flex-wrap: wrap;
-        margin-top: 1rem;
-      }
-      .tag {
-        background: rgba(0, 212, 228, 0.2);
-        color: #00d4e4;
-        padding: 0.35rem 0.7rem;
-        border-radius: 16px;
-        font-size: 0.8rem;
-        border: 1px solid rgba(0, 212, 228, 0.3);
-        transition: all 0.2s;
-        cursor: pointer;
-      }
-      .tag:hover {
-        background: rgba(0, 212, 228, 0.3);
-        border-color: #00d4e4;
-      }
-      .empty-state {
-        text-align: center;
-        padding: 3rem 2rem;
-        color: rgba(245, 245, 240, 0.6);
-        font-size: 1.1rem;
-      }
-
-      /* Scoring Section */
-      .scoring-section {
-        background: rgba(0, 212, 228, 0.05);
-      }
-      .scoring-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.5rem;
-        margin: 2rem 0;
-      }
-      .scoring-item {
-        background: rgba(0, 212, 228, 0.08);
-        border: 1px solid rgba(0, 212, 228, 0.2);
-        padding: 1.5rem;
-        border-radius: 12px;
-        text-align: center;
-        transition: all 0.3s ease;
-      }
-      .scoring-item:hover {
-        background: rgba(0, 212, 228, 0.12);
-        transform: translateY(-4px);
-        border-color: rgba(0, 212, 228, 0.5);
-      }
-      .scoring-emoji {
-        font-size: 2.5rem;
-        margin-bottom: 0.8rem;
-      }
-      .scoring-item h4 {
-        color: #00d4e4;
-        font-size: 1.1rem;
-        margin-bottom: 0.5rem;
-      }
-      .scoring-item p {
-        color: rgba(245, 245, 240, 0.8);
-        font-size: 0.95rem;
-        margin: 0;
-      }
-      .scoring-note {
-        text-align: center;
-        padding: 1.5rem;
-        background: rgba(0, 212, 228, 0.1);
-        border-left: 4px solid #00d4e4;
-        border-radius: 8px;
-        margin-top: 2rem;
-      }
-      .scoring-note p {
-        font-weight: 600;
-        color: #00f0ff;
-        margin: 0;
-      }
-
-      /* CTA Section */
-      .cta-section {
-        background: linear-gradient(
-          135deg,
-          rgba(0, 212, 228, 0.08) 0%,
-          rgba(0, 240, 255, 0.05) 100%
-        );
-        text-align: center;
-      }
-      .cta {
-        display: flex;
-        justify-content: center;
-        gap: 1rem;
-        flex-wrap: wrap;
-        margin: 2rem 0;
-      }
-      .button {
-        display: inline-block;
-        background: #00d4e4;
-        color: #0d1f2d;
-        padding: 1rem 2.5rem;
-        text-decoration: none;
-        border-radius: 50px;
-        font-weight: 700;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(0, 212, 228, 0.4);
-        border: 2px solid transparent;
-        cursor: pointer;
-      }
-      .button:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(0, 212, 228, 0.6);
-        background: #00f0ff;
-      }
-      .button:active {
-        transform: translateY(-1px);
-      }
-      .button-secondary {
-        background: transparent;
-        color: #00d4e4;
-        border: 2px solid #00d4e4;
-      }
-      .button-secondary:hover {
-        background: rgba(0, 212, 228, 0.1);
-        border-color: #00f0ff;
-        color: #00f0ff;
-      }
-
-      /* Footer */
-      .footer {
-        text-align: center;
-        margin-top: 4rem;
-        padding-top: 2rem;
-        border-top: 1px solid rgba(0, 212, 228, 0.2);
-      }
-      .last-updated {
-        color: rgba(245, 245, 240, 0.7);
-        font-size: 0.9rem;
-        margin: 0;
-        line-height: 1.6;
-      }
-
-      /* Release Banner */
-      .release-banner {
-        background: linear-gradient(
-          135deg,
-          rgba(0, 212, 228, 0.15) 0%,
-          rgba(0, 240, 255, 0.1) 100%
-        );
-        border: 2px solid #00d4e4;
-        padding: 2rem;
-        border-radius: 12px;
-        margin-bottom: 2rem;
-        text-align: center;
-        box-shadow: 0 4px 20px rgba(0, 212, 228, 0.2);
-      }
-      .release-badge {
-        color: #f5f5f0;
-        font-weight: 600;
-        margin: 0 0 0.5rem 0;
-      }
-      .release-banner h2 {
-        color: #00f0ff;
-        margin: 0 0 0.5rem 0;
-      }
-      .release-banner p {
-        color: #f5f5f0;
-        margin: 0.5rem 0;
-      }
-      .release-banner a {
-        display: inline-block;
-        margin-top: 1rem;
-        padding: 0.6rem 1.5rem;
-        background: #00d4e4;
-        color: #0d1f2d;
-        text-decoration: none;
-        border-radius: 6px;
-        font-weight: 700;
-        cursor: pointer;
-        border: 2px solid #00d4e4;
-        transition: all 0.3s ease;
-      }
-      .release-banner a:hover {
-        background: #00f0ff;
-        border-color: #00f0ff;
-        transform: translateY(-2px);
-      }
-
-      /* LIGHT THEME */
-      @media (prefers-color-scheme: light) {
+        
+        /* DARK THEME (Default) */
         body {
-          color: #1a3a52;
-          background: linear-gradient(135deg, #f0f4f8 0%, #e8f2f7 100%);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #f5f5f0;
+            background: linear-gradient(135deg, #1a3a52 0%, #0f2234 100%);
+            min-height: 100vh;
+            padding-bottom: 2rem;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
         }
         .card {
-          background: rgba(255, 255, 255, 0.9);
-          border: 1px solid rgba(0, 163, 184, 0.2);
-          box-shadow: 0 10px 40px rgba(26, 58, 82, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            padding: 3rem;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 2rem;
+            border: 1px solid rgba(0, 212, 228, 0.2);
+            animation: slideUp 0.6s ease-out forwards;
+            opacity: 0;
         }
+        .card:nth-child(1) { animation-delay: 0ms; }
+        .card:nth-child(2) { animation-delay: 100ms; }
+        .card:nth-child(3) { animation-delay: 200ms; }
+        .card:nth-child(4) { animation-delay: 300ms; }
+        .card:nth-child(5) { animation-delay: 400ms; }
+        .card:nth-child(n+6) { animation-delay: 500ms; }
+        
+        /* Animation class attachment */
+        [data-animate].animate-on-load {
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+        }
+        .animate-fadeInUp { animation-name: fadeInUp; }
+        .animate-fadeIn { animation-name: fadeIn; }
+        .animate-slideInDown { animation-name: slideInDown; }
+        .animate-scaleIn { animation-name: scaleIn; }
+        .animate-bounce { animation-name: bounce; animation-duration: 1s; }
+        
+        /* Hero Section */
         .hero-card {
-          background: linear-gradient(
-            135deg,
-            rgba(0, 212, 228, 0.08) 0%,
-            rgba(0, 240, 255, 0.05) 100%
-          );
+            text-align: center;
+            background: linear-gradient(135deg, rgba(0, 212, 228, 0.1) 0%, rgba(0, 240, 255, 0.05) 100%);
+            border: 2px solid rgba(0, 212, 228, 0.3);
+            padding: 4rem 2rem;
         }
-        h1,
-        h2,
-        .hero-title {
-          color: #00838f;
+        .logo-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .logo {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 1rem;
+            border-radius: 20%;
+            box-shadow: 0 10px 40px rgba(0, 212, 228, 0.5), inset 0 0 20px rgba(0, 212, 228, 0.2);
+            overflow: hidden;
+            border: 2px solid rgba(0, 212, 228, 0.4);
+            transition: all 0.3s ease;
+        }
+        .logo:hover {
+            box-shadow: 0 15px 50px rgba(0, 212, 228, 0.7), inset 0 0 30px rgba(0, 212, 228, 0.3);
+            transform: scale(1.05);
+        }
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* Typography */
+        h1, .hero-title {
+            text-align: center;
+            font-size: 3rem;
+            color: #00d4e4;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        h2 {
+            color: #00d4e4;
+            margin: 2rem 0 1rem 0;
+            font-weight: 600;
+            font-size: 1.8rem;
+        }
+        h3, h4 {
+            margin-bottom: 0.5rem;
         }
         .tagline {
-          color: #2d3e50;
-        }
-        .logo {
-          box-shadow:
-            0 10px 40px rgba(0, 163, 184, 0.3),
-            inset 0 0 20px rgba(0, 163, 184, 0.1);
-          border-color: rgba(0, 163, 184, 0.3);
-        }
-        .stat-card {
-          background: linear-gradient(135deg, #e0f7fa 0%, #b3e5fc 100%);
-          border: none;
-          color: #1a3a52;
-        }
-        .stat-card:hover {
-          background: linear-gradient(135deg, #b3e5fc 0%, #81d4fa 100%);
-          box-shadow: 0 8px 24px rgba(0, 163, 184, 0.2);
-        }
-        .stat-number {
-          color: #00838f;
-        }
-        .stat-label {
-          color: #1a3a52;
-        }
-        .featured-section {
-          background: rgba(0, 212, 228, 0.05);
-          border-color: #00a3b8;
-        }
-        .featured-header h3 {
-          color: #00838f;
-        }
-        .score-badge {
-          background: linear-gradient(135deg, #00a3b8 0%, #00d4e4 100%);
-          color: white;
-        }
-        .featured-definition {
-          color: #2d3e50;
-        }
-        .featured-humor {
-          background: rgba(217, 119, 6, 0.08);
-          border-left-color: #d97706;
-        }
-        .featured-humor p {
-          color: #d97706;
-        }
-        .featured-tag {
-          background: rgba(0, 131, 143, 0.1);
-          border-color: #00a3b8;
-          color: #00838f;
-        }
-        .term-card {
-          background: white;
-          border: 1px solid #e0e7ed;
-        }
-        .term-card:hover {
-          border-color: #00d4e4;
-          background: rgba(0, 212, 228, 0.02);
-        }
-        .term-header h3 {
-          color: #00838f;
-        }
-        .term-definition {
-          color: #2d3e50;
-        }
-        .term-humor {
-          color: #d97706;
-          background: #fef3c7;
-          border-left-color: #fbbf24;
-        }
-        .tag {
-          background: #e0f7fa;
-          color: #00838f;
-          border: 1px solid #b2ebf2;
-        }
-        .tag:hover {
-          background: #b2ebf2;
-          color: white;
-        }
-        .search-input {
-          background: white;
-          border-color: rgba(0, 163, 184, 0.3);
-          color: #1a3a52;
-        }
-        .search-input:focus {
-          background: rgba(0, 212, 228, 0.05);
-          border-color: #00a3b8;
-        }
-        .sort-select,
-        .sort-select option {
-          background: white;
-          color: #1a3a52;
-          border-color: rgba(0, 163, 184, 0.3);
-        }
-        .filter-label {
-          color: #2d3e50;
-        }
-        .scoring-item {
-          background: rgba(0, 212, 228, 0.05);
-          border-color: rgba(0, 163, 184, 0.2);
-        }
-        .scoring-item h4 {
-          color: #00838f;
-        }
-        .scoring-item p {
-          color: #2d3e50;
-        }
-        .button {
-          background: linear-gradient(135deg, #00a3b8 0%, #00d4e4 100%);
-          color: white;
-        }
-        .button:hover {
-          background: linear-gradient(135deg, #00d4e4 0%, #00f0ff 100%);
-        }
-        .button-secondary {
-          background: white;
-          color: #00a3b8;
-          border-color: #00d4e4;
-        }
-        .button-secondary:hover {
-          background: #e0f7fa;
-          border-color: #00a3b8;
-          color: #00838f;
-        }
-        .release-banner {
-          background: linear-gradient(135deg, #e0f7fa 0%, #b3e5fc 100%);
-          border-color: #00a3b8;
-          box-shadow: 0 4px 20px rgba(0, 163, 184, 0.15);
-        }
-        .release-banner p {
-          color: #1a3a52;
-        }
-        .release-banner h2 {
-          color: #00838f;
-        }
-        .release-banner a {
-          background: #00a3b8;
-          border-color: #00a3b8;
-          color: white;
-        }
-        .release-banner a:hover {
-          background: #00d4e4;
-          border-color: #00d4e4;
-        }
-        .empty-state {
-          color: rgba(45, 62, 80, 0.6);
-        }
-        .result-count {
-          color: rgba(45, 62, 80, 0.7);
-        }
-        .last-updated {
-          color: rgba(45, 62, 80, 0.7);
-          border-top-color: rgba(0, 163, 184, 0.2);
-        }
-      }
-
-      /* RESPONSIVE DESIGN */
-      @media (max-width: 768px) {
-        .container {
-          padding: 1rem;
-        }
-        .card {
-          padding: 1.5rem;
-        }
-        .hero-card {
-          padding: 2rem 1rem;
-        }
-        h1,
-        .hero-title {
-          font-size: 2rem;
-        }
-        h2 {
-          font-size: 1.4rem;
-        }
-        .term-grid {
-          grid-template-columns: 1fr;
-        }
-        .term-header {
-          flex-direction: column;
-          align-items: flex-start;
-        }
-        .featured-header {
-          flex-direction: column;
-        }
-        .cta {
-          flex-direction: column;
-        }
-        .button {
-          width: 100%;
-        }
-        .filter-controls {
-          flex-direction: column;
-          align-items: stretch;
-          gap: 1rem;
-        }
-        .filter-group {
-          width: 100%;
-        }
-        .sort-label {
-          flex-direction: column;
-          width: 100%;
-        }
-        .sort-select {
-          width: 100%;
-        }
-        .search-section h2 {
-          margin-top: 0;
-        }
-        .scoring-grid {
-          grid-template-columns: 1fr;
-        }
-        .stat-card {
-          padding: 1.5rem 1rem;
-        }
-        .stat-number {
-          font-size: 2rem;
-        }
-      }
-
-      @media (max-width: 480px) {
-        .container {
-          padding: 0.75rem;
-        }
-        .card {
-          padding: 1rem;
-        }
-        .hero-card {
-          padding: 1.5rem 0.75rem;
-        }
-        h1,
-        .hero-title {
-          font-size: 1.5rem;
-          margin-bottom: 0.5rem;
-        }
-        h2 {
-          font-size: 1.2rem;
-          margin: 1.5rem 0 0.75rem 0;
-        }
-        h3 {
-          font-size: 1.1rem;
-        }
-        .logo {
-          width: 120px;
-          height: 120px;
-        }
-        .term-definition {
-          font-size: 0.95rem;
-        }
-        .term-humor {
-          font-size: 0.85rem;
-          padding: 0.6rem;
-        }
-        .tag {
-          font-size: 0.75rem;
-          padding: 0.25rem 0.5rem;
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Statistics Section */
+        .stats-card {
+            background: rgba(0, 212, 228, 0.05);
+            border: 1px solid rgba(0, 212, 228, 0.3);
         }
         .live-stats {
-          grid-template-columns: repeat(2, 1fr);
-          gap: 1rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .stat-card {
+            background: rgba(0, 212, 228, 0.1);
+            border: 2px solid #00d4e4;
+            color: #f5f5f0;
+            padding: 2rem 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+        .stat-card:hover {
+            background: rgba(0, 212, 228, 0.15);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 212, 228, 0.2);
+        }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            display: block;
+            color: #00f0ff;
+        }
+        .stat-label {
+            font-size: 0.95rem;
+            opacity: 0.85;
+            margin-top: 0.5rem;
+        }
+        
+        /* Featured Term Section */
+        .featured-section {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.1) 0%, rgba(0, 212, 228, 0.05) 100%);
+            border: 2px solid #00d4e4;
+            position: relative;
+            overflow: hidden;
+        }
+        .featured-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 212, 228, 0.2), transparent);
+            animation: shine 3s infinite;
+        }
+        @keyframes shine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        .featured-term-card {
+            position: relative;
+            z-index: 1;
         }
         .featured-header {
-          gap: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .featured-header h3 {
+            font-size: 1.8rem;
+            color: #00f0ff;
+            margin: 0;
+            flex: 1;
         }
         .score-badge {
-          padding: 0.6rem 1rem;
-          font-size: 0.9rem;
+            background: linear-gradient(135deg, #00d4e4 0%, #00f0ff 100%);
+            color: #0d1f2d;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 700;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 212, 228, 0.4);
+        }
+        .score-value {
+            font-size: 1.5rem;
+        }
+        .score-label {
+            font-size: 0.7rem;
+            opacity: 0.8;
+        }
+        .featured-definition {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            color: #f5f5f0;
+        }
+        .featured-humor {
+            background: rgba(255, 217, 61, 0.1);
+            border-left: 4px solid #ffd93d;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        .featured-humor p {
+            color: #ffd93d;
+            font-style: italic;
+            margin: 0;
+        }
+        .featured-tags {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .featured-tag {
+            background: rgba(0, 212, 228, 0.3);
+            border: 1px solid #00d4e4;
+            font-size: 0.9rem;
+        }
+        
+        /* Recent Additions */
+        .recent-additions {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 212, 228, 0.2);
+        }
+        .recent-additions p {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+        
+        /* Search & Filter Section */
+        .search-section {
+            background: rgba(0, 212, 228, 0.05);
+            border: 1px solid rgba(0, 212, 228, 0.3);
+        }
+        .search-container {
+            margin: 2rem 0;
+        }
+        .search-input-wrapper {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.2rem 1rem 3rem;
+            background: rgba(0, 212, 228, 0.1);
+            border: 2px solid rgba(0, 212, 228, 0.3);
+            border-radius: 10px;
+            color: #f5f5f0;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        .search-input::placeholder {
+            color: rgba(245, 245, 240, 0.5);
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: #00d4e4;
+            background: rgba(0, 212, 228, 0.15);
+            box-shadow: 0 0 20px rgba(0, 212, 228, 0.2);
+        }
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        .filter-controls {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+            align-items: center;
+        }
+        .filter-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .filter-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .filter-label:hover {
+            color: #00f0ff;
+        }
+        .filter-label input[type="checkbox"] {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            accent-color: #00d4e4;
+        }
+        .sort-label {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .sort-select {
+            padding: 0.6rem 0.8rem;
+            background: rgba(0, 212, 228, 0.1);
+            border: 1px solid rgba(0, 212, 228, 0.3);
+            color: #f5f5f0;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .sort-select:hover,
+        .sort-select:focus {
+            border-color: #00d4e4;
+            background: rgba(0, 212, 228, 0.15);
+        }
+        .sort-select option {
+            background: #1a3a52;
+            color: #f5f5f0;
+        }
+        .filter-tags-container {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
         }
         .filter-chip {
-          font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(0, 212, 228, 0.2);
+            border: 1px solid #00d4e4;
+            color: #00d4e4;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            animation: fadeInUp 0.3s ease;
+        }
+        .chip-remove {
+            background: none;
+            border: none;
+            color: #00d4e4;
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 0;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+        .chip-remove:hover {
+            opacity: 1;
+        }
+        .result-count {
+            color: rgba(245, 245, 240, 0.7);
+            font-size: 0.95rem;
+            margin-top: 1rem;
+        }
+        
+        /* Term Grid & Cards */
+        .terms-section {
+            background: rgba(0, 212, 228, 0.03);
+        }
+        .term-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .term-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(0, 212, 228, 0.3);
+            padding: 1.5rem;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            opacity: 1;
+        }
+        .term-card.visible {
+            animation: fadeInUp 0.4s ease-out;
+        }
+        .term-card:hover {
+            border-color: #00d4e4;
+            transform: translateY(-4px);
+            box-shadow: 0 12px 36px rgba(0, 212, 228, 0.25);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        .term-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .term-header h3 {
+            color: #00d4e4;
+            margin: 0;
+            font-size: 1.3rem;
+            flex: 1;
+            word-break: break-word;
+        }
+        .score-bar-container {
+            width: 100px;
+            height: 6px;
+            background: rgba(0, 212, 228, 0.2);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+        .score-bar {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.4s ease;
+            box-shadow: 0 0 8px currentColor;
+        }
+        .term-score {
+            font-weight: 700;
+            font-size: 1rem;
+            white-space: nowrap;
+        }
+        .term-definition {
+            color: #f5f5f0;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        .term-humor {
+            color: #ffd93d;
+            font-style: italic;
+            font-size: 0.95rem;
+            padding: 0.8rem;
+            background: rgba(255, 217, 61, 0.08);
+            border-left: 3px solid #ffd93d;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+        .term-tags {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        .tag {
+            background: rgba(0, 212, 228, 0.2);
+            color: #00d4e4;
+            padding: 0.35rem 0.7rem;
+            border-radius: 16px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(0, 212, 228, 0.3);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .tag:hover {
+            background: rgba(0, 212, 228, 0.3);
+            border-color: #00d4e4;
         }
         .empty-state {
-          padding: 2rem 1rem;
-          font-size: 1rem;
+            text-align: center;
+            padding: 3rem 2rem;
+            color: rgba(245, 245, 240, 0.6);
+            font-size: 1.1rem;
         }
-      }
-    </style>
-  </head>
-  <body>
+        
+        /* Scoring Section */
+        .scoring-section {
+            background: rgba(0, 212, 228, 0.05);
+        }
+        .scoring-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .scoring-item {
+            background: rgba(0, 212, 228, 0.08);
+            border: 1px solid rgba(0, 212, 228, 0.2);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .scoring-item:hover {
+            background: rgba(0, 212, 228, 0.12);
+            transform: translateY(-4px);
+            border-color: rgba(0, 212, 228, 0.5);
+        }
+        .scoring-emoji {
+            font-size: 2.5rem;
+            margin-bottom: 0.8rem;
+        }
+        .scoring-item h4 {
+            color: #00d4e4;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        .scoring-item p {
+            color: rgba(245, 245, 240, 0.8);
+            font-size: 0.95rem;
+            margin: 0;
+        }
+        .scoring-note {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(0, 212, 228, 0.1);
+            border-left: 4px solid #00d4e4;
+            border-radius: 8px;
+            margin-top: 2rem;
+        }
+        .scoring-note p {
+            font-weight: 600;
+            color: #00f0ff;
+            margin: 0;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, rgba(0, 212, 228, 0.08) 0%, rgba(0, 240, 255, 0.05) 100%);
+            text-align: center;
+        }
+        .cta {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+        .button {
+            display: inline-block;
+            background: #00d4e4;
+            color: #0d1f2d;
+            padding: 1rem 2.5rem;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 212, 228, 0.4);
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
+        .button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 212, 228, 0.6);
+            background: #00f0ff;
+        }
+        .button:active {
+            transform: translateY(-1px);
+        }
+        .button-secondary {
+            background: transparent;
+            color: #00d4e4;
+            border: 2px solid #00d4e4;
+        }
+        .button-secondary:hover {
+            background: rgba(0, 212, 228, 0.1);
+            border-color: #00f0ff;
+            color: #00f0ff;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(0, 212, 228, 0.2);
+        }
+        .last-updated {
+            color: rgba(245, 245, 240, 0.7);
+            font-size: 0.9rem;
+            margin: 0;
+            line-height: 1.6;
+        }
+        
+        /* Release Banner */
+        .release-banner {
+            background: linear-gradient(135deg, rgba(0, 212, 228, 0.15) 0%, rgba(0, 240, 255, 0.1) 100%);
+            border: 2px solid #00d4e4;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 212, 228, 0.2);
+        }
+        .release-badge {
+            color: #f5f5f0;
+            font-weight: 600;
+            margin: 0 0 0.5rem 0;
+        }
+        .release-banner h2 {
+            color: #00f0ff;
+            margin: 0 0 0.5rem 0;
+        }
+        .release-banner p {
+            color: #f5f5f0;
+            margin: 0.5rem 0;
+        }
+        .release-banner a {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.6rem 1.5rem;
+            background: #00d4e4;
+            color: #0d1f2d;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            border: 2px solid #00d4e4;
+            transition: all 0.3s ease;
+        }
+        .release-banner a:hover {
+            background: #00f0ff;
+            border-color: #00f0ff;
+            transform: translateY(-2px);
+        }
+        
+        /* LIGHT THEME */
+        @media (prefers-color-scheme: light) {
+            body {
+                color: #1a3a52;
+                background: linear-gradient(135deg, #f0f4f8 0%, #e8f2f7 100%);
+            }
+            .card {
+                background: rgba(255, 255, 255, 0.9);
+                border: 1px solid rgba(0, 163, 184, 0.2);
+                box-shadow: 0 10px 40px rgba(26, 58, 82, 0.1);
+            }
+            .hero-card {
+                background: linear-gradient(135deg, rgba(0, 212, 228, 0.08) 0%, rgba(0, 240, 255, 0.05) 100%);
+            }
+            h1, h2, .hero-title {
+                color: #00838f;
+            }
+            .tagline {
+                color: #2d3e50;
+            }
+            .logo {
+                box-shadow: 0 10px 40px rgba(0, 163, 184, 0.3), inset 0 0 20px rgba(0, 163, 184, 0.1);
+                border-color: rgba(0, 163, 184, 0.3);
+            }
+            .stat-card {
+                background: linear-gradient(135deg, #e0f7fa 0%, #b3e5fc 100%);
+                border: none;
+                color: #1a3a52;
+            }
+            .stat-card:hover {
+                background: linear-gradient(135deg, #b3e5fc 0%, #81d4fa 100%);
+                box-shadow: 0 8px 24px rgba(0, 163, 184, 0.2);
+            }
+            .stat-number {
+                color: #00838f;
+            }
+            .stat-label {
+                color: #1a3a52;
+            }
+            .featured-section {
+                background: rgba(0, 212, 228, 0.05);
+                border-color: #00a3b8;
+            }
+            .featured-header h3 {
+                color: #00838f;
+            }
+            .score-badge {
+                background: linear-gradient(135deg, #00a3b8 0%, #00d4e4 100%);
+                color: white;
+            }
+            .featured-definition {
+                color: #2d3e50;
+            }
+            .featured-humor {
+                background: rgba(217, 119, 6, 0.08);
+                border-left-color: #d97706;
+            }
+            .featured-humor p {
+                color: #d97706;
+            }
+            .featured-tag {
+                background: rgba(0, 131, 143, 0.1);
+                border-color: #00a3b8;
+                color: #00838f;
+            }
+            .term-card {
+                background: white;
+                border: 1px solid #e0e7ed;
+            }
+            .term-card:hover {
+                border-color: #00d4e4;
+                background: rgba(0, 212, 228, 0.02);
+            }
+            .term-header h3 {
+                color: #00838f;
+            }
+            .term-definition {
+                color: #2d3e50;
+            }
+            .term-humor {
+                color: #d97706;
+                background: #fef3c7;
+                border-left-color: #fbbf24;
+            }
+            .tag {
+                background: #e0f7fa;
+                color: #00838f;
+                border: 1px solid #b2ebf2;
+            }
+            .tag:hover {
+                background: #b2ebf2;
+                color: white;
+            }
+            .search-input {
+                background: white;
+                border-color: rgba(0, 163, 184, 0.3);
+                color: #1a3a52;
+            }
+            .search-input:focus {
+                background: rgba(0, 212, 228, 0.05);
+                border-color: #00a3b8;
+            }
+            .sort-select,
+            .sort-select option {
+                background: white;
+                color: #1a3a52;
+                border-color: rgba(0, 163, 184, 0.3);
+            }
+            .filter-label {
+                color: #2d3e50;
+            }
+            .scoring-item {
+                background: rgba(0, 212, 228, 0.05);
+                border-color: rgba(0, 163, 184, 0.2);
+            }
+            .scoring-item h4 {
+                color: #00838f;
+            }
+            .scoring-item p {
+                color: #2d3e50;
+            }
+            .button {
+                background: linear-gradient(135deg, #00a3b8 0%, #00d4e4 100%);
+                color: white;
+            }
+            .button:hover {
+                background: linear-gradient(135deg, #00d4e4 0%, #00f0ff 100%);
+            }
+            .button-secondary {
+                background: white;
+                color: #00a3b8;
+                border-color: #00d4e4;
+            }
+            .button-secondary:hover {
+                background: #e0f7fa;
+                border-color: #00a3b8;
+                color: #00838f;
+            }
+            .release-banner {
+                background: linear-gradient(135deg, #e0f7fa 0%, #b3e5fc 100%);
+                border-color: #00a3b8;
+                box-shadow: 0 4px 20px rgba(0, 163, 184, 0.15);
+            }
+            .release-banner p {
+                color: #1a3a52;
+            }
+            .release-banner h2 {
+                color: #00838f;
+            }
+            .release-banner a {
+                background: #00a3b8;
+                border-color: #00a3b8;
+                color: white;
+            }
+            .release-banner a:hover {
+                background: #00d4e4;
+                border-color: #00d4e4;
+            }
+            .empty-state {
+                color: rgba(45, 62, 80, 0.6);
+            }
+            .result-count {
+                color: rgba(45, 62, 80, 0.7);
+            }
+            .last-updated {
+                color: rgba(45, 62, 80, 0.7);
+                border-top-color: rgba(0, 163, 184, 0.2);
+            }
+        }
+        
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .card { padding: 1.5rem; }
+            .hero-card { padding: 2rem 1rem; }
+            h1, .hero-title { font-size: 2rem; }
+            h2 { font-size: 1.4rem; }
+            .term-grid { grid-template-columns: 1fr; }
+            .term-header { flex-direction: column; align-items: flex-start; }
+            .featured-header { flex-direction: column; }
+            .cta { flex-direction: column; }
+            .button { width: 100%; }
+            .filter-controls { flex-direction: column; align-items: stretch; gap: 1rem; }
+            .filter-group { width: 100%; }
+            .sort-label { flex-direction: column; width: 100%; }
+            .sort-select { width: 100%; }
+            .search-section h2 { margin-top: 0; }
+            .scoring-grid { grid-template-columns: 1fr; }
+            .stat-card { padding: 1.5rem 1rem; }
+            .stat-number { font-size: 2rem; }
+        }
+        
+        @media (max-width: 480px) {
+            .container { padding: 0.75rem; }
+            .card { padding: 1rem; }
+            .hero-card { padding: 1.5rem 0.75rem; }
+            h1, .hero-title { font-size: 1.5rem; margin-bottom: 0.5rem; }
+            h2 { font-size: 1.2rem; margin: 1.5rem 0 0.75rem 0; }
+            h3 { font-size: 1.1rem; }
+            .logo { width: 120px; height: 120px; }
+            .term-definition { font-size: 0.95rem; }
+            .term-humor { font-size: 0.85rem; padding: 0.6rem; }
+            .tag { font-size: 0.75rem; padding: 0.25rem 0.5rem; }
+            .live-stats { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+            .featured-header { gap: 1rem; }
+            .score-badge { padding: 0.6rem 1rem; font-size: 0.9rem; }
+            .filter-chip { font-size: 0.85rem; }
+            .empty-state { padding: 2rem 1rem; font-size: 1rem; }
+        }
+</style>
+</head>
+<body>
     <div class="container">
-      <!-- HERO SECTION -->
-      <div class="card hero-card">
-        <div class="logo-section">
-          <div class="logo" data-animate="bounce">
-            <img src="./pwa/assets/logo.png" alt="FOSS Glossary Logo" />
-          </div>
+        <!-- HERO SECTION -->
+        <div class="card hero-card">
+            <div class="logo-section">
+                <div class="logo" data-animate="bounce">
+                    <img src="./pwa/assets/logo.png" alt="FOSS Glossary Logo" />
+                </div>
+            </div>
+            
+            <h1 class="hero-title">🚀 FOSS Glossary</h1>
+            <p class="tagline">A gamified glossary of Free and Open Source Software terms, with humor, sarcasm, and honest truths.</p>
+            
+            <!-- RELEASE ANNOUNCEMENT -->
+            <div class="release-banner" data-animate="slideInDown">
+                <p class="release-badge">🎉 Latest Release</p>
+                <h2>v1.0.0</h2>
+                <p>First stable release of FOSS Glossary with gamification features!</p>
+                <a href="https://github.com/LuminLynx/FOSS-Glossary/releases/tag/v1.0.0">View Release Notes →</a>
+            </div>
         </div>
 
-        <h1 class="hero-title">🚀 FOSS Glossary</h1>
-        <p class="tagline">
-          A gamified glossary of Free and Open Source Software terms, with humor, sarcasm, and
-          honest truths.
-        </p>
-
-        <!-- RELEASE ANNOUNCEMENT -->
-        <div class="release-banner" data-animate="slideInDown">
-          <p class="release-badge">🎉 Latest Release</p>
-          <h2>v1.0.0</h2>
-          <p>First stable release of FOSS Glossary with gamification features!</p>
-          <a href="https://github.com/LuminLynx/FOSS-Glossary/releases/tag/v1.0.0"
-            >View Release Notes →</a
-          >
-        </div>
-      </div>
-
-      <!-- LIVE STATISTICS -->
-      <div class="card stats-card">
-        <h2>📊 Live Statistics</h2>
-        <div class="live-stats">
-          <div class="stat-card" data-animate="fadeInUp" data-delay="0">
-            <span class="stat-number">28</span>
-            <span class="stat-label">Total Terms</span>
-          </div>
-          <div class="stat-card" data-animate="fadeInUp" data-delay="1">
-            <span class="stat-number">28</span>
-            <span class="stat-label">Funny Terms</span>
-          </div>
-          <div class="stat-card" data-animate="fadeInUp" data-delay="2">
-            <span class="stat-number">100%</span>
-            <span class="stat-label">Humor Rate</span>
-          </div>
-          <div class="stat-card" data-animate="fadeInUp" data-delay="3">
-            <span class="stat-number">65</span>
-            <span class="stat-label">Categories</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- FEATURED TERM SPOTLIGHT -->
-      <div class="card featured-section" data-animate="scaleIn">
-        <h2>⭐ Featured Term</h2>
-        <div class="featured-term-card">
-          <div class="featured-header">
-            <h3>License Proliferation</h3>
-            <div class="score-badge" data-score="98">
-              <span class="score-value">98</span>
-              <span class="score-label">/ 100</span>
+        <!-- LIVE STATISTICS -->
+        <div class="card stats-card">
+            <h2>📊 Live Statistics</h2>
+            <div class="live-stats">
+                <div class="stat-card" data-animate="fadeInUp" data-delay="0">
+                    <span class="stat-number">28</span>
+                    <span class="stat-label">Total Terms</span>
+                </div>
+                <div class="stat-card" data-animate="fadeInUp" data-delay="1">
+                    <span class="stat-number">28</span>
+                    <span class="stat-label">Funny Terms</span>
+                </div>
+                <div class="stat-card" data-animate="fadeInUp" data-delay="2">
+                    <span class="stat-number">100%</span>
+                    <span class="stat-label">Humor Rate</span>
+                </div>
+                <div class="stat-card" data-animate="fadeInUp" data-delay="3">
+                    <span class="stat-number">65</span>
+                    <span class="stat-label">Categories</span>
+                </div>
             </div>
-          </div>
-          <p class="featured-definition">
-            The overabundance of open source licenses, often with subtle but significant
-            differences, making it difficult to combine or reuse code across projects without legal
-            contortions.
-          </p>
-          <div class="featured-humor">
-            <p>
-              😂 "Like trying to host a potluck where everyone insists on bringing food—but only if
-              you agree to eat it under their very specific house rules."
-            </p>
-          </div>
-          <div class="featured-tags">
-            <span class="tag featured-tag">open-source</span>
-            <span class="tag featured-tag">legal</span>
-            <span class="tag featured-tag">compatibility</span>
-            <span class="tag featured-tag">community</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- RECENT ADDITIONS -->
-      <div class="card recent-additions">
-        <h2>🆕 Latest Additions</h2>
-        <p>Just added: <strong>Zombie Dependencies, YOLO Deploy, Yak Shaving</strong></p>
-      </div>
-
-      <!-- SEARCH & FILTER SECTION -->
-      <div class="card search-section" data-animate="fadeIn">
-        <h2>🔍 Explore Glossary</h2>
-        <div class="search-container">
-          <div class="search-input-wrapper">
-            <input
-              type="text"
-              id="searchInput"
-              class="search-input"
-              placeholder="Search terms, definitions, or tags..."
-              aria-label="Search glossary"
-            />
-            <span class="search-icon">🔍</span>
-          </div>
-
-          <div class="filter-controls">
-            <div class="filter-group">
-              <label class="filter-label">
-                <input type="checkbox" class="score-filter" value="90-100" data-label="Score 90+" />
-                <span>💯 Perfectionist (90+)</span>
-              </label>
-              <label class="filter-label">
-                <input
-                  type="checkbox"
-                  class="score-filter"
-                  value="80-89"
-                  data-label="Score 80-89"
-                />
-                <span>⭐ Excellent (80+)</span>
-              </label>
-              <label class="filter-label">
-                <input type="checkbox" class="score-filter" value="0-79" data-label="Score <80" />
-                <span>📖 Learning (All)</span>
-              </label>
-            </div>
-
-            <div class="filter-group">
-              <label class="sort-label">
-                Sort by:
-                <select id="sortSelect" class="sort-select" aria-label="Sort terms">
-                  <option value="date-desc">Most Recent</option>
-                  <option value="score-desc">Highest Score</option>
-                  <option value="score-asc">Lowest Score</option>
-                  <option value="alpha-asc">Alphabetical (A-Z)</option>
-                </select>
-              </label>
-            </div>
-          </div>
-
-          <div class="filter-tags-container" id="activeFilters"></div>
-        </div>
-        <p class="result-count" id="resultCount">Showing 16 terms</p>
-      </div>
-
-      <!-- TERM GRID -->
-      <div class="card terms-section">
-        <h2>📖 All Terms</h2>
-        <div class="term-grid" id="termGrid">
-          <div
-            class="term-card"
-            data-term="Zombie Dependencies"
-            data-slug="zombie-dependencies"
-            data-score="88"
-            data-tags="dependencies maintenance technical-debt risk "
-            data-definition="Outdated or abandoned libraries that are still widely used, often without active maintenance or clear alternatives, lurking silently until a breaking change or CVE emerges."
-            data-humor="Like relying on a haunted vending machine — it still dispenses snacks, but nobody knows how or why it’s still running."
-            data-date="2025-11-16T21:17:24.579Z"
-            data-animate="fadeInUp"
-            data-delay="0"
-          >
-            <div class="term-header">
-              <h3>Zombie Dependencies</h3>
-              <div class="score-bar-container">
-                <div class="score-bar" style="width: 88%; background-color: #00d4e4"></div>
-              </div>
-              <span class="term-score" style="color: #00d4e4">88</span>
-            </div>
-
-            <p class="term-definition">
-              Outdated or abandoned libraries that are still widely used, often without active
-              maintenance or clear alternatives, lurking silently until a breaking change or CVE
-              emerges.
-            </p>
-
-            <p class="term-humor">
-              😂 "Like relying on a haunted vending machine — it still dispenses snacks, but nobody
-              knows how or why it’s still running."
-            </p>
-
-            <div class="term-tags">
-              <span class="tag" data-tag="dependencies">dependencies</span>
-              <span class="tag" data-tag="maintenance">maintenance</span>
-              <span class="tag" data-tag="technical-debt">technical-debt</span>
-              <span class="tag" data-tag="risk">risk</span>
-            </div>
-          </div>
-          <div
-            class="term-card"
-            data-term="YOLO Deploy"
-            data-slug="yolo-deploy"
-            data-score="35"
-            data-tags="deployment chaos "
-            data-definition="Deploying directly to production without testing because confidence or impatience overrides caution, usually followed by frantic monitoring."
-            data-humor="Your Ops team Loves Organization... just kidding"
-            data-date="2025-11-16T21:17:24.579Z"
-            data-animate="fadeInUp"
-            data-delay="1"
-          >
-            <div class="term-header">
-              <h3>YOLO Deploy</h3>
-              <div class="score-bar-container">
-                <div class="score-bar" style="width: 35%; background-color: #ffd93d"></div>
-              </div>
-              <span class="term-score" style="color: #ffd93d">35</span>
-            </div>
-
-            <p class="term-definition">
-              Deploying directly to production without testing because confidence or impatience
-              overrides caution, usually followed by frantic monitoring.
-            </p>
-
-            <p class="term-humor">😂 "Your Ops team Loves Organization... just kidding"</p>
-
-            <div class="term-tags">
-              <span class="tag" data-tag="deployment">deployment</span>
-              <span class="tag" data-tag="chaos">chaos</span>
-            </div>
-          </div>
-          <div
-            class="term-card"
-            data-term="Yak Shaving"
-            data-slug="yak-shaving"
-            data-score="64"
-            data-tags="productivity procrastination "
-            data-definition="Doing a series of seemingly unrelated tasks before you can do what you actually intended because each prerequisite reveals yet another detour."
-            data-humor="I came here to write code, and somehow I&#x27;m now learning about Tibetan yak grooming techniques"
-            data-date="2025-11-16T21:17:24.579Z"
-            data-animate="fadeInUp"
-            data-delay="2"
-          >
-            <div class="term-header">
-              <h3>Yak Shaving</h3>
-              <div class="score-bar-container">
-                <div class="score-bar" style="width: 64%; background-color: #00f0ff"></div>
-              </div>
-              <span class="term-score" style="color: #00f0ff">64</span>
-            </div>
-
-            <p class="term-definition">
-              Doing a series of seemingly unrelated tasks before you can do what you actually
-              intended because each prerequisite reveals yet another detour.
-            </p>
-
-            <p class="term-humor">
-              😂 "I came here to write code, and somehow I&#x27;m now learning about Tibetan yak
-              grooming techniques"
-            </p>
-
-            <div class="term-tags">
-              <span class="tag" data-tag="productivity">productivity</span>
-              <span class="tag" data-tag="procrastination">procrastination</span>
-            </div>
-          </div>
-          <div
-            class="term-card"
-            data-term="Works on My Machine"
-            data-slug="works-on-my-machine"
-            data-score="41"
-            data-tags="debugging classic excuse "
-            data-definition="The developer&#x27;s eternal defense when code fails in production, implying the environment is to blame and quietly shifting responsibility back to operations."
-            data-humor="Certification program coming soon: WOMM Certified Developer™"
-            data-date="2025-11-16T21:17:24.579Z"
-            data-animate="fadeInUp"
-            data-delay="3"
-          >
-            <div class="term-header">
-              <h3>Works on My Machine</h3>
-              <div class="score-bar-container">
-                <div class="score-bar" style="width: 41%; background-color: #ffd93d"></div>
-              </div>
-              <span class="term-score" style="color: #ffd93d">41</span>
-            </div>
-
-            <p class="term-definition">
-              The developer&#x27;s eternal defense when code fails in production, implying the
-              environment is to blame and quietly shifting responsibility back to operations.
-            </p>
-
-            <p class="term-humor">
-              😂 "Certification program coming soon: WOMM Certified Developer™"
-            </p>
-
-            <div class="term-tags">
-              <span class="tag" data-tag="debugging">debugging</span>
-              <span class="tag" data-tag="classic">classic</span>
-              <span class="tag" data-tag="excuse">excuse</span>
-            </div>
-          </div>
-          <div
-            class="term-card"
-            data-term="WONTFIX"
-            data-slug="wontfix"
-            data-score="81"
-            data-tags="foss issue-tracking development community "
-            data-definition="Will Not Fix — an issue tracker resolution meaning the reported bug or feature request will remain unresolved, often due to scope, philosophy, or maintenance trade-offs."
-            data-humor="The open‑source equivalent of &#x27;working as intended&#x27; — even when it clearly isn’t."
-            data-date="2025-11-16T21:17:24.579Z"
-            data-animate="fadeInUp"
-            data-delay="4"
-          >
-            <div class="term-header">
-              <h3>WONTFIX</h3>
-              <div class="score-bar-container">
-                <div class="score-bar" style="width: 81%; background-color: #00d4e4"></div>
-              </div>
-              <span class="term-score" style="color: #00d4e4">81</span>
-            </div>
-
-            <p class="term-definition">
-              Will Not Fix — an issue tracker resolution meaning the reported bug or feature request
-              will remain unresolved, often due to scope, philosophy, or maintenance trade-offs.
-            </p>
-
-            <p class="term-humor">
-              😂 "The open‑source equivalent of &#x27;working as intended&#x27; — even when it
-              clearly isn’t."
-            </p>
-
-            <div class="term-tags">
-              <span class="tag" data-tag="foss">foss</span>
-              <span class="tag" data-tag="issue-tracking">issue-tracking</span>
-              <span class="tag" data-tag="development">development</span>
-              <span class="tag" data-tag="community">community</span>
-            </div>
-          </div>
-          <div
-            class="term-card"
-            data-term="Ship It"
-            data-slug="ship-it"
-            data-score="33"
-            data-tags="deployment courage "
-            data-definition="Deploy to production and hope for the best, often uttered at the last minute when deadlines trump testing discipline and everyone crosses their fingers."
-            data-humor="What you say at 4:59 PM on a Friday"
-            data-date="2025-11-16T21:17:24.579Z"
-            data-animate="fadeInUp"
-            data-delay="5"
-          >
-            <div class="term-header">
-              <h3>Ship It</h3>
-              <div class="score-bar-container">
-                <div class="score-bar" style="width: 33%; background-color: #ffd93d"></div>
-              </div>
-              <span class="term-score" style="color: #ffd93d">33</span>
-            </div>
-
-            <p class="term-definition">
-              Deploy to production and hope for the best, often uttered at the last minute when
-              deadlines trump testing discipline and everyone crosses their fingers.
-            </p>
-
-            <p class="term-humor">😂 "What you say at 4:59 PM on a Friday"</p>
-
-            <div class="term-tags">
-              <span class="tag" data-tag="deployment">deployment</span>
-              <span class="tag" data-tag="courage">courage</span>
-            </div>
-          </div>
-          <div
-            class="term-card"
-            data-term="RTFM"
-            data-slug="rtfm"
-            data-score="81"
-            data-tags="acronym documentation support "
-            data-definition="Read The F***ing Manual — a blunt reminder to consult documentation before asking questions so helpers aren&#x27;t repeating themselves."
-            data-humor="The four most powerful letters in tech support, capable of solving 90% of problems and hurting 100% of feelings"
-            data-date="2025-11-16T21:17:24.579Z"
-            data-animate="fadeInUp"
-            data-delay="6"
-          >
-            <div class="term-header">
-              <h3>RTFM</h3>
-              <div class="score-bar-container">
-                <div class="score-bar" style="width: 81%; background-color: #00d4e4"></div>
-              </div>
-              <span class="term-score" style="color: #00d4e4">81</span>
-            </div>
-
-            <p class="term-definition">
-              Read The F***ing Manual — a blunt reminder to consult documentation before asking
-              questions so helpers aren&#x27;t repeating themselves.
-            </p>
-
-            <p class="term-humor">
-              😂 "The four most powerful letters in tech support, capable of solving 90% of problems
-              and hurting 100% of feelings"
-            </p>
-
-            <div class="term-tags">
-              <span class="tag" data-tag="acronym">acronym</span>
-              <span class="tag" data-tag="documentation">documentation</span>
-              <span class="tag" data-tag="support">support</span>
-            </div>
-          </div>
-          <div
-            class="term-card"
-            data-term="Pullpocalypse"
-            data-slug="pullpocalypse"
-            data-score="80"
-            data-tags="pull-requests maintenance overload anti-pattern "
-            data-definition="The overwhelming flood of open pull requests that threatens to drown maintainers, creating backlog, merge conflicts, and frustrated contributors."
-            data-humor="Like trying to bail out a sinking ship with a coffee mug during a thunderstorm"
-            data-date="2025-11-16T21:17:24.579Z"
-            data-animate="fadeInUp"
-            data-delay="7"
-          >
-            <div class="term-header">
-              <h3>Pullpocalypse</h3>
-              <div class="score-bar-container">
-                <div class="score-bar" style="width: 80%; background-color: #00d4e4"></div>
-              </div>
-              <span class="term-score" style="color: #00d4e4">80</span>
-            </div>
-
-            <p class="term-definition">
-              The overwhelming flood of open pull requests that threatens to drown maintainers,
-              creating backlog, merge conflicts, and frustrated contributors.
-            </p>
-
-            <p class="term-humor">
-              😂 "Like trying to bail out a sinking ship with a coffee mug during a thunderstorm"
-            </p>
-
-            <div class="term-tags">
-              <span class="tag" data-tag="pull-requests">pull-requests</span>
-              <span class="tag" data-tag="maintenance">maintenance</span>
-              <span class="tag" data-tag="overload">overload</span>
-              <span class="tag" data-tag="anti-pattern">anti-pattern</span>
-            </div>
-          </div>
-          <div
-            class="term-card"
-            data-term="PTW"
-            data-slug="ptw"
-            data-score="81"
-            data-tags="foss contribution community development "
-            data-definition="Patches Welcome — a standard open-source response inviting contributors to submit code if they want a change, reminding requesters that collaboration beats complaints."
-            data-humor="The polite way of saying: &#x27;Yes, that’s a problem. No, I’m not fixing it for you.&#x27;"
-            data-date="2025-11-16T21:17:24.579Z"
-            data-animate="fadeInUp"
-            data-delay="8"
-          >
-            <div class="term-header">
-              <h3>PTW</h3>
-              <div class="score-bar-container">
-                <div class="score-bar" style="width: 81%; background-color: #00d4e4"></div>
-              </div>
-              <span class="term-score" style="color: #00d4e4">81</span>
-            </div>
-
-            <p class="term-definition">
-              Patches Welcome — a standard open-source response inviting contributors to submit code
-              if they want a change, reminding requesters that collaboration beats complaints.
-            </p>
-
-            <p class="term-humor">
-              😂 "The polite way of saying: &#x27;Yes, that’s a problem. No, I’m not fixing it for
-              you.&#x27;"
-            </p>
-
-            <div class="term-tags">
-              <span class="tag" data-tag="foss">foss</span>
-              <span class="tag" data-tag="contribution">contribution</span>
-              <span class="tag" data-tag="community">community</span>
-              <span class="tag" data-tag="development">development</span>
-            </div>
-          </div>
-          <div
-            class="term-card"
-            data-term="PEBKAC"
-            data-slug="pebkac"
-            data-score="73"
-            data-tags="acronym support user-error "
-            data-definition="Problem Exists Between Keyboard And Chair — a tongue-in-cheek acknowledgment that user error, not software flaws, caused the reported issue."
-            data-humor="A timeless classic in tech support — polite sarcasm wrapped in an acronym."
-            data-date="2025-11-16T21:17:24.579Z"
-            data-animate="fadeInUp"
-            data-delay="9"
-          >
-            <div class="term-header">
-              <h3>PEBKAC</h3>
-              <div class="score-bar-container">
-                <div class="score-bar" style="width: 73%; background-color: #00f0ff"></div>
-              </div>
-              <span class="term-score" style="color: #00f0ff">73</span>
-            </div>
-
-            <p class="term-definition">
-              Problem Exists Between Keyboard And Chair — a tongue-in-cheek acknowledgment that user
-              error, not software flaws, caused the reported issue.
-            </p>
-
-            <p class="term-humor">
-              😂 "A timeless classic in tech support — polite sarcasm wrapped in an acronym."
-            </p>
-
-            <div class="term-tags">
-              <span class="tag" data-tag="acronym">acronym</span>
-              <span class="tag" data-tag="support">support</span>
-              <span class="tag" data-tag="user-error">user-error</span>
-            </div>
-          </div>
-          <div
-            class="term-card"
-            data-term="Not Invented Here Syndrome"
-            data-slug="not-invented-here-syndrome"
-            data-score="91"
-            data-tags="reinvention ego duplication engineering-culture "
-            data-definition="A reluctance to adopt existing external solutions, leading teams to reimplement functionality themselves—even when mature, well-tested options already exist and would save effort."
-            data-humor="Like refusing to buy bread because you’re convinced you can grow the wheat, mill the flour, and bake a better loaf in your spare time."
-            data-date="2025-11-16T21:17:24.579Z"
-            data-animate="fadeInUp"
-            data-delay="10"
-          >
-            <div class="term-header">
-              <h3>Not Invented Here Syndrome</h3>
-              <div class="score-bar-container">
-                <div class="score-bar" style="width: 91%; background-color: #00d4e4"></div>
-              </div>
-              <span class="term-score" style="color: #00d4e4">91</span>
-            </div>
-
-            <p class="term-definition">
-              A reluctance to adopt existing external solutions, leading teams to reimplement
-              functionality themselves—even when mature, well-tested options already exist and would
-              save effort.
-            </p>
-
-            <p class="term-humor">
-              😂 "Like refusing to buy bread because you’re convinced you can grow the wheat, mill
-              the flour, and bake a better loaf in your spare time."
-            </p>
-
-            <div class="term-tags">
-              <span class="tag" data-tag="reinvention">reinvention</span>
-              <span class="tag" data-tag="ego">ego</span>
-              <span class="tag" data-tag="duplication">duplication</span>
-              <span class="tag" data-tag="engineering-culture">engineering-culture</span>
-            </div>
-          </div>
-          <div
-            class="term-card"
-            data-term="Mergequake"
-            data-slug="mergequake"
-            data-score="84"
-            data-tags="merge conflict workflow "
-            data-definition="The sudden cascade of conflicts triggered when multiple long-lived branches are merged at once, shaking the repo like tectonic plates colliding."
-            data-humor="One minute you&#x27;re merging, the next you&#x27;re an amateur seismologist mapping aftershocks in rebase hell"
-            data-date="2025-11-16T21:17:24.579Z"
-            data-animate="fadeInUp"
-            data-delay="11"
-          >
-            <div class="term-header">
-              <h3>Mergequake</h3>
-              <div class="score-bar-container">
-                <div class="score-bar" style="width: 84%; background-color: #00d4e4"></div>
-              </div>
-              <span class="term-score" style="color: #00d4e4">84</span>
-            </div>
-
-            <p class="term-definition">
-              The sudden cascade of conflicts triggered when multiple long-lived branches are merged
-              at once, shaking the repo like tectonic plates colliding.
-            </p>
-
-            <p class="term-humor">
-              😂 "One minute you&#x27;re merging, the next you&#x27;re an amateur seismologist
-              mapping aftershocks in rebase hell"
-            </p>
-
-            <div class="term-tags">
-              <span class="tag" data-tag="merge">merge</span>
-              <span class="tag" data-tag="conflict">conflict</span>
-              <span class="tag" data-tag="workflow">workflow</span>
-            </div>
-          </div>
-          <div
-            class="term-card"
-            data-term="Maintainer Burnout"
-            data-slug="maintainer-burnout"
-            data-score="87"
-            data-tags="community sustainability mental-health open-source "
-            data-definition="The exhaustion and disengagement experienced by open source maintainers who face constant demands, limited support, and little recognition from the communities relying on them."
-            data-humor="Like being the only bartender at a never-ending party where everyone wants a custom cocktail, but nobody tips."
-            data-date="2025-11-16T21:17:24.579Z"
-            data-animate="fadeInUp"
-            data-delay="12"
-          >
-            <div class="term-header">
-              <h3>Maintainer Burnout</h3>
-              <div class="score-bar-container">
-                <div class="score-bar" style="width: 87%; background-color: #00d4e4"></div>
-              </div>
-              <span class="term-score" style="color: #00d4e4">87</span>
-            </div>
-
-            <p class="term-definition">
-              The exhaustion and disengagement experienced by open source maintainers who face
-              constant demands, limited support, and little recognition from the communities relying
-              on them.
-            </p>
-
-            <p class="term-humor">
-              😂 "Like being the only bartender at a never-ending party where everyone wants a
-              custom cocktail, but nobody tips."
-            </p>
-
-            <div class="term-tags">
-              <span class="tag" data-tag="community">community</span>
-              <span class="tag" data-tag="sustainability">sustainability</span>
-              <span class="tag" data-tag="mental-health">mental-health</span>
-              <span class="tag" data-tag="open-source">open-source</span>
-            </div>
-          </div>
-          <div
-            class="term-card"
-            data-term="Linux"
-            data-slug="linux"
-            data-score="91"
-            data-tags="os kernel foss "
-            data-definition="An open-source operating system kernel that powers servers, desktops, smartphones, and countless embedded devices through collaborative development."
-            data-humor="The only kernel that makes you feel powerful—until you realize you’ve spent three hours compiling drivers just to get your Wi-Fi working"
-            data-date="2025-11-16T21:17:24.579Z"
-            data-animate="fadeInUp"
-            data-delay="13"
-          >
-            <div class="term-header">
-              <h3>Linux</h3>
-              <div class="score-bar-container">
-                <div class="score-bar" style="width: 91%; background-color: #00d4e4"></div>
-              </div>
-              <span class="term-score" style="color: #00d4e4">91</span>
-            </div>
-
-            <p class="term-definition">
-              An open-source operating system kernel that powers servers, desktops, smartphones, and
-              countless embedded devices through collaborative development.
-            </p>
-
-            <p class="term-humor">
-              😂 "The only kernel that makes you feel powerful—until you realize you’ve spent three
-              hours compiling drivers just to get your Wi-Fi working"
-            </p>
-
-            <div class="term-tags">
-              <span class="tag" data-tag="os">os</span>
-              <span class="tag" data-tag="kernel">kernel</span>
-              <span class="tag" data-tag="foss">foss</span>
-            </div>
-          </div>
-          <div
-            class="term-card"
-            data-term="Linus&#x27;s Law"
-            data-slug="linuss-law"
-            data-score="80"
-            data-tags="open-source collaboration quality "
-            data-definition="The idea that &#x27;given enough eyeballs, all bugs are shallow&#x27; — suggesting open collaboration makes problems easier to find and fix because more reviewers share the workload."
-            data-humor="Like having a hundred proofreaders for your essay — someone will catch that typo."
-            data-date="2025-11-16T21:17:24.579Z"
-            data-animate="fadeInUp"
-            data-delay="14"
-          >
-            <div class="term-header">
-              <h3>Linus&#x27;s Law</h3>
-              <div class="score-bar-container">
-                <div class="score-bar" style="width: 80%; background-color: #00d4e4"></div>
-              </div>
-              <span class="term-score" style="color: #00d4e4">80</span>
-            </div>
-
-            <p class="term-definition">
-              The idea that &#x27;given enough eyeballs, all bugs are shallow&#x27; — suggesting
-              open collaboration makes problems easier to find and fix because more reviewers share
-              the workload.
-            </p>
-
-            <p class="term-humor">
-              😂 "Like having a hundred proofreaders for your essay — someone will catch that typo."
-            </p>
-
-            <div class="term-tags">
-              <span class="tag" data-tag="open-source">open-source</span>
-              <span class="tag" data-tag="collaboration">collaboration</span>
-              <span class="tag" data-tag="quality">quality</span>
-            </div>
-          </div>
-          <div
-            class="term-card"
-            data-term="License Proliferation"
-            data-slug="license-proliferation"
-            data-score="98"
-            data-tags="open-source legal compatibility community "
-            data-definition="The overabundance of open source licenses, often with subtle but significant differences, making it difficult to combine or reuse code across projects without legal contortions."
-            data-humor="Like trying to host a potluck where everyone insists on bringing food—but only if you agree to eat it under their very specific house rules."
-            data-date="2025-11-16T21:17:24.579Z"
-            data-animate="fadeInUp"
-            data-delay="15"
-          >
-            <div class="term-header">
-              <h3>License Proliferation</h3>
-              <div class="score-bar-container">
-                <div class="score-bar" style="width: 98%; background-color: #00d4e4"></div>
-              </div>
-              <span class="term-score" style="color: #00d4e4">98</span>
-            </div>
-
-            <p class="term-definition">
-              The overabundance of open source licenses, often with subtle but significant
-              differences, making it difficult to combine or reuse code across projects without
-              legal contortions.
-            </p>
-
-            <p class="term-humor">
-              😂 "Like trying to host a potluck where everyone insists on bringing food—but only if
-              you agree to eat it under their very specific house rules."
-            </p>
-
-            <div class="term-tags">
-              <span class="tag" data-tag="open-source">open-source</span>
-              <span class="tag" data-tag="legal">legal</span>
-              <span class="tag" data-tag="compatibility">compatibility</span>
-              <span class="tag" data-tag="community">community</span>
-            </div>
-          </div>
         </div>
 
-        <div class="empty-state" id="emptyState" style="display: none">
-          <p>😕 No terms match your filters. Try adjusting your search or clearing filters.</p>
+        <!-- FEATURED TERM SPOTLIGHT -->
+        <div class="card featured-section" data-animate="scaleIn">
+            <h2>⭐ Featured Term</h2>
+            <div class="featured-term-card">
+                <div class="featured-header">
+                    <h3>License Proliferation</h3>
+                    <div class="score-badge" data-score="98">
+                        <span class="score-value">98</span>
+                        <span class="score-label">/ 100</span>
+                    </div>
+                </div>
+                <p class="featured-definition">The overabundance of open source licenses, often with subtle but significant differences, making it difficult to combine or reuse code across projects without legal contortions.</p>
+                <div class="featured-humor">
+                    <p>😂 "Like trying to host a potluck where everyone insists on bringing food—but only if you agree to eat it under their very specific house rules."</p>
+                </div>
+                <div class="featured-tags">
+                    <span class="tag featured-tag">open-source</span>
+                    <span class="tag featured-tag">legal</span>
+                    <span class="tag featured-tag">compatibility</span>
+                    <span class="tag featured-tag">community</span>
+                </div>
+            </div>
         </div>
-      </div>
 
-      <!-- SCORING SYSTEM -->
-      <div class="card scoring-section">
-        <h2>📊 How Scoring Works</h2>
-        <div class="scoring-grid">
-          <div class="scoring-item" data-animate="fadeInUp">
-            <div class="scoring-emoji">✅</div>
-            <h4>Base Definition</h4>
-            <p>20 points</p>
-          </div>
-          <div class="scoring-item" data-animate="fadeInUp">
-            <div class="scoring-emoji">😂</div>
-            <h4>Humor</h4>
-            <p>Up to 30 points (be funny!)</p>
-          </div>
-          <div class="scoring-item" data-animate="fadeInUp">
-            <div class="scoring-emoji">📝</div>
-            <h4>Explanation</h4>
-            <p>20 points</p>
-          </div>
-          <div class="scoring-item" data-animate="fadeInUp">
-            <div class="scoring-emoji">🔗</div>
-            <h4>Cross-references</h4>
-            <p>Up to 20 points</p>
-          </div>
-          <div class="scoring-item" data-animate="fadeInUp">
-            <div class="scoring-emoji">🏷️</div>
-            <h4>Tags</h4>
-            <p>10 points</p>
-          </div>
+        <!-- RECENT ADDITIONS -->
+        <div class="card recent-additions">
+            <h2>🆕 Latest Additions</h2>
+            <p>Just added: <strong>Zombie Dependencies, YOLO Deploy, Yak Shaving</strong></p>
         </div>
-        <div class="scoring-note">
-          <p>💯 Score 90+ to become a legend!</p>
-        </div>
-      </div>
 
-      <!-- CALL TO ACTION -->
-      <div class="card cta-section">
-        <h2>Ready to Contribute?</h2>
-        <div class="cta">
-          <a
-            href="https://github.com/LuminLynx/FOSS-Glossary"
-            class="button"
-            data-animate="slideInUp"
-          >
-            🎮 Contribute on GitHub
-          </a>
-          <a
-            href="https://luminlynx.github.io/FOSS-Glossary/pwa/"
-            class="button button-secondary"
-            data-animate="slideInUp"
-          >
-            📝 View All 28 Terms
-          </a>
-          <a href="./documentation.html" class="button button-secondary" data-animate="slideInUp">
-            📚 View Documentation Hub
-          </a>
+        <!-- SEARCH & FILTER SECTION -->
+        <div class="card search-section" data-animate="fadeIn">
+            <h2>🔍 Explore Glossary</h2>
+            <div class="search-container">
+                <div class="search-input-wrapper">
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        class="search-input" 
+                        placeholder="Search terms, definitions, or tags..."
+                        aria-label="Search glossary"
+                    >
+                    <span class="search-icon">🔍</span>
+                </div>
+                
+                <div class="filter-controls">
+                    <div class="filter-group">
+                        <label class="filter-label">
+                            <input type="checkbox" class="score-filter" value="90-100" data-label="Score 90+">
+                            <span>💯 Perfectionist (90+)</span>
+                        </label>
+                        <label class="filter-label">
+                            <input type="checkbox" class="score-filter" value="80-89" data-label="Score 80-89">
+                            <span>⭐ Excellent (80+)</span>
+                        </label>
+                        <label class="filter-label">
+                            <input type="checkbox" class="score-filter" value="0-79" data-label="Score <80">
+                            <span>📖 Learning (All)</span>
+                        </label>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label class="sort-label">
+                            Sort by:
+                            <select id="sortSelect" class="sort-select" aria-label="Sort terms">
+                                <option value="date-desc">Most Recent</option>
+                                <option value="score-desc">Highest Score</option>
+                                <option value="score-asc">Lowest Score</option>
+                                <option value="alpha-asc">Alphabetical (A-Z)</option>
+                            </select>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="filter-tags-container" id="activeFilters"></div>
+            </div>
+            <p class="result-count" id="resultCount">Showing 16 terms</p>
         </div>
-      </div>
 
-      <!-- FOOTER -->
-      <div class="footer">
-        <p class="last-updated">
-          Last updated: Nov 16, 2025, 9:17 PM | 28 terms and growing!<br />
-          Made with 💙 by the FOSS community
-        </p>
-      </div>
+        <!-- TERM GRID -->
+        <div class="card terms-section">
+            <h2>📖 All Terms</h2>
+            <div class="term-grid" id="termGrid">
+                <div class="term-card" 
+                     data-term="Zombie Dependencies" 
+                     data-slug="zombie-dependencies"
+                     data-score="88"
+                     data-tags="dependencies maintenance technical-debt risk "
+                     data-definition="Outdated or abandoned libraries that are still widely used, often without active maintenance or clear alternatives, lurking silently until a breaking change or CVE emerges."
+                     data-humor="Like relying on a haunted vending machine — it still dispenses snacks, but nobody knows how or why it’s still running."
+                     data-date="2025-11-16T22:42:51.051Z"
+                     data-animate="fadeInUp"
+                     data-delay="0">
+                    
+                    <div class="term-header">
+                        <h3>Zombie Dependencies</h3>
+                        <div class="score-bar-container">
+                            <div class="score-bar" style="width: 88%; background-color: #00d4e4;"></div>
+                        </div>
+                        <span class="term-score" style="color: #00d4e4">88</span>
+                    </div>
+                    
+                    <p class="term-definition">Outdated or abandoned libraries that are still widely used, often without active maintenance or clear alternatives, lurking silently until a breaking change or CVE emerges.</p>
+                    
+                    <p class="term-humor">😂 "Like relying on a haunted vending machine — it still dispenses snacks, but nobody knows how or why it’s still running."</p>
+                    
+                    <div class="term-tags">
+                        <span class="tag" data-tag="dependencies">dependencies</span>
+                        <span class="tag" data-tag="maintenance">maintenance</span>
+                        <span class="tag" data-tag="technical-debt">technical-debt</span>
+                        <span class="tag" data-tag="risk">risk</span>
+                    </div>
+                </div>
+                <div class="term-card" 
+                     data-term="YOLO Deploy" 
+                     data-slug="yolo-deploy"
+                     data-score="35"
+                     data-tags="deployment chaos "
+                     data-definition="Deploying directly to production without testing because confidence or impatience overrides caution, usually followed by frantic monitoring."
+                     data-humor="Your Ops team Loves Organization... just kidding"
+                     data-date="2025-11-16T22:42:51.051Z"
+                     data-animate="fadeInUp"
+                     data-delay="1">
+                    
+                    <div class="term-header">
+                        <h3>YOLO Deploy</h3>
+                        <div class="score-bar-container">
+                            <div class="score-bar" style="width: 35%; background-color: #ffd93d;"></div>
+                        </div>
+                        <span class="term-score" style="color: #ffd93d">35</span>
+                    </div>
+                    
+                    <p class="term-definition">Deploying directly to production without testing because confidence or impatience overrides caution, usually followed by frantic monitoring.</p>
+                    
+                    <p class="term-humor">😂 "Your Ops team Loves Organization... just kidding"</p>
+                    
+                    <div class="term-tags">
+                        <span class="tag" data-tag="deployment">deployment</span>
+                        <span class="tag" data-tag="chaos">chaos</span>
+                    </div>
+                </div>
+                <div class="term-card" 
+                     data-term="Yak Shaving" 
+                     data-slug="yak-shaving"
+                     data-score="64"
+                     data-tags="productivity procrastination "
+                     data-definition="Doing a series of seemingly unrelated tasks before you can do what you actually intended because each prerequisite reveals yet another detour."
+                     data-humor="I came here to write code, and somehow I&#x27;m now learning about Tibetan yak grooming techniques"
+                     data-date="2025-11-16T22:42:51.051Z"
+                     data-animate="fadeInUp"
+                     data-delay="2">
+                    
+                    <div class="term-header">
+                        <h3>Yak Shaving</h3>
+                        <div class="score-bar-container">
+                            <div class="score-bar" style="width: 64%; background-color: #00f0ff;"></div>
+                        </div>
+                        <span class="term-score" style="color: #00f0ff">64</span>
+                    </div>
+                    
+                    <p class="term-definition">Doing a series of seemingly unrelated tasks before you can do what you actually intended because each prerequisite reveals yet another detour.</p>
+                    
+                    <p class="term-humor">😂 "I came here to write code, and somehow I&#x27;m now learning about Tibetan yak grooming techniques"</p>
+                    
+                    <div class="term-tags">
+                        <span class="tag" data-tag="productivity">productivity</span>
+                        <span class="tag" data-tag="procrastination">procrastination</span>
+                    </div>
+                </div>
+                <div class="term-card" 
+                     data-term="Works on My Machine" 
+                     data-slug="works-on-my-machine"
+                     data-score="41"
+                     data-tags="debugging classic excuse "
+                     data-definition="The developer&#x27;s eternal defense when code fails in production, implying the environment is to blame and quietly shifting responsibility back to operations."
+                     data-humor="Certification program coming soon: WOMM Certified Developer™"
+                     data-date="2025-11-16T22:42:51.051Z"
+                     data-animate="fadeInUp"
+                     data-delay="3">
+                    
+                    <div class="term-header">
+                        <h3>Works on My Machine</h3>
+                        <div class="score-bar-container">
+                            <div class="score-bar" style="width: 41%; background-color: #ffd93d;"></div>
+                        </div>
+                        <span class="term-score" style="color: #ffd93d">41</span>
+                    </div>
+                    
+                    <p class="term-definition">The developer&#x27;s eternal defense when code fails in production, implying the environment is to blame and quietly shifting responsibility back to operations.</p>
+                    
+                    <p class="term-humor">😂 "Certification program coming soon: WOMM Certified Developer™"</p>
+                    
+                    <div class="term-tags">
+                        <span class="tag" data-tag="debugging">debugging</span>
+                        <span class="tag" data-tag="classic">classic</span>
+                        <span class="tag" data-tag="excuse">excuse</span>
+                    </div>
+                </div>
+                <div class="term-card" 
+                     data-term="WONTFIX" 
+                     data-slug="wontfix"
+                     data-score="81"
+                     data-tags="foss issue-tracking development community "
+                     data-definition="Will Not Fix — an issue tracker resolution meaning the reported bug or feature request will remain unresolved, often due to scope, philosophy, or maintenance trade-offs."
+                     data-humor="The open‑source equivalent of &#x27;working as intended&#x27; — even when it clearly isn’t."
+                     data-date="2025-11-16T22:42:51.051Z"
+                     data-animate="fadeInUp"
+                     data-delay="4">
+                    
+                    <div class="term-header">
+                        <h3>WONTFIX</h3>
+                        <div class="score-bar-container">
+                            <div class="score-bar" style="width: 81%; background-color: #00d4e4;"></div>
+                        </div>
+                        <span class="term-score" style="color: #00d4e4">81</span>
+                    </div>
+                    
+                    <p class="term-definition">Will Not Fix — an issue tracker resolution meaning the reported bug or feature request will remain unresolved, often due to scope, philosophy, or maintenance trade-offs.</p>
+                    
+                    <p class="term-humor">😂 "The open‑source equivalent of &#x27;working as intended&#x27; — even when it clearly isn’t."</p>
+                    
+                    <div class="term-tags">
+                        <span class="tag" data-tag="foss">foss</span>
+                        <span class="tag" data-tag="issue-tracking">issue-tracking</span>
+                        <span class="tag" data-tag="development">development</span>
+                        <span class="tag" data-tag="community">community</span>
+                    </div>
+                </div>
+                <div class="term-card" 
+                     data-term="Ship It" 
+                     data-slug="ship-it"
+                     data-score="33"
+                     data-tags="deployment courage "
+                     data-definition="Deploy to production and hope for the best, often uttered at the last minute when deadlines trump testing discipline and everyone crosses their fingers."
+                     data-humor="What you say at 4:59 PM on a Friday"
+                     data-date="2025-11-16T22:42:51.051Z"
+                     data-animate="fadeInUp"
+                     data-delay="5">
+                    
+                    <div class="term-header">
+                        <h3>Ship It</h3>
+                        <div class="score-bar-container">
+                            <div class="score-bar" style="width: 33%; background-color: #ffd93d;"></div>
+                        </div>
+                        <span class="term-score" style="color: #ffd93d">33</span>
+                    </div>
+                    
+                    <p class="term-definition">Deploy to production and hope for the best, often uttered at the last minute when deadlines trump testing discipline and everyone crosses their fingers.</p>
+                    
+                    <p class="term-humor">😂 "What you say at 4:59 PM on a Friday"</p>
+                    
+                    <div class="term-tags">
+                        <span class="tag" data-tag="deployment">deployment</span>
+                        <span class="tag" data-tag="courage">courage</span>
+                    </div>
+                </div>
+                <div class="term-card" 
+                     data-term="RTFM" 
+                     data-slug="rtfm"
+                     data-score="81"
+                     data-tags="acronym documentation support "
+                     data-definition="Read The F***ing Manual — a blunt reminder to consult documentation before asking questions so helpers aren&#x27;t repeating themselves."
+                     data-humor="The four most powerful letters in tech support, capable of solving 90% of problems and hurting 100% of feelings"
+                     data-date="2025-11-16T22:42:51.051Z"
+                     data-animate="fadeInUp"
+                     data-delay="6">
+                    
+                    <div class="term-header">
+                        <h3>RTFM</h3>
+                        <div class="score-bar-container">
+                            <div class="score-bar" style="width: 81%; background-color: #00d4e4;"></div>
+                        </div>
+                        <span class="term-score" style="color: #00d4e4">81</span>
+                    </div>
+                    
+                    <p class="term-definition">Read The F***ing Manual — a blunt reminder to consult documentation before asking questions so helpers aren&#x27;t repeating themselves.</p>
+                    
+                    <p class="term-humor">😂 "The four most powerful letters in tech support, capable of solving 90% of problems and hurting 100% of feelings"</p>
+                    
+                    <div class="term-tags">
+                        <span class="tag" data-tag="acronym">acronym</span>
+                        <span class="tag" data-tag="documentation">documentation</span>
+                        <span class="tag" data-tag="support">support</span>
+                    </div>
+                </div>
+                <div class="term-card" 
+                     data-term="Pullpocalypse" 
+                     data-slug="pullpocalypse"
+                     data-score="80"
+                     data-tags="pull-requests maintenance overload anti-pattern "
+                     data-definition="The overwhelming flood of open pull requests that threatens to drown maintainers, creating backlog, merge conflicts, and frustrated contributors."
+                     data-humor="Like trying to bail out a sinking ship with a coffee mug during a thunderstorm"
+                     data-date="2025-11-16T22:42:51.051Z"
+                     data-animate="fadeInUp"
+                     data-delay="7">
+                    
+                    <div class="term-header">
+                        <h3>Pullpocalypse</h3>
+                        <div class="score-bar-container">
+                            <div class="score-bar" style="width: 80%; background-color: #00d4e4;"></div>
+                        </div>
+                        <span class="term-score" style="color: #00d4e4">80</span>
+                    </div>
+                    
+                    <p class="term-definition">The overwhelming flood of open pull requests that threatens to drown maintainers, creating backlog, merge conflicts, and frustrated contributors.</p>
+                    
+                    <p class="term-humor">😂 "Like trying to bail out a sinking ship with a coffee mug during a thunderstorm"</p>
+                    
+                    <div class="term-tags">
+                        <span class="tag" data-tag="pull-requests">pull-requests</span>
+                        <span class="tag" data-tag="maintenance">maintenance</span>
+                        <span class="tag" data-tag="overload">overload</span>
+                        <span class="tag" data-tag="anti-pattern">anti-pattern</span>
+                    </div>
+                </div>
+                <div class="term-card" 
+                     data-term="PTW" 
+                     data-slug="ptw"
+                     data-score="81"
+                     data-tags="foss contribution community development "
+                     data-definition="Patches Welcome — a standard open-source response inviting contributors to submit code if they want a change, reminding requesters that collaboration beats complaints."
+                     data-humor="The polite way of saying: &#x27;Yes, that’s a problem. No, I’m not fixing it for you.&#x27;"
+                     data-date="2025-11-16T22:42:51.051Z"
+                     data-animate="fadeInUp"
+                     data-delay="8">
+                    
+                    <div class="term-header">
+                        <h3>PTW</h3>
+                        <div class="score-bar-container">
+                            <div class="score-bar" style="width: 81%; background-color: #00d4e4;"></div>
+                        </div>
+                        <span class="term-score" style="color: #00d4e4">81</span>
+                    </div>
+                    
+                    <p class="term-definition">Patches Welcome — a standard open-source response inviting contributors to submit code if they want a change, reminding requesters that collaboration beats complaints.</p>
+                    
+                    <p class="term-humor">😂 "The polite way of saying: &#x27;Yes, that’s a problem. No, I’m not fixing it for you.&#x27;"</p>
+                    
+                    <div class="term-tags">
+                        <span class="tag" data-tag="foss">foss</span>
+                        <span class="tag" data-tag="contribution">contribution</span>
+                        <span class="tag" data-tag="community">community</span>
+                        <span class="tag" data-tag="development">development</span>
+                    </div>
+                </div>
+                <div class="term-card" 
+                     data-term="PEBKAC" 
+                     data-slug="pebkac"
+                     data-score="73"
+                     data-tags="acronym support user-error "
+                     data-definition="Problem Exists Between Keyboard And Chair — a tongue-in-cheek acknowledgment that user error, not software flaws, caused the reported issue."
+                     data-humor="A timeless classic in tech support — polite sarcasm wrapped in an acronym."
+                     data-date="2025-11-16T22:42:51.051Z"
+                     data-animate="fadeInUp"
+                     data-delay="9">
+                    
+                    <div class="term-header">
+                        <h3>PEBKAC</h3>
+                        <div class="score-bar-container">
+                            <div class="score-bar" style="width: 73%; background-color: #00f0ff;"></div>
+                        </div>
+                        <span class="term-score" style="color: #00f0ff">73</span>
+                    </div>
+                    
+                    <p class="term-definition">Problem Exists Between Keyboard And Chair — a tongue-in-cheek acknowledgment that user error, not software flaws, caused the reported issue.</p>
+                    
+                    <p class="term-humor">😂 "A timeless classic in tech support — polite sarcasm wrapped in an acronym."</p>
+                    
+                    <div class="term-tags">
+                        <span class="tag" data-tag="acronym">acronym</span>
+                        <span class="tag" data-tag="support">support</span>
+                        <span class="tag" data-tag="user-error">user-error</span>
+                    </div>
+                </div>
+                <div class="term-card" 
+                     data-term="Not Invented Here Syndrome" 
+                     data-slug="not-invented-here-syndrome"
+                     data-score="91"
+                     data-tags="reinvention ego duplication engineering-culture "
+                     data-definition="A reluctance to adopt existing external solutions, leading teams to reimplement functionality themselves—even when mature, well-tested options already exist and would save effort."
+                     data-humor="Like refusing to buy bread because you’re convinced you can grow the wheat, mill the flour, and bake a better loaf in your spare time."
+                     data-date="2025-11-16T22:42:51.051Z"
+                     data-animate="fadeInUp"
+                     data-delay="10">
+                    
+                    <div class="term-header">
+                        <h3>Not Invented Here Syndrome</h3>
+                        <div class="score-bar-container">
+                            <div class="score-bar" style="width: 91%; background-color: #00d4e4;"></div>
+                        </div>
+                        <span class="term-score" style="color: #00d4e4">91</span>
+                    </div>
+                    
+                    <p class="term-definition">A reluctance to adopt existing external solutions, leading teams to reimplement functionality themselves—even when mature, well-tested options already exist and would save effort.</p>
+                    
+                    <p class="term-humor">😂 "Like refusing to buy bread because you’re convinced you can grow the wheat, mill the flour, and bake a better loaf in your spare time."</p>
+                    
+                    <div class="term-tags">
+                        <span class="tag" data-tag="reinvention">reinvention</span>
+                        <span class="tag" data-tag="ego">ego</span>
+                        <span class="tag" data-tag="duplication">duplication</span>
+                        <span class="tag" data-tag="engineering-culture">engineering-culture</span>
+                    </div>
+                </div>
+                <div class="term-card" 
+                     data-term="Mergequake" 
+                     data-slug="mergequake"
+                     data-score="84"
+                     data-tags="merge conflict workflow "
+                     data-definition="The sudden cascade of conflicts triggered when multiple long-lived branches are merged at once, shaking the repo like tectonic plates colliding."
+                     data-humor="One minute you&#x27;re merging, the next you&#x27;re an amateur seismologist mapping aftershocks in rebase hell"
+                     data-date="2025-11-16T22:42:51.051Z"
+                     data-animate="fadeInUp"
+                     data-delay="11">
+                    
+                    <div class="term-header">
+                        <h3>Mergequake</h3>
+                        <div class="score-bar-container">
+                            <div class="score-bar" style="width: 84%; background-color: #00d4e4;"></div>
+                        </div>
+                        <span class="term-score" style="color: #00d4e4">84</span>
+                    </div>
+                    
+                    <p class="term-definition">The sudden cascade of conflicts triggered when multiple long-lived branches are merged at once, shaking the repo like tectonic plates colliding.</p>
+                    
+                    <p class="term-humor">😂 "One minute you&#x27;re merging, the next you&#x27;re an amateur seismologist mapping aftershocks in rebase hell"</p>
+                    
+                    <div class="term-tags">
+                        <span class="tag" data-tag="merge">merge</span>
+                        <span class="tag" data-tag="conflict">conflict</span>
+                        <span class="tag" data-tag="workflow">workflow</span>
+                    </div>
+                </div>
+                <div class="term-card" 
+                     data-term="Maintainer Burnout" 
+                     data-slug="maintainer-burnout"
+                     data-score="87"
+                     data-tags="community sustainability mental-health open-source "
+                     data-definition="The exhaustion and disengagement experienced by open source maintainers who face constant demands, limited support, and little recognition from the communities relying on them."
+                     data-humor="Like being the only bartender at a never-ending party where everyone wants a custom cocktail, but nobody tips."
+                     data-date="2025-11-16T22:42:51.051Z"
+                     data-animate="fadeInUp"
+                     data-delay="12">
+                    
+                    <div class="term-header">
+                        <h3>Maintainer Burnout</h3>
+                        <div class="score-bar-container">
+                            <div class="score-bar" style="width: 87%; background-color: #00d4e4;"></div>
+                        </div>
+                        <span class="term-score" style="color: #00d4e4">87</span>
+                    </div>
+                    
+                    <p class="term-definition">The exhaustion and disengagement experienced by open source maintainers who face constant demands, limited support, and little recognition from the communities relying on them.</p>
+                    
+                    <p class="term-humor">😂 "Like being the only bartender at a never-ending party where everyone wants a custom cocktail, but nobody tips."</p>
+                    
+                    <div class="term-tags">
+                        <span class="tag" data-tag="community">community</span>
+                        <span class="tag" data-tag="sustainability">sustainability</span>
+                        <span class="tag" data-tag="mental-health">mental-health</span>
+                        <span class="tag" data-tag="open-source">open-source</span>
+                    </div>
+                </div>
+                <div class="term-card" 
+                     data-term="Linux" 
+                     data-slug="linux"
+                     data-score="91"
+                     data-tags="os kernel foss "
+                     data-definition="An open-source operating system kernel that powers servers, desktops, smartphones, and countless embedded devices through collaborative development."
+                     data-humor="The only kernel that makes you feel powerful—until you realize you’ve spent three hours compiling drivers just to get your Wi-Fi working"
+                     data-date="2025-11-16T22:42:51.051Z"
+                     data-animate="fadeInUp"
+                     data-delay="13">
+                    
+                    <div class="term-header">
+                        <h3>Linux</h3>
+                        <div class="score-bar-container">
+                            <div class="score-bar" style="width: 91%; background-color: #00d4e4;"></div>
+                        </div>
+                        <span class="term-score" style="color: #00d4e4">91</span>
+                    </div>
+                    
+                    <p class="term-definition">An open-source operating system kernel that powers servers, desktops, smartphones, and countless embedded devices through collaborative development.</p>
+                    
+                    <p class="term-humor">😂 "The only kernel that makes you feel powerful—until you realize you’ve spent three hours compiling drivers just to get your Wi-Fi working"</p>
+                    
+                    <div class="term-tags">
+                        <span class="tag" data-tag="os">os</span>
+                        <span class="tag" data-tag="kernel">kernel</span>
+                        <span class="tag" data-tag="foss">foss</span>
+                    </div>
+                </div>
+                <div class="term-card" 
+                     data-term="Linus&#x27;s Law" 
+                     data-slug="linuss-law"
+                     data-score="80"
+                     data-tags="open-source collaboration quality "
+                     data-definition="The idea that &#x27;given enough eyeballs, all bugs are shallow&#x27; — suggesting open collaboration makes problems easier to find and fix because more reviewers share the workload."
+                     data-humor="Like having a hundred proofreaders for your essay — someone will catch that typo."
+                     data-date="2025-11-16T22:42:51.051Z"
+                     data-animate="fadeInUp"
+                     data-delay="14">
+                    
+                    <div class="term-header">
+                        <h3>Linus&#x27;s Law</h3>
+                        <div class="score-bar-container">
+                            <div class="score-bar" style="width: 80%; background-color: #00d4e4;"></div>
+                        </div>
+                        <span class="term-score" style="color: #00d4e4">80</span>
+                    </div>
+                    
+                    <p class="term-definition">The idea that &#x27;given enough eyeballs, all bugs are shallow&#x27; — suggesting open collaboration makes problems easier to find and fix because more reviewers share the workload.</p>
+                    
+                    <p class="term-humor">😂 "Like having a hundred proofreaders for your essay — someone will catch that typo."</p>
+                    
+                    <div class="term-tags">
+                        <span class="tag" data-tag="open-source">open-source</span>
+                        <span class="tag" data-tag="collaboration">collaboration</span>
+                        <span class="tag" data-tag="quality">quality</span>
+                    </div>
+                </div>
+                <div class="term-card" 
+                     data-term="License Proliferation" 
+                     data-slug="license-proliferation"
+                     data-score="98"
+                     data-tags="open-source legal compatibility community "
+                     data-definition="The overabundance of open source licenses, often with subtle but significant differences, making it difficult to combine or reuse code across projects without legal contortions."
+                     data-humor="Like trying to host a potluck where everyone insists on bringing food—but only if you agree to eat it under their very specific house rules."
+                     data-date="2025-11-16T22:42:51.051Z"
+                     data-animate="fadeInUp"
+                     data-delay="15">
+                    
+                    <div class="term-header">
+                        <h3>License Proliferation</h3>
+                        <div class="score-bar-container">
+                            <div class="score-bar" style="width: 98%; background-color: #00d4e4;"></div>
+                        </div>
+                        <span class="term-score" style="color: #00d4e4">98</span>
+                    </div>
+                    
+                    <p class="term-definition">The overabundance of open source licenses, often with subtle but significant differences, making it difficult to combine or reuse code across projects without legal contortions.</p>
+                    
+                    <p class="term-humor">😂 "Like trying to host a potluck where everyone insists on bringing food—but only if you agree to eat it under their very specific house rules."</p>
+                    
+                    <div class="term-tags">
+                        <span class="tag" data-tag="open-source">open-source</span>
+                        <span class="tag" data-tag="legal">legal</span>
+                        <span class="tag" data-tag="compatibility">compatibility</span>
+                        <span class="tag" data-tag="community">community</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <p>😕 No terms match your filters. Try adjusting your search or clearing filters.</p>
+            </div>
+        </div>
+
+        <!-- SCORING SYSTEM -->
+        <div class="card scoring-section">
+            <h2>📊 How Scoring Works</h2>
+            <div class="scoring-grid">
+                <div class="scoring-item" data-animate="fadeInUp">
+                    <div class="scoring-emoji">✅</div>
+                    <h4>Base Definition</h4>
+                    <p>20 points</p>
+                </div>
+                <div class="scoring-item" data-animate="fadeInUp">
+                    <div class="scoring-emoji">😂</div>
+                    <h4>Humor</h4>
+                    <p>Up to 30 points (be funny!)</p>
+                </div>
+                <div class="scoring-item" data-animate="fadeInUp">
+                    <div class="scoring-emoji">📝</div>
+                    <h4>Explanation</h4>
+                    <p>20 points</p>
+                </div>
+                <div class="scoring-item" data-animate="fadeInUp">
+                    <div class="scoring-emoji">🔗</div>
+                    <h4>Cross-references</h4>
+                    <p>Up to 20 points</p>
+                </div>
+                <div class="scoring-item" data-animate="fadeInUp">
+                    <div class="scoring-emoji">🏷️</div>
+                    <h4>Tags</h4>
+                    <p>10 points</p>
+                </div>
+            </div>
+            <div class="scoring-note">
+                <p>💯 Score 90+ to become a legend!</p>
+            </div>
+        </div>
+
+        <!-- CALL TO ACTION -->
+        <div class="card cta-section">
+            <h2>Ready to Contribute?</h2>
+            <div class="cta">
+                <a href="https://github.com/LuminLynx/FOSS-Glossary" class="button" data-animate="slideInUp">
+                    🎮 Contribute on GitHub
+                </a>
+                <a href="https://luminlynx.github.io/FOSS-Glossary/pwa/" class="button button-secondary" data-animate="slideInUp">
+                    📝 View All 28 Terms
+                </a>
+                <a href="./documentation.html" class="button button-secondary" data-animate="slideInUp">
+                    📚 View Documentation Hub
+                </a>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            <p class="last-updated">
+                Last updated: Nov 16, 2025, 10:42 PM | 28 terms and growing!<br>
+                Made with 💙 by the FOSS community
+            </p>
+        </div>
     </div>
 
     <script>
-      window.__TERMS_JSON_URL = './terms.json?ver=d64b5f8';
-
-      /**
-       * FOSS Glossary Landing Page - Client-Side Search & Filter Engine
-       *
-       * Features:
-       * - Real-time search with fuzzy matching
-       * - Filter by score range (90+, 80-89, etc.)
-       * - Sort by date, score, alphabetical
-       * - Click tags to filter by category
-       * - Responsive design with mobile-friendly controls
-       * - Debounced search for performance
-       * - Keyboard navigation support
-       *
-       * No external dependencies - pure vanilla JavaScript
-       */
-
-      // Search state management
-      const SearchEngine = {
-        allTerms: [],
-        filteredTerms: [],
-        searchTerm: '',
-        scoreFilters: new Set(),
-        tagFilters: new Set(),
-        sortBy: 'date-desc',
-        debounceTimer: null,
-        debounceDelay: 150,
+        window.__TERMS_JSON_URL = './terms.json?ver=07d2379';
 
         /**
-         * Initialize the search engine
-         * Extract all term data from DOM and setup event listeners
+         * FOSS Glossary Landing Page - Client-Side Search & Filter Engine
+         * 
+         * Features:
+         * - Real-time search with fuzzy matching
+         * - Filter by score range (90+, 80-89, etc.)
+         * - Sort by date, score, alphabetical
+         * - Click tags to filter by category
+         * - Responsive design with mobile-friendly controls
+         * - Debounced search for performance
+         * - Keyboard navigation support
+         * 
+         * No external dependencies - pure vanilla JavaScript
          */
-        init() {
-          this.extractTermsFromDOM();
-          this.setupEventListeners();
-          this.setupTagClickHandlers();
-          this.render();
-          console.log('🔍 Search engine initialized with', this.allTerms.length, 'terms');
-        },
 
-        /**
-         * Extract term data from DOM cards
-         * Converts data attributes to searchable objects
-         */
-        extractTermsFromDOM() {
-          const cards = document.querySelectorAll('[data-term]');
-          this.allTerms = Array.from(cards).map((card, index) => ({
-            element: card,
-            term: card.dataset.term,
-            slug: card.dataset.slug,
-            definition: card.dataset.definition,
-            humor: card.dataset.humor || '',
-            score: parseInt(card.dataset.score),
-            tags: (card.dataset.tags || '').split(' ').filter((t) => t.length > 0),
-            sortDate: new Date(card.dataset.date || new Date()).getTime(),
-            originalIndex: index,
-          }));
-        },
+        // Search state management
+        const SearchEngine = {
+            allTerms: [],
+            filteredTerms: [],
+            searchTerm: '',
+            scoreFilters: new Set(),
+            tagFilters: new Set(),
+            sortBy: 'date-desc',
+            debounceTimer: null,
+            debounceDelay: 150,
 
-        /**
-         * Setup event listeners for search, filters, and sort
-         */
-        setupEventListeners() {
-          // Search input with debounce
-          const searchInput = document.getElementById('searchInput');
-          if (searchInput) {
-            searchInput.addEventListener('input', (e) => {
-              clearTimeout(this.debounceTimer);
-              this.debounceTimer = setTimeout(() => {
-                this.searchTerm = e.target.value.toLowerCase().trim();
+            /**
+             * Initialize the search engine
+             * Extract all term data from DOM and setup event listeners
+             */
+            init() {
+                this.extractTermsFromDOM();
+                this.setupEventListeners();
+                this.setupTagClickHandlers();
                 this.filter();
                 this.render();
-              }, this.debounceDelay);
-            });
-
-            // Clear search on Escape key
-            searchInput.addEventListener('keydown', (e) => {
-              if (e.key === 'Escape') {
-                searchInput.value = '';
-                this.searchTerm = '';
-                this.filter();
-                this.render();
-              }
-            });
-          }
-
-          // Score filters
-          document.querySelectorAll('.score-filter').forEach((checkbox) => {
-            checkbox.addEventListener('change', (e) => {
-              if (e.target.checked) {
-                this.scoreFilters.add(e.target.value);
-              } else {
-                this.scoreFilters.delete(e.target.value);
-              }
-              this.filter();
-              this.render();
-            });
-          });
-
-          // Sort select
-          const sortSelect = document.getElementById('sortSelect');
-          if (sortSelect) {
-            sortSelect.addEventListener('change', (e) => {
-              this.sortBy = e.target.value;
-              this.render();
-            });
-          }
-        },
-
-        /**
-         * Setup click handlers for category tag filtering
-         */
-        setupTagClickHandlers() {
-          document.addEventListener('click', (e) => {
-            if (
-              e.target.classList.contains('tag') &&
-              !e.target.classList.contains('featured-tag')
-            ) {
-              const tag = e.target.dataset.tag;
-              if (this.tagFilters.has(tag)) {
-                this.tagFilters.delete(tag);
-              } else {
-                this.tagFilters.add(tag);
-              }
-              this.filter();
-              this.render();
-            }
-          });
-        },
-
-        /**
-         * Filter terms based on search, score, and tag filters
-         */
-        filter() {
-          this.filteredTerms = this.allTerms.filter((term) => {
-            // Search filter
-            if (this.searchTerm) {
-              const matches =
-                term.term.toLowerCase().includes(this.searchTerm) ||
-                term.definition.toLowerCase().includes(this.searchTerm) ||
-                term.humor.toLowerCase().includes(this.searchTerm) ||
-                term.tags.some((tag) => tag.toLowerCase().includes(this.searchTerm));
-
-              if (!matches) return false;
-            }
-
-            // Score filter
-            if (this.scoreFilters.size > 0) {
-              const scoreInRange = Array.from(this.scoreFilters).some((range) => {
-                const [min, max] = range.split('-').map(Number);
-                return term.score >= min && term.score <= max;
-              });
-              if (!scoreInRange) return false;
-            }
-
-            // Tag filter
-            if (this.tagFilters.size > 0) {
-              const hasTag = term.tags.some((tag) => this.tagFilters.has(tag));
-              if (!hasTag) return false;
-            }
-
-            return true;
-          });
-
-          // Sort filtered results
-          this.sort();
-        },
-
-        /**
-         * Sort filtered terms based on selected sort option
-         */
-        sort() {
-          switch (this.sortBy) {
-            case 'date-desc':
-              this.filteredTerms.sort((a, b) => b.sortDate - a.sortDate);
-              break;
-            case 'score-desc':
-              this.filteredTerms.sort((a, b) => b.score - a.score);
-              break;
-            case 'score-asc':
-              this.filteredTerms.sort((a, b) => a.score - b.score);
-              break;
-            case 'alpha-asc':
-              this.filteredTerms.sort((a, b) => a.term.localeCompare(b.term));
-              break;
-          }
-        },
-
-        /**
-         * Update DOM to show/hide filtered terms
-         */
-        render() {
-          // Update visibility
-          this.allTerms.forEach((term) => {
-            const isVisible = this.filteredTerms.includes(term);
-            term.element.style.display = isVisible ? 'block' : 'none';
-            if (isVisible) {
-              term.element.classList.add('visible');
-            } else {
-              term.element.classList.remove('visible');
-            }
-          });
-
-          // Update result count
-          const resultCount = document.getElementById('resultCount');
-          if (resultCount) {
-            const count = this.filteredTerms.length;
-            resultCount.textContent = `Showing ${count} of 16 terms`;
-          }
-
-          // Show/hide empty state
-          const emptyState = document.getElementById('emptyState');
-          if (emptyState) {
-            emptyState.style.display = this.filteredTerms.length === 0 ? 'block' : 'none';
-          }
-
-          // Update active filters display
-          this.updateActiveFiltersDisplay();
-        },
-
-        /**
-         * Display active filters as removable chips
-         */
-        updateActiveFiltersDisplay() {
-          const container = document.getElementById('activeFilters');
-          if (!container) return;
-
-          container.innerHTML = '';
-          const allFilters = new Set([...this.scoreFilters, ...this.tagFilters]);
-
-          if (allFilters.size === 0) return;
-
-          allFilters.forEach((filter) => {
-            const chip = document.createElement('span');
-            chip.className = 'filter-chip';
-
-            let label = filter;
-            if (filter.includes('-') && !filter.includes('tag')) {
-              const [min, max] = filter.split('-');
-              label = `Score ${min}-${max}`;
-            }
-
-            chip.innerHTML = `${label} <button class="chip-remove" data-filter="${filter}">✕</button>`;
-            chip.querySelector('.chip-remove').addEventListener('click', () => {
-              this.scoreFilters.delete(filter);
-              this.tagFilters.delete(filter);
-              this.filter();
-              this.render();
-            });
-
-            container.appendChild(chip);
-          });
-        },
-      };
-
-      /**
-       * Animation utilities for entrance animations
-       */
-      const Animations = {
-        init() {
-          this.observeElements();
-          this.attachAnimationClasses();
-        },
-
-        attachAnimationClasses() {
-          document.querySelectorAll('[data-animate]').forEach((el) => {
-            el.classList.add('animate-on-load');
-            const animationType = el.dataset.animate;
-            el.classList.add(`animate-${animationType}`);
-
-            if (el.dataset.delay) {
-              const delay = parseInt(el.dataset.delay) * 50;
-              el.style.animationDelay = `${delay}ms`;
-            }
-          });
-        },
-
-        observeElements() {
-          if (!('IntersectionObserver' in window)) return;
-
-          const observer = new IntersectionObserver(
-            (entries) => {
-              entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                  entry.target.classList.add('in-view');
-                  observer.unobserve(entry.target);
-                }
-              });
+                console.log('🔍 Search engine initialized with', this.allTerms.length, 'terms');
             },
-            { threshold: 0.1 }
-          );
 
-          document.querySelectorAll('[data-animate]').forEach((el) => {
-            observer.observe(el);
-          });
-        },
-      };
+            /**
+             * Extract term data from DOM cards
+             * Converts data attributes to searchable objects
+             */
+            extractTermsFromDOM() {
+                const cards = document.querySelectorAll('[data-term]');
+                this.allTerms = Array.from(cards).map((card, index) => ({
+                    element: card,
+                    term: card.dataset.term,
+                    slug: card.dataset.slug,
+                    definition: card.dataset.definition,
+                    humor: card.dataset.humor || '',
+                    score: parseInt(card.dataset.score),
+                    tags: (card.dataset.tags || '').split(' ').filter(t => t.length > 0),
+                    sortDate: new Date(card.dataset.date || new Date()).getTime(),
+                    originalIndex: index,
+                }));
+            },
 
-      // Initialize on page load
-      document.addEventListener('DOMContentLoaded', () => {
-        SearchEngine.init();
-        Animations.init();
-      });
+            /**
+             * Setup event listeners for search, filters, and sort
+             */
+            setupEventListeners() {
+                // Search input with debounce
+                const searchInput = document.getElementById('searchInput');
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        clearTimeout(this.debounceTimer);
+                        this.debounceTimer = setTimeout(() => {
+                            this.searchTerm = e.target.value.toLowerCase().trim();
+                            this.filter();
+                            this.render();
+                        }, this.debounceDelay);
+                    });
+
+                    // Clear search on Escape key
+                    searchInput.addEventListener('keydown', (e) => {
+                        if (e.key === 'Escape') {
+                            searchInput.value = '';
+                            this.searchTerm = '';
+                            this.filter();
+                            this.render();
+                        }
+                    });
+                }
+
+                // Score filters
+                document.querySelectorAll('.score-filter').forEach(checkbox => {
+                    checkbox.addEventListener('change', (e) => {
+                        if (e.target.checked) {
+                            this.scoreFilters.add(e.target.value);
+                        } else {
+                            this.scoreFilters.delete(e.target.value);
+                        }
+                        this.filter();
+                        this.render();
+                    });
+                });
+
+                // Sort select
+                const sortSelect = document.getElementById('sortSelect');
+                if (sortSelect) {
+                    sortSelect.addEventListener('change', (e) => {
+                        this.sortBy = e.target.value;
+                        this.render();
+                    });
+                }
+            },
+
+            /**
+             * Setup click handlers for category tag filtering
+             */
+            setupTagClickHandlers() {
+                document.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('tag') && !e.target.classList.contains('featured-tag')) {
+                        const tag = e.target.dataset.tag;
+                        if (this.tagFilters.has(tag)) {
+                            this.tagFilters.delete(tag);
+                        } else {
+                            this.tagFilters.add(tag);
+                        }
+                        this.filter();
+                        this.render();
+                    }
+                });
+            },
+
+            /**
+             * Filter terms based on search, score, and tag filters
+             */
+            filter() {
+                this.filteredTerms = this.allTerms.filter(term => {
+                    // Search filter
+                    if (this.searchTerm) {
+                        const matches = 
+                            term.term.toLowerCase().includes(this.searchTerm) ||
+                            term.definition.toLowerCase().includes(this.searchTerm) ||
+                            term.humor.toLowerCase().includes(this.searchTerm) ||
+                            term.tags.some(tag => tag.toLowerCase().includes(this.searchTerm));
+                        
+                        if (!matches) return false;
+                    }
+
+                    // Score filter
+                    if (this.scoreFilters.size > 0) {
+                        const scoreInRange = Array.from(this.scoreFilters).some(range => {
+                            const [min, max] = range.split('-').map(Number);
+                            return term.score >= min && term.score <= max;
+                        });
+                        if (!scoreInRange) return false;
+                    }
+
+                    // Tag filter
+                    if (this.tagFilters.size > 0) {
+                        const hasTag = term.tags.some(tag => this.tagFilters.has(tag));
+                        if (!hasTag) return false;
+                    }
+
+                    return true;
+                });
+
+                // Sort filtered results
+                this.sort();
+            },
+
+            /**
+             * Sort filtered terms based on selected sort option
+             */
+            sort() {
+                switch (this.sortBy) {
+                    case 'date-desc':
+                        this.filteredTerms.sort((a, b) => b.sortDate - a.sortDate);
+                        break;
+                    case 'score-desc':
+                        this.filteredTerms.sort((a, b) => b.score - a.score);
+                        break;
+                    case 'score-asc':
+                        this.filteredTerms.sort((a, b) => a.score - b.score);
+                        break;
+                    case 'alpha-asc':
+                        this.filteredTerms.sort((a, b) => a.term.localeCompare(b.term));
+                        break;
+                }
+            },
+
+            /**
+             * Update DOM to show/hide filtered terms
+             */
+            render() {
+                // Update visibility
+                this.allTerms.forEach(term => {
+                    const isVisible = this.filteredTerms.includes(term);
+                    term.element.style.display = isVisible ? 'block' : 'none';
+                    if (isVisible) {
+                        term.element.classList.add('visible');
+                    } else {
+                        term.element.classList.remove('visible');
+                    }
+                });
+
+                // Update result count
+                const resultCount = document.getElementById('resultCount');
+                if (resultCount) {
+                    const count = this.filteredTerms.length;
+                    resultCount.textContent = `Showing ${count} of 16 terms`;
+                }
+
+                // Show/hide empty state
+                const emptyState = document.getElementById('emptyState');
+                if (emptyState) {
+                    emptyState.style.display = this.filteredTerms.length === 0 ? 'block' : 'none';
+                }
+
+                // Update active filters display
+                this.updateActiveFiltersDisplay();
+            },
+
+            /**
+             * Display active filters as removable chips
+             */
+            updateActiveFiltersDisplay() {
+                const container = document.getElementById('activeFilters');
+                if (!container) return;
+
+                container.innerHTML = '';
+                const allFilters = new Set([...this.scoreFilters, ...this.tagFilters]);
+
+                if (allFilters.size === 0) return;
+
+                allFilters.forEach(filter => {
+                    const chip = document.createElement('span');
+                    chip.className = 'filter-chip';
+                    
+                    let label = filter;
+                    if (filter.includes('-') && !filter.includes('tag')) {
+                        const [min, max] = filter.split('-');
+                        label = `Score ${min}-${max}`;
+                    }
+
+                    chip.innerHTML = `${label} <button class="chip-remove" data-filter="${filter}">✕</button>`;
+                    chip.querySelector('.chip-remove').addEventListener('click', () => {
+                        this.scoreFilters.delete(filter);
+                        this.tagFilters.delete(filter);
+                        this.filter();
+                        this.render();
+                    });
+
+                    container.appendChild(chip);
+                });
+            }
+        };
+
+        /**
+         * Animation utilities for entrance animations
+         */
+        const Animations = {
+            init() {
+                this.observeElements();
+                this.attachAnimationClasses();
+            },
+
+            attachAnimationClasses() {
+                document.querySelectorAll('[data-animate]').forEach(el => {
+                    el.classList.add('animate-on-load');
+                    const animationType = el.dataset.animate;
+                    el.classList.add(`animate-${animationType}`);
+                    
+                    if (el.dataset.delay) {
+                        const delay = parseInt(el.dataset.delay) * 50;
+                        el.style.animationDelay = `${delay}ms`;
+                    }
+                });
+            },
+
+            observeElements() {
+                if (!('IntersectionObserver' in window)) return;
+                
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('in-view');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.1 });
+
+                document.querySelectorAll('[data-animate]').forEach(el => {
+                    observer.observe(el);
+                });
+            }
+        };
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            SearchEngine.init();
+            Animations.init();
+        });
     </script>
-  </body>
+</body>
 </html>
