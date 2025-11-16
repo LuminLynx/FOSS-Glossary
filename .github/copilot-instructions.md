@@ -260,6 +260,7 @@ npm run validate      # Focused: schema validation only
 - [`docs/IMPLEMENTATION_PLAN.md`](../docs/IMPLEMENTATION_PLAN.md) — Detailed design docs
 
 **Quick command reference:**
+
 ```
 npm run validate         # Pre-flight check
 npm run generate:landing # Regenerate HTML
