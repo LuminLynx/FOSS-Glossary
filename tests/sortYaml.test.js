@@ -129,7 +129,7 @@ terms:
   fs.writeFileSync(termsFile, withHeader, 'utf8');
 
   try {
-    execSync(`node ${SCRIPT_PATH}`, { cwd: tmpDir, encoding: 'utf8' });
+    execFileSync('node', [SCRIPT_PATH], { cwd: tmpDir, encoding: 'utf8' });
     const sorted = fs.readFileSync(termsFile, 'utf8');
     assert.ok(sorted.startsWith('# FOSS Glossary'), 'Header comment should be preserved');
   } finally {
