@@ -101,7 +101,7 @@ test('sortYaml: check mode passes for sorted terms', () => {
   fs.writeFileSync(termsFile, sorted, 'utf8');
 
   try {
-    const output = execSync(`node ${SCRIPT_PATH} --check`, {
+    const output = execFileSync('node', [SCRIPT_PATH, '--check'], {
       cwd: tmpDir,
       encoding: 'utf8',
     });
