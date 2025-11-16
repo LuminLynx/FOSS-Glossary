@@ -27,7 +27,7 @@ const PATTERNS = {
   TOTAL_TERMS:
     /<span class="stat-number">(\d+)<\/span>\s*<span class="stat-label">Total Terms<\/span>/,
   LATEST_ADDITIONS: /<h2>🆕 Latest Additions<\/h2>\s*<p>Just added: <strong>([^<]+)<\/strong><\/p>/,
-  TERM_CARD: /<div class="term-card">/g,
+  TERM_CARD: /<div\s+class="term-card"/g,
 };
 
 /**
