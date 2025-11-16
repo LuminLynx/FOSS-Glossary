@@ -505,13 +505,7 @@ const CSS_STYLES = `
             background: #00f0ff;
             border-color: #00f0ff;
             transform: none;
-<<<<<<< HEAD
-        }
-        .release-banner a:active {
-            transform: none;
-=======
             box-shadow: none;
->>>>>>> a25e619 (N/A)
         }
         /* LIGHT THEME - Release Banner */
         @media (prefers-color-scheme: light) {
@@ -537,13 +531,7 @@ const CSS_STYLES = `
                 background: #00d4e4;
                 border-color: #00d4e4;
                 transform: none;
-<<<<<<< HEAD
-            }
-            .release-banner a:active {
-                transform: none;
-=======
                 box-shadow: none;
->>>>>>> a25e619 (N/A)
             }
         }
 `;
