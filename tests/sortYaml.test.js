@@ -183,7 +183,7 @@ test('sortYaml: normalizes key order within terms', () => {
   fs.writeFileSync(termsFile, unsortedKeys, 'utf8');
 
   try {
-    execSync(`node ${SCRIPT_PATH}`, { cwd: tmpDir, encoding: 'utf8' });
+    execFileSync('node', [SCRIPT_PATH], { cwd: tmpDir, encoding: 'utf8' });
     const sorted = fs.readFileSync(termsFile, 'utf8');
 
     // Verify canonical key order: slug, term, definition, explanation, humor, see_also, tags, aliases, controversy_level
