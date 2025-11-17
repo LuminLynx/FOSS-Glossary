@@ -19,14 +19,8 @@
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta
-      property="og:url"
-      content="https://luminlynx.github.io/FOSS-Glossary/"
-    />
-    <meta
-      property="og:title"
-      content="FOSS Glossary - Gamified Open Source Terms"
-    />
+    <meta property="og:url" content="https://luminlynx.github.io/FOSS-Glossary/" />
+    <meta property="og:title" content="FOSS Glossary - Gamified Open Source Terms" />
     <meta
       property="og:description"
       content="Score points, unlock achievements, and learn FOSS terms with humor! 1 terms and growing."
@@ -41,14 +35,8 @@
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta
-      name="twitter:url"
-      content="https://luminlynx.github.io/FOSS-Glossary/"
-    />
-    <meta
-      name="twitter:title"
-      content="FOSS Glossary - Gamified Open Source Terms"
-    />
+    <meta name="twitter:url" content="https://luminlynx.github.io/FOSS-Glossary/" />
+    <meta name="twitter:title" content="FOSS Glossary - Gamified Open Source Terms" />
     <meta
       name="twitter:description"
       content="Score points, unlock achievements, and learn FOSS terms with humor! 1 terms and growing."
@@ -129,9 +117,7 @@
 
       /* DARK THEME (Default) */
       body {
-        font-family:
-          -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
-          sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
         line-height: 1.6;
         color: #f5f5f0;
         background: linear-gradient(135deg, #1a3a52 0%, #0f2234 100%);
@@ -314,18 +300,13 @@
         overflow: hidden;
       }
       .featured-section::before {
-        content: "";
+        content: '';
         position: absolute;
         top: 0;
         left: -100%;
         width: 100%;
         height: 100%;
-        background: linear-gradient(
-          90deg,
-          transparent,
-          rgba(0, 212, 228, 0.2),
-          transparent
-        );
+        background: linear-gradient(90deg, transparent, rgba(0, 212, 228, 0.2), transparent);
         animation: shine 3s infinite;
       }
       @keyframes shine {
@@ -472,7 +453,7 @@
       .filter-label:hover {
         color: #00f0ff;
       }
-      .filter-label input[type="checkbox"] {
+      .filter-label input[type='checkbox'] {
         cursor: pointer;
         width: 18px;
         height: 18px;
@@ -1113,19 +1094,16 @@
 
         <h1 class="hero-title">🚀 FOSS Glossary</h1>
         <p class="tagline">
-          A gamified glossary of Free and Open Source Software terms, with
-          humor, sarcasm, and honest truths.
+          A gamified glossary of Free and Open Source Software terms, with humor, sarcasm, and
+          honest truths.
         </p>
 
         <!-- RELEASE ANNOUNCEMENT -->
         <div class="release-banner" data-animate="slideInDown">
           <p class="release-badge">🎉 Latest Release</p>
           <h2>v1.0.0</h2>
-          <p>
-            First stable release of FOSS Glossary with gamification features!
-          </p>
-          <a
-            href="https://github.com/LuminLynx/FOSS-Glossary/releases/tag/v1.0.0"
+          <p>First stable release of FOSS Glossary with gamification features!</p>
+          <a href="https://github.com/LuminLynx/FOSS-Glossary/releases/tag/v1.0.0"
             >View Release Notes →</a
           >
         </div>
@@ -1166,8 +1144,7 @@
             </div>
           </div>
           <p class="featured-definition">
-            A test term with special &amp; characters like &gt; &lt; &quot; and
-            &#x27;
+            A test term with special &amp; characters like &gt; &lt; &quot; and &#x27;
           </p>
           <div class="featured-tags">
             <span class="tag featured-tag">test</span>
@@ -1178,9 +1155,7 @@
       <!-- RECENT ADDITIONS -->
       <div class="card recent-additions">
         <h2>🆕 Latest Additions</h2>
-        <p>
-          Just added: <strong>Test &amp; Special &lt;Characters&gt;</strong>
-        </p>
+        <p>Just added: <strong>Test &amp; Special &lt;Characters&gt;</strong></p>
       </div>
 
       <!-- SEARCH & FILTER SECTION -->
@@ -1201,12 +1176,7 @@
           <div class="filter-controls">
             <div class="filter-group">
               <label class="filter-label">
-                <input
-                  type="checkbox"
-                  class="score-filter"
-                  value="90-100"
-                  data-label="Score 90+"
-                />
+                <input type="checkbox" class="score-filter" value="90-100" data-label="Score 90+" />
                 <span>💯 Perfectionist (90+)</span>
               </label>
               <label class="filter-label">
@@ -1219,12 +1189,7 @@
                 <span>⭐ Excellent (80+)</span>
               </label>
               <label class="filter-label">
-                <input
-                  type="checkbox"
-                  class="score-filter"
-                  value="0-79"
-                  data-label="Score <80"
-                />
+                <input type="checkbox" class="score-filter" value="0-79" data-label="Score <80" />
                 <span>📖 Learning (All)</span>
               </label>
             </div>
@@ -1232,11 +1197,7 @@
             <div class="filter-group">
               <label class="sort-label">
                 Sort by:
-                <select
-                  id="sortSelect"
-                  class="sort-select"
-                  aria-label="Sort terms"
-                >
+                <select id="sortSelect" class="sort-select" aria-label="Sort terms">
                   <option value="date-desc">Most Recent</option>
                   <option value="score-desc">Highest Score</option>
                   <option value="score-asc">Lowest Score</option>
@@ -1270,17 +1231,13 @@
             <div class="term-header">
               <h3>Test &amp; Special &lt;Characters&gt;</h3>
               <div class="score-bar-container">
-                <div
-                  class="score-bar"
-                  style="width: 23%; background-color: #ffd93d"
-                ></div>
+                <div class="score-bar" style="width: 23%; background-color: #ffd93d"></div>
               </div>
               <span class="term-score" style="color: #ffd93d">23</span>
             </div>
 
             <p class="term-definition">
-              A test term with special &amp; characters like &gt; &lt; &quot;
-              and &#x27;
+              A test term with special &amp; characters like &gt; &lt; &quot; and &#x27;
             </p>
 
             <div class="term-tags">
@@ -1290,10 +1247,7 @@
         </div>
 
         <div class="empty-state" id="emptyState" style="display: none">
-          <p>
-            😕 No terms match your filters. Try adjusting your search or
-            clearing filters.
-          </p>
+          <p>😕 No terms match your filters. Try adjusting your search or clearing filters.</p>
         </div>
       </div>
 
@@ -1350,11 +1304,7 @@
           >
             📝 View All 1 Terms
           </a>
-          <a
-            href="./documentation.html"
-            class="button button-secondary"
-            data-animate="slideInUp"
-          >
+          <a href="./documentation.html" class="button button-secondary" data-animate="slideInUp">
             📚 View Documentation Hub
           </a>
         </div>

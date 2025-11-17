@@ -53,7 +53,7 @@ render() {
 Also ensured `sort()` is called when dropdown changes:
 
 ```javascript
-sortSelect.addEventListener("change", (e) => {
+sortSelect.addEventListener('change', (e) => {
   this.sortBy = e.target.value;
   this.sort(); // Added this line
   this.render();

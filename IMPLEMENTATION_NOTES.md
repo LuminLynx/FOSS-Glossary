@@ -45,7 +45,7 @@ data-tags="{{#each this.tags}}{{this}} {{/each}}" ❌ Prettier error
 return {
   // ... other properties
   tags: tags, // Array for iteration in template
-  tagsString: tags.join(" "), // Space-separated string for data attribute
+  tagsString: tags.join(' '), // Space-separated string for data attribute
   // ...
 };
 ```
