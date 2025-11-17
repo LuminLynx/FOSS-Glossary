@@ -133,6 +133,7 @@ render() {
 **Problem:** The sort dropdown changes the internal `filteredTerms` array order but does NOT reorder the DOM elements.
 
 **Current Code:**
+
 ```javascript
 sort() {
   switch (this.sortBy) {
@@ -163,7 +164,7 @@ sort() {
 **Current Ranges:**
 
 - 90-100: Perfectionist
-- 80-89: Excellent  
+- 80-89: Excellent
 - 0-79: Learning
 
 **Impact:** The third option is essentially "show everything that's not perfect or excellent", which may not be the intended UX.
@@ -236,17 +237,18 @@ This creates white space, but it's **intentional design**. With 16+ terms (the i
 **Solution:** Modify the `render()` method to reorder DOM elements based on the sorted array.
 
 **Implementation:**
+
 ```javascript
 render() {
   // Get the parent container
   const termGrid = document.getElementById('termGrid');
-  
+
   // Reorder DOM elements based on sorted filteredTerms
   this.filteredTerms.forEach((term, index) => {
     // Move visible terms to the front in sorted order
     termGrid.appendChild(term.element);
   });
-  
+
   // Update visibility for all terms
   this.allTerms.forEach(term => {
     const isVisible = this.filteredTerms.includes(term);
@@ -257,7 +259,7 @@ render() {
       term.element.classList.remove('visible');
     }
   });
-  
+
   // ... rest of render logic
 }
 ```
@@ -268,12 +270,14 @@ render() {
 
 **Solution 1: Active Sort Indicator**
 Add a small badge next to the sort dropdown showing the active sort:
+
 ```html
 <span class="sort-indicator">🔽 Most Recent</span>
 ```
 
 **Solution 2: Smooth Transitions**
 Add CSS transitions when cards reorder:
+
 ```css
 .term-card {
   transition: all 0.3s ease;
