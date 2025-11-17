@@ -15,7 +15,8 @@
 **Change:**
 
 ```javascript
-function prepareTermCardsData(count = 10) {  // Was: count = 16
+function prepareTermCardsData(count = 10) {
+  // Was: count = 16
   const validTerms = terms.filter(isValidTerm);
   // Get the most recent N terms, ordered by most recent first
   return validTerms.slice(-count).reverse().map(prepareTermCardData);
@@ -34,7 +35,7 @@ function prepareTermCardsData(count = 10) {  // Was: count = 16
 **Problem:** Handlebars template had inline loop in HTML attribute:
 
 ```handlebars
-data-tags="{{#each this.tags}}{{this}} {{/each}}"  ❌ Prettier error
+data-tags="{{#each this.tags}}{{this}} {{/each}}" ❌ Prettier error
 ```
 
 **Solution:** Added `tagsString` property to term data:
@@ -43,8 +44,8 @@ data-tags="{{#each this.tags}}{{this}} {{/each}}"  ❌ Prettier error
 // In prepareTermCardData()
 return {
   // ... other properties
-  tags: tags,                    // Array for iteration in template
-  tagsString: tags.join(' '),    // Space-separated string for data attribute
+  tags: tags, // Array for iteration in template
+  tagsString: tags.join(" "), // Space-separated string for data attribute
   // ...
 };
 ```
@@ -52,7 +53,7 @@ return {
 **Template change:**
 
 ```handlebars
-data-tags="{{this.tagsString}}"  ✅ Prettier compliant
+data-tags="{{this.tagsString}}" ✅ Prettier compliant
 ```
 
 **Additional formatting:**
@@ -114,7 +115,7 @@ The search can only filter the 10 terms that are initially rendered in the HTML.
 const SearchEngine = {
   allTerms: [],
   displayedTerms: [], // Initial 10 from DOM
-  searchResults: [],  // Fetched dynamically
+  searchResults: [], // Fetched dynamically
 
   async search(query) {
     if (!this.allTerms.length) {
@@ -129,7 +130,7 @@ const SearchEngine = {
 
     // Hide "Latest Terms", show "Search Results"
     this.renderSearchResults();
-  }
+  },
 };
 ```
 
