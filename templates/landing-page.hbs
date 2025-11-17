@@ -369,6 +369,7 @@
                 if (sortSelect) {
                     sortSelect.addEventListener('change', (e) => {
                         this.sortBy = e.target.value;
+                        this.sort();
                         this.render();
                     });
                 }
@@ -451,10 +452,19 @@
             },
 
             /**
-             * Update DOM to show/hide filtered terms
+             * Update DOM to show/hide filtered terms and reorder them based on sort
              */
             render() {
-                // Update visibility
+                const termGrid = document.getElementById('termGrid');
+                if (!termGrid) return;
+
+                // Reorder DOM elements based on sorted filteredTerms
+                // This ensures the visual order matches the sort selection
+                this.filteredTerms.forEach((term) => {
+                    termGrid.appendChild(term.element);
+                });
+
+                // Update visibility for all terms
                 this.allTerms.forEach(term => {
                     const isVisible = this.filteredTerms.includes(term);
                     term.element.style.display = isVisible ? 'block' : 'none';
