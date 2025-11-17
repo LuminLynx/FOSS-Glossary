@@ -20,12 +20,12 @@
  * - CSS styles use triple-braces {{{ }}} in template to remain unescaped
  * - All user-provided content (terms, definitions, humor, tags) is escaped
  */
-const fs = require('fs');
-const path = require('path');
-const Handlebars = require('handlebars');
-const { scoreTerm } = require('./scoring');
-const { getGitSha } = require('../utils/git');
-const { loadTermsYaml } = require('../utils/fileSystem');
+const fs = require("fs");
+const path = require("path");
+const Handlebars = require("handlebars");
+const { scoreTerm } = require("./scoring");
+const { getGitSha } = require("../utils/git");
+const { loadTermsYaml } = require("../utils/fileSystem");
 
 // Module-level variables will be initialized in main()
 let artifactVersion;
@@ -37,7 +37,7 @@ let stats;
  * This is called at the start of main() to ensure fresh data on each run
  */
 function initializeData() {
-  artifactVersion = getGitSha('dev');
+  artifactVersion = getGitSha("dev");
   terms = loadTermsYaml();
 
   // Calculate statistics
@@ -65,18 +65,18 @@ function initializeData() {
  * @returns {string} HTML-escaped text
  */
 function escapeHtml(text) {
-  if (!text) return '';
+  if (!text) return "";
   return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 // Register Handlebars helper for HTML escaping
 // (available in template if needed, though Handlebars auto-escapes by default)
-Handlebars.registerHelper('escapeHtml', escapeHtml);
+Handlebars.registerHelper("escapeHtml", escapeHtml);
 
 /**
  * Get score color based on score value
@@ -89,9 +89,9 @@ Handlebars.registerHelper('escapeHtml', escapeHtml);
  * @returns {string} Hex color code
  */
 function getScoreColor(score) {
-  if (score >= 80) return '#00d4e4';
-  if (score >= 60) return '#00f0ff';
-  return '#ffd93d';
+  if (score >= 80) return "#00d4e4";
+  if (score >= 60) return "#00f0ff";
+  return "#ffd93d";
 }
 
 /**
@@ -105,23 +105,22 @@ function getScoreColor(score) {
  * @param {string} term.definition - Term definition
  * @param {string} [term.humor] - Humorous description
  * @param {string[]} [term.tags] - Category tags
- * @returns {Object} Prepared term card data with term, slug, score, scoreColor, definition, humor, tags, and sortDate
+ * @returns {Object} Prepared term card data with term, slug, score, scoreColor, definition, humor, tags, tagsString, and sortDate
  */
 function prepareTermCardData(term) {
   const { score } = scoreTerm(term);
   const scoreColor = getScoreColor(score);
+  const tags = term.tags && term.tags.length > 0 ? term.tags : [];
 
   return {
     term: term.term, // Handlebars auto-escapes
-    slug: term.slug || '', // URL identifier for filtering
+    slug: term.slug || "", // URL identifier for filtering
     score,
     scoreColor, // Color codes are safe, not escaped
     definition: term.definition, // Handlebars auto-escapes
     humor: term.humor || null, // Handlebars auto-escapes
-    tags:
-      term.tags && term.tags.length > 0
-        ? term.tags // Handlebars auto-escapes each tag
-        : [],
+    tags: tags, // Array for iteration in template
+    tagsString: tags.join(" "), // Space-separated string for data attribute
     sortDate: new Date().toISOString(), // For client-side sorting
   };
 }
@@ -138,25 +137,25 @@ function isValidTerm(term) {
   return (
     term &&
     term.term &&
-    typeof term.term === 'string' &&
-    term.term.trim() !== '' &&
+    typeof term.term === "string" &&
+    term.term.trim() !== "" &&
     term.definition &&
-    typeof term.definition === 'string' &&
-    term.definition.trim() !== ''
+    typeof term.definition === "string" &&
+    term.definition.trim() !== ""
   );
 }
 
 /**
  * Prepare term cards data for landing page
- * Filters valid terms and returns all of them for client-side search/filter
- * Shows 16 most recent terms by default
+ * Shows the most recent terms (default 10) on initial page load
+ * The search functionality will dynamically load and display search results
  *
- * @param {number} [count=16] - Number of recent terms to display
+ * @param {number} [count=10] - Number of recent terms to display
  * @returns {Object[]} Array of prepared term card data objects
  */
-function prepareTermCardsData(count = 16) {
+function prepareTermCardsData(count = 10) {
   const validTerms = terms.filter(isValidTerm);
-  // Get all terms for search/filter, but order by most recent first
+  // Get the most recent N terms, ordered by most recent first
   return validTerms.slice(-count).reverse().map(prepareTermCardData);
 }
 
@@ -194,43 +193,49 @@ function prepareFeaturedTermData() {
  */
 function prepareMetaTags(stats) {
   const description = `A gamified glossary of FOSS terms with humor. ${stats.totalTerms} terms defined by the community! Score points, unlock achievements, and learn with fun.`;
-  const url = 'https://luminlynx.github.io/FOSS-Glossary/';
+  const url = "https://luminlynx.github.io/FOSS-Glossary/";
   const imageUrl =
-    'https://raw.githubusercontent.com/LuminLynx/FOSS-Glossary/main/assets/twitter-card.png';
+    "https://raw.githubusercontent.com/LuminLynx/FOSS-Glossary/main/assets/twitter-card.png";
 
   return {
     primary: [
-      { name: 'title', content: 'FOSS Glossary - Gamified Open Source Terms' },
-      { name: 'description', content: description },
+      { name: "title", content: "FOSS Glossary - Gamified Open Source Terms" },
+      { name: "description", content: description },
       {
-        name: 'keywords',
+        name: "keywords",
         content:
-          'FOSS, open source, glossary, gamification, github, programming, developer, community',
+          "FOSS, open source, glossary, gamification, github, programming, developer, community",
       },
-      { name: 'author', content: 'LuminLynx' },
+      { name: "author", content: "LuminLynx" },
     ],
     og: [
-      { property: 'og:type', content: 'website' },
-      { property: 'og:url', content: url },
-      { property: 'og:title', content: 'FOSS Glossary - Gamified Open Source Terms' },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: url },
       {
-        property: 'og:description',
+        property: "og:title",
+        content: "FOSS Glossary - Gamified Open Source Terms",
+      },
+      {
+        property: "og:description",
         content: `Score points, unlock achievements, and learn FOSS terms with humor! ${stats.totalTerms} terms and growing.`,
       },
-      { property: 'og:image', content: imageUrl },
-      { property: 'og:image:width', content: '1200' },
-      { property: 'og:image:height', content: '628' },
-      { property: 'og:site_name', content: 'FOSS Glossary' },
+      { property: "og:image", content: imageUrl },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "628" },
+      { property: "og:site_name", content: "FOSS Glossary" },
     ],
     twitter: [
-      { name: 'twitter:card', content: 'summary_large_image' },
-      { name: 'twitter:url', content: url },
-      { name: 'twitter:title', content: 'FOSS Glossary - Gamified Open Source Terms' },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:url", content: url },
       {
-        name: 'twitter:description',
+        name: "twitter:title",
+        content: "FOSS Glossary - Gamified Open Source Terms",
+      },
+      {
+        name: "twitter:description",
         content: `Score points, unlock achievements, and learn FOSS terms with humor! ${stats.totalTerms} terms and growing.`,
       },
-      { name: 'twitter:image', content: imageUrl },
+      { name: "twitter:image", content: imageUrl },
     ],
   };
 }
@@ -1106,13 +1111,15 @@ const CSS_STYLES = `
  * @returns {Object[]} Array of stat card objects with number and label
  */
 function prepareStatCardsData(stats) {
-  const humorPercentage = Math.round((stats.termsWithHumor / stats.totalTerms) * 100);
+  const humorPercentage = Math.round(
+    (stats.termsWithHumor / stats.totalTerms) * 100,
+  );
 
   return [
-    { number: String(stats.totalTerms), label: 'Total Terms' },
-    { number: String(stats.termsWithHumor), label: 'Funny Terms' },
-    { number: `${humorPercentage}%`, label: 'Humor Rate' },
-    { number: String(stats.totalTags), label: 'Categories' },
+    { number: String(stats.totalTerms), label: "Total Terms" },
+    { number: String(stats.termsWithHumor), label: "Funny Terms" },
+    { number: `${humorPercentage}%`, label: "Humor Rate" },
+    { number: String(stats.totalTags), label: "Categories" },
   ];
 }
 
@@ -1124,11 +1131,11 @@ function prepareStatCardsData(stats) {
  */
 function prepareScoringItemsData() {
   return [
-    { emoji: '✅', text: 'Base Definition', points: '20 points' },
-    { emoji: '😂', text: 'Humor', points: 'Up to 30 points (be funny!)' },
-    { emoji: '📝', text: 'Explanation', points: '20 points' },
-    { emoji: '🔗', text: 'Cross-references', points: 'Up to 20 points' },
-    { emoji: '🏷️', text: 'Tags', points: '10 points' },
+    { emoji: "✅", text: "Base Definition", points: "20 points" },
+    { emoji: "😂", text: "Humor", points: "Up to 30 points (be funny!)" },
+    { emoji: "📝", text: "Explanation", points: "20 points" },
+    { emoji: "🔗", text: "Cross-references", points: "Up to 20 points" },
+    { emoji: "🏷️", text: "Tags", points: "10 points" },
   ];
 }
 
@@ -1142,19 +1149,19 @@ function prepareScoringItemsData() {
 function prepareCTAButtonsData(stats) {
   return [
     {
-      text: '🎮 Contribute on GitHub',
-      href: 'https://github.com/LuminLynx/FOSS-Glossary',
-      className: 'button',
+      text: "🎮 Contribute on GitHub",
+      href: "https://github.com/LuminLynx/FOSS-Glossary",
+      className: "button",
     },
     {
       text: `📝 View All ${stats.totalTerms} Terms`,
-      href: 'https://luminlynx.github.io/FOSS-Glossary/pwa/',
-      className: 'button button-secondary',
+      href: "https://luminlynx.github.io/FOSS-Glossary/pwa/",
+      className: "button button-secondary",
     },
     {
-      text: '📚 View Documentation Hub',
-      href: './documentation.html',
-      className: 'button button-secondary',
+      text: "📚 View Documentation Hub",
+      href: "./documentation.html",
+      className: "button button-secondary",
     },
   ];
 }
@@ -1172,11 +1179,16 @@ function prepareCTAButtonsData(stats) {
  */
 function loadTemplate() {
   try {
-    const templatePath = path.join(__dirname, '..', 'templates', 'landing-page.hbs');
-    const templateSource = fs.readFileSync(templatePath, 'utf8');
+    const templatePath = path.join(
+      __dirname,
+      "..",
+      "templates",
+      "landing-page.hbs",
+    );
+    const templateSource = fs.readFileSync(templatePath, "utf8");
     return Handlebars.compile(templateSource);
   } catch (error) {
-    console.error('❌ Error loading template:', error.message);
+    console.error("❌ Error loading template:", error.message);
     process.exit(1);
   }
 }
@@ -1200,10 +1212,12 @@ function loadTemplate() {
  */
 function prepareReleaseData() {
   return {
-    version: '1.0.0',
-    releaseDate: 'November 15, 2025',
-    releaseUrl: 'https://github.com/LuminLynx/FOSS-Glossary/releases/tag/v1.0.0',
-    description: 'First stable release of FOSS Glossary with gamification features!',
+    version: "1.0.0",
+    releaseDate: "November 15, 2025",
+    releaseUrl:
+      "https://github.com/LuminLynx/FOSS-Glossary/releases/tag/v1.0.0",
+    description:
+      "First stable release of FOSS Glossary with gamification features!",
   };
 }
 
@@ -1213,19 +1227,19 @@ function generateHTML(stats, artifactVersion) {
   // Prepare all data for the template
   const templateData = {
     title: `FOSS Glossary - ${stats.totalTerms} Terms and Growing!`,
-    canonicalUrl: 'https://luminlynx.github.io/FOSS-Glossary/',
+    canonicalUrl: "https://luminlynx.github.io/FOSS-Glossary/",
     metaTags: prepareMetaTags(stats),
     styles: CSS_STYLES, // Use triple-braces in template for unescaped CSS
     release: prepareReleaseData(),
     statCards: prepareStatCardsData(stats),
-    recentTermsList: stats.recentTerms.join(', '), // Handlebars auto-escapes
+    recentTermsList: stats.recentTerms.join(", "), // Handlebars auto-escapes
     termCards: prepareTermCardsData(), // Now returns 16 terms for search/filter
     featuredTerm: prepareFeaturedTermData(), // Highest-scoring term
     scoringItems: prepareScoringItemsData(),
     ctaButtons: prepareCTAButtonsData(stats),
-    lastUpdated: new Date().toLocaleString('en-US', {
-      dateStyle: 'medium',
-      timeStyle: 'short',
+    lastUpdated: new Date().toLocaleString("en-US", {
+      dateStyle: "medium",
+      timeStyle: "short",
     }),
     stats,
     artifactVersion,
@@ -1245,18 +1259,18 @@ function generateHTML(stats, artifactVersion) {
 function writeOutputFile(html) {
   try {
     // Ensure docs directory exists
-    if (!fs.existsSync('docs')) {
-      fs.mkdirSync('docs', { recursive: true });
+    if (!fs.existsSync("docs")) {
+      fs.mkdirSync("docs", { recursive: true });
     }
 
-    fs.writeFileSync('docs/index.html', html);
+    fs.writeFileSync("docs/index.html", html);
     console.log(`✅ Generated landing page with ${stats.totalTerms} terms!`);
     console.log(
-      `📊 Stats: ${stats.termsWithHumor}/${stats.totalTerms} terms have humor (${Math.round((stats.termsWithHumor / stats.totalTerms) * 100)}%)`
+      `📊 Stats: ${stats.termsWithHumor}/${stats.totalTerms} terms have humor (${Math.round((stats.termsWithHumor / stats.totalTerms) * 100)}%)`,
     );
-    console.log(`🆕 Recent: ${stats.recentTerms.join(', ')}`);
+    console.log(`🆕 Recent: ${stats.recentTerms.join(", ")}`);
   } catch (error) {
-    console.error('❌ Error writing landing page file:', error.message);
+    console.error("❌ Error writing landing page file:", error.message);
     process.exit(1);
   }
 }
