@@ -176,7 +176,7 @@
                 
                 <div class="filter-tags-container" id="activeFilters"></div>
             </div>
-            <p class="result-count" id="resultCount">Showing {{termCards.length}} terms</p>
+            <p class="result-count" id="resultCount">Showing {{termCards.length}} of {{stats.totalTerms}} terms</p>
         </div>
 
         <!-- TERM GRID -->
@@ -469,7 +469,7 @@
                 const resultCount = document.getElementById('resultCount');
                 if (resultCount) {
                     const count = this.filteredTerms.length;
-                    resultCount.textContent = `Showing ${count} of {{termCards.length}} terms`;
+                    resultCount.textContent = `Showing ${count} of {{stats.totalTerms}} terms`;
                 }
 
                 // Show/hide empty state
