@@ -311,8 +311,9 @@
       range (90+, 80-89, etc.) * - Sort by date, score, alphabetical * - Click
       tags to filter by category * - Responsive design with mobile-friendly
       controls * - Debounced search for performance * - Keyboard navigation
-      support * * No external dependencies - pure vanilla JavaScript */ //
-      Search state management const SearchEngine = { allTerms: [],
+      support * * No external dependencies - pure vanilla JavaScript */
+      // Search state management
+      const SearchEngine = { allTerms: [],
       filteredTerms: [], searchTerm: '', scoreFilters: new Set(), tagFilters:
       new Set(), sortBy: 'date-desc', debounceTimer: null, debounceDelay: 150,
       /** * Initialize the search engine * Extract all term data from DOM and
@@ -325,11 +326,11 @@
       Array.from(cards).map((card, index) => ({ element: card, term:
       card.dataset.term, slug: card.dataset.slug, definition:
       card.dataset.definition, humor: card.dataset.humor || '', score:
-      parseInt(card.dataset.score), tags: (card.dataset.tags || '').split('
-      ').filter(t => t.length > 0), sortDate: new Date(card.dataset.date || new
+      parseInt(card.dataset.score), tags: (card.dataset.tags || '').split(' ').filter(t => t.length > 0), sortDate: new Date(card.dataset.date || new
       Date()).getTime(), originalIndex: index, })); }, /** * Setup event
-      listeners for search, filters, and sort */ setupEventListeners() { //
-      Search input with debounce const searchInput =
+      listeners for search, filters, and sort */ setupEventListeners() {
+      // Search input with debounce
+      const searchInput =
       document.getElementById('searchInput'); if (searchInput) {
       searchInput.addEventListener('input', (e) => {
       clearTimeout(this.debounceTimer); this.debounceTimer = setTimeout(() => {
@@ -354,34 +355,41 @@
       this.tagFilters.delete(tag); } else { this.tagFilters.add(tag); }
       this.filter(); this.render(); } }); }, /** * Filter terms based on search,
       score, and tag filters */ filter() { this.filteredTerms =
-      this.allTerms.filter(term => { // Search filter if (this.searchTerm) {
+      this.allTerms.filter(term => {
+      // Search filter
+      if (this.searchTerm) {
       const matches = term.term.toLowerCase().includes(this.searchTerm) ||
       term.definition.toLowerCase().includes(this.searchTerm) ||
-      term.humor.toLowerCase().includes(this.searchTerm) || term.tags.some(tag
-      => tag.toLowerCase().includes(this.searchTerm)); if (!matches) return
-      false; } // Score filter if (this.scoreFilters.size > 0) { const
-      scoreInRange = Array.from(this.scoreFilters).some(range => { const [min,
-      max] = range.split('-').map(Number); return term.score >= min &&
-      term.score <= max; }); if (!scoreInRange) return false; } // Tag filter if
-      (this.tagFilters.size > 0) { const hasTag = term.tags.some(tag =>
-      this.tagFilters.has(tag)); if (!hasTag) return false; } return true; });
-      // Sort filtered results this.sort(); }, /** * Sort filtered terms based
+      term.humor.toLowerCase().includes(this.searchTerm) || term.tags.some(tag => tag.toLowerCase().includes(this.searchTerm)); if (!matches) return
+      false; }
+      // Score filter
+      if (this.scoreFilters.size > 0) { const
+      scoreInRange = Array.from(this.scoreFilters).some(range => { const [min, max] = range.split('-').map(Number); return term.score >= min &&
+      term.score <= max; }); if (!scoreInRange) return false; }
+      // Tag filter
+      if
+      (this.tagFilters.size > 0) { const hasTag = term.tags.some(tag => this.tagFilters.has(tag)); if (!hasTag) return false; } return true; });
+      // Sort filtered results
+      this.sort(); }, /** * Sort filtered terms based
       on selected sort option */ sort() { switch (this.sortBy) { case
       'date-desc': this.filteredTerms.sort((a, b) => b.sortDate - a.sortDate);
       break; case 'score-desc': this.filteredTerms.sort((a, b) => b.score -
-      a.score); break; case 'score-asc': this.filteredTerms.sort((a, b) =>
-      a.score - b.score); break; case 'alpha-asc': this.filteredTerms.sort((a,
+      a.score); break; case 'score-asc': this.filteredTerms.sort((a, b) => a.score - b.score); break; case 'alpha-asc': this.filteredTerms.sort((a,
       b) => a.term.localeCompare(b.term)); break; } }, /** * Update DOM to
       show/hide filtered terms and reorder them based on sort */ render() {
       const termGrid = document.getElementById('termGrid'); if (!termGrid)
-      return; // Reorder DOM elements based on sorted filteredTerms // This
-      ensures the visual order matches the sort selection
+      return;
+      // Reorder DOM elements based on sorted filteredTerms
+      // This ensures the visual order matches the sort selection
       this.filteredTerms.forEach((term) => { termGrid.appendChild(term.element);
-      }); // Update visibility for all terms this.allTerms.forEach(term => {
+      });
+      // Update visibility for all terms
+      this.allTerms.forEach(term => {
       const isVisible = this.filteredTerms.includes(term);
       term.element.style.display = isVisible ? 'block' : 'none'; if (isVisible)
       { term.element.classList.add('visible'); } else {
-      term.element.classList.remove('visible'); } }); // Update result count
+      term.element.classList.remove('visible'); } });
+      // Update result count
       const resultCount = document.getElementById('resultCount'); if
       (resultCount) { const count = this.filteredTerms.length;
       resultCount.textContent = `Showing ${count} of
