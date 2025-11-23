@@ -105,11 +105,12 @@ function getScoreColor(score) {
  * @param {string} term.definition - Term definition
  * @param {string} [term.humor] - Humorous description
  * @param {string[]} [term.tags] - Category tags
- * @returns {Object} Prepared term card data with term, slug, score, scoreColor, definition, humor, tags, and sortDate
+ * @returns {Object} Prepared term card data with term, slug, score, scoreColor, definition, humor, tags, tagsString, and sortDate
  */
 function prepareTermCardData(term) {
   const { score } = scoreTerm(term);
   const scoreColor = getScoreColor(score);
+  const tags = term.tags && term.tags.length > 0 ? term.tags : [];
 
   return {
     term: term.term, // Handlebars auto-escapes
@@ -118,10 +119,8 @@ function prepareTermCardData(term) {
     scoreColor, // Color codes are safe, not escaped
     definition: term.definition, // Handlebars auto-escapes
     humor: term.humor || null, // Handlebars auto-escapes
-    tags:
-      term.tags && term.tags.length > 0
-        ? term.tags // Handlebars auto-escapes each tag
-        : [],
+    tags: tags, // Array for iteration in template
+    tagsString: tags.join(' '), // Space-separated string for data attribute
     sortDate: new Date().toISOString(), // For client-side sorting
   };
 }
@@ -148,15 +147,15 @@ function isValidTerm(term) {
 
 /**
  * Prepare term cards data for landing page
- * Filters valid terms and returns all of them for client-side search/filter
- * Shows 16 most recent terms by default
+ * Shows the most recent terms (default 10) on initial page load
+ * The search functionality will dynamically load and display search results
  *
- * @param {number} [count=16] - Number of recent terms to display
+ * @param {number} [count=10] - Number of recent terms to display
  * @returns {Object[]} Array of prepared term card data objects
  */
-function prepareTermCardsData(count = 16) {
+function prepareTermCardsData(count = 10) {
   const validTerms = terms.filter(isValidTerm);
-  // Get all terms for search/filter, but order by most recent first
+  // Get the most recent N terms, ordered by most recent first
   return validTerms.slice(-count).reverse().map(prepareTermCardData);
 }
 
@@ -212,7 +211,10 @@ function prepareMetaTags(stats) {
     og: [
       { property: 'og:type', content: 'website' },
       { property: 'og:url', content: url },
-      { property: 'og:title', content: 'FOSS Glossary - Gamified Open Source Terms' },
+      {
+        property: 'og:title',
+        content: 'FOSS Glossary - Gamified Open Source Terms',
+      },
       {
         property: 'og:description',
         content: `Score points, unlock achievements, and learn FOSS terms with humor! ${stats.totalTerms} terms and growing.`,
@@ -225,7 +227,10 @@ function prepareMetaTags(stats) {
     twitter: [
       { name: 'twitter:card', content: 'summary_large_image' },
       { name: 'twitter:url', content: url },
-      { name: 'twitter:title', content: 'FOSS Glossary - Gamified Open Source Terms' },
+      {
+        name: 'twitter:title',
+        content: 'FOSS Glossary - Gamified Open Source Terms',
+      },
       {
         name: 'twitter:description',
         content: `Score points, unlock achievements, and learn FOSS terms with humor! ${stats.totalTerms} terms and growing.`,
