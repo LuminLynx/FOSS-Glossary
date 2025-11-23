@@ -46,11 +46,7 @@ Agents should watch these labels to decide actions:
 
 ---
 
-## 4) Branching & PR Standards
-
-**Branch naming:** `copilot/<short-task-slug>` (e.g., `copilot/strict-validation-terms-json`).
-
-**PR title:** short & imperative (e.g., `Validation: enforce strict terms.yaml & publish docs/terms.json`).
+## 4) PR Body Template & Checklist Standards
 
 **PR body must include:**
 
@@ -63,7 +59,34 @@ Agents should watch these labels to decide actions:
 **Do not include in PR:**
 
 - `docs/terms.json` (post‑merge artifact).
+- `docs/index.html` (post‑merge artifact).
 - Unrelated refactors or formatting noise.
+
+---
+
+## 4.1) Linting & Code Quality Gate (Mandatory)
+
+**All PRs must pass linting checks before submission:**
+
+```bash
+# Run locally before pushing
+npm run lint    # Prettier + markdownlint + cspell
+npm run format  # Auto-fix formatting issues
+```
+
+**Required compliance:**
+- ✅ Prettier (code/markdown formatting)
+- ✅ markdownlint (markdown structure)
+- ✅ cspell (spell checking)
+
+**CI Gate:** `.github/workflows/pr-complete.yml` enforces linting as a **blocking check**. 
+
+**If linting fails:**
+- ❌ PR cannot be merged
+- ❌ Downstream jobs (validate, score, export) are blocked
+- ✅ Re-run `npm run format` locally and push fixes
+
+**Agent responsibility:** Ensure `npm run lint` returns **zero errors** before opening PR.
 
 ---
 
@@ -108,7 +131,14 @@ Agents should watch these labels to decide actions:
 
 **Caching:** Landing Page fetches `./terms.json` (relative URL). Optional cache‑buster `?ver=<shortSHA>`.
 
-**Rule:** PRs must **not** commit `docs/terms.json` — it’s generated post‑merge.
+**Generated Artifacts (Never Commit in PRs):**
+
+- `docs/terms.json` — generated post-merge via `npm run export:new`
+- `docs/index.html` — generated post-merge via `npm run generate:landing`
+
+These files are **automatically regenerated** on every push to `main`. PRs must **not** include these files.
+
+**Rule:** Contributors and agents must never commit `docs/terms.json` or `docs/index.html` — they are generated post‑merge by CI workflows.
 
 ---
 
@@ -215,52 +245,66 @@ If information is missing, add `needs-info` and ask one precise question.
 
 ## 15) Related Documentation
 
-### Essential Reading for Agents
+### By Use Case
 
-- **[RUNBOOK.md](./RUNBOOK.md)** — Operations runbook for troubleshooting workflow failures, rollback procedures, and emergency responses. Consult this when:
-  - Workflows fail and need diagnosis
-  - Landing page or terms.json needs rollback
-  - Emergency procedures required (outage, data corruption, leaked secrets)
-  - Common error patterns need resolution
+**Setting up or debugging automation:**
+→ [`.github/RUNBOOK.md`](./RUNBOOK.md) — Troubleshooting, rollback procedures, emergency responses
 
-- **[README.md](./README.md)** — Contains CI/CD pipeline diagram showing complete flow from PR to deployment. Reference for:
-  - Understanding the complete automation pipeline
-  - Visualizing workflow dependencies
-  - Quick links to all project resources
+**Understanding the complete pipeline:**
+→ [`README.md`](../README.md) — CI/CD flow diagram, quick links to all resources
 
-- **[docs/WORKFLOW_DOCUMENTATION.md](./docs/WORKFLOW_DOCUMENTATION.md)** — Complete workflow reference for issue-task-PR automation. Use when:
-  - Setting up or modifying issue automation
-  - Troubleshooting task branch creation
-  - Configuring Slack notifications
+**Technical implementation details:**
+→ [`.github/copilot-instructions.md`](./copilot-instructions.md) — Code patterns, schema deep-dive, debugging tips
 
-- **[docs/landing-page-maintenance.md](./docs/landing-page-maintenance.md)** — Landing page sync and maintenance guide. Consult for:
-  - Understanding landing page generation
-  - Manual regeneration procedures
-  - Validation processes
+**Issue automation specifics:**
+→ [`docs/workflows/documentation.md`](../docs/workflows/documentation.md) — Issue → Task → PR workflow configuration
 
-- **[docs/terms-json-deploy.md](./docs/terms-json-deploy.md)** — Terms JSON deployment strategy and rationale. Important for:
-  - Understanding why terms.json is NOT committed
-  - Export workflow behavior
-  - Caching and rollback strategies
+**Landing page maintenance:**
+→ [`docs/landing-page-maintenance.md`](../docs/landing-page-maintenance.md) — Generation, sync, validation procedures
 
-### Quick Reference Commands
+**Understanding terms.json export:**
+→ [`docs/terms-json-deploy.md`](../docs/terms-json-deploy.md) — Why it's post-merge, caching strategy, rollback
+
+### Quick Command Reference
 
 ```bash
+# Validation & Testing
+npm run validate              # Pre-flight check (use before PR)
+npm run validate:landing      # Check landing page HTML sync
+npm test                      # Full test suite
+
+# Code Generation & Export
+npm run generate:landing      # Regenerate docs/index.html
+npm run export:new            # Export terms.json (only if new slugs)
+npm run score                 # Score all terms
+
 # Troubleshooting
-npm run validate          # Validate terms.yaml
-npm run validate:landing  # Check landing page sync
-npm test                  # Run all tests
-
-# Operations
-npm run generate:landing  # Regenerate landing page
-npm run export:new        # Export terms (if new slugs)
-npm run score            # Score latest term
-
-# Rollback (via git revert - preferred method)
-git revert COMMIT_SHA    # Revert specific commit
-git revert --no-commit SHA1^..SHA2  # Revert range
+npm run sort:yaml             # Verify YAML sort order
+npm run validate:types        # Check TypeScript definitions
 ```
+
+### Overlap Clarification
+
+**This document (AGENTS.md) is authoritative for:**
+- Automation rules (§1-6)
+- PR standards & checklist (§4, §14)
+- SLA & fallbacks (§12)
+- What agents **must** do
+
+**[Copilot Instructions](.github/copilot-instructions.md) provides:**
+- Technical implementation details
+- Code patterns & conventions
+- How to debug failures
+- Schema & validation deep-dive
+
+**When in doubt:**
+1. Check AGENTS.md for **requirements** (what to do)
+2. Check copilot-instructions.md for **how-to** (implementation)
+3. Check RUNBOOK.md for **troubleshooting** (when things fail)
 
 ---
 
 _This document is guidance for agents and automation. GitHub does not provide an `AGENTS.md` by default — this file is project‑specific._
+
+> **See also:** [Copilot Instructions](.github/copilot-instructions.md) 
+> for technical implementation, code patterns, and debugging guides.
