@@ -272,3 +272,15 @@ npm test                 # Full test suite
 
 **Version**: Aligned with AGENTS.md §1-15 and package.json v1.0.0
 **Last Updated**: November 15, 2025
+
+**See also:** [AGENTS.md](.github/AGENTS.md) 
+for automation workflows, branching rules, and SLA policies.
+
+---
+
+**Document hierarchy:**
+- **[AGENTS.md](./.github/AGENTS.md)** — Rules, standards, SLA (what you must do)
+- **This file** — Implementation details, code patterns, debugging (how to do it)
+- **[RUNBOOK.md](./.github/RUNBOOK.md)** — Troubleshooting, rollback (when things break)
+
+**Overlap resolution:** If both documents cover the same topic, AGENTS.md is authoritative for requirements; this file provides implementation context.
