@@ -1,6 +1,6 @@
-# AGENTS.md — Automation & Codex Playbook [![AGENTS.md Compliance](https://img.shields.io/badge/AGENTS.md-100%25-brightgreen)](./.github/AGENTS.md)
+# AGENTS.md — Automation & Copilot Playbook [![AGENTS.md Compliance](https://img.shields.io/badge/AGENTS.md-100%25-brightgreen)](./.github/AGENTS.md)
 
-> **Audience:** Maintainers, contributors, and automation/bot agents ("Codex").
+> **Audience:** Maintainers, contributors, and automation/bot agents ("Copilot").
 >
 > **Goal:** Explain exactly how agents should interact with this repository — issues, labels, PRs, validation, scoring, and post‑merge publishing — with clear rules, checklists, and safe‑guards.
 
@@ -8,7 +8,7 @@
 
 ## 1) Agent Identity & Scope
 
-**Agent name:** `Codex` (or `codex-bot` if using a GitHub user/bot).
+**Agent name:** `Copilot` (or `codex-bot` if using a GitHub user/bot).
 
 **Scope of work (allowed):**
 N/A
@@ -32,13 +32,13 @@ N/A
 
 Agents should watch these labels to decide actions:
 
-- `codex` or `ready-for-codex`: issue is ready for Codex to pick up.
+- `copilot` or `ready-for-copilot`: issue is ready for Copilot to pick up.
 - `validation`, `ci`, `pages`: tasks in the automation pipeline.
-- `needs-info`: Codex should leave a concise question and pause.
-- `blocked`: external dependency; Codex should pause and summarize blockers.
+- `needs-info`: Copilot should leave a concise question and pause.
+- `blocked`: external dependency; Copilot should pause and summarize blockers.
 - `high-priority`: prefer this task when multiple are open.
 
-**Mentions:** `@codex-bot` means: subscribe to the issue and acknowledge with a comment.
+**Mentions:** `@copilot` means: subscribe to the issue and acknowledge with a comment.
 
 **Acknowledgement comment template:**
 
@@ -48,7 +48,7 @@ Agents should watch these labels to decide actions:
 
 ## 4) Branching & PR Standards
 
-**Branch naming:** `codex/<short-task-slug>` (e.g., `codex/strict-validation-terms-json`).
+**Branch naming:** `copilot/<short-task-slug>` (e.g., `copilot/strict-validation-terms-json`).
 
 **PR title:** short & imperative (e.g., `Validation: enforce strict terms.yaml & publish docs/terms.json`).
 
@@ -112,14 +112,14 @@ Agents should watch these labels to decide actions:
 
 ---
 
-## 7) Issue Intake — What Codex Should Do
+## 7) Issue Intake — What Copilot Should Do
 
-When an issue with label `ready-for-codex` arrives:
+When an issue with label `ready-for-copilot` arrives:
 
 1. **Acknowledge** with the template comment and subscribe.
 2. **Restate** the task in 2–4 bullet points to confirm scope.
 3. **Propose a Diff Plan** (files + bullets) before committing any changes.
-4. **Open a PR** from a `codex/…` branch with the PR body sections above.
+4. **Open a PR** from a `copilot/…` branch with the PR body sections above.
 5. **Run CI**, summarize results in a comment.
 6. **Wait for maintainer review.** Apply changes only in response to review notes.
 
@@ -184,7 +184,7 @@ If information is missing, add `needs-info` and ask one precise question.
 ## 13) Updating This Document
 
 - Maintainers may adjust rules as the project evolves (leaderboard, server‑side search).
-- Codex should follow the newest version on `main` and reference section numbers in PRs (e.g., "Complies with §5 and §6").
+- Copilot should follow the newest version on `main` and reference section numbers in PRs (e.g., "Complies with §5 and §6").
 
 ---
 

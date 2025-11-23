@@ -37,7 +37,7 @@
     "husky": "^9.1.7",
     "json-schema-to-typescript": "^15.0.4",
     "lint-staged": "^16.2.6",
-    "markdownlint-cli": "^0.45.0",
+    "markdownlint-cli": "^0.46.0",
     "prettier": "^3.6.2",
     "typescript": "^5.9.2"
   },
@@ -54,13 +54,10 @@
   "license": "CC0",
   "lint-staged": {
     "*.{js,json,yaml,yml,md}": [
-      "prettier --config config/prettierrc.json --ignore-path config/prettierignore --write"
+      "cspell --config config/cspell.json --no-must-find-files"
     ],
     "*.md": [
       "markdownlint --config config/markdownlint.json --fix"
-    ],
-    "*.{js,json,yaml,yml,md}": [
-      "cspell --config config/cspell.json --no-must-find-files"
     ]
   }
 }
