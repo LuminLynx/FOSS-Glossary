@@ -658,7 +658,7 @@
           if (term.tags.length > 0) {
             tagsHtml = `
               <div class="term-tags">
-                ${term.tags.map((tag) => `<span class="tag" data-tag="${this.escapeHtml(tag)}">${this.escapeHtml(tag)}</span>`).join('')}
+                ${term.tags.map((tag) => { const escaped = this.escapeHtml(tag); return `<span class="tag" data-tag="${escaped}">${escaped}</span>`; }).join('')}
               </div>
             `;
           }
@@ -779,7 +779,9 @@
               label = `Score ${min}-${max}`;
             }
 
-            chip.innerHTML = `${this.escapeHtml(label)} <button class="chip-remove" data-filter="${this.escapeHtml(filter)}">✕</button>`;
+            const escapedLabel = this.escapeHtml(label);
+            const escapedFilter = this.escapeHtml(filter);
+            chip.innerHTML = `${escapedLabel} <button class="chip-remove" data-filter="${escapedFilter}">✕</button>`;
 
             chip.querySelector('.chip-remove').addEventListener('click', () => {
               this.scoreFilters.delete(filter);
