@@ -75,13 +75,15 @@ npm run format  # Auto-fix formatting issues
 ```
 
 **Required compliance:**
+
 - ✅ Prettier (code/markdown formatting)
 - ✅ markdownlint (markdown structure)
 - ✅ cspell (spell checking)
 
-**CI Gate:** `.github/workflows/pr-complete.yml` enforces linting as a **blocking check**. 
+**CI Gate:** `.github/workflows/pr-complete.yml` enforces linting as a **blocking check**.
 
 **If linting fails:**
+
 - ❌ PR cannot be merged
 - ❌ Downstream jobs (validate, score, export) are blocked
 - ✅ Re-run `npm run format` locally and push fixes
@@ -286,18 +288,21 @@ npm run validate:types        # Check TypeScript definitions
 ### Overlap Clarification
 
 **This document (AGENTS.md) is authoritative for:**
+
 - Automation rules (§1-6)
 - PR standards & checklist (§4, §14)
 - SLA & fallbacks (§12)
 - What agents **must** do
 
 **[Copilot Instructions](.github/copilot-instructions.md) provides:**
+
 - Technical implementation details
 - Code patterns & conventions
 - How to debug failures
 - Schema & validation deep-dive
 
 **When in doubt:**
+
 1. Check AGENTS.md for **requirements** (what to do)
 2. Check copilot-instructions.md for **how-to** (implementation)
 3. Check RUNBOOK.md for **troubleshooting** (when things fail)
@@ -306,5 +311,5 @@ npm run validate:types        # Check TypeScript definitions
 
 _This document is guidance for agents and automation. GitHub does not provide an `AGENTS.md` by default — this file is project‑specific._
 
-> **See also:** [Copilot Instructions](.github/copilot-instructions.md) 
+> **See also:** [Copilot Instructions](.github/copilot-instructions.md)
 > for technical implementation, code patterns, and debugging guides.
