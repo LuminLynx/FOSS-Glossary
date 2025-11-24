@@ -1,10 +1,59 @@
 # Landing Page Search Functionality Analysis
 
+## User Guide: How to Use the Search Feature
+
+The FOSS Glossary landing page includes a powerful client-side search and filter system. Here's how to use it:
+
+### Text Search
+
+1. **Find the search box** in the "🔍 Explore Glossary" section
+2. **Type your query** - the search works in real-time with a 150ms debounce
+3. **What gets searched:**
+   - Term names (e.g., "FOSS", "Fork")
+   - Definitions (e.g., "open source")
+   - Humor text (e.g., "zombie")
+   - Tags (e.g., "licensing", "git")
+4. **Press Escape** to clear the search and show all terms
+
+### Score Filters
+
+Use the checkboxes to filter terms by their quality score:
+
+- **💯 Perfectionist (90+)**: Top-quality terms with all fields completed
+- **⭐ Excellent (80-89)**: High-quality terms with humor and explanations
+- **📖 Learning (0-79)**: All other terms that may need improvement
+
+Multiple score filters can be selected (OR logic: shows terms matching ANY selected range).
+
+### Sorting Options
+
+Use the "Sort by" dropdown to organize results:
+
+- **Most Recent**: Terms added most recently appear first
+- **Highest Score**: Best-scoring terms appear first
+- **Lowest Score**: Terms needing improvement appear first
+- **Alphabetical (A-Z)**: Terms sorted by name
+
+### Tag Filtering
+
+1. **Click any tag** on a term card to filter by that tag
+2. **Active filters** appear as removable chips above the term grid
+3. **Click the ✕** on a chip to remove that filter
+4. Multiple tags use AND logic (term must have ALL selected tags)
+
+### Tips
+
+- Combine search with filters for precise results
+- The result count updates in real-time ("Showing X of Y terms")
+- When no matches are found, an empty state message appears
+
+---
+
 ## Executive Summary
 
-This document provides a comprehensive analysis of the FOSS Glossary landing page search functionality, addressing the issues raised in the GitHub issue about the "📖 All Terms" section appearing empty and covering a large part of the landing page.
+This document provides a comprehensive analysis of the FOSS Glossary landing page search functionality.
 
-**Key Finding:** The search functionality is **WORKING CORRECTLY**. The perceived "empty area" is actually the normal card styling when there is minimal content (only 1 term in the test environment).
+**Key Finding:** The search functionality is **WORKING CORRECTLY**. The landing page now displays 10 recent terms with all 28 glossary terms searchable and filterable.
 
 ## Investigation Details
 
@@ -220,15 +269,17 @@ sort() {
 
 #### 4.5 ✅ The "Empty" Appearance is Normal
 
-**Status:** **NOT A BUG**
+**Status:** **RESOLVED**
 
-The white space in the "📖 All Terms" section is the **normal card styling**. With only 1 term in the test data:
+The landing page previously only had 1 test term which made the section appear empty. This issue has been fixed by regenerating the landing page with all terms from terms.yaml. The page now displays 10 recent terms with the full glossary of 28 terms searchable.
+
+With the correct number of terms:
 
 - The card has standard padding (1.5rem = 24px)
 - The grid has gaps (1.5rem between cards)
 - The section has margin (2rem top/bottom)
 
-This creates white space, but it's **intentional design**. With 16+ terms (the intended display count from `prepareTermCardsData(count = 16)`), the section will look full and properly populated.
+The grid now looks full and properly populated with real glossary terms.
 
 ## 5. Recommended Fixes
 
@@ -431,7 +482,7 @@ Add CSS transitions when cards reorder:
 
 ### Current Performance Metrics
 
-- **Initial Load Time:** < 1s (with 1 term)
+- **Initial Load Time:** < 1s (with 10 displayed terms, 28 total)
 - **Search Response Time:** < 150ms (debounced)
 - **Filter Response Time:** Immediate (< 16ms)
 - **Memory Usage:** Minimal (~5KB for search state)
