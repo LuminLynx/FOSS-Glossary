@@ -3,11 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FOSS Glossary - 1 Terms and Growing!</title>
+    <title>FOSS Glossary - 28 Terms and Growing!</title>
 
     <!-- Primary Meta Tags -->
       <meta name="title" content="FOSS Glossary - Gamified Open Source Terms" />
-      <meta name="description" content="A gamified glossary of FOSS terms with humor. 1 terms defined by the community! Score points, unlock achievements, and learn with fun." />
+      <meta name="description" content="A gamified glossary of FOSS terms with humor. 28 terms defined by the community! Score points, unlock achievements, and learn with fun." />
       <meta name="keywords" content="FOSS, open source, glossary, gamification, github, programming, developer, community" />
       <meta name="author" content="LuminLynx" />
     <link rel="canonical" href="https://luminlynx.github.io/FOSS-Glossary/" />
@@ -16,7 +16,7 @@
       <meta property="og:type" content="website" />
       <meta property="og:url" content="https://luminlynx.github.io/FOSS-Glossary/" />
       <meta property="og:title" content="FOSS Glossary - Gamified Open Source Terms" />
-      <meta property="og:description" content="Score points, unlock achievements, and learn FOSS terms with humor! 1 terms and growing." />
+      <meta property="og:description" content="Score points, unlock achievements, and learn FOSS terms with humor! 28 terms and growing." />
       <meta property="og:image" content="https://raw.githubusercontent.com/LuminLynx/FOSS-Glossary/main/assets/twitter-card.png" />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="628" />
@@ -26,7 +26,7 @@
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:url" content="https://luminlynx.github.io/FOSS-Glossary/" />
       <meta name="twitter:title" content="FOSS Glossary - Gamified Open Source Terms" />
-      <meta name="twitter:description" content="Score points, unlock achievements, and learn FOSS terms with humor! 1 terms and growing." />
+      <meta name="twitter:description" content="Score points, unlock achievements, and learn FOSS terms with humor! 28 terms and growing." />
       <meta name="twitter:image" content="https://raw.githubusercontent.com/LuminLynx/FOSS-Glossary/main/assets/twitter-card.png" />
 
     <!-- Favicon (optional - add later) -->
@@ -301,6 +301,9 @@
         .search-section {
             background: rgba(0, 212, 228, 0.05);
             border: 1px solid rgba(0, 212, 228, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
         .search-container {
             margin: 2rem 0;
@@ -923,7 +926,7 @@
               data-animate="fadeInUp"
               data-delay="0"
             >
-              <span class="stat-number">1</span>
+              <span class="stat-number">28</span>
               <span class="stat-label">Total Terms</span>
             </div>
             <div
@@ -931,7 +934,7 @@
               data-animate="fadeInUp"
               data-delay="1"
             >
-              <span class="stat-number">0</span>
+              <span class="stat-number">28</span>
               <span class="stat-label">Funny Terms</span>
             </div>
             <div
@@ -939,7 +942,7 @@
               data-animate="fadeInUp"
               data-delay="2"
             >
-              <span class="stat-number">0%</span>
+              <span class="stat-number">100%</span>
               <span class="stat-label">Humor Rate</span>
             </div>
             <div
@@ -947,7 +950,7 @@
               data-animate="fadeInUp"
               data-delay="3"
             >
-              <span class="stat-number">1</span>
+              <span class="stat-number">65</span>
               <span class="stat-label">Categories</span>
             </div>
         </div>
@@ -958,15 +961,21 @@
           <h2>⭐ Featured Term</h2>
           <div class="featured-term-card">
             <div class="featured-header">
-              <h3>Test &amp; Special &lt;Characters&gt;</h3>
-              <div class="score-badge" data-score="23">
-                <span class="score-value">23</span>
+              <h3>License Proliferation</h3>
+              <div class="score-badge" data-score="98">
+                <span class="score-value">98</span>
                 <span class="score-label">/ 100</span>
               </div>
             </div>
-            <p class="featured-definition">A test term with special &amp; characters like &gt; &lt; &quot; and &#x27;</p>
+            <p class="featured-definition">The overabundance of open source licenses, often with subtle but significant differences, making it difficult to combine or reuse code across projects without legal contortions.</p>
+              <div class="featured-humor">
+                <p>😂 "Like trying to host a potluck where everyone insists on bringing food—but only if you agree to eat it under their very specific house rules."</p>
+              </div>
               <div class="featured-tags">
-                  <span class="tag featured-tag">test</span>
+                  <span class="tag featured-tag">open-source</span>
+                  <span class="tag featured-tag">legal</span>
+                  <span class="tag featured-tag">compatibility</span>
+                  <span class="tag featured-tag">community</span>
               </div>
           </div>
         </div>
@@ -974,7 +983,7 @@
       <!-- RECENT ADDITIONS -->
       <div class="card recent-additions">
         <h2>🆕 Latest Additions</h2>
-        <p>Just added: <strong>Test &amp; Special &lt;Characters&gt;</strong></p>
+        <p>Just added: <strong>Zombie Dependencies, YOLO Deploy, Yak Shaving</strong></p>
       </div>
 
       <!-- SEARCH & FILTER SECTION -->
@@ -1042,51 +1051,12 @@
 
           <div class="filter-tags-container" id="activeFilters"></div>
         </div>
-        <p class="result-count" id="resultCount">Showing
-          1
-          of
-          1
-          terms</p>
+        <p class="result-count" id="resultCount">Search 28 terms</p>
       </div>
 
       <!-- TERM GRID -->
-      <div class="card terms-section">
-        <h2>🆕 Latest Terms</h2>
+      <div class="card terms-section" id="termsSection" style="display: none;">
         <div class="term-grid" id="termGrid">
-            <div
-              class="term-card"
-              data-term="Test &amp; Special &lt;Characters&gt;"
-              data-slug="special-chars"
-              data-score="23"
-              data-tags="test"
-              data-definition="A test term with special &amp; characters like &gt; &lt; &quot; and &#x27;"
-              data-humor=""
-              data-date="2025-11-24T23:09:09.207Z"
-              data-animate="fadeInUp"
-              data-delay="0"
-            >
-
-              <div class="term-header">
-                <h3>Test &amp; Special &lt;Characters&gt;</h3>
-                <div class="score-bar-container">
-                  <div
-                    class="score-bar"
-                    style="width: 23%; background-color: #ffd93d;"
-                  ></div>
-                </div>
-                <span
-                  class="term-score"
-                  style="color: #ffd93d"
-                >23</span>
-              </div>
-
-              <p class="term-definition">A test term with special &amp; characters like &gt; &lt; &quot; and &#x27;</p>
-
-
-                <div class="term-tags">
-                    <span class="tag" data-tag="test">test</span>
-                </div>
-            </div>
         </div>
 
         <div class="empty-state" id="emptyState" style="display: none;">
@@ -1138,7 +1108,7 @@
               🎮 Contribute on GitHub
             </a>
             <a href="https://luminlynx.github.io/FOSS-Glossary/pwa/" class="button button-secondary" data-animate="slideInUp">
-              📝 View All 1 Terms
+              📝 View All 28 Terms
             </a>
             <a href="./documentation.html" class="button button-secondary" data-animate="slideInUp">
               📚 View Documentation Hub
@@ -1150,9 +1120,9 @@
       <div class="footer">
         <p class="last-updated">
           Last updated:
-          Nov 24, 2025, 11:09 PM
+          Nov 24, 2025, 11:15 PM
           |
-          1
+          28
           terms and growing!<br />
           Made with 💙 by the FOSS community
         </p>
@@ -1160,8 +1130,8 @@
     </div>
 
     <script>
-      window.__TERMS_JSON_URL = './terms.json?ver=397b7eb';
-      window.__TOTAL_TERMS = 1;
+      window.__TERMS_JSON_URL = './terms.json?ver=a40296a';
+      window.__TOTAL_TERMS = 28;
 
       /**
        * FOSS Glossary Landing Page - Client-Side Search & Filter Engine
@@ -1179,8 +1149,6 @@
        */
 
       const SearchEngine = {
-        // Terms from the initial DOM (10 recent terms)
-        displayedTerms: [],
         // All terms loaded from JSON (lazy loaded on first search)
         allTermsFromJson: null,
         // Current filtered terms to display
@@ -1192,45 +1160,17 @@
         sortBy: 'date-desc',
         debounceTimer: null,
         debounceDelay: 150,
-        // Track if we're in search mode (showing results from JSON)
-        isSearchMode: false,
         // Loading state
         isLoading: false,
 
         /**
          * Initialize the search engine
-         * Extract initial term data from DOM and setup event listeners
+         * Setup event listeners - no initial terms to display
          */
         init() {
-          this.extractTermsFromDOM();
           this.setupEventListeners();
           this.setupTagClickHandlers();
-          this.filter();
-          this.render();
-          console.log(
-            '🔍 Search engine initialized with',
-            this.displayedTerms.length,
-            'displayed terms'
-          );
-        },
-
-        /**
-         * Extract term data from DOM cards (initial 10 terms)
-         * Converts data attributes to searchable objects
-         */
-        extractTermsFromDOM() {
-          const cards = document.querySelectorAll('[data-term]');
-          this.displayedTerms = Array.from(cards).map((card, index) => ({
-            element: card,
-            term: card.dataset.term,
-            slug: card.dataset.slug,
-            definition: card.dataset.definition,
-            humor: card.dataset.humor || '',
-            score: parseInt(card.dataset.score),
-            tags: (card.dataset.tags || '').split(' ').filter((t) => t.length > 0),
-            sortDate: new Date(card.dataset.date || new Date()).getTime(),
-            originalIndex: index,
-          }));
+          console.log('🔍 Search engine initialized');
         },
 
         /**
@@ -1254,7 +1194,6 @@
 
             // Convert JSON terms to our internal format
             this.allTermsFromJson = data.terms.map((term, index) => ({
-              element: null, // No DOM element for JSON-loaded terms
               term: term.term,
               slug: term.slug,
               definition: term.definition,
@@ -1312,6 +1251,13 @@
         },
 
         /**
+         * Check if any search/filter is active
+         */
+        hasActiveSearch() {
+          return this.searchTerm || this.scoreFilters.size > 0 || this.tagFilters.size > 0;
+        },
+
+        /**
          * Setup event listeners for search, filters, and sort
          */
         setupEventListeners() {
@@ -1322,13 +1268,8 @@
               this.debounceTimer = setTimeout(async () => {
                 this.searchTerm = e.target.value.toLowerCase().trim();
 
-                // If user is searching, fetch all terms and enter search mode
-                if (this.searchTerm) {
+                if (this.hasActiveSearch()) {
                   await this.fetchAllTerms();
-                  this.isSearchMode = true;
-                } else {
-                  // Clear search - return to showing displayed terms
-                  this.isSearchMode = false;
                 }
 
                 this.filter();
@@ -1341,7 +1282,6 @@
               if (e.key === 'Escape') {
                 searchInput.value = '';
                 this.searchTerm = '';
-                this.isSearchMode = false;
                 this.filter();
                 this.render();
               }
@@ -1357,12 +1297,8 @@
                 this.scoreFilters.delete(e.target.value);
               }
 
-              // If filtering, load all terms
-              if (this.scoreFilters.size > 0 || this.tagFilters.size > 0) {
+              if (this.hasActiveSearch()) {
                 await this.fetchAllTerms();
-                this.isSearchMode = true;
-              } else if (!this.searchTerm) {
-                this.isSearchMode = false;
               }
 
               this.filter();
@@ -1395,12 +1331,8 @@
                 this.tagFilters.add(tag);
               }
 
-              // If filtering, load all terms
-              if (this.tagFilters.size > 0 || this.scoreFilters.size > 0) {
+              if (this.hasActiveSearch()) {
                 await this.fetchAllTerms();
-                this.isSearchMode = true;
-              } else if (!this.searchTerm) {
-                this.isSearchMode = false;
               }
 
               this.filter();
@@ -1413,10 +1345,13 @@
          * Filter terms based on search and filters
          */
         filter() {
-          // Determine which terms to filter
-          const sourceTerms = this.isSearchMode
-            ? this.allTermsFromJson || []
-            : this.displayedTerms;
+          // Only filter if we have active search/filters and terms loaded
+          if (!this.hasActiveSearch()) {
+            this.filteredTerms = [];
+            return;
+          }
+
+          const sourceTerms = this.allTermsFromJson || [];
 
           this.filteredTerms = sourceTerms.filter((term) => {
             // Text search
@@ -1544,68 +1479,46 @@
          */
         render() {
           const termGrid = document.getElementById('termGrid');
-          if (!termGrid) return;
+          const termsSection = document.getElementById('termsSection');
+          if (!termGrid || !termsSection) return;
 
-          if (this.isSearchMode) {
-            // In search mode: hide all displayed terms, show search results
-            this.displayedTerms.forEach((term) => {
-              term.element.style.display = 'none';
-            });
+          // Clear the grid
+          termGrid.innerHTML = '';
 
-            // Remove any previously created search result cards
-            const existingSearchCards = termGrid.querySelectorAll(
-              '.term-card.search-result'
-            );
-            existingSearchCards.forEach((card) => card.remove());
+          if (this.hasActiveSearch()) {
+            // Show the terms section
+            termsSection.style.display = 'block';
 
-            // Create and append new cards for search results
+            // Create and append cards for filtered results
             this.filteredTerms.forEach((term) => {
               const card = this.createTermCard(term);
-              card.classList.add('search-result');
               termGrid.appendChild(card);
             });
-          } else {
-            // Not in search mode: show displayed terms, remove search result cards
-            const existingSearchCards = termGrid.querySelectorAll(
-              '.term-card.search-result'
-            );
-            existingSearchCards.forEach((card) => card.remove());
 
-            // Reorder and show/hide displayed terms
-            this.filteredTerms.forEach((term) => {
-              if (term.element) {
-                termGrid.appendChild(term.element);
-              }
-            });
-
-            this.displayedTerms.forEach((term) => {
-              const isVisible = this.filteredTerms.includes(term);
-              term.element.style.display = isVisible ? 'block' : 'none';
-              if (isVisible) {
-                term.element.classList.add('visible');
-              } else {
-                term.element.classList.remove('visible');
-              }
-            });
-          }
-
-          // Update result count
-          const resultCount = document.getElementById('resultCount');
-          if (resultCount) {
-            const count = this.filteredTerms.length;
-            const total = window.__TOTAL_TERMS || 1;
-            if (this.isSearchMode) {
-              resultCount.textContent = `Showing ${count} of ${total} terms (searching all)`;
-            } else {
+            // Update result count
+            const resultCount = document.getElementById('resultCount');
+            if (resultCount) {
+              const count = this.filteredTerms.length;
+              const total = window.__TOTAL_TERMS || 28;
               resultCount.textContent = `Showing ${count} of ${total} terms`;
             }
-          }
 
-          // Show/hide empty state
-          const emptyState = document.getElementById('emptyState');
-          if (emptyState) {
-            emptyState.style.display =
-              this.filteredTerms.length === 0 ? 'block' : 'none';
+            // Show/hide empty state
+            const emptyState = document.getElementById('emptyState');
+            if (emptyState) {
+              emptyState.style.display =
+                this.filteredTerms.length === 0 ? 'block' : 'none';
+            }
+          } else {
+            // Hide the terms section when not searching
+            termsSection.style.display = 'none';
+
+            // Update result count to default message
+            const resultCount = document.getElementById('resultCount');
+            if (resultCount) {
+              const total = window.__TOTAL_TERMS || 28;
+              resultCount.textContent = `Search ${total} terms`;
+            }
           }
 
           // Update active filters display
@@ -1641,15 +1554,6 @@
             chip.querySelector('.chip-remove').addEventListener('click', () => {
               this.scoreFilters.delete(filter);
               this.tagFilters.delete(filter);
-
-              // Check if we should exit search mode
-              if (
-                !this.searchTerm &&
-                this.scoreFilters.size === 0 &&
-                this.tagFilters.size === 0
-              ) {
-                this.isSearchMode = false;
-              }
 
               this.filter();
               this.render();

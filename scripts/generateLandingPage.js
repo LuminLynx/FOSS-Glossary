@@ -510,6 +510,9 @@ const CSS_STYLES = `
         .search-section {
             background: rgba(0, 212, 228, 0.05);
             border: 1px solid rgba(0, 212, 228, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
         .search-container {
             margin: 2rem 0;
@@ -1224,7 +1227,6 @@ function generateHTML(stats, artifactVersion) {
     release: prepareReleaseData(),
     statCards: prepareStatCardsData(stats),
     recentTermsList: stats.recentTerms.join(', '), // Handlebars auto-escapes
-    termCards: prepareTermCardsData(), // Now returns 16 terms for search/filter
     featuredTerm: prepareFeaturedTermData(), // Highest-scoring term
     scoringItems: prepareScoringItemsData(),
     ctaButtons: prepareCTAButtonsData(stats),
