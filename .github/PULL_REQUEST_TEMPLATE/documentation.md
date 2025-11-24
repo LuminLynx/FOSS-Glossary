@@ -16,8 +16,6 @@
 
 <!-- List the documentation files modified -->
 
--
-
 ### Checklist
 
 - [ ] I have checked for spelling and grammar errors
