@@ -353,30 +353,29 @@
       !e.target.classList.contains('featured-tag')) { const tag =
       e.target.dataset.tag; if (this.tagFilters.has(tag)) {
       this.tagFilters.delete(tag); } else { this.tagFilters.add(tag); }
-      this.filter(); this.render(); } }); }, /** * Filter terms based on search,
-      score, and tag filters */ filter() { this.filteredTerms =
-      this.allTerms.filter(term => {
-      // Search filter
-      if (this.searchTerm) {
-      const matches = term.term.toLowerCase().includes(this.searchTerm) ||
-      term.definition.toLowerCase().includes(this.searchTerm) ||
-      term.humor.toLowerCase().includes(this.searchTerm) || term.tags.some(tag => tag.toLowerCase().includes(this.searchTerm)); if (!matches) return
-      false; }
-      // Score filter
-      if (this.scoreFilters.size > 0) { const
-      scoreInRange = Array.from(this.scoreFilters).some(range => { const [min, max] = range.split('-').map(Number); return term.score >= min &&
-      term.score <= max; }); if (!scoreInRange) return false; }
-      // Tag filter
-      if
-      (this.tagFilters.size > 0) { const hasTag = term.tags.some(tag => this.tagFilters.has(tag)); if (!hasTag) return false; } return true; });
-      // Sort filtered results
-      this.sort(); }, /** * Sort filtered terms based
-      on selected sort option */ sort() { switch (this.sortBy) { case
+      this.filter(); this.render(); } }); },
+      filter() { this.filteredTerms = this.allTerms.filter(term => {
+        if (this.searchTerm) {
+          const matches = term.term.toLowerCase().includes(this.searchTerm) || term.definition.toLowerCase().includes(this.searchTerm) || term.humor.toLowerCase().includes(this.searchTerm) || term.tags.some(tag => tag.toLowerCase().includes(this.searchTerm));
+          if (!matches) return false;
+        }
+        if (this.scoreFilters.size > 0) {
+          const scoreInRange = Array.from(this.scoreFilters).some(range => { const [min, max] = range.split('-').map(Number); return term.score >= min && term.score <= max; });
+          if (!scoreInRange) return false;
+        }
+        if (this.tagFilters.size > 0) {
+          const hasTag = term.tags.some(tag => this.tagFilters.has(tag));
+          if (!hasTag) return false;
+        }
+        return true;
+      });
+      this.sort(); },
+      sort() { switch (this.sortBy) { case
       'date-desc': this.filteredTerms.sort((a, b) => b.sortDate - a.sortDate);
       break; case 'score-desc': this.filteredTerms.sort((a, b) => b.score -
       a.score); break; case 'score-asc': this.filteredTerms.sort((a, b) => a.score - b.score); break; case 'alpha-asc': this.filteredTerms.sort((a,
-      b) => a.term.localeCompare(b.term)); break; } }, /** * Update DOM to
-      show/hide filtered terms and reorder them based on sort */ render() {
+      b) => a.term.localeCompare(b.term)); break; } },
+      render() {
       const termGrid = document.getElementById('termGrid'); if (!termGrid)
       return;
       // Reorder DOM elements based on sorted filteredTerms

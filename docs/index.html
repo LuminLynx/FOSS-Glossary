@@ -1236,7 +1236,7 @@
             data-tags="dependencies maintenance technical-debt risk"
             data-definition="Outdated or abandoned libraries that are still widely used, often without active maintenance or clear alternatives, lurking silently until a breaking change or CVE emerges."
             data-humor="Like relying on a haunted vending machine — it still dispenses snacks, but nobody knows how or why it’s still running."
-            data-date="2025-11-24T20:55:35.685Z"
+            data-date="2025-11-24T21:01:01.477Z"
             data-animate="fadeInUp"
             data-delay="0"
           >
@@ -1274,7 +1274,7 @@
             data-tags="deployment chaos"
             data-definition="Deploying directly to production without testing because confidence or impatience overrides caution, usually followed by frantic monitoring."
             data-humor="Your Ops team Loves Organization... just kidding"
-            data-date="2025-11-24T20:55:35.686Z"
+            data-date="2025-11-24T21:01:01.477Z"
             data-animate="fadeInUp"
             data-delay="1"
           >
@@ -1306,7 +1306,7 @@
             data-tags="productivity procrastination"
             data-definition="Doing a series of seemingly unrelated tasks before you can do what you actually intended because each prerequisite reveals yet another detour."
             data-humor="I came here to write code, and somehow I&#x27;m now learning about Tibetan yak grooming techniques"
-            data-date="2025-11-24T20:55:35.686Z"
+            data-date="2025-11-24T21:01:01.477Z"
             data-animate="fadeInUp"
             data-delay="2"
           >
@@ -1341,7 +1341,7 @@
             data-tags="debugging classic excuse"
             data-definition="The developer&#x27;s eternal defense when code fails in production, implying the environment is to blame and quietly shifting responsibility back to operations."
             data-humor="Certification program coming soon: WOMM Certified Developer™"
-            data-date="2025-11-24T20:55:35.686Z"
+            data-date="2025-11-24T21:01:01.477Z"
             data-animate="fadeInUp"
             data-delay="3"
           >
@@ -1376,7 +1376,7 @@
             data-tags="foss issue-tracking development community"
             data-definition="Will Not Fix — an issue tracker resolution meaning the reported bug or feature request will remain unresolved, often due to scope, philosophy, or maintenance trade-offs."
             data-humor="The open‑source equivalent of &#x27;working as intended&#x27; — even when it clearly isn’t."
-            data-date="2025-11-24T20:55:35.686Z"
+            data-date="2025-11-24T21:01:01.477Z"
             data-animate="fadeInUp"
             data-delay="4"
           >
@@ -1413,7 +1413,7 @@
             data-tags="deployment courage"
             data-definition="Deploy to production and hope for the best, often uttered at the last minute when deadlines trump testing discipline and everyone crosses their fingers."
             data-humor="What you say at 4:59 PM on a Friday"
-            data-date="2025-11-24T20:55:35.686Z"
+            data-date="2025-11-24T21:01:01.477Z"
             data-animate="fadeInUp"
             data-delay="5"
           >
@@ -1445,7 +1445,7 @@
             data-tags="acronym documentation support"
             data-definition="Read The F***ing Manual — a blunt reminder to consult documentation before asking questions so helpers aren&#x27;t repeating themselves."
             data-humor="The four most powerful letters in tech support, capable of solving 90% of problems and hurting 100% of feelings"
-            data-date="2025-11-24T20:55:35.686Z"
+            data-date="2025-11-24T21:01:01.477Z"
             data-animate="fadeInUp"
             data-delay="6"
           >
@@ -1481,7 +1481,7 @@
             data-tags="pull-requests maintenance overload anti-pattern"
             data-definition="The overwhelming flood of open pull requests that threatens to drown maintainers, creating backlog, merge conflicts, and frustrated contributors."
             data-humor="Like trying to bail out a sinking ship with a coffee mug during a thunderstorm"
-            data-date="2025-11-24T20:55:35.686Z"
+            data-date="2025-11-24T21:01:01.477Z"
             data-animate="fadeInUp"
             data-delay="7"
           >
@@ -1517,7 +1517,7 @@
             data-tags="foss contribution community development"
             data-definition="Patches Welcome — a standard open-source response inviting contributors to submit code if they want a change, reminding requesters that collaboration beats complaints."
             data-humor="The polite way of saying: &#x27;Yes, that’s a problem. No, I’m not fixing it for you.&#x27;"
-            data-date="2025-11-24T20:55:35.686Z"
+            data-date="2025-11-24T21:01:01.477Z"
             data-animate="fadeInUp"
             data-delay="8"
           >
@@ -1554,7 +1554,7 @@
             data-tags="acronym support user-error"
             data-definition="Problem Exists Between Keyboard And Chair — a tongue-in-cheek acknowledgment that user error, not software flaws, caused the reported issue."
             data-humor="A timeless classic in tech support — polite sarcasm wrapped in an acronym."
-            data-date="2025-11-24T20:55:35.686Z"
+            data-date="2025-11-24T21:01:01.477Z"
             data-animate="fadeInUp"
             data-delay="9"
           >
@@ -1650,14 +1650,14 @@
       <!-- FOOTER -->
       <div class="footer">
         <p class="last-updated">
-          Last updated: Nov 24, 2025, 8:55 PM | 28 terms and growing!<br />
+          Last updated: Nov 24, 2025, 9:01 PM | 28 terms and growing!<br />
           Made with 💙 by the FOSS community
         </p>
       </div>
     </div>
 
     <script>
-      window.__TERMS_JSON_URL = './terms.json?ver=c1cac7e'; /** *
+      window.__TERMS_JSON_URL = './terms.json?ver=6c2c42b'; /** *
       FOSS Glossary Landing Page - Client-Side Search & Filter Engine * *
       Features: * - Real-time search with fuzzy matching * - Filter by score
       range (90+, 80-89, etc.) * - Sort by date, score, alphabetical * - Click
@@ -1758,20 +1758,16 @@
             }
           });
         },
-        /** * Filter terms based on search,
-      score, and tag filters */ filter() {
+        filter() {
           this.filteredTerms = this.allTerms.filter((term) => {
-            // Search filter
             if (this.searchTerm) {
               const matches =
                 term.term.toLowerCase().includes(this.searchTerm) ||
                 term.definition.toLowerCase().includes(this.searchTerm) ||
                 term.humor.toLowerCase().includes(this.searchTerm) ||
                 term.tags.some((tag) => tag.toLowerCase().includes(this.searchTerm));
-              if (!matches) return;
-              false;
+              if (!matches) return false;
             }
-            // Score filter
             if (this.scoreFilters.size > 0) {
               const scoreInRange = Array.from(this.scoreFilters).some((range) => {
                 const [min, max] = range.split('-').map(Number);
@@ -1779,18 +1775,15 @@
               });
               if (!scoreInRange) return false;
             }
-            // Tag filter
             if (this.tagFilters.size > 0) {
               const hasTag = term.tags.some((tag) => this.tagFilters.has(tag));
               if (!hasTag) return false;
             }
             return true;
           });
-          // Sort filtered results
           this.sort();
         },
-        /** * Sort filtered terms based
-      on selected sort option */ sort() {
+        sort() {
           switch (this.sortBy) {
             case 'date-desc':
               this.filteredTerms.sort((a, b) => b.sortDate - a.sortDate);
@@ -1806,8 +1799,7 @@
               break;
           }
         },
-        /** * Update DOM to
-      show/hide filtered terms and reorder them based on sort */ render() {
+        render() {
           const termGrid = document.getElementById('termGrid');
           if (!termGrid) return;
           // Reorder DOM elements based on sorted filteredTerms
