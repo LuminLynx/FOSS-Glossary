@@ -1236,7 +1236,7 @@
             data-tags="dependencies maintenance technical-debt risk"
             data-definition="Outdated or abandoned libraries that are still widely used, often without active maintenance or clear alternatives, lurking silently until a breaking change or CVE emerges."
             data-humor="Like relying on a haunted vending machine — it still dispenses snacks, but nobody knows how or why it’s still running."
-            data-date="2025-11-24T21:01:01.477Z"
+            data-date="2025-11-24T21:56:52.520Z"
             data-animate="fadeInUp"
             data-delay="0"
           >
@@ -1274,7 +1274,7 @@
             data-tags="deployment chaos"
             data-definition="Deploying directly to production without testing because confidence or impatience overrides caution, usually followed by frantic monitoring."
             data-humor="Your Ops team Loves Organization... just kidding"
-            data-date="2025-11-24T21:01:01.477Z"
+            data-date="2025-11-24T21:56:52.520Z"
             data-animate="fadeInUp"
             data-delay="1"
           >
@@ -1306,7 +1306,7 @@
             data-tags="productivity procrastination"
             data-definition="Doing a series of seemingly unrelated tasks before you can do what you actually intended because each prerequisite reveals yet another detour."
             data-humor="I came here to write code, and somehow I&#x27;m now learning about Tibetan yak grooming techniques"
-            data-date="2025-11-24T21:01:01.477Z"
+            data-date="2025-11-24T21:56:52.520Z"
             data-animate="fadeInUp"
             data-delay="2"
           >
@@ -1341,7 +1341,7 @@
             data-tags="debugging classic excuse"
             data-definition="The developer&#x27;s eternal defense when code fails in production, implying the environment is to blame and quietly shifting responsibility back to operations."
             data-humor="Certification program coming soon: WOMM Certified Developer™"
-            data-date="2025-11-24T21:01:01.477Z"
+            data-date="2025-11-24T21:56:52.520Z"
             data-animate="fadeInUp"
             data-delay="3"
           >
@@ -1376,7 +1376,7 @@
             data-tags="foss issue-tracking development community"
             data-definition="Will Not Fix — an issue tracker resolution meaning the reported bug or feature request will remain unresolved, often due to scope, philosophy, or maintenance trade-offs."
             data-humor="The open‑source equivalent of &#x27;working as intended&#x27; — even when it clearly isn’t."
-            data-date="2025-11-24T21:01:01.477Z"
+            data-date="2025-11-24T21:56:52.520Z"
             data-animate="fadeInUp"
             data-delay="4"
           >
@@ -1413,7 +1413,7 @@
             data-tags="deployment courage"
             data-definition="Deploy to production and hope for the best, often uttered at the last minute when deadlines trump testing discipline and everyone crosses their fingers."
             data-humor="What you say at 4:59 PM on a Friday"
-            data-date="2025-11-24T21:01:01.477Z"
+            data-date="2025-11-24T21:56:52.520Z"
             data-animate="fadeInUp"
             data-delay="5"
           >
@@ -1445,7 +1445,7 @@
             data-tags="acronym documentation support"
             data-definition="Read The F***ing Manual — a blunt reminder to consult documentation before asking questions so helpers aren&#x27;t repeating themselves."
             data-humor="The four most powerful letters in tech support, capable of solving 90% of problems and hurting 100% of feelings"
-            data-date="2025-11-24T21:01:01.477Z"
+            data-date="2025-11-24T21:56:52.520Z"
             data-animate="fadeInUp"
             data-delay="6"
           >
@@ -1481,7 +1481,7 @@
             data-tags="pull-requests maintenance overload anti-pattern"
             data-definition="The overwhelming flood of open pull requests that threatens to drown maintainers, creating backlog, merge conflicts, and frustrated contributors."
             data-humor="Like trying to bail out a sinking ship with a coffee mug during a thunderstorm"
-            data-date="2025-11-24T21:01:01.477Z"
+            data-date="2025-11-24T21:56:52.520Z"
             data-animate="fadeInUp"
             data-delay="7"
           >
@@ -1517,7 +1517,7 @@
             data-tags="foss contribution community development"
             data-definition="Patches Welcome — a standard open-source response inviting contributors to submit code if they want a change, reminding requesters that collaboration beats complaints."
             data-humor="The polite way of saying: &#x27;Yes, that’s a problem. No, I’m not fixing it for you.&#x27;"
-            data-date="2025-11-24T21:01:01.477Z"
+            data-date="2025-11-24T21:56:52.520Z"
             data-animate="fadeInUp"
             data-delay="8"
           >
@@ -1554,7 +1554,7 @@
             data-tags="acronym support user-error"
             data-definition="Problem Exists Between Keyboard And Chair — a tongue-in-cheek acknowledgment that user error, not software flaws, caused the reported issue."
             data-humor="A timeless classic in tech support — polite sarcasm wrapped in an acronym."
-            data-date="2025-11-24T21:01:01.477Z"
+            data-date="2025-11-24T21:56:52.520Z"
             data-animate="fadeInUp"
             data-delay="9"
           >
@@ -1650,43 +1650,74 @@
       <!-- FOOTER -->
       <div class="footer">
         <p class="last-updated">
-          Last updated: Nov 24, 2025, 9:01 PM | 28 terms and growing!<br />
+          Last updated: Nov 24, 2025, 9:56 PM | 28 terms and growing!<br />
           Made with 💙 by the FOSS community
         </p>
       </div>
     </div>
 
     <script>
-      window.__TERMS_JSON_URL = './terms.json?ver=6c2c42b'; /** *
-      FOSS Glossary Landing Page - Client-Side Search & Filter Engine * *
-      Features: * - Real-time search with fuzzy matching * - Filter by score
-      range (90+, 80-89, etc.) * - Sort by date, score, alphabetical * - Click
-      tags to filter by category * - Responsive design with mobile-friendly
-      controls * - Debounced search for performance * - Keyboard navigation
-      support * * No external dependencies - pure vanilla JavaScript */
-      // Search state management
+      window.__TERMS_JSON_URL = './terms.json?ver=7f6d3e6';
+      window.__TOTAL_TERMS = 28;
+
+      /**
+       * FOSS Glossary Landing Page - Client-Side Search & Filter Engine
+       *
+       * Features:
+       * - Real-time search across ALL terms (lazy loaded from terms.json)
+       * - Filter by score range (90+, 80-89, etc.)
+       * - Sort by date, score, alphabetical
+       * - Click tags to filter by category
+       * - Responsive design with mobile-friendly controls
+       * - Debounced search for performance
+       * - Keyboard navigation support
+       *
+       * No external dependencies - pure vanilla JavaScript
+       */
+
       const SearchEngine = {
-        allTerms: [],
+        // Terms from the initial DOM (10 recent terms)
+        displayedTerms: [],
+        // All terms loaded from JSON (lazy loaded on first search)
+        allTermsFromJson: null,
+        // Current filtered terms to display
         filteredTerms: [],
+        // Search and filter state
         searchTerm: '',
         scoreFilters: new Set(),
         tagFilters: new Set(),
         sortBy: 'date-desc',
         debounceTimer: null,
         debounceDelay: 150,
-        /** * Initialize the search engine * Extract all term data from DOM and
-      setup event listeners */ init() {
+        // Track if we're in search mode (showing results from JSON)
+        isSearchMode: false,
+        // Loading state
+        isLoading: false,
+
+        /**
+         * Initialize the search engine
+         * Extract initial term data from DOM and setup event listeners
+         */
+        init() {
           this.extractTermsFromDOM();
           this.setupEventListeners();
           this.setupTagClickHandlers();
           this.filter();
           this.render();
-          console.log('🔍 Search engine initialized with', this.allTerms.length, 'terms');
+          console.log(
+            '🔍 Search engine initialized with',
+            this.displayedTerms.length,
+            'displayed terms'
+          );
         },
-        /** * Extract term data from DOM cards
-         * Converts data attributes to searchable objects */ extractTermsFromDOM() {
+
+        /**
+         * Extract term data from DOM cards (initial 10 terms)
+         * Converts data attributes to searchable objects
+         */
+        extractTermsFromDOM() {
           const cards = document.querySelectorAll('[data-term]');
-          this.allTerms = Array.from(cards).map((card, index) => ({
+          this.displayedTerms = Array.from(cards).map((card, index) => ({
             element: card,
             term: card.dataset.term,
             slug: card.dataset.slug,
@@ -1698,40 +1729,142 @@
             originalIndex: index,
           }));
         },
-        /** * Setup event
-      listeners for search, filters, and sort */ setupEventListeners() {
-          // Search input with debounce
+
+        /**
+         * Lazy load all terms from terms.json
+         * Only fetches once, caches result
+         */
+        async fetchAllTerms() {
+          if (this.allTermsFromJson !== null) {
+            return this.allTermsFromJson;
+          }
+
+          this.isLoading = true;
+          this.updateLoadingState();
+
+          try {
+            const response = await fetch(window.__TERMS_JSON_URL);
+            if (!response.ok) {
+              throw new Error('Failed to fetch terms.json');
+            }
+            const data = await response.json();
+
+            // Convert JSON terms to our internal format
+            this.allTermsFromJson = data.terms.map((term, index) => ({
+              element: null, // No DOM element for JSON-loaded terms
+              term: term.term,
+              slug: term.slug,
+              definition: term.definition,
+              humor: term.humor || '',
+              explanation: term.explanation || '',
+              score: this.calculateScore(term),
+              tags: term.tags || [],
+              seeAlso: term.see_also || [],
+              controversyLevel: term.controversy_level || '',
+              sortDate: Date.now() - index * 1000, // Approximate order
+              originalIndex: index,
+            }));
+
+            console.log('📥 Loaded', this.allTermsFromJson.length, 'terms from JSON');
+            return this.allTermsFromJson;
+          } catch (error) {
+            console.error('❌ Error loading terms:', error);
+            return [];
+          } finally {
+            this.isLoading = false;
+            this.updateLoadingState();
+          }
+        },
+
+        /**
+         * Calculate score for a term (simplified version)
+         */
+        calculateScore(term) {
+          let score = 0;
+          // Base points for term + definition
+          if (term.term && term.definition) score += 20;
+          // Humor points (1 per 5 chars, max 30)
+          if (term.humor) score += Math.min(30, Math.floor(term.humor.length / 5));
+          // Explanation points
+          if (term.explanation && term.explanation.length > 20) score += 20;
+          // Tag points (3 per tag, max 10)
+          if (term.tags) score += Math.min(10, term.tags.length * 3);
+          // Cross-reference points (5 per ref, max 20)
+          if (term.see_also) score += Math.min(20, term.see_also.length * 5);
+          return Math.min(100, score);
+        },
+
+        /**
+         * Update loading indicator
+         */
+        updateLoadingState() {
+          const resultCount = document.getElementById('resultCount');
+          if (resultCount && this.isLoading) {
+            resultCount.textContent = 'Loading all terms...';
+          }
+        },
+
+        /**
+         * Setup event listeners for search, filters, and sort
+         */
+        setupEventListeners() {
           const searchInput = document.getElementById('searchInput');
           if (searchInput) {
             searchInput.addEventListener('input', (e) => {
               clearTimeout(this.debounceTimer);
-              this.debounceTimer = setTimeout(() => {
+              this.debounceTimer = setTimeout(async () => {
                 this.searchTerm = e.target.value.toLowerCase().trim();
+
+                // If user is searching, fetch all terms and enter search mode
+                if (this.searchTerm) {
+                  await this.fetchAllTerms();
+                  this.isSearchMode = true;
+                } else {
+                  // Clear search - return to showing displayed terms
+                  this.isSearchMode = false;
+                }
+
                 this.filter();
                 this.render();
               }, this.debounceDelay);
-            }); // Clear search on Escape key
+            });
+
+            // Clear search on Escape key
             searchInput.addEventListener('keydown', (e) => {
               if (e.key === 'Escape') {
                 searchInput.value = '';
                 this.searchTerm = '';
+                this.isSearchMode = false;
                 this.filter();
                 this.render();
               }
             });
-          } // Score filters
+          }
+
+          // Score filters
           document.querySelectorAll('.score-filter').forEach((checkbox) => {
-            checkbox.addEventListener('change', (e) => {
+            checkbox.addEventListener('change', async (e) => {
               if (e.target.checked) {
                 this.scoreFilters.add(e.target.value);
               } else {
                 this.scoreFilters.delete(e.target.value);
               }
+
+              // If filtering, load all terms
+              if (this.scoreFilters.size > 0 || this.tagFilters.size > 0) {
+                await this.fetchAllTerms();
+                this.isSearchMode = true;
+              } else if (!this.searchTerm) {
+                this.isSearchMode = false;
+              }
+
               this.filter();
               this.render();
             });
-          }); // Sort select const sortSelect =
-          document.getElementById('sortSelect');
+          });
+
+          // Sort select
+          const sortSelect = document.getElementById('sortSelect');
           if (sortSelect) {
             sortSelect.addEventListener('change', (e) => {
               this.sortBy = e.target.value;
@@ -1740,34 +1873,57 @@
             });
           }
         },
-        /** * Setup click
-      handlers for category tag filtering */ setupTagClickHandlers() {
-          document.addEventListener('click', (e) => {
-            if (
-              e.target.classList.contains('tag') &&
-              !e.target.classList.contains('featured-tag')
-            ) {
-              const tag = e.target.dataset.tag;
+
+        /**
+         * Setup click handlers for category tag filtering
+         */
+        setupTagClickHandlers() {
+          document.addEventListener('click', async (e) => {
+            const tagElement = e.target.closest('.tag:not(.featured-tag)');
+            if (tagElement) {
+              const tag = tagElement.dataset.tag;
               if (this.tagFilters.has(tag)) {
                 this.tagFilters.delete(tag);
               } else {
                 this.tagFilters.add(tag);
               }
+
+              // If filtering, load all terms
+              if (this.tagFilters.size > 0 || this.scoreFilters.size > 0) {
+                await this.fetchAllTerms();
+                this.isSearchMode = true;
+              } else if (!this.searchTerm) {
+                this.isSearchMode = false;
+              }
+
               this.filter();
               this.render();
             }
           });
         },
+
+        /**
+         * Filter terms based on search and filters
+         */
         filter() {
-          this.filteredTerms = this.allTerms.filter((term) => {
+          // Determine which terms to filter
+          const sourceTerms = this.isSearchMode ? this.allTermsFromJson || [] : this.displayedTerms;
+
+          this.filteredTerms = sourceTerms.filter((term) => {
+            // Text search
             if (this.searchTerm) {
-              const matches =
-                term.term.toLowerCase().includes(this.searchTerm) ||
-                term.definition.toLowerCase().includes(this.searchTerm) ||
-                term.humor.toLowerCase().includes(this.searchTerm) ||
-                term.tags.some((tag) => tag.toLowerCase().includes(this.searchTerm));
+              const searchFields = [
+                term.term.toLowerCase(),
+                term.definition.toLowerCase(),
+                term.humor.toLowerCase(),
+                (term.explanation || '').toLowerCase(),
+                ...term.tags.map((t) => t.toLowerCase()),
+              ];
+              const matches = searchFields.some((field) => field.includes(this.searchTerm));
               if (!matches) return false;
             }
+
+            // Score filter
             if (this.scoreFilters.size > 0) {
               const scoreInRange = Array.from(this.scoreFilters).some((range) => {
                 const [min, max] = range.split('-').map(Number);
@@ -1775,14 +1931,22 @@
               });
               if (!scoreInRange) return false;
             }
+
+            // Tag filter
             if (this.tagFilters.size > 0) {
               const hasTag = term.tags.some((tag) => this.tagFilters.has(tag));
               if (!hasTag) return false;
             }
+
             return true;
           });
+
           this.sort();
         },
+
+        /**
+         * Sort filtered terms
+         */
         sort() {
           switch (this.sortBy) {
             case 'date-desc':
@@ -1799,70 +1963,197 @@
               break;
           }
         },
+
+        /**
+         * Get score color based on score value
+         */
+        getScoreColor(score) {
+          if (score >= 80) return '#00d4e4';
+          if (score >= 60) return '#00f0ff';
+          return '#ffd93d';
+        },
+
+        /**
+         * Escape HTML to prevent XSS
+         */
+        escapeHtml(text) {
+          if (!text) return '';
+          const div = document.createElement('div');
+          div.textContent = text;
+          return div.innerHTML;
+        },
+
+        /**
+         * Create a term card element for dynamically loaded terms
+         */
+        createTermCard(term) {
+          const card = document.createElement('div');
+          card.className = 'term-card visible';
+          card.dataset.term = term.term;
+          card.dataset.slug = term.slug;
+          card.dataset.score = term.score;
+          card.dataset.tags = term.tags.join(' ');
+          card.dataset.definition = term.definition;
+          card.dataset.humor = term.humor;
+
+          const scoreColor = this.getScoreColor(term.score);
+
+          let tagsHtml = '';
+          if (term.tags.length > 0) {
+            tagsHtml = `
+              <div class="term-tags">
+                ${term.tags
+                  .map((tag) => {
+                    const escaped = this.escapeHtml(tag);
+                    return `<span class="tag" data-tag="${escaped}">${escaped}</span>`;
+                  })
+                  .join('')}
+              </div>
+            `;
+          }
+
+          let humorHtml = '';
+          if (term.humor) {
+            humorHtml = `<p class="term-humor">😂 "${this.escapeHtml(term.humor)}"</p>`;
+          }
+
+          card.innerHTML = `
+            <div class="term-header">
+              <h3>${this.escapeHtml(term.term)}</h3>
+              <div class="score-bar-container">
+                <div class="score-bar" style="width: ${term.score}%; background-color: ${scoreColor};"></div>
+              </div>
+              <span class="term-score" style="color: ${scoreColor}">${term.score}</span>
+            </div>
+            <p class="term-definition">${this.escapeHtml(term.definition)}</p>
+            ${humorHtml}
+            ${tagsHtml}
+          `;
+
+          return card;
+        },
+
+        /**
+         * Render the current state
+         */
         render() {
           const termGrid = document.getElementById('termGrid');
           if (!termGrid) return;
-          // Reorder DOM elements based on sorted filteredTerms
-          // This ensures the visual order matches the sort selection
-          this.filteredTerms.forEach((term) => {
-            termGrid.appendChild(term.element);
-          });
-          // Update visibility for all terms
-          this.allTerms.forEach((term) => {
-            const isVisible = this.filteredTerms.includes(term);
-            term.element.style.display = isVisible ? 'block' : 'none';
-            if (isVisible) {
-              term.element.classList.add('visible');
-            } else {
-              term.element.classList.remove('visible');
-            }
-          });
+
+          if (this.isSearchMode) {
+            // In search mode: hide all displayed terms, show search results
+            this.displayedTerms.forEach((term) => {
+              term.element.style.display = 'none';
+            });
+
+            // Remove any previously created search result cards
+            const existingSearchCards = termGrid.querySelectorAll('.term-card.search-result');
+            existingSearchCards.forEach((card) => card.remove());
+
+            // Create and append new cards for search results
+            this.filteredTerms.forEach((term) => {
+              const card = this.createTermCard(term);
+              card.classList.add('search-result');
+              termGrid.appendChild(card);
+            });
+          } else {
+            // Not in search mode: show displayed terms, remove search result cards
+            const existingSearchCards = termGrid.querySelectorAll('.term-card.search-result');
+            existingSearchCards.forEach((card) => card.remove());
+
+            // Reorder and show/hide displayed terms
+            this.filteredTerms.forEach((term) => {
+              if (term.element) {
+                termGrid.appendChild(term.element);
+              }
+            });
+
+            this.displayedTerms.forEach((term) => {
+              const isVisible = this.filteredTerms.includes(term);
+              term.element.style.display = isVisible ? 'block' : 'none';
+              if (isVisible) {
+                term.element.classList.add('visible');
+              } else {
+                term.element.classList.remove('visible');
+              }
+            });
+          }
+
           // Update result count
           const resultCount = document.getElementById('resultCount');
           if (resultCount) {
             const count = this.filteredTerms.length;
-            resultCount.textContent = `Showing ${count} of
-      28
-      terms`;
-          } // Show/hide empty state const emptyState =
-          document.getElementById('emptyState');
+            const total = window.__TOTAL_TERMS || 28;
+            if (this.isSearchMode) {
+              resultCount.textContent = `Showing ${count} of ${total} terms (searching all)`;
+            } else {
+              resultCount.textContent = `Showing ${count} of ${total} terms`;
+            }
+          }
+
+          // Show/hide empty state
+          const emptyState = document.getElementById('emptyState');
           if (emptyState) {
             emptyState.style.display = this.filteredTerms.length === 0 ? 'block' : 'none';
-          } // Update active filters display
+          }
+
+          // Update active filters display
           this.updateActiveFiltersDisplay();
         },
-        /** * Display active filters as
-      removable chips */ updateActiveFiltersDisplay() {
+
+        /**
+         * Display active filters as removable chips
+         */
+        updateActiveFiltersDisplay() {
           const container = document.getElementById('activeFilters');
           if (!container) return;
+
           container.innerHTML = '';
+
           const allFilters = new Set([...this.scoreFilters, ...this.tagFilters]);
           if (allFilters.size === 0) return;
+
           allFilters.forEach((filter) => {
             const chip = document.createElement('span');
             chip.className = 'filter-chip';
+
             let label = filter;
             if (filter.includes('-') && !filter.includes('tag')) {
               const [min, max] = filter.split('-');
               label = `Score ${min}-${max}`;
             }
-            chip.innerHTML = `${label} <button class="chip-remove"
-      data-filter="${filter}">✕</button>`;
+
+            const escapedLabel = this.escapeHtml(label);
+            const escapedFilter = this.escapeHtml(filter);
+            chip.innerHTML = `${escapedLabel} <button class="chip-remove" data-filter="${escapedFilter}">✕</button>`;
+
             chip.querySelector('.chip-remove').addEventListener('click', () => {
               this.scoreFilters.delete(filter);
               this.tagFilters.delete(filter);
+
+              // Check if we should exit search mode
+              if (!this.searchTerm && this.scoreFilters.size === 0 && this.tagFilters.size === 0) {
+                this.isSearchMode = false;
+              }
+
               this.filter();
               this.render();
             });
+
             container.appendChild(chip);
           });
         },
       };
-      /** * Animation utilities for entrance animations */ const Animations = {
+
+      /**
+       * Animation utilities for entrance animations
+       */
+      const Animations = {
         init() {
           this.observeElements();
           this.attachAnimationClasses();
         },
+
         attachAnimationClasses() {
           document.querySelectorAll('[data-animate]').forEach((el) => {
             el.classList.add('animate-on-load');
@@ -1874,8 +2165,10 @@
             }
           });
         },
+
         observeElements() {
           if (!('IntersectionObserver' in window)) return;
+
           const observer = new IntersectionObserver(
             (entries) => {
               entries.forEach((entry) => {
@@ -1887,11 +2180,14 @@
             },
             { threshold: 0.1 }
           );
+
           document.querySelectorAll('[data-animate]').forEach((el) => {
             observer.observe(el);
           });
         },
-      }; // Initialize on page load
+      };
+
+      // Initialize on page load
       document.addEventListener('DOMContentLoaded', () => {
         SearchEngine.init();
         Animations.init();
