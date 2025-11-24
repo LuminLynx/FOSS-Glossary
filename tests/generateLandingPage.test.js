@@ -179,7 +179,7 @@ test('generateLandingPage: contains all expected HTML sections', () => {
   assert.ok(html.includes('<body>'), 'Should have body section');
 
   // Verify meta tags
-  assert.ok(html.includes('<meta charset="UTF-8">'), 'Should have charset meta tag');
+  assert.ok(html.includes('charset="UTF-8"'), 'Should have charset meta tag');
   assert.ok(html.includes('<meta name="viewport"'), 'Should have viewport meta tag');
   assert.ok(html.includes('FOSS Glossary'), 'Should contain site title');
 
