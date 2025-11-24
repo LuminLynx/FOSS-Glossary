@@ -200,60 +200,12 @@
 
           <div class="filter-tags-container" id="activeFilters"></div>
         </div>
-        <p class="result-count" id="resultCount">Showing
-          {{termCards.length}}
-          of
-          {{stats.totalTerms}}
-          terms</p>
+        <p class="result-count" id="resultCount">Search {{stats.totalTerms}} terms</p>
       </div>
 
       <!-- TERM GRID -->
-      <div class="card terms-section">
-        <h2>🆕 Latest Terms</h2>
+      <div class="card terms-section" id="termsSection" style="display: none;">
         <div class="term-grid" id="termGrid">
-          {{#each termCards}}
-            <div
-              class="term-card"
-              data-term="{{this.term}}"
-              data-slug="{{this.slug}}"
-              data-score="{{this.score}}"
-              data-tags="{{this.tagsString}}"
-              data-definition="{{this.definition}}"
-              data-humor="{{this.humor}}"
-              data-date="{{this.sortDate}}"
-              data-animate="fadeInUp"
-              data-delay="{{@index}}"
-            >
-
-              <div class="term-header">
-                <h3>{{this.term}}</h3>
-                <div class="score-bar-container">
-                  <div
-                    class="score-bar"
-                    style="width: {{this.score}}%; background-color: {{this.scoreColor}};"
-                  ></div>
-                </div>
-                <span
-                  class="term-score"
-                  style="color: {{this.scoreColor}}"
-                >{{this.score}}</span>
-              </div>
-
-              <p class="term-definition">{{this.definition}}</p>
-
-              {{#if this.humor}}
-                <p class="term-humor">😂 "{{this.humor}}"</p>
-              {{/if}}
-
-              {{#if this.tags.length}}
-                <div class="term-tags">
-                  {{#each this.tags}}
-                    <span class="tag" data-tag="{{this}}">{{this}}</span>
-                  {{/each}}
-                </div>
-              {{/if}}
-            </div>
-          {{/each}}
         </div>
 
         <div class="empty-state" id="emptyState" style="display: none;">
@@ -324,8 +276,6 @@
        */
 
       const SearchEngine = {
-        // Terms from the initial DOM (10 recent terms)
-        displayedTerms: [],
         // All terms loaded from JSON (lazy loaded on first search)
         allTermsFromJson: null,
         // Current filtered terms to display
@@ -337,45 +287,17 @@
         sortBy: 'date-desc',
         debounceTimer: null,
         debounceDelay: 150,
-        // Track if we're in search mode (showing results from JSON)
-        isSearchMode: false,
         // Loading state
         isLoading: false,
 
         /**
          * Initialize the search engine
-         * Extract initial term data from DOM and setup event listeners
+         * Setup event listeners - no initial terms to display
          */
         init() {
-          this.extractTermsFromDOM();
           this.setupEventListeners();
           this.setupTagClickHandlers();
-          this.filter();
-          this.render();
-          console.log(
-            '🔍 Search engine initialized with',
-            this.displayedTerms.length,
-            'displayed terms'
-          );
-        },
-
-        /**
-         * Extract term data from DOM cards (initial 10 terms)
-         * Converts data attributes to searchable objects
-         */
-        extractTermsFromDOM() {
-          const cards = document.querySelectorAll('[data-term]');
-          this.displayedTerms = Array.from(cards).map((card, index) => ({
-            element: card,
-            term: card.dataset.term,
-            slug: card.dataset.slug,
-            definition: card.dataset.definition,
-            humor: card.dataset.humor || '',
-            score: parseInt(card.dataset.score),
-            tags: (card.dataset.tags || '').split(' ').filter((t) => t.length > 0),
-            sortDate: new Date(card.dataset.date || new Date()).getTime(),
-            originalIndex: index,
-          }));
+          console.log('🔍 Search engine initialized');
         },
 
         /**
@@ -399,7 +321,6 @@
 
             // Convert JSON terms to our internal format
             this.allTermsFromJson = data.terms.map((term, index) => ({
-              element: null, // No DOM element for JSON-loaded terms
               term: term.term,
               slug: term.slug,
               definition: term.definition,
@@ -457,6 +378,13 @@
         },
 
         /**
+         * Check if any search/filter is active
+         */
+        hasActiveSearch() {
+          return this.searchTerm || this.scoreFilters.size > 0 || this.tagFilters.size > 0;
+        },
+
+        /**
          * Setup event listeners for search, filters, and sort
          */
         setupEventListeners() {
@@ -467,13 +395,8 @@
               this.debounceTimer = setTimeout(async () => {
                 this.searchTerm = e.target.value.toLowerCase().trim();
 
-                // If user is searching, fetch all terms and enter search mode
-                if (this.searchTerm) {
+                if (this.hasActiveSearch()) {
                   await this.fetchAllTerms();
-                  this.isSearchMode = true;
-                } else {
-                  // Clear search - return to showing displayed terms
-                  this.isSearchMode = false;
                 }
 
                 this.filter();
@@ -486,7 +409,6 @@
               if (e.key === 'Escape') {
                 searchInput.value = '';
                 this.searchTerm = '';
-                this.isSearchMode = false;
                 this.filter();
                 this.render();
               }
@@ -502,12 +424,8 @@
                 this.scoreFilters.delete(e.target.value);
               }
 
-              // If filtering, load all terms
-              if (this.scoreFilters.size > 0 || this.tagFilters.size > 0) {
+              if (this.hasActiveSearch()) {
                 await this.fetchAllTerms();
-                this.isSearchMode = true;
-              } else if (!this.searchTerm) {
-                this.isSearchMode = false;
               }
 
               this.filter();
@@ -540,12 +458,8 @@
                 this.tagFilters.add(tag);
               }
 
-              // If filtering, load all terms
-              if (this.tagFilters.size > 0 || this.scoreFilters.size > 0) {
+              if (this.hasActiveSearch()) {
                 await this.fetchAllTerms();
-                this.isSearchMode = true;
-              } else if (!this.searchTerm) {
-                this.isSearchMode = false;
               }
 
               this.filter();
@@ -558,10 +472,13 @@
          * Filter terms based on search and filters
          */
         filter() {
-          // Determine which terms to filter
-          const sourceTerms = this.isSearchMode
-            ? this.allTermsFromJson || []
-            : this.displayedTerms;
+          // Only filter if we have active search/filters and terms loaded
+          if (!this.hasActiveSearch()) {
+            this.filteredTerms = [];
+            return;
+          }
+
+          const sourceTerms = this.allTermsFromJson || [];
 
           this.filteredTerms = sourceTerms.filter((term) => {
             // Text search
@@ -689,68 +606,46 @@
          */
         render() {
           const termGrid = document.getElementById('termGrid');
-          if (!termGrid) return;
+          const termsSection = document.getElementById('termsSection');
+          if (!termGrid || !termsSection) return;
 
-          if (this.isSearchMode) {
-            // In search mode: hide all displayed terms, show search results
-            this.displayedTerms.forEach((term) => {
-              term.element.style.display = 'none';
-            });
+          // Clear the grid
+          termGrid.innerHTML = '';
 
-            // Remove any previously created search result cards
-            const existingSearchCards = termGrid.querySelectorAll(
-              '.term-card.search-result'
-            );
-            existingSearchCards.forEach((card) => card.remove());
+          if (this.hasActiveSearch()) {
+            // Show the terms section
+            termsSection.style.display = 'block';
 
-            // Create and append new cards for search results
+            // Create and append cards for filtered results
             this.filteredTerms.forEach((term) => {
               const card = this.createTermCard(term);
-              card.classList.add('search-result');
               termGrid.appendChild(card);
             });
-          } else {
-            // Not in search mode: show displayed terms, remove search result cards
-            const existingSearchCards = termGrid.querySelectorAll(
-              '.term-card.search-result'
-            );
-            existingSearchCards.forEach((card) => card.remove());
 
-            // Reorder and show/hide displayed terms
-            this.filteredTerms.forEach((term) => {
-              if (term.element) {
-                termGrid.appendChild(term.element);
-              }
-            });
-
-            this.displayedTerms.forEach((term) => {
-              const isVisible = this.filteredTerms.includes(term);
-              term.element.style.display = isVisible ? 'block' : 'none';
-              if (isVisible) {
-                term.element.classList.add('visible');
-              } else {
-                term.element.classList.remove('visible');
-              }
-            });
-          }
-
-          // Update result count
-          const resultCount = document.getElementById('resultCount');
-          if (resultCount) {
-            const count = this.filteredTerms.length;
-            const total = window.__TOTAL_TERMS || {{stats.totalTerms}};
-            if (this.isSearchMode) {
-              resultCount.textContent = `Showing ${count} of ${total} terms (searching all)`;
-            } else {
+            // Update result count
+            const resultCount = document.getElementById('resultCount');
+            if (resultCount) {
+              const count = this.filteredTerms.length;
+              const total = window.__TOTAL_TERMS || {{stats.totalTerms}};
               resultCount.textContent = `Showing ${count} of ${total} terms`;
             }
-          }
 
-          // Show/hide empty state
-          const emptyState = document.getElementById('emptyState');
-          if (emptyState) {
-            emptyState.style.display =
-              this.filteredTerms.length === 0 ? 'block' : 'none';
+            // Show/hide empty state
+            const emptyState = document.getElementById('emptyState');
+            if (emptyState) {
+              emptyState.style.display =
+                this.filteredTerms.length === 0 ? 'block' : 'none';
+            }
+          } else {
+            // Hide the terms section when not searching
+            termsSection.style.display = 'none';
+
+            // Update result count to default message
+            const resultCount = document.getElementById('resultCount');
+            if (resultCount) {
+              const total = window.__TOTAL_TERMS || {{stats.totalTerms}};
+              resultCount.textContent = `Search ${total} terms`;
+            }
           }
 
           // Update active filters display
@@ -786,15 +681,6 @@
             chip.querySelector('.chip-remove').addEventListener('click', () => {
               this.scoreFilters.delete(filter);
               this.tagFilters.delete(filter);
-
-              // Check if we should exit search mode
-              if (
-                !this.searchTerm &&
-                this.scoreFilters.size === 0 &&
-                this.tagFilters.size === 0
-              ) {
-                this.isSearchMode = false;
-              }
 
               this.filter();
               this.render();
