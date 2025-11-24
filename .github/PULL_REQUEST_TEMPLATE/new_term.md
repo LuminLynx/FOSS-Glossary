@@ -1,8 +1,3 @@
-<!--
-Create this file at: .github/pull_request_template.md
-This template appears automatically when someone creates a PR (CLI and some UIs)
--->
-
 ## 🎮 New Term Submission
 
 ### The Term I'm Adding:
