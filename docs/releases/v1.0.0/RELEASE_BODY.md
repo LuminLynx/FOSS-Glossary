@@ -20,7 +20,7 @@
 
 **CI/Publishing:** PR workflow (validation → TypeScript → YAML → scoring → comment). Post-merge: landing page rebuild → terms.json export → Pages deployment. See [WORKFLOW_DOCUMENTATION.md](https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/WORKFLOW_DOCUMENTATION.md).
 
-**Guidelines:** [CONTRIBUTING.md](https://github.com/LuminLynx/FOSS-Glossary/blob/main/CONTRIBUTING.md), [CODE_OF_CONDUCT.md](https://github.com/LuminLynx/FOSS-Glossary/blob/main/CODE_OF_CONDUCT.md), [AGENTS.md](https://github.com/LuminLynx/FOSS-Glossary/blob/main/AGENTS.md) automation playbook. See also [slug-policy.md](https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/slug-policy.md), [deletion-policy.md](https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/deletion-policy.md).
+**Guidelines:** [CONTRIBUTING.md](https://github.com/LuminLynx/FOSS-Glossary/blob/main/.github/CONTRIBUTING.md), [CODE_OF_CONDUCT.md](https://github.com/LuminLynx/FOSS-Glossary/blob/main/.github/CODE_OF_CONDUCT.md), [AGENTS.md](https://github.com/LuminLynx/FOSS-Glossary/blob/main/.github/AGENTS.md) automation playbook. See also [slug-policy.md](https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/slug-policy.md), [deletion-policy.md](https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/deletion-policy.md).
 
 **Current Stats:** 28 terms, 5 contributors, 100% humor rate. Champion: "License Proliferation" (98/100).
 

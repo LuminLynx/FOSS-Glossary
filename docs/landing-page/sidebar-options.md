@@ -118,12 +118,13 @@ Add a pure CSS sidebar to the landing page (`docs/index.html`) using native HTML
          <ul>
            <li><a href="https://github.com/LuminLynx/FOSS-Glossary#readme">README</a></li>
            <li>
-             <a href="https://github.com/LuminLynx/FOSS-Glossary/blob/main/CONTRIBUTING.md"
+             <a href="https://github.com/LuminLynx/FOSS-Glossary/blob/main/.github/CONTRIBUTING.md"
                >Contributing Guide</a
              >
            </li>
            <li>
-             <a href="https://github.com/LuminLynx/FOSS-Glossary/blob/main/CODE_OF_CONDUCT.md"
+             <a
+               href="https://github.com/LuminLynx/FOSS-Glossary/blob/main/.github/CODE_OF_CONDUCT.md"
                >Code of Conduct</a
              >
            </li>
@@ -158,9 +159,9 @@ Add a pure CSS sidebar to the landing page (`docs/index.html`) using native HTML
        <div class="sidebar-section">
          <h3>⚙️ Workflows & CI/CD</h3>
          <ul>
-           <li><a href="./WORKFLOW_DOCUMENTATION.md">Workflow Documentation</a></li>
-           <li><a href="./WORKFLOW_EXAMPLES.md">Workflow Examples</a></li>
-           <li><a href="./WORKFLOW_CHANGELOG.md">Workflow Changelog</a></li>
+           <li><a href="./workflows/documentation.md">Workflow Documentation</a></li>
+           <li><a href="./workflows/examples.md">Workflow Examples</a></li>
+           <li><a href="./workflows/changelog.md">Workflow Changelog</a></li>
            <li><a href="./workflows/README.md">Workflows Directory</a></li>
          </ul>
        </div>
@@ -181,7 +182,8 @@ Add a pure CSS sidebar to the landing page (`docs/index.html`) using native HTML
            <li><a href="./RELEASE_PROCESS.md">Release Process</a></li>
            <li><a href="./RELEASE_INSTRUCTIONS_v1.0.0.md">v1.0.0 Instructions</a></li>
            <li>
-             <a href="https://github.com/LuminLynx/FOSS-Glossary/blob/main/CHANGELOG.md"
+             <a
+               href="https://github.com/LuminLynx/FOSS-Glossary/blob/main/docs/releases/CHANGELOG.md"
                >Changelog</a
              >
            </li>
@@ -805,12 +807,13 @@ Add a comprehensive footer section to the landing page with organized documentat
          <ul>
            <li><a href="https://github.com/LuminLynx/FOSS-Glossary#readme">README</a></li>
            <li>
-             <a href="https://github.com/LuminLynx/FOSS-Glossary/blob/main/CONTRIBUTING.md"
+             <a href="https://github.com/LuminLynx/FOSS-Glossary/blob/main/.github/CONTRIBUTING.md"
                >Contributing</a
              >
            </li>
            <li>
-             <a href="https://github.com/LuminLynx/FOSS-Glossary/blob/main/CODE_OF_CONDUCT.md"
+             <a
+               href="https://github.com/LuminLynx/FOSS-Glossary/blob/main/.github/CODE_OF_CONDUCT.md"
                >Code of Conduct</a
              >
            </li>

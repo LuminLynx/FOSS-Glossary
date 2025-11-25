@@ -5,7 +5,7 @@
 [![PWA Ready](https://img.shields.io/badge/PWA-Ready-purple)](https://luminlynx.github.io/FOSS-Glossary/pwa/)
 [![Terms Count](https://img.shields.io/badge/Terms-28-orange)](./terms.yaml)
 [![Docs](https://img.shields.io/badge/docs-passing-brightgreen)](https://luminlynx.github.io/FOSS-Glossary/)
-[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/LuminLynx/FOSS-Glossary/blob/main/CONTRIBUTING.md)
+[![Contributions Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/LuminLynx/FOSS-Glossary/blob/main/.github/CONTRIBUTING.md)
 [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)](https://github.com/LuminLynx/FOSS-Glossary)
 [![Node.js](https://img.shields.io/badge/Node.js-v22.17-green)](https://github.com/LuminLynx/FOSS-Glossary)
 [![Open Issues](https://img.shields.io/github/issues/LuminLynx/FOSS-Glossary)](https://github.com/LuminLynx/FOSS-Glossary/issues)

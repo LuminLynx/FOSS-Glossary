@@ -256,7 +256,7 @@ npm run validate      # Focused: schema validation only
 
 - [`.github/AGENTS.md`](./.github/AGENTS.md) — Automation playbook (compliance checklist)
 - [`README.md`](../README.md) — CI/CD pipeline diagram, quick links
-- [`CONTRIBUTING.md`](../CONTRIBUTING.md) — Contributor guide (user-facing)
+- [`CONTRIBUTING.md`](./CONTRIBUTING.md) — Contributor guide (user-facing)
 - [`docs/IMPLEMENTATION_PLAN.md`](../docs/IMPLEMENTATION_PLAN.md) — Detailed design docs
 
 **Quick command reference:**
