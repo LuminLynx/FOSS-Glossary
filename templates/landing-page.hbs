@@ -58,7 +58,7 @@
 
     <style>{{{styles}}}</style>
   </head>
-  <body>
+  <body class="no-js">
     <div class="container">
       <!-- HERO SECTION -->
       <div class="card hero-card">
@@ -69,8 +69,12 @@
         </div>
 
         <h1 class="hero-title">🚀 FOSS Glossary</h1>
-        <p class="tagline">A gamified glossary of Free and Open Source Software
-          terms, with humor, sarcasm, and honest truths.</p>
+        <p class="tagline">
+          <span class="typewriter-fallback">A gamified glossary of Free and Open Source Software terms, with humor, sarcasm, and honest truths.</span>
+          <span class="typewriter-container" aria-hidden="true">
+            <span class="typewriter-text" data-typewriter="A gamified glossary of Free and Open Source Software terms, with humor, sarcasm, and honest truths."></span><span class="typewriter-cursor"></span>
+          </span>
+        </p>
 
         <!-- RELEASE ANNOUNCEMENT -->
         {{#if release}}
@@ -733,10 +737,61 @@
         },
       };
 
+      /**
+       * Terminal-style typewriter effect for tagline
+       * Features:
+       * - Letter by letter animation with cursor
+       * - Respects prefers-reduced-motion
+       * - Fallback for users with JS disabled
+       */
+      const Typewriter = {
+        charDelay: 50, // ms per character
+
+        init() {
+          // Remove no-js class to hide fallback and show typewriter
+          document.body.classList.remove('no-js');
+
+          // Check for reduced motion preference
+          if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            this.showInstantly();
+            return;
+          }
+
+          this.animate();
+        },
+
+        showInstantly() {
+          const textElement = document.querySelector('[data-typewriter]');
+          if (textElement) {
+            textElement.textContent = textElement.dataset.typewriter;
+          }
+        },
+
+        animate() {
+          const textElement = document.querySelector('[data-typewriter]');
+          if (!textElement) return;
+
+          const fullText = textElement.dataset.typewriter;
+          let currentIndex = 0;
+          textElement.textContent = '';
+
+          const type = () => {
+            if (currentIndex < fullText.length) {
+              textElement.textContent += fullText.charAt(currentIndex);
+              currentIndex++;
+              setTimeout(type, this.charDelay);
+            }
+          };
+
+          type();
+        },
+      };
+
       // Initialize on page load
       document.addEventListener('DOMContentLoaded', () => {
         SearchEngine.init();
         Animations.init();
+        Typewriter.init();
       });
     </script>
   </body>

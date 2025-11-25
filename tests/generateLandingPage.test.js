@@ -176,7 +176,7 @@ test('generateLandingPage: contains all expected HTML sections', () => {
   assert.ok(html.includes('<!DOCTYPE html>'), 'Should have DOCTYPE');
   assert.ok(html.includes('<html lang="en">'), 'Should have html tag with lang');
   assert.ok(html.includes('<head>'), 'Should have head section');
-  assert.ok(html.includes('<body>'), 'Should have body section');
+  assert.ok(html.includes('<body'), 'Should have body section');
 
   // Verify meta tags
   assert.ok(html.includes('charset="UTF-8"'), 'Should have charset meta tag');
