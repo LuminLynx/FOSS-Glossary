@@ -5,7 +5,9 @@
  * Validates that docs/index.html is in sync with terms.yaml by checking:
  * 1. Total terms count in statistics section
  * 2. Recent terms listed in "Latest Additions" section
- * 3. Number of term cards in "Recent Terms" section
+ *
+ * Note: Term cards are now dynamically loaded via JavaScript from terms.json,
+ * so pre-rendered term card validation has been removed.
  *
  * This prevents the landing page from showing outdated data.
  *
@@ -19,7 +21,6 @@ const path = require('path');
 const { loadTermsYaml } = require('../utils/fileSystem');
 
 const DOCS_INDEX_PATH = path.join(__dirname, '..', 'docs', 'index.html');
-const EXPECTED_RECENT_COUNT = 6; // Number of recent terms displayed in cards
 const EXPECTED_LATEST_COUNT = 3; // Number of terms in "Latest Additions"
 
 // Regex patterns for HTML parsing
@@ -27,7 +28,6 @@ const PATTERNS = {
   TOTAL_TERMS:
     /<span class="stat-number">(\d+)<\/span>\s*<span class="stat-label">Total Terms<\/span>/,
   LATEST_ADDITIONS: /<h2>🆕 Latest Additions<\/h2>\s*<p>Just added: <strong>([^<]+)<\/strong><\/p>/,
-  TERM_CARD: /<div\s+class="term-card"/g,
 };
 
 /**
@@ -50,17 +50,6 @@ function extractNumber(html, pattern) {
 function extractText(html, pattern) {
   const match = html.match(pattern);
   return match ? match[1] : null;
-}
-
-/**
- * Count occurrences of a pattern in HTML
- * @param {string} html - HTML content
- * @param {RegExp} pattern - Regex pattern to match
- * @returns {number} Count of matches
- */
-function countMatches(html, pattern) {
-  const matches = html.match(pattern);
-  return matches ? matches.length : 0;
 }
 
 /**
@@ -117,28 +106,10 @@ function validateLandingPage() {
       return false;
     }
 
-    // Validation 3: Check number of term cards
-    const termCardCount = countMatches(html, PATTERNS.TERM_CARD);
-
-    if (termCardCount === 0) {
-      console.error('❌ Error: No term cards found in HTML');
-      console.error('   Run: node scripts/generateLandingPage.js');
-      return false;
-    }
-
-    if (termCardCount === 1 && html.includes('Test &amp;')) {
-      console.error(`❌ Error: Only placeholder test card found in "Recent Terms"`);
-      console.error(`   Expected: ${EXPECTED_RECENT_COUNT} recent term cards`);
-      console.error(`   Found: 1 test card`);
-      console.error('   Run: node scripts/generateLandingPage.js');
-      return false;
-    }
-
     // All validations passed
     console.log('✅ Landing page is in sync with terms.yaml');
     console.log(`   - Total terms: ${totalTerms}`);
     console.log(`   - Latest additions: ${recentTermsList}`);
-    console.log(`   - Recent term cards: ${termCardCount}`);
     return true;
   } catch (error) {
     console.error('❌ Error during validation:', error.message);
