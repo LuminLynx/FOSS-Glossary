@@ -241,7 +241,11 @@ function prepareMetaTags(stats) {
 }
 
 // CSS styles as a constant for better maintainability
-// FOSS Community Theme - Dark mode default with terminal aesthetics
+// FOSS Community Theme - Visual redesign with:
+// - Dark mode as default theme
+// - Terminal-inspired color palette (greens, amber, cyan, purple)
+// - Monospace fonts for headers (Fira Code, JetBrains Mono)
+// - GitHub ribbon, gradient card borders, terminal prompt decoration
 const CSS_STYLES = `
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -295,14 +299,6 @@ const CSS_STYLES = `
         @keyframes bounce {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
-        }
-        @keyframes terminalBlink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
-        }
-        @keyframes scanline {
-            0% { transform: translateY(-100%); }
-            100% { transform: translateY(100%); }
         }
         
         /* DARK THEME (Default) - FOSS Community Style */
@@ -1066,7 +1062,10 @@ const CSS_STYLES = `
             transform: translateY(-2px);
         }
         
-        /* LIGHT THEME (for users who prefer light mode) */
+        /* LIGHT THEME - Overrides CSS custom properties for users who prefer light mode.
+           The base styles above use CSS variables, so overriding only the color variables
+           is sufficient to theme the entire page. Additional element-specific overrides
+           below handle cases where shadows or text colors need adjustment for light backgrounds. */
         @media (prefers-color-scheme: light) {
             :root {
                 --bg-primary: #ffffff;
