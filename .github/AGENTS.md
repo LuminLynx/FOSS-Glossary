@@ -90,6 +90,24 @@ npm run format  # Auto-fix formatting issues
 
 **Agent responsibility:** Ensure `npm run lint` returns **zero errors** before opening PR.
 
+## 4.2) File Organization Rules (Mandatory)
+
+**Document Placement:**
+- ❌ **NEVER** create new `.md` files in the repository root
+- ✅ Use existing subdirectories or create logical folder structure
+- ✅ Group related content when possible to reduce file count
+
+**Root Directory Reserved For:**
+- README.md (only markdown file allowed in root) 
+- LICENSE, CONTRIBUTING.md 
+- Configuration files (package.json, .gitignore, etc.)
+
+**When Creating New Documents:**
+1. Identify appropriate subdirectory
+2. Consider if content can be added to existing files
+3. Update any cross-references when reorganizing
+
+**Agent responsibility:** Ensure NO new markdown files are created in root directory.
 ---
 
 ## 5) Validation & Schema Rules (What Agents Enforce)
@@ -243,6 +261,10 @@ If information is missing, add `needs-info` and ask one precise question.
 - [ ] Clear PR body with checklist and negative tests.
 - [ ] No artifacts or unrelated changes.
 
+**File Organization:**
+- [ ] No new `.md` files created in root directory
+- [ ] Content placed in appropriate subdirectories
+- [ ] Cross-references updated if files moved
 ---
 
 ## 15) Related Documentation
