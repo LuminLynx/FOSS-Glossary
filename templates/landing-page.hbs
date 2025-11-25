@@ -741,8 +741,12 @@
         charDelay: 50,
 
         init() {
-          // Check for reduced motion preference
-          if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          // Check for reduced motion preference (with fallback for older browsers)
+          const prefersReducedMotion =
+            window.matchMedia &&
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+          if (prefersReducedMotion) {
             this.showTextImmediately();
             return;
           }
@@ -770,14 +774,14 @@
           el.appendChild(cursor);
 
           let index = 0;
-          const type = () => {
+          const intervalId = setInterval(() => {
             if (index < text.length) {
               el.insertBefore(document.createTextNode(text.charAt(index)), cursor);
               index++;
-              setTimeout(type, this.charDelay);
+            } else {
+              clearInterval(intervalId);
             }
-          };
-          type();
+          }, this.charDelay);
         },
       };
 
