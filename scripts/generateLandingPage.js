@@ -373,6 +373,46 @@ const CSS_STYLES = `
             color: #2d3e50;
         }
         
+        /* Typewriter Effect */
+        .typewriter-container {
+            min-height: 1.6em;
+            display: flex;
+            justify-content: center;
+        }
+        .typewriter-text {
+            display: inline;
+        }
+        .typewriter-cursor {
+            display: inline-block;
+            width: 0.6em;
+            height: 1em;
+            background-color: #00838f;
+            margin-left: 2px;
+            vertical-align: text-bottom;
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        /* Fallback: show full text when JS is disabled */
+        .tagline .typewriter-fallback {
+            display: none;
+        }
+        .no-js .tagline .typewriter-fallback {
+            display: inline;
+        }
+        .no-js .tagline .typewriter-container {
+            display: none;
+        }
+        /* Respect reduced motion preference */
+        @media (prefers-reduced-motion: reduce) {
+            .typewriter-cursor {
+                animation: none;
+                opacity: 1;
+            }
+        }
+        
         /* Statistics Section */
         .stats-card {
             background: rgba(0, 212, 228, 0.05);
@@ -916,6 +956,9 @@ const CSS_STYLES = `
             }
             .tagline {
                 color: #f5f5f0;
+            }
+            .typewriter-cursor {
+                background-color: #00d4e4;
             }
             .logo {
                 box-shadow: 0 10px 40px rgba(0, 212, 228, 0.5), inset 0 0 20px rgba(0, 212, 228, 0.2);
