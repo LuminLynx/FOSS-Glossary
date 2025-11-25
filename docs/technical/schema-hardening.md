@@ -266,7 +266,7 @@ terms:
 
 ## Related Documentation
 
-- [Contributing Guide](../CONTRIBUTING.md)
+- [Contributing Guide](../../.github/CONTRIBUTING.md)
 - [Slug Policy](slug-policy.md)
 - [Schema Specification](../schema.json)
 - [Workflow Documentation](WORKFLOW_DOCUMENTATION.md)

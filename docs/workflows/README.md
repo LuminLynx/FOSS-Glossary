@@ -4,9 +4,9 @@ Welcome to the FOSS Glossary workflow documentation!
 
 ## 📚 Quick Links
 
-- [Complete Documentation](../WORKFLOW_DOCUMENTATION.md) - Full reference guide
-- [Practical Examples](../WORKFLOW_EXAMPLES.md) - Real-world usage examples
-- [Changelog](../WORKFLOW_CHANGELOG.md) - Version history and changes
+- [Complete Documentation](./documentation.md) - Full reference guide
+- [Practical Examples](./examples.md) - Real-world usage examples
+- [Changelog](./changelog.md) - Version history and changes
 
 ## 🚀 Quick Start
 
@@ -37,4 +37,4 @@ gh workflow run issue-task-pr.yml \
 
 ## �� Full Documentation
 
-See [WORKFLOW_DOCUMENTATION.md](../WORKFLOW_DOCUMENTATION.md) for complete details.
+See [documentation.md](./documentation.md) for complete details.

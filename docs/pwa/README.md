@@ -299,7 +299,7 @@ After the first visit, the app works completely offline with all features functi
 
 ## Contributing
 
-Contributions are welcome! Please see the main repository [CONTRIBUTING.md](../CONTRIBUTING.md) for guidelines.
+Contributions are welcome! Please see the main repository [CONTRIBUTING.md](../../.github/CONTRIBUTING.md) for guidelines.
 
 ## License
 
