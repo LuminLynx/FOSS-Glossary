@@ -51,7 +51,8 @@ Agents should watch these labels to decide actions:
 **PR body must include:**
 
 - Context summary (1–3 lines).
-- Files modified list with bullets.
+- Files modified list with Manda
+- **✅ Linting confirmation: "Ran `npm run format` - all checks pass"**
 - Checklist of acceptance criteria.
 - Negative test plan (for validator changes).
 - "Fixes #<ISSUE_NUMBER>" to auto-close on merge.
@@ -65,6 +66,8 @@ Agents should watch these labels to decide actions:
 ---
 
 ## 4.1) Linting & Code Quality Gate (Mandatory)
+
+**⚠️ CRITICAL - DO NOT SKIP ⚠️**
 
 **All PRs must pass linting checks before submission:**
 
