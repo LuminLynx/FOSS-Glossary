@@ -772,18 +772,23 @@
           if (!textElement) return;
 
           const fullText = textElement.dataset.typewriter;
-          let currentIndex = 0;
+          const charDelay = this.charDelay;
+          let startTime = null;
+
           textElement.textContent = '';
 
-          const type = () => {
-            if (currentIndex < fullText.length) {
-              textElement.textContent += fullText.charAt(currentIndex);
-              currentIndex++;
-              setTimeout(type, this.charDelay);
+          const type = (timestamp) => {
+            if (!startTime) startTime = timestamp;
+            const elapsed = timestamp - startTime;
+            const charIndex = Math.floor(elapsed / charDelay);
+
+            if (charIndex < fullText.length) {
+              textElement.textContent = fullText.substring(0, charIndex + 1);
+              requestAnimationFrame(type);
             }
           };
 
-          type();
+          requestAnimationFrame(type);
         },
       };
 
