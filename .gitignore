@@ -35,3 +35,6 @@ File Structure
 
 # Release info
 .release-info.json
+
+# post-merge generated
+docs/index.html
