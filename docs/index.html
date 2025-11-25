@@ -3,13 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FOSS Glossary - 1 Terms and Growing!</title>
+    <title>FOSS Glossary - 28 Terms and Growing!</title>
 
     <!-- Primary Meta Tags -->
     <meta name="title" content="FOSS Glossary - Gamified Open Source Terms" />
     <meta
       name="description"
-      content="A gamified glossary of FOSS terms with humor. 1 terms defined by the community! Score points, unlock achievements, and learn with fun."
+      content="A gamified glossary of FOSS terms with humor. 28 terms defined by the community! Score points, unlock achievements, and learn with fun."
     />
     <meta
       name="keywords"
@@ -24,7 +24,7 @@
     <meta property="og:title" content="FOSS Glossary - Gamified Open Source Terms" />
     <meta
       property="og:description"
-      content="Score points, unlock achievements, and learn FOSS terms with humor! 1 terms and growing."
+      content="Score points, unlock achievements, and learn FOSS terms with humor! 28 terms and growing."
     />
     <meta
       property="og:image"
@@ -40,7 +40,7 @@
     <meta name="twitter:title" content="FOSS Glossary - Gamified Open Source Terms" />
     <meta
       name="twitter:description"
-      content="Score points, unlock achievements, and learn FOSS terms with humor! 1 terms and growing."
+      content="Score points, unlock achievements, and learn FOSS terms with humor! 28 terms and growing."
     />
     <meta
       name="twitter:image"
@@ -55,6 +55,35 @@
         margin: 0;
         padding: 0;
         box-sizing: border-box;
+      }
+
+      /* FOSS THEME CSS CUSTOM PROPERTIES */
+      :root {
+        /* Terminal-inspired green palette */
+        --foss-green: #00ff41;
+        --foss-green-dim: #00cc33;
+        --foss-green-bright: #39ff14;
+        --foss-amber: #ffb000;
+        --foss-cyan: #00d4ff;
+        --foss-purple: #bd93f9;
+
+        /* Dark theme colors (default) */
+        --bg-primary: #0d1117;
+        --bg-secondary: #161b22;
+        --bg-card: #21262d;
+        --bg-elevated: #30363d;
+        --text-primary: #e6edf3;
+        --text-secondary: #8b949e;
+        --text-muted: #6e7681;
+        --border-color: #30363d;
+        --border-accent: #238636;
+
+        /* Monospace font stack */
+        --font-mono:
+          'Fira Code', 'JetBrains Mono', 'SF Mono', 'Cascadia Code', 'Consolas', 'Liberation Mono',
+          monospace;
+        --font-sans:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
       }
 
       /* ANIMATIONS */
@@ -116,30 +145,75 @@
         }
       }
 
-      /* LIGHT THEME (Default) */
+      /* DARK THEME (Default) - FOSS Community Style */
       body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+        font-family: var(--font-sans);
         line-height: 1.6;
-        color: #1a3a52;
-        background: linear-gradient(135deg, #f0f4f8 0%, #e8f2f7 100%);
+        color: var(--text-primary);
+        background: var(--bg-primary);
         min-height: 100vh;
         padding-bottom: 2rem;
       }
+
+      /* Fork me ribbon */
+      .github-ribbon {
+        position: fixed;
+        top: 0;
+        right: 0;
+        z-index: 1000;
+        width: 150px;
+        height: 150px;
+        overflow: hidden;
+        pointer-events: none;
+      }
+      .github-ribbon a {
+        pointer-events: auto;
+        position: absolute;
+        width: 200px;
+        padding: 8px 0;
+        background: var(--foss-green-dim);
+        color: var(--bg-primary);
+        text-align: center;
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-decoration: none;
+        transform: rotate(45deg);
+        right: -50px;
+        top: 30px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        transition: background 0.3s ease;
+      }
+      .github-ribbon a:hover {
+        background: var(--foss-green);
+      }
+
       .container {
         max-width: 1200px;
         margin: 0 auto;
         padding: 2rem;
       }
       .card {
-        background: rgba(255, 255, 255, 0.9);
+        background: var(--bg-card);
         backdrop-filter: blur(10px);
         padding: 3rem;
-        border-radius: 15px;
-        box-shadow: 0 10px 40px rgba(26, 58, 82, 0.1);
+        border-radius: 8px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         margin-bottom: 2rem;
-        border: 1px solid rgba(0, 163, 184, 0.2);
+        border: 1px solid var(--border-color);
         animation: slideUp 0.6s ease-out forwards;
         opacity: 0;
+        position: relative;
+      }
+      .card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--foss-green), var(--foss-cyan), var(--foss-purple));
+        border-radius: 8px 8px 0 0;
       }
       .card:nth-child(1) {
         animation-delay: 0ms;
@@ -185,13 +259,12 @@
       /* Hero Section */
       .hero-card {
         text-align: center;
-        background: linear-gradient(
-          135deg,
-          rgba(0, 212, 228, 0.08) 0%,
-          rgba(0, 240, 255, 0.05) 100%
-        );
-        border: 2px solid rgba(0, 163, 184, 0.3);
+        background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-card) 100%);
+        border: 1px solid var(--border-accent);
         padding: 4rem 2rem;
+      }
+      .hero-card::before {
+        background: linear-gradient(90deg, var(--foss-green), var(--foss-green-bright));
       }
       .logo-section {
         text-align: center;
@@ -201,19 +274,20 @@
         width: 150px;
         height: 150px;
         margin: 0 auto 1rem;
-        border-radius: 20%;
+        border-radius: 16px;
         box-shadow:
-          0 10px 40px rgba(0, 163, 184, 0.3),
-          inset 0 0 20px rgba(0, 163, 184, 0.1);
+          0 0 30px rgba(0, 255, 65, 0.3),
+          0 0 60px rgba(0, 255, 65, 0.1);
         overflow: hidden;
-        border: 2px solid rgba(0, 163, 184, 0.3);
+        border: 2px solid var(--foss-green-dim);
         transition: all 0.3s ease;
       }
       .logo:hover {
         box-shadow:
-          0 15px 50px rgba(0, 163, 184, 0.5),
-          inset 0 0 30px rgba(0, 163, 184, 0.2);
+          0 0 40px rgba(0, 255, 65, 0.5),
+          0 0 80px rgba(0, 255, 65, 0.2);
         transform: scale(1.05);
+        border-color: var(--foss-green);
       }
       .logo img {
         width: 100%;
@@ -226,20 +300,24 @@
       .hero-title {
         text-align: center;
         font-size: 3rem;
-        color: #00838f;
+        color: var(--foss-green);
         margin-bottom: 1rem;
         font-weight: 700;
         letter-spacing: -0.5px;
+        font-family: var(--font-mono);
+        text-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
       }
       h2 {
-        color: #00838f;
+        color: var(--foss-green);
         margin: 2rem 0 1rem 0;
         font-weight: 600;
         font-size: 1.8rem;
+        font-family: var(--font-mono);
       }
       h3,
       h4 {
         margin-bottom: 0.5rem;
+        font-family: var(--font-mono);
       }
       .tagline {
         text-align: center;
@@ -249,13 +327,23 @@
         max-width: 700px;
         margin-left: auto;
         margin-right: auto;
-        color: #2d3e50;
+        color: var(--text-secondary);
+      }
+
+      /* Terminal prompt decoration */
+      .hero-title::before {
+        content: '$ ';
+        color: var(--foss-green-dim);
+        opacity: 0.7;
       }
 
       /* Statistics Section */
       .stats-card {
-        background: rgba(0, 212, 228, 0.05);
-        border: 1px solid rgba(0, 163, 184, 0.3);
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+      }
+      .stats-card::before {
+        background: linear-gradient(90deg, var(--foss-cyan), var(--foss-purple));
       }
       .live-stats {
         display: grid;
@@ -264,48 +352,70 @@
         margin: 2rem 0;
       }
       .stat-card {
-        background: linear-gradient(135deg, #e0f7fa 0%, #b3e5fc 100%);
-        border: none;
-        color: #1a3a52;
+        background: var(--bg-elevated);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
         padding: 2rem 1.5rem;
-        border-radius: 12px;
+        border-radius: 8px;
         text-align: center;
         transition: all 0.3s ease;
         cursor: default;
+        position: relative;
+        overflow: hidden;
+      }
+      .stat-card::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: var(--foss-green);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+      }
+      .stat-card:hover::after {
+        transform: scaleX(1);
       }
       .stat-card:hover {
-        background: linear-gradient(135deg, #b3e5fc 0%, #81d4fa 100%);
+        border-color: var(--foss-green-dim);
         transform: translateY(-4px);
-        box-shadow: 0 8px 24px rgba(0, 163, 184, 0.2);
+        box-shadow: 0 8px 24px rgba(0, 255, 65, 0.15);
       }
       .stat-number {
         font-size: 2.5rem;
         font-weight: 700;
         display: block;
-        color: #00838f;
+        color: var(--foss-green);
+        font-family: var(--font-mono);
       }
       .stat-label {
         font-size: 0.95rem;
         opacity: 0.85;
         margin-top: 0.5rem;
-        color: #1a3a52;
+        color: var(--text-secondary);
+        font-family: var(--font-mono);
+        text-transform: lowercase;
       }
 
       /* Featured Term Section */
       .featured-section {
-        background: rgba(0, 212, 228, 0.05);
-        border: 2px solid #00a3b8;
+        background: var(--bg-secondary);
+        border: 1px solid var(--foss-amber);
         position: relative;
         overflow: hidden;
       }
       .featured-section::before {
+        background: linear-gradient(90deg, var(--foss-amber), var(--foss-green));
+      }
+      .featured-section::after {
         content: '';
         position: absolute;
         top: 0;
         left: -100%;
         width: 100%;
         height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(0, 163, 184, 0.15), transparent);
+        background: linear-gradient(90deg, transparent, rgba(255, 176, 0, 0.08), transparent);
         animation: shine 3s infinite;
       }
       @keyframes shine {
@@ -330,20 +440,21 @@
       }
       .featured-header h3 {
         font-size: 1.8rem;
-        color: #00838f;
+        color: var(--foss-amber);
         margin: 0;
         flex: 1;
       }
       .score-badge {
-        background: linear-gradient(135deg, #00a3b8 0%, #00d4e4 100%);
-        color: white;
+        background: linear-gradient(135deg, var(--foss-green-dim) 0%, var(--foss-green) 100%);
+        color: var(--bg-primary);
         padding: 0.8rem 1.5rem;
-        border-radius: 50px;
+        border-radius: 8px;
         font-weight: 700;
         display: flex;
         flex-direction: column;
         align-items: center;
-        box-shadow: 0 4px 15px rgba(0, 163, 184, 0.4);
+        box-shadow: 0 4px 15px rgba(0, 255, 65, 0.3);
+        font-family: var(--font-mono);
       }
       .score-value {
         font-size: 1.5rem;
@@ -356,17 +467,17 @@
         font-size: 1.1rem;
         line-height: 1.8;
         margin-bottom: 1.5rem;
-        color: #2d3e50;
+        color: var(--text-primary);
       }
       .featured-humor {
-        background: rgba(217, 119, 6, 0.08);
-        border-left: 4px solid #d97706;
+        background: rgba(255, 176, 0, 0.1);
+        border-left: 4px solid var(--foss-amber);
         padding: 1rem;
-        border-radius: 8px;
+        border-radius: 4px;
         margin-bottom: 1.5rem;
       }
       .featured-humor p {
-        color: #d97706;
+        color: var(--foss-amber);
         font-style: italic;
         margin: 0;
       }
@@ -376,29 +487,41 @@
         flex-wrap: wrap;
       }
       .featured-tag {
-        background: rgba(0, 131, 143, 0.1);
-        border: 1px solid #00a3b8;
+        background: rgba(0, 255, 65, 0.1);
+        border: 1px solid var(--foss-green-dim);
         font-size: 0.9rem;
-        color: #00838f;
+        color: var(--foss-green);
+        font-family: var(--font-mono);
       }
 
       /* Recent Additions */
       .recent-additions {
-        background: rgba(0, 163, 184, 0.05);
-        border: 1px solid rgba(0, 163, 184, 0.2);
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+      }
+      .recent-additions::before {
+        background: linear-gradient(90deg, var(--foss-purple), var(--foss-cyan));
       }
       .recent-additions p {
         margin: 0;
         font-size: 1.1rem;
+        color: var(--text-primary);
+      }
+      .recent-additions strong {
+        color: var(--foss-cyan);
+        font-family: var(--font-mono);
       }
 
       /* Search & Filter Section */
       .search-section {
-        background: rgba(0, 212, 228, 0.05);
-        border: 1px solid rgba(0, 163, 184, 0.3);
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
         position: sticky;
         top: 0;
         z-index: 10;
+      }
+      .search-section::before {
+        background: linear-gradient(90deg, var(--foss-green), var(--foss-amber));
       }
       .search-container {
         margin: 2rem 0;
@@ -410,21 +533,22 @@
       .search-input {
         width: 100%;
         padding: 1rem 1.2rem 1rem 3rem;
-        background: white;
-        border: 2px solid rgba(0, 163, 184, 0.3);
-        border-radius: 10px;
-        color: #1a3a52;
+        background: var(--bg-primary);
+        border: 2px solid var(--border-color);
+        border-radius: 6px;
+        color: var(--text-primary);
+        font-family: var(--font-mono);
         font-size: 1rem;
         transition: all 0.3s ease;
       }
       .search-input::placeholder {
-        color: rgba(26, 58, 82, 0.5);
+        color: var(--text-muted);
       }
       .search-input:focus {
         outline: none;
-        border-color: #00a3b8;
-        background: rgba(0, 212, 228, 0.05);
-        box-shadow: 0 0 20px rgba(0, 163, 184, 0.15);
+        border-color: var(--foss-green);
+        background: var(--bg-secondary);
+        box-shadow: 0 0 20px rgba(0, 255, 65, 0.15);
       }
       .search-icon {
         position: absolute;
@@ -452,40 +576,45 @@
         gap: 0.5rem;
         cursor: pointer;
         transition: color 0.2s;
-        color: #2d3e50;
+        color: var(--text-secondary);
+        font-family: var(--font-mono);
+        font-size: 0.9rem;
       }
       .filter-label:hover {
-        color: #00838f;
+        color: var(--foss-green);
       }
       .filter-label input[type='checkbox'] {
         cursor: pointer;
         width: 18px;
         height: 18px;
-        accent-color: #00a3b8;
+        accent-color: var(--foss-green);
       }
       .sort-label {
         display: flex;
         align-items: center;
         gap: 0.8rem;
+        color: var(--text-secondary);
+        font-family: var(--font-mono);
       }
       .sort-select {
         padding: 0.6rem 0.8rem;
-        background: white;
-        border: 1px solid rgba(0, 163, 184, 0.3);
-        color: #1a3a52;
-        border-radius: 6px;
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        border-radius: 4px;
         font-size: 0.95rem;
+        font-family: var(--font-mono);
         cursor: pointer;
         transition: all 0.2s;
       }
       .sort-select:hover,
       .sort-select:focus {
-        border-color: #00a3b8;
-        background: rgba(0, 212, 228, 0.05);
+        border-color: var(--foss-green);
+        background: var(--bg-secondary);
       }
       .sort-select option {
-        background: white;
-        color: #1a3a52;
+        background: var(--bg-primary);
+        color: var(--text-primary);
       }
       .filter-tags-container {
         display: flex;
@@ -497,18 +626,19 @@
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        background: rgba(0, 163, 184, 0.15);
-        border: 1px solid #00a3b8;
-        color: #00838f;
+        background: rgba(0, 255, 65, 0.1);
+        border: 1px solid var(--foss-green-dim);
+        color: var(--foss-green);
         padding: 0.5rem 1rem;
-        border-radius: 20px;
+        border-radius: 4px;
         font-size: 0.9rem;
+        font-family: var(--font-mono);
         animation: fadeInUp 0.3s ease;
       }
       .chip-remove {
         background: none;
         border: none;
-        color: #00838f;
+        color: var(--foss-green);
         cursor: pointer;
         font-size: 1.1rem;
         padding: 0;
@@ -519,14 +649,18 @@
         opacity: 1;
       }
       .result-count {
-        color: rgba(45, 62, 80, 0.7);
+        color: var(--text-muted);
         font-size: 0.95rem;
         margin-top: 1rem;
+        font-family: var(--font-mono);
       }
 
       /* Term Grid & Cards */
       .terms-section {
-        background: rgba(0, 163, 184, 0.03);
+        background: var(--bg-secondary);
+      }
+      .terms-section::before {
+        background: linear-gradient(90deg, var(--foss-cyan), var(--foss-green));
       }
       .term-grid {
         display: grid;
@@ -535,10 +669,10 @@
         margin: 2rem 0;
       }
       .term-card {
-        background: white;
-        border: 1px solid #e0e7ed;
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
         padding: 1.5rem;
-        border-radius: 12px;
+        border-radius: 6px;
         transition: all 0.3s ease;
         opacity: 1;
       }
@@ -546,10 +680,10 @@
         animation: fadeInUp 0.4s ease-out;
       }
       .term-card:hover {
-        border-color: #00d4e4;
+        border-color: var(--foss-green-dim);
         transform: translateY(-4px);
-        box-shadow: 0 12px 36px rgba(0, 163, 184, 0.15);
-        background: rgba(0, 212, 228, 0.02);
+        box-shadow: 0 12px 36px rgba(0, 255, 65, 0.1);
+        background: var(--bg-elevated);
       }
       .term-header {
         display: flex;
@@ -560,7 +694,7 @@
         flex-wrap: wrap;
       }
       .term-header h3 {
-        color: #00838f;
+        color: var(--foss-cyan);
         margin: 0;
         font-size: 1.3rem;
         flex: 1;
@@ -569,7 +703,7 @@
       .score-bar-container {
         width: 100px;
         height: 6px;
-        background: rgba(0, 163, 184, 0.2);
+        background: var(--bg-elevated);
         border-radius: 3px;
         overflow: hidden;
         margin-bottom: 0.5rem;
@@ -584,19 +718,20 @@
         font-weight: 700;
         font-size: 1rem;
         white-space: nowrap;
+        font-family: var(--font-mono);
       }
       .term-definition {
-        color: #2d3e50;
+        color: var(--text-primary);
         margin-bottom: 1rem;
         line-height: 1.6;
       }
       .term-humor {
-        color: #d97706;
+        color: var(--foss-amber);
         font-style: italic;
         font-size: 0.95rem;
         padding: 0.8rem;
-        background: #fef3c7;
-        border-left: 3px solid #fbbf24;
+        background: rgba(255, 176, 0, 0.1);
+        border-left: 3px solid var(--foss-amber);
         margin: 1rem 0;
         border-radius: 4px;
       }
@@ -607,29 +742,33 @@
         margin-top: 1rem;
       }
       .tag {
-        background: #e0f7fa;
-        color: #00838f;
+        background: rgba(0, 255, 65, 0.1);
+        color: var(--foss-green);
         padding: 0.35rem 0.7rem;
-        border-radius: 16px;
+        border-radius: 4px;
         font-size: 0.8rem;
-        border: 1px solid #b2ebf2;
+        border: 1px solid var(--foss-green-dim);
         transition: all 0.2s;
         cursor: pointer;
+        font-family: var(--font-mono);
       }
       .tag:hover {
-        background: #b2ebf2;
-        border-color: #00a3b8;
+        background: rgba(0, 255, 65, 0.2);
+        border-color: var(--foss-green);
       }
       .empty-state {
         text-align: center;
         padding: 3rem 2rem;
-        color: rgba(45, 62, 80, 0.6);
+        color: var(--text-muted);
         font-size: 1.1rem;
       }
 
       /* Scoring Section */
       .scoring-section {
-        background: rgba(0, 163, 184, 0.05);
+        background: var(--bg-secondary);
+      }
+      .scoring-section::before {
+        background: linear-gradient(90deg, var(--foss-amber), var(--foss-purple));
       }
       .scoring-grid {
         display: grid;
@@ -638,54 +777,55 @@
         margin: 2rem 0;
       }
       .scoring-item {
-        background: rgba(0, 212, 228, 0.05);
-        border: 1px solid rgba(0, 163, 184, 0.2);
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
         padding: 1.5rem;
-        border-radius: 12px;
+        border-radius: 6px;
         text-align: center;
         transition: all 0.3s ease;
       }
       .scoring-item:hover {
-        background: rgba(0, 212, 228, 0.08);
+        background: var(--bg-elevated);
         transform: translateY(-4px);
-        border-color: rgba(0, 163, 184, 0.4);
+        border-color: var(--foss-green-dim);
       }
       .scoring-emoji {
         font-size: 2.5rem;
         margin-bottom: 0.8rem;
       }
       .scoring-item h4 {
-        color: #00838f;
+        color: var(--foss-green);
         font-size: 1.1rem;
         margin-bottom: 0.5rem;
       }
       .scoring-item p {
-        color: #2d3e50;
+        color: var(--text-secondary);
         font-size: 0.95rem;
         margin: 0;
+        font-family: var(--font-mono);
       }
       .scoring-note {
         text-align: center;
         padding: 1.5rem;
-        background: rgba(0, 163, 184, 0.1);
-        border-left: 4px solid #00a3b8;
-        border-radius: 8px;
+        background: rgba(0, 255, 65, 0.1);
+        border-left: 4px solid var(--foss-green);
+        border-radius: 4px;
         margin-top: 2rem;
       }
       .scoring-note p {
         font-weight: 600;
-        color: #00838f;
+        color: var(--foss-green);
         margin: 0;
+        font-family: var(--font-mono);
       }
 
       /* CTA Section */
       .cta-section {
-        background: linear-gradient(
-          135deg,
-          rgba(0, 163, 184, 0.08) 0%,
-          rgba(0, 212, 228, 0.05) 100%
-        );
+        background: var(--bg-secondary);
         text-align: center;
+      }
+      .cta-section::before {
+        background: linear-gradient(90deg, var(--foss-green), var(--foss-cyan));
       }
       .cta {
         display: flex;
@@ -696,35 +836,37 @@
       }
       .button {
         display: inline-block;
-        background: linear-gradient(135deg, #00a3b8 0%, #00d4e4 100%);
-        color: white;
+        background: var(--foss-green);
+        color: var(--bg-primary);
         padding: 1rem 2.5rem;
         text-decoration: none;
-        border-radius: 50px;
+        border-radius: 6px;
         font-weight: 700;
         font-size: 1rem;
+        font-family: var(--font-mono);
         transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(0, 163, 184, 0.4);
-        border: 2px solid transparent;
+        box-shadow: 0 4px 15px rgba(0, 255, 65, 0.3);
+        border: 2px solid var(--foss-green);
         cursor: pointer;
       }
       .button:hover {
         transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(0, 163, 184, 0.5);
-        background: linear-gradient(135deg, #00d4e4 0%, #00f0ff 100%);
+        box-shadow: 0 8px 25px rgba(0, 255, 65, 0.4);
+        background: var(--foss-green-bright);
+        border-color: var(--foss-green-bright);
       }
       .button:active {
         transform: translateY(-1px);
       }
       .button-secondary {
-        background: white;
-        color: #00a3b8;
-        border: 2px solid #00d4e4;
+        background: transparent;
+        color: var(--foss-green);
+        border: 2px solid var(--foss-green-dim);
       }
       .button-secondary:hover {
-        background: #e0f7fa;
-        border-color: #00a3b8;
-        color: #00838f;
+        background: rgba(0, 255, 65, 0.1);
+        border-color: var(--foss-green);
+        color: var(--foss-green-bright);
       }
 
       /* Footer */
@@ -732,305 +874,129 @@
         text-align: center;
         margin-top: 4rem;
         padding-top: 2rem;
-        border-top: 1px solid rgba(0, 163, 184, 0.2);
+        border-top: 1px solid var(--border-color);
       }
       .last-updated {
-        color: rgba(45, 62, 80, 0.7);
+        color: var(--text-muted);
         font-size: 0.9rem;
         margin: 0;
         line-height: 1.6;
+        font-family: var(--font-mono);
+      }
+
+      /* ASCII art decoration */
+      .footer::before {
+        content: '/* EOF */';
+        display: block;
+        color: var(--text-muted);
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+        margin-bottom: 1rem;
+        opacity: 0.6;
       }
 
       /* Release Banner */
       .release-banner {
-        background: linear-gradient(135deg, #e0f7fa 0%, #b3e5fc 100%);
-        border: 2px solid #00a3b8;
+        background: var(--bg-elevated);
+        border: 1px solid var(--foss-purple);
         padding: 2rem;
-        border-radius: 12px;
+        border-radius: 6px;
         margin-bottom: 2rem;
         text-align: center;
-        box-shadow: 0 4px 20px rgba(0, 163, 184, 0.15);
+        box-shadow: 0 4px 20px rgba(189, 147, 249, 0.15);
       }
       .release-badge {
-        color: #1a3a52;
+        color: var(--foss-purple);
         font-weight: 600;
         margin: 0 0 0.5rem 0;
+        font-family: var(--font-mono);
       }
       .release-banner h2 {
-        color: #00838f;
+        color: var(--foss-green);
         margin: 0 0 0.5rem 0;
       }
       .release-banner p {
-        color: #1a3a52;
+        color: var(--text-secondary);
         margin: 0.5rem 0;
       }
       .release-banner a {
         display: inline-block;
         margin-top: 1rem;
         padding: 0.6rem 1.5rem;
-        background: #00a3b8;
-        color: white;
+        background: var(--foss-green-dim);
+        color: var(--bg-primary);
         text-decoration: none;
-        border-radius: 6px;
+        border-radius: 4px;
         font-weight: 700;
+        font-family: var(--font-mono);
         cursor: pointer;
-        border: 2px solid #00a3b8;
+        border: 2px solid var(--foss-green-dim);
         transition: all 0.3s ease;
       }
       .release-banner a:hover {
-        background: #00d4e4;
-        border-color: #00d4e4;
+        background: var(--foss-green);
+        border-color: var(--foss-green);
         transform: translateY(-2px);
       }
 
-      /* DARK THEME */
-      @media (prefers-color-scheme: dark) {
+      /* LIGHT THEME - Overrides CSS custom properties for users who prefer light mode.
+           The base styles above use CSS variables, so overriding only the color variables
+           is sufficient to theme the entire page. Additional element-specific overrides
+           below handle cases where shadows or text colors need adjustment for light backgrounds. */
+      @media (prefers-color-scheme: light) {
+        :root {
+          --bg-primary: #ffffff;
+          --bg-secondary: #f6f8fa;
+          --bg-card: #ffffff;
+          --bg-elevated: #f3f4f6;
+          --text-primary: #1f2937;
+          --text-secondary: #4b5563;
+          --text-muted: #6b7280;
+          --border-color: #e5e7eb;
+          --border-accent: #22c55e;
+          --foss-green: #16a34a;
+          --foss-green-dim: #22c55e;
+          --foss-green-bright: #4ade80;
+          --foss-amber: #d97706;
+          --foss-cyan: #0891b2;
+          --foss-purple: #7c3aed;
+        }
         body {
-          color: #f5f5f0;
-          background: linear-gradient(135deg, #1a3a52 0%, #0f2234 100%);
+          background: linear-gradient(135deg, #f0fdf4 0%, #ecfeff 100%);
         }
         .card {
-          background: rgba(255, 255, 255, 0.05);
-          border: 1px solid rgba(0, 212, 228, 0.2);
-          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
         }
-        .hero-card {
-          background: linear-gradient(
-            135deg,
-            rgba(0, 212, 228, 0.1) 0%,
-            rgba(0, 240, 255, 0.05) 100%
-          );
-          border-color: rgba(0, 212, 228, 0.3);
-        }
-        h1,
-        h2,
         .hero-title {
-          color: #00d4e4;
-        }
-        .tagline {
-          color: #f5f5f0;
+          text-shadow: none;
         }
         .logo {
-          box-shadow:
-            0 10px 40px rgba(0, 212, 228, 0.5),
-            inset 0 0 20px rgba(0, 212, 228, 0.2);
-          border-color: rgba(0, 212, 228, 0.4);
+          box-shadow: 0 10px 40px rgba(22, 163, 74, 0.2);
         }
         .logo:hover {
-          box-shadow:
-            0 15px 50px rgba(0, 212, 228, 0.7),
-            inset 0 0 30px rgba(0, 212, 228, 0.3);
+          box-shadow: 0 15px 50px rgba(22, 163, 74, 0.3);
         }
-        .stat-card {
-          background: rgba(0, 212, 228, 0.1);
-          border: 2px solid #00d4e4;
-          color: #f5f5f0;
+        .github-ribbon a {
+          background: var(--foss-green);
+          color: white;
         }
-        .stat-card:hover {
-          background: rgba(0, 212, 228, 0.15);
-          box-shadow: 0 8px 24px rgba(0, 212, 228, 0.2);
-        }
-        .stat-number {
-          color: #00f0ff;
-        }
-        .stat-label {
-          color: #f5f5f0;
-        }
-        .featured-section {
-          background: linear-gradient(
-            135deg,
-            rgba(0, 240, 255, 0.1) 0%,
-            rgba(0, 212, 228, 0.05) 100%
-          );
-          border-color: #00d4e4;
-        }
-        .featured-section::before {
-          background: linear-gradient(90deg, transparent, rgba(0, 212, 228, 0.2), transparent);
-        }
-        .featured-header h3 {
-          color: #00f0ff;
-        }
-        .score-badge {
-          background: linear-gradient(135deg, #00d4e4 0%, #00f0ff 100%);
-          color: #0d1f2d;
-        }
-        .featured-definition {
-          color: #f5f5f0;
-        }
-        .featured-humor {
-          background: rgba(255, 217, 61, 0.1);
-          border-left-color: #ffd93d;
-        }
-        .featured-humor p {
-          color: #ffd93d;
-        }
-        .featured-tag {
-          background: rgba(0, 212, 228, 0.3);
-          border-color: #00d4e4;
-          color: #00d4e4;
-        }
-        .recent-additions {
-          background: rgba(0, 0, 0, 0.3);
-          border-color: rgba(0, 212, 228, 0.2);
-        }
-        .term-card {
-          background: rgba(255, 255, 255, 0.05);
-          border: 2px solid rgba(0, 212, 228, 0.3);
-        }
-        .term-card:hover {
-          border-color: #00d4e4;
-          background: rgba(255, 255, 255, 0.08);
-          box-shadow: 0 12px 36px rgba(0, 212, 228, 0.25);
-        }
-        .term-header h3 {
-          color: #00d4e4;
-        }
-        .term-definition {
-          color: #f5f5f0;
-        }
-        .term-humor {
-          color: #ffd93d;
-          background: rgba(255, 217, 61, 0.08);
-          border-left-color: #ffd93d;
-        }
-        .tag {
-          background: rgba(0, 212, 228, 0.2);
-          color: #00d4e4;
-          border: 1px solid rgba(0, 212, 228, 0.3);
-        }
-        .tag:hover {
-          background: rgba(0, 212, 228, 0.3);
-          border-color: #00d4e4;
-        }
-        .search-input {
-          background: rgba(0, 212, 228, 0.1);
-          border-color: rgba(0, 212, 228, 0.3);
-          color: #f5f5f0;
-        }
-        .search-input::placeholder {
-          color: rgba(245, 245, 240, 0.5);
-        }
-        .search-input:focus {
-          background: rgba(0, 212, 228, 0.15);
-          border-color: #00d4e4;
-          box-shadow: 0 0 20px rgba(0, 212, 228, 0.2);
-        }
-        .sort-select,
-        .sort-select option {
-          background: #1a3a52;
-          color: #f5f5f0;
-          border-color: rgba(0, 212, 228, 0.3);
-        }
-        .sort-select:hover,
-        .sort-select:focus {
-          border-color: #00d4e4;
-          background: rgba(0, 212, 228, 0.15);
-        }
-        .filter-label {
-          color: #f5f5f0;
-        }
-        .filter-label:hover {
-          color: #00f0ff;
-        }
-        .filter-label input[type='checkbox'] {
-          accent-color: #00d4e4;
-        }
-        .filter-chip {
-          background: rgba(0, 212, 228, 0.2);
-          border-color: #00d4e4;
-          color: #00d4e4;
-        }
-        .chip-remove {
-          color: #00d4e4;
-        }
-        .result-count {
-          color: rgba(245, 245, 240, 0.7);
-        }
-        .scoring-section {
-          background: rgba(0, 212, 228, 0.05);
-        }
-        .scoring-item {
-          background: rgba(0, 212, 228, 0.08);
-          border-color: rgba(0, 212, 228, 0.2);
-        }
-        .scoring-item:hover {
-          background: rgba(0, 212, 228, 0.12);
-          border-color: rgba(0, 212, 228, 0.5);
-        }
-        .scoring-item h4 {
-          color: #00d4e4;
-        }
-        .scoring-item p {
-          color: rgba(245, 245, 240, 0.8);
-        }
-        .scoring-note {
-          background: rgba(0, 212, 228, 0.1);
-          border-left-color: #00d4e4;
-        }
-        .scoring-note p {
-          color: #00f0ff;
-        }
-        .cta-section {
-          background: linear-gradient(
-            135deg,
-            rgba(0, 212, 228, 0.08) 0%,
-            rgba(0, 240, 255, 0.05) 100%
-          );
+        .github-ribbon a:hover {
+          background: var(--foss-green-bright);
         }
         .button {
-          background: #00d4e4;
-          color: #0d1f2d;
-          box-shadow: 0 4px 15px rgba(0, 212, 228, 0.4);
+          color: white;
         }
-        .button:hover {
-          background: #00f0ff;
-          box-shadow: 0 8px 25px rgba(0, 212, 228, 0.6);
+        .stat-card:hover {
+          box-shadow: 0 8px 24px rgba(22, 163, 74, 0.15);
         }
-        .button-secondary {
-          background: transparent;
-          color: #00d4e4;
-          border-color: #00d4e4;
+        .term-card:hover {
+          box-shadow: 0 12px 36px rgba(22, 163, 74, 0.1);
         }
-        .button-secondary:hover {
-          background: rgba(0, 212, 228, 0.1);
-          border-color: #00f0ff;
-          color: #00f0ff;
-        }
-        .release-banner {
-          background: linear-gradient(
-            135deg,
-            rgba(0, 212, 228, 0.15) 0%,
-            rgba(0, 240, 255, 0.1) 100%
-          );
-          border-color: #00d4e4;
-          box-shadow: 0 4px 20px rgba(0, 212, 228, 0.2);
-        }
-        .release-badge {
-          color: #f5f5f0;
-        }
-        .release-banner p {
-          color: #f5f5f0;
-        }
-        .release-banner h2 {
-          color: #00f0ff;
+        .score-badge {
+          color: white;
         }
         .release-banner a {
-          background: #00d4e4;
-          border-color: #00d4e4;
-          color: #0d1f2d;
-        }
-        .release-banner a:hover {
-          background: #00f0ff;
-          border-color: #00f0ff;
-        }
-        .empty-state {
-          color: rgba(245, 245, 240, 0.6);
-        }
-        .footer {
-          border-top-color: rgba(0, 212, 228, 0.2);
-        }
-        .last-updated {
-          color: rgba(245, 245, 240, 0.7);
+          color: white;
         }
       }
 
@@ -1156,6 +1122,11 @@
     </style>
   </head>
   <body>
+    <!-- Fork me on GitHub ribbon -->
+    <div class="github-ribbon">
+      <a href="https://github.com/LuminLynx/FOSS-Glossary">Fork me on GitHub</a>
+    </div>
+
     <div class="container">
       <!-- HERO SECTION -->
       <div class="card hero-card">
@@ -1187,19 +1158,19 @@
         <h2>📊 Live Statistics</h2>
         <div class="live-stats">
           <div class="stat-card" data-animate="fadeInUp" data-delay="0">
-            <span class="stat-number">1</span>
+            <span class="stat-number">28</span>
             <span class="stat-label">Total Terms</span>
           </div>
           <div class="stat-card" data-animate="fadeInUp" data-delay="1">
-            <span class="stat-number">0</span>
+            <span class="stat-number">28</span>
             <span class="stat-label">Funny Terms</span>
           </div>
           <div class="stat-card" data-animate="fadeInUp" data-delay="2">
-            <span class="stat-number">0%</span>
+            <span class="stat-number">100%</span>
             <span class="stat-label">Humor Rate</span>
           </div>
           <div class="stat-card" data-animate="fadeInUp" data-delay="3">
-            <span class="stat-number">1</span>
+            <span class="stat-number">65</span>
             <span class="stat-label">Categories</span>
           </div>
         </div>
@@ -1210,17 +1181,28 @@
         <h2>⭐ Featured Term</h2>
         <div class="featured-term-card">
           <div class="featured-header">
-            <h3>Test &amp; Special &lt;Characters&gt;</h3>
-            <div class="score-badge" data-score="23">
-              <span class="score-value">23</span>
+            <h3>License Proliferation</h3>
+            <div class="score-badge" data-score="98">
+              <span class="score-value">98</span>
               <span class="score-label">/ 100</span>
             </div>
           </div>
           <p class="featured-definition">
-            A test term with special &amp; characters like &gt; &lt; &quot; and &#x27;
+            The overabundance of open source licenses, often with subtle but significant
+            differences, making it difficult to combine or reuse code across projects without legal
+            contortions.
           </p>
+          <div class="featured-humor">
+            <p>
+              😂 "Like trying to host a potluck where everyone insists on bringing food—but only if
+              you agree to eat it under their very specific house rules."
+            </p>
+          </div>
           <div class="featured-tags">
-            <span class="tag featured-tag">test</span>
+            <span class="tag featured-tag">open-source</span>
+            <span class="tag featured-tag">legal</span>
+            <span class="tag featured-tag">compatibility</span>
+            <span class="tag featured-tag">community</span>
           </div>
         </div>
       </div>
@@ -1228,7 +1210,7 @@
       <!-- RECENT ADDITIONS -->
       <div class="card recent-additions">
         <h2>🆕 Latest Additions</h2>
-        <p>Just added: <strong>Test &amp; Special &lt;Characters&gt;</strong></p>
+        <p>Just added: <strong>Zombie Dependencies, YOLO Deploy, Yak Shaving</strong></p>
       </div>
 
       <!-- SEARCH & FILTER SECTION -->
@@ -1282,7 +1264,7 @@
 
           <div class="filter-tags-container" id="activeFilters"></div>
         </div>
-        <p class="result-count" id="resultCount">Search 1 terms</p>
+        <p class="result-count" id="resultCount">Search 28 terms</p>
       </div>
 
       <!-- TERM GRID -->
@@ -1345,7 +1327,7 @@
             class="button button-secondary"
             data-animate="slideInUp"
           >
-            📝 View All 1 Terms
+            📝 View All 28 Terms
           </a>
           <a href="./documentation.html" class="button button-secondary" data-animate="slideInUp">
             📚 View Documentation Hub
@@ -1356,15 +1338,15 @@
       <!-- FOOTER -->
       <div class="footer">
         <p class="last-updated">
-          Last updated: Nov 25, 2025, 5:20 PM | 1 terms and growing!<br />
+          Last updated: Nov 25, 2025, 7:27 PM | 28 terms and growing!<br />
           Made with 💙 by the FOSS community
         </p>
       </div>
     </div>
 
     <script>
-      window.__TERMS_JSON_URL = './terms.json?ver=15a3ac3';
-      window.__TOTAL_TERMS = 1;
+      window.__TERMS_JSON_URL = './terms.json?ver=3f830fe';
+      window.__TOTAL_TERMS = 28;
 
       /**
        * FOSS Glossary Landing Page - Client-Side Search & Filter Engine
@@ -1731,7 +1713,7 @@
             const resultCount = document.getElementById('resultCount');
             if (resultCount) {
               const count = this.filteredTerms.length;
-              const total = window.__TOTAL_TERMS || 1;
+              const total = window.__TOTAL_TERMS || 28;
               resultCount.textContent = `Showing ${count} of ${total} terms`;
             }
 
@@ -1747,7 +1729,7 @@
             // Update result count to default message
             const resultCount = document.getElementById('resultCount');
             if (resultCount) {
-              const total = window.__TOTAL_TERMS || 1;
+              const total = window.__TOTAL_TERMS || 28;
               resultCount.textContent = `Search ${total} terms`;
             }
           }

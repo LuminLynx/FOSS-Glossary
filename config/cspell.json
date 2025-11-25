@@ -97,7 +97,12 @@
     "morphism",
     "WCAG",
     "aren",
-    "jank"
+    "jank",
+    "Fira",
+    "Cascadia",
+    "Consolas",
+    "Noto",
+    "scanline"
   ],
   "ignorePaths": [
     "node_modules/**",
