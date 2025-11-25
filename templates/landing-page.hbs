@@ -69,8 +69,8 @@
         </div>
 
         <h1 class="hero-title">🚀 FOSS Glossary</h1>
-        <p class="tagline">A gamified glossary of Free and Open Source Software
-          terms, with humor, sarcasm, and honest truths.</p>
+        <p class="tagline" data-typewriter="A gamified glossary of Free and Open Source Software terms, with humor, sarcasm, and honest truths."><noscript>A gamified glossary of Free and Open Source Software
+          terms, with humor, sarcasm, and honest truths.</noscript></p>
 
         <!-- RELEASE ANNOUNCEMENT -->
         {{#if release}}
@@ -733,8 +733,57 @@
         },
       };
 
+      /**
+       * Typewriter effect for terminal-style text animation
+       * Respects prefers-reduced-motion accessibility setting
+       */
+      const Typewriter = {
+        charDelay: 50,
+
+        init() {
+          // Check for reduced motion preference
+          if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            this.showTextImmediately();
+            return;
+          }
+
+          const elements = document.querySelectorAll('[data-typewriter]');
+          elements.forEach((el) => this.animate(el));
+        },
+
+        showTextImmediately() {
+          const elements = document.querySelectorAll('[data-typewriter]');
+          elements.forEach((el) => {
+            const text = el.dataset.typewriter;
+            el.textContent = text;
+          });
+        },
+
+        animate(el) {
+          const text = el.dataset.typewriter;
+          if (!text) return;
+
+          el.textContent = '';
+          const cursor = document.createElement('span');
+          cursor.className = 'typewriter-cursor';
+          cursor.setAttribute('aria-hidden', 'true');
+          el.appendChild(cursor);
+
+          let index = 0;
+          const type = () => {
+            if (index < text.length) {
+              el.insertBefore(document.createTextNode(text.charAt(index)), cursor);
+              index++;
+              setTimeout(type, this.charDelay);
+            }
+          };
+          type();
+        },
+      };
+
       // Initialize on page load
       document.addEventListener('DOMContentLoaded', () => {
+        Typewriter.init();
         SearchEngine.init();
         Animations.init();
       });

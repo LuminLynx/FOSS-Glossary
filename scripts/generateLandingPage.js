@@ -371,6 +371,32 @@ const CSS_STYLES = `
             margin-left: auto;
             margin-right: auto;
             color: #2d3e50;
+            min-height: 1.8em;
+        }
+        
+        /* Typewriter Effect */
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .typewriter-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1.2em;
+            background-color: #00838f;
+            margin-left: 2px;
+            vertical-align: text-bottom;
+            animation: blink 1s step-end infinite;
+        }
+        @media (prefers-color-scheme: dark) {
+            .typewriter-cursor {
+                background-color: #00d4e4;
+            }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .typewriter-cursor {
+                animation: none;
+            }
         }
         
         /* Statistics Section */
