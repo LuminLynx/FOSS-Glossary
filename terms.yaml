@@ -358,3 +358,17 @@ terms:
       - technical-debt
       - risk
     controversy_level: medium
+  - slug: bdfl
+    term: 'BDFL (Benevolent Dictator for Life)'
+    definition: "A project leader with final decision-making authority, trusted to guide the project's direction while remaining accountable to the community."
+    explanation: 'The BDFL model balances efficiency with openness—one person breaks deadlocks and maintains vision, but risks burnout or community friction. Python had Guido van Rossum; Linux has Linus Torvalds (though he disputes the "benevolent" part).'
+    humor: 'A title that sounds like a joke until you realize it's the actual governance model—because nothing says "democracy" like a lifetime dictatorship, even a friendly one.'
+    see_also: 
+      - Maintainer
+      - Meritocract
+      - Code-of-Conduct
+    tags: 
+      - governance
+      - community 
+      - leadership
+    controversy_level: 'high'
