@@ -4,16 +4,16 @@ on:
   push:
     branches: [main]
     paths:
-      - 'terms.yaml'
-      - 'scripts/generateLandingPage.js'
-      - 'scripts/exportTerms.js'
-      - 'docs/**'
-      - 'package.json'
-      - 'package-lock.json'
+      - "terms.yaml"
+      - "scripts/generateLandingPage.js"
+      - "scripts/exportTerms.js"
+      - "docs/**"
+      - "package.json"
+      - "package-lock.json"
   workflow_dispatch:
 
 concurrency:
-  group: 'docs-updates'
+  group: "docs-updates"
   cancel-in-progress: false
 
 permissions:
@@ -34,7 +34,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
@@ -47,6 +47,10 @@ jobs:
 
       - name: Export terms bundle (only if new slugs)
         run: npm run export:new
+
+      # --- FIXING .gitignore to allow deployment ---
+      - name: Remove docs/index.html from .gitignore to allow deployment
+        run: sed -i '/docs\/index.html/d' .gitignore
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
