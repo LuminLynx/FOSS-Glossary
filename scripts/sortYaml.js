@@ -35,7 +35,7 @@ function parseArgs() {
 
 /**
  * Load and parse terms.yaml, preserving header comment
- * @returns {Object} Object with data and headerComment
+ * @returns {Object} Object with data, headerComment, and original content
  */
 function loadTermsYaml() {
   try {
@@ -57,6 +57,7 @@ function loadTermsYaml() {
     return {
       data,
       headerComment: headerLines.length > 0 ? headerLines.join('\n') + '\n' : '',
+      originalContent: content,
     };
   } catch (error) {
     console.error(`❌ Error: Failed to read ${TERMS_FILE}:`, error.message);
@@ -144,7 +145,7 @@ function main() {
   const options = parseArgs();
 
   // Load terms.yaml
-  const { data, headerComment } = loadTermsYaml();
+  const { data, headerComment, originalContent } = loadTermsYaml();
 
   if (!data.terms || !Array.isArray(data.terms)) {
     console.error('❌ Error: terms.yaml must contain a "terms" array');
@@ -152,19 +153,16 @@ function main() {
   }
 
   // Sort the terms
-  const originalTerms = data.terms;
-  const sortedTerms = sortTerms(originalTerms);
+  const sortedTerms = sortTerms(data.terms);
 
-  // Create sorted data
+  // Create the full sorted YAML output as a string
   const sortedData = { ...data, terms: sortedTerms };
-
-  // Serialize both versions for comparison
-  const originalYaml = serializeYaml(data);
-  const sortedYaml = serializeYaml(sortedData);
+  const sortedYamlString = serializeYaml(sortedData);
+  const sortedOutput = headerComment + sortedYamlString;
 
   if (options.check) {
-    // Check mode: Compare without modifying
-    if (originalYaml === sortedYaml) {
+    // Check mode: Compare original file content with sorted output
+    if (originalContent === sortedOutput) {
       console.log('✅ YAML is properly sorted');
       process.exit(0);
     } else {
@@ -174,8 +172,7 @@ function main() {
   } else {
     // Write mode: Save sorted version with header
     try {
-      const output = headerComment + sortedYaml;
-      fs.writeFileSync(TERMS_FILE, output, 'utf8');
+      fs.writeFileSync(TERMS_FILE, sortedOutput, 'utf8');
       console.log(`✅ YAML terms and keys sorted successfully`);
       process.exit(0);
     } catch (error) {
