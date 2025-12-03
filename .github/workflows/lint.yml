@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: write
 
 jobs:
   lint:
@@ -27,10 +28,82 @@ jobs:
         run: npm ci --include=dev --no-audit --no-fund
 
       - name: Run Prettier
+        id: prettier
+        continue-on-error: true
         run: npm run lint:prettier
 
       - name: Run Markdownlint
+        id: markdownlint
+        continue-on-error: true
         run: npm run lint:markdown
 
       - name: Run cspell
+        id: cspell
+        continue-on-error: true
         run: npm run lint:spell
+
+      - name: Comment on PR with linting results
+        if: steps.prettier.outcome == 'failure' || steps.markdownlint.outcome == 'failure' || steps.cspell.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            const marker = '<!-- lint-check -->';
+            const prettierFailed = '${{ steps.prettier.outcome }}' === 'failure';
+            const markdownlintFailed = '${{ steps.markdownlint.outcome }}' === 'failure';
+            const cspellFailed = '${{ steps.cspell.outcome }}' === 'failure';
+
+            let body = `${marker}\n### Lint Check ❌\n\n`;
+            body += `One or more linters failed. Please fix the issues below:\n\n`;
+
+            if (prettierFailed) {
+              body += `#### Prettier\n`;
+              body += `- **Issue:** Code formatting does not match the project style.\n`;
+              body += `- **Fix:** Run \`npm run format\` locally to auto-fix formatting issues.\n\n`;
+            }
+
+            if (markdownlintFailed) {
+              body += `#### Markdownlint\n`;
+              body += `- **Issue:** Markdown files have linting errors.\n`;
+              body += `- **Fix:** Run \`npm run lint:markdown\` locally to see the errors, then fix them manually.\n\n`;
+            }
+
+            if (cspellFailed) {
+              body += `#### cspell (Spell Check)\n`;
+              body += `- **Issue:** Spelling errors were detected.\n`;
+              body += `- **Fix:** Run \`npm run lint:spell\` locally to see the misspelled words. Add valid terms to \`config/cspell.json\` if needed.\n\n`;
+            }
+
+            body += `---\n`;
+            body += `**Tip:** Run \`npm run lint\` locally before pushing to catch all linting issues at once.`;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              per_page: 100,
+            });
+
+            const existing = comments.find(comment => comment.body && comment.body.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+              console.log('✅ Updated existing lint comment');
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+              console.log('✅ Created new lint comment');
+            }
+
+      - name: Fail if any linter failed
+        if: steps.prettier.outcome == 'failure' || steps.markdownlint.outcome == 'failure' || steps.cspell.outcome == 'failure'
+        run: exit 1
