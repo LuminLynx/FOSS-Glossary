@@ -21,7 +21,7 @@
 
 ### Key Workflow Files
 
-- **PR Validation**: `.github/workflows/pr-complete.yml` - Validates terms.yaml, runs scoring
+- **PR Validation**: `.github/workflows/pr-comment.yml` - Validates terms.yaml, runs scoring for all PRs
 - **Landing Page Deploy**: `.github/workflows/update-landing-page.yml` - Builds and deploys to GitHub Pages
 - **Issue Automation**: `.github/workflows/issue-task-pr.yml` - Creates task branches and PRs
 - **Stats Update**: `.github/workflows/readme-stats.yml` - Updates README statistics
@@ -61,7 +61,7 @@ npm test
 
 ### 1. PR Validation Workflow Failures
 
-**Workflow**: `pr-complete.yml`
+**Workflow**: `pr-comment.yml`
 
 #### Symptom: Schema validation fails
 
@@ -639,7 +639,7 @@ gh run view RUN_ID --log
 **Workflow Status Badge in README:**
 
 ```markdown
-[![CI](https://github.com/LuminLynx/FOSS-Glossary/actions/workflows/pr-complete.yml/badge.svg)](https://github.com/LuminLynx/FOSS-Glossary/actions)
+[![CI](https://github.com/LuminLynx/FOSS-Glossary/actions/workflows/pr-comment.yml/badge.svg)](https://github.com/LuminLynx/FOSS-Glossary/actions)
 ```
 
 **Slack Integration (if configured):**

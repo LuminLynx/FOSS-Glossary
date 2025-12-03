@@ -13,7 +13,7 @@ const EXPORT_SCRIPT = path.join(__dirname, '..', 'scripts', 'exportTerms.js');
 
 /**
  * Simulate the PR workflow validation steps
- * This matches the behavior in .github/workflows/pr-complete.yml
+ * This matches the behavior in .github/workflows/pr-comment.yml
  */
 function simulateWorkflow(termsData, baseTermsData = null) {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'workflow-test-'));

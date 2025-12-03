@@ -51,19 +51,19 @@ Acknowledges when issues are assigned to the Codex bot and applies tracking labe
 - Applies `in-progress` label
 - Validates bot assignment and `codex` label
 
-### PR Complete (`pr-complete.yml`)
+### PR Validation (`pr-comment.yml`)
 
 Validates pull requests for term additions and calculates contributor scores.
 
 **Triggers:**
 
-- Pull request opened/synchronized
+- Pull request opened/synchronized (applies to all PRs, including forks)
 
 **Key Features:**
 
-- Validates terms.yaml against schema
+- Validates terms.yaml against schema (via API for security)
 - Calculates contribution scores
-- Updates PR with validation results
+- Updates PR with validation results and score
 
 ### PR Welcome (`pr-welcome.yml`)
 

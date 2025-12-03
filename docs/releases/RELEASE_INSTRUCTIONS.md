@@ -107,7 +107,7 @@ After publishing the release, verify the following:
 
 Check that the CI workflows are still functioning correctly:
 
-- [ ] PR validation workflow (`.github/workflows/pr-complete.yml`)
+- [ ] PR validation workflow (`.github/workflows/pr-comment.yml`)
 - [ ] Landing page update workflow (`.github/workflows/update-landing-page.yml`)
 - [ ] README stats workflow (`.github/workflows/readme-stats.yml`)
 

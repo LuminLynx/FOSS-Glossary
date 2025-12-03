@@ -20,7 +20,7 @@ N/A
 ## 2) Repository Truths
 
 - **Canonical data:** `terms.yaml` (validated by `schema.json`).
-- **Validation workflow:** `.github/workflows/pr-complete.yml` calls `scripts/validateTerms.js` on PRs.
+- **Validation workflow:** `.github/workflows/pr-comment.yml` calls `scripts/validateTerms.js` on PRs.
 - **Contributor score:** computed/displayed **after validation** on PRs.
 - **Merge policy:** Owner approval required.
 - **Post‑merge export:** `npm run export:new` runs on push to `main` **only if** a new term (new slug) was added; it publishes `docs/terms.json` for the Landing Page.
@@ -83,7 +83,7 @@ npm run format  # Auto-fix formatting issues
 - ✅ markdownlint (markdown structure)
 - ✅ cspell (spell checking)
 
-**CI Gate:** `.github/workflows/pr-complete.yml` enforces linting as a **blocking check**.
+**CI Gate:** `.github/workflows/pr-comment.yml` enforces linting as a **blocking check**.
 
 **If linting fails:**
 
@@ -188,7 +188,7 @@ If information is missing, add `needs-info` and ask one precise question.
 
 - Modify `schema.json` per Section 5.
 - Update `scripts/validateTerms.js` to validate the **root** document and to fail non‑zero on violations and duplicates.
-- Ensure `.github/workflows/pr-complete.yml` gates `score`/`stats` on validate success.
+- Ensure `.github/workflows/pr-comment.yml` gates `score`/`stats` on validate success.
 - Add/confirm negative tests in PR description.
 
 ### 8.2 Add Post‑Merge Export Job
