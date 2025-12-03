@@ -112,7 +112,7 @@ After creating a release:
 
 The release process integrates with existing workflows:
 
-- **PR Validation** (`pr-complete.yml`): Ensures quality before merge
+- **PR Validation** (`pr-comment.yml`): Ensures quality before merge
 - **Landing Page** (`update-landing-page.yml`): Auto-deploys on merge to main
 - **README Stats** (`readme-stats.yml`): Updates statistics
 

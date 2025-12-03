@@ -41,18 +41,14 @@ Located in `scripts/scoring.js`. Allocates points as:
 
 ## Critical Workflows
 
-### PR Validation Workflow (`.github/workflows/pr-complete.yml`)
+### PR Validation Workflow (`.github/workflows/pr-comment.yml`)
 
-**Trigger**: PR opened or updated.
+**Trigger**: PR opened or updated (all PRs, including forks).
 **Steps** (in order):
 
 1. Validate schema (`scripts/validateTerms.js`) — blocks downstream if fails
-2. Type-check TypeScript definitions (`scripts/generateTypes.js --check`)
-3. Verify YAML sort order (`scripts/sortYaml.js`)
-4. Detect duplicates (handled in validation)
-5. Validate export schema (`scripts/exportTerms.js --check`)
-6. Score new/modified term (`scripts/quickScore.js`)
-7. Post comment with results
+2. Score new/modified term (`scripts/quickScore.js`)
+3. Post comment with validation status and score
 
 **Key rule**: If validation fails (exit non-zero), CI stops and PR cannot merge until fixed.
 
@@ -207,7 +203,7 @@ npm run validate      # Focused: schema validation only
 1. Update `config/schema.json` with new rules
 2. Update validation script (`scripts/validateTerms.js`)
 3. Add tests in `tests/validation.test.js`
-4. Ensure CI gate in `.github/workflows/pr-complete.yml` is correct
+4. Ensure CI gate in `.github/workflows/pr-comment.yml` is correct
 5. Document in PR body per AGENTS.md §8.1
 
 ### For Scoring or Export Changes

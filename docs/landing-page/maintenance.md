@@ -103,7 +103,7 @@ The `update-landing-page.yml` workflow automatically runs when:
 
 ### When PRs Are Created
 
-The `pr-complete.yml` workflow includes:
+The `pr-comment.yml` workflow includes:
 
 - Validates terms.yaml schema and content
 - Checks if landing page needs regeneration (informational)

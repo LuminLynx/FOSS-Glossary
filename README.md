@@ -47,7 +47,7 @@ Our automated pipeline ensures quality and keeps the glossary up-to-date:
                              │
                              ▼
          ┌───────────────────────────────────────┐
-         │   pr-complete.yml (PR Validation)     │
+         │   pr-comment.yml (PR Validation)       │
          ├───────────────────────────────────────┤
          │  1. ✓ Schema validation               │
          │  2. ✓ TypeScript types check          │
@@ -102,7 +102,7 @@ Our automated pipeline ensures quality and keeps the glossary up-to-date:
 
 - **readme-stats.yml** - Updates README statistics (terms count, contributors)
 - **issue-task-pr.yml** - Automates issue → task branch → PR creation
-- **pr-comment.yml** - Handles PR comments for forked repositories
+- **pr-comment.yml** - Validates PRs and provides scoring for all contributors
 - **pr-welcome.yml** - Welcomes new contributors
 
 📚 **[Detailed Pipeline Documentation](./docs/workflows/documentation.md)** | 🔧 **[Operations Runbook](./.github/RUNBOOK.md)**

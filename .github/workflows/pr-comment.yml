@@ -1,6 +1,6 @@
-name: PR Validation Comment (Forked PRs)
+name: PR Glossary Validation
 
-# This workflow safely posts validation results for PRs from forks
+# This workflow safely posts validation and scoring results for all PRs
 # Security: Uses pull_request_target to run with base repo permissions
 # Only fetches terms.yaml via API - does NOT checkout or execute PR code
 
@@ -17,10 +17,8 @@ permissions:
 
 jobs:
   validate-and-comment:
-    name: Validate terms.yaml and comment
+    name: Validate & score glossary
     runs-on: ubuntu-latest
-    # Only run for forked PRs (base repo PRs are handled by pr-complete.yml)
-    if: github.event.pull_request.head.repo.full_name != github.repository
 
     steps:
       - name: Checkout base repository only
@@ -110,26 +108,97 @@ jobs:
             echo EOF
           } >> "$GITHUB_OUTPUT"
 
-      - name: Comment validation result on PR
+      - name: Score latest term
+        id: score
+        if: steps.validate.outputs.exit_code == '0'
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          node scripts/quickScore.js > score-output.txt
+          EXIT=${PIPESTATUS[0]}
+          cat score-output.txt
+
+          SCORE_LINE=$(grep -m1 '^SCORE:' score-output.txt || true)
+          BADGES_LINE=$(grep -m1 '^BADGES:' score-output.txt || true)
+          TERM_NAME_LINE=$(grep -m1 '^TERM_NAME:' score-output.txt || true)
+          TERM_SLUG_LINE=$(grep -m1 '^TERM_SLUG:' score-output.txt || true)
+
+          if [ -n "$SCORE_LINE" ]; then
+            SCORE_VALUE=$(echo "$SCORE_LINE" | cut -d: -f2- | xargs)
+            echo "score=$SCORE_VALUE" >> "$GITHUB_OUTPUT"
+          else
+            echo "score=" >> "$GITHUB_OUTPUT"
+          fi
+
+          if [ -n "$BADGES_LINE" ]; then
+            BADGES_VALUE=$(echo "$BADGES_LINE" | cut -d: -f2- | sed 's/^ *//' | sed 's/ *$//')
+            echo "badges=$BADGES_VALUE" >> "$GITHUB_OUTPUT"
+          else
+            echo "badges=" >> "$GITHUB_OUTPUT"
+          fi
+
+          if [ -n "$TERM_NAME_LINE" ]; then
+            TERM_NAME_VALUE=$(echo "$TERM_NAME_LINE" | cut -d: -f2-)
+            echo "term_name=${TERM_NAME_VALUE}" >> "$GITHUB_OUTPUT"
+          else
+            echo "term_name=" >> "$GITHUB_OUTPUT"
+          fi
+
+          if [ -n "$TERM_SLUG_LINE" ]; then
+            TERM_SLUG_VALUE=$(echo "$TERM_SLUG_LINE" | cut -d: -f2- | xargs)
+            echo "term_slug=$TERM_SLUG_VALUE" >> "$GITHUB_OUTPUT"
+          else
+            echo "term_slug=" >> "$GITHUB_OUTPUT"
+          fi
+
+          echo "exit_code=$EXIT" >> "$GITHUB_OUTPUT"
+          exit $EXIT
+
+      - name: Comment on PR
         if: always()
         uses: actions/github-script@v7
         env:
           VALIDATION_EXIT: ${{ steps.validate.outputs.exit_code }}
           VALIDATION_OUTPUT: ${{ steps.read-output.outputs.output }}
+          SCORE: ${{ steps.score.outputs.score }}
+          BADGES: ${{ steps.score.outputs.badges }}
+          TERM_NAME: ${{ steps.score.outputs.term_name }}
+          TERM_SLUG: ${{ steps.score.outputs.term_slug }}
         with:
           github-token: ${{ github.token }}
           script: |
-            const marker = '<!-- glossary-validation-forked-pr -->';
+            const marker = '<!-- glossary-check -->';
             const validationExit = process.env.VALIDATION_EXIT || '';
             const validationOutput = (process.env.VALIDATION_OUTPUT || '').trim();
             const passed = validationExit === '0';
+            const score = process.env.SCORE || '';
+            const badges = process.env.BADGES || '';
+            const termName = process.env.TERM_NAME || '';
+            const termSlug = process.env.TERM_SLUG || '';
             const statusEmoji = passed ? '✅' : '❌';
 
-            let body = `${marker}\n### Glossary Validation ${statusEmoji}\n\n`;
+            let body = `${marker}\n### Glossary Check ${statusEmoji}\n\n`;
 
             if (passed) {
-              body += `- Status: **Passed** – schema, duplicates, and slug checks succeeded.\n\n`;
-              body += `The main validation workflow will provide detailed scoring once the PR is approved.\n`;
+              const badgeList = badges
+                .split(',')
+                .map(b => b.trim())
+                .filter(Boolean);
+
+              body += `- Status: **Passed** – schema, duplicates, and slug checks succeeded.\n`;
+
+              if (termName || termSlug) {
+                const slugPart = termSlug ? ` (${termSlug})` : '';
+                const namePart = termName ? `\`${termName}\`` : 'Latest entry';
+                body += `- Latest term: ${namePart}${slugPart}\n`;
+              }
+
+              if (score) {
+                body += `- Score: ${score}/100\n`;
+              }
+
+              const badgeDisplay = badgeList.length > 0 ? badgeList.join(', ') : 'None';
+              body += `- Badges: ${badgeDisplay}\n\n`;
             } else {
               body += `- Status: **Failed** – please address the errors below.\n\n`;
               
@@ -138,15 +207,16 @@ jobs:
                   .split('\n')
                   .map(line => line.trimEnd())
                   .filter(Boolean)
-                  .slice(0, 50)  // Limit to 50 lines
+                  .slice(0, 20)  // Limit to 20 lines
                   .join('\n');
                 body += '```\n' + trimmed + '\n```\n\n';
               }
+
+              body += `Scoring was skipped because validation did not succeed.\n\n`;
             }
 
             const docsUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/docs/REPOSITORY_REVIEW.md#data-model--validation-rules`;
-            body += `[Validation docs](${docsUrl}) for field requirements and examples.\n\n`;
-            body += `*This is a preliminary validation for forked PRs. Full validation with scoring will run after merge approval.*`;
+            body += `[Validation docs](${docsUrl}) for field requirements and examples.`;
 
             // Find existing comment
             const { data: comments } = await github.rest.issues.listComments({
