@@ -62,11 +62,16 @@ function generateSlug(term) {
  * @returns {Promise<Object>} Generated term object
  */
 async function generateTermContent(term) {
-  // GITHUB_TOKEN is valid for GitHub Models API (models.inference.ai.azure.com)
+  // GITHUB_TOKEN is used for GitHub Models API (models.inference.ai.azure.com)
   // See: https://docs.github.com/en/github-models/prototyping-with-ai-models
+  const apiKey = process.env.GITHUB_TOKEN;
+  if (!apiKey) {
+    throw new Error('GITHUB_TOKEN environment variable is required for GitHub Models API access');
+  }
+
   const client = new OpenAI({
     baseURL: 'https://models.inference.ai.azure.com',
-    apiKey: process.env.GITHUB_TOKEN || process.env.OPENAI_API_KEY,
+    apiKey,
   });
 
   // Model can be configured via environment variable
@@ -97,7 +102,17 @@ Respond ONLY with the JSON object, no additional text.`;
     max_tokens: 500,
   });
 
-  const content = response.choices[0].message.content.trim();
+  // Validate response structure
+  if (!response.choices || response.choices.length === 0) {
+    throw new Error('AI response did not contain any choices');
+  }
+
+  const messageContent = response.choices[0].message?.content;
+  if (!messageContent) {
+    throw new Error('AI response did not contain message content');
+  }
+
+  const content = messageContent.trim();
 
   // Parse the JSON response
   let parsed;
