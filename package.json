@@ -15,6 +15,7 @@
     "sort:yaml": "node scripts/sortYaml.js",
     "fix:tags": "node scripts/fixTags.js",
     "release:create": "node scripts/createRelease.js",
+    "trend": "node scripts/trendWatcher.js",
     "test": "npm run validate && npm run score && node --test",
     "lint": "npm run lint:prettier && npm run lint:markdown && npm run lint:spell",
     "lint:prettier": "prettier --config config/prettierrc.json --ignore-path config/prettierignore --check .",
@@ -27,7 +28,8 @@
   "dependencies": {
     "@octokit/rest": "^22.0.0",
     "handlebars": "^4.7.8",
-    "js-yaml": "^4.1.0"
+    "js-yaml": "^4.1.0",
+    "openai": "^4.81.0"
   },
   "devDependencies": {
     "@types/node": "^24.3.1",
