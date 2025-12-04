@@ -97,7 +97,8 @@
     "morphism",
     "WCAG",
     "aren",
-    "jank"
+    "jank",
+    "Agentic"
   ],
   "ignorePaths": [
     "node_modules/**",
