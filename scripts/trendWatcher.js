@@ -124,6 +124,17 @@ Respond ONLY with the JSON object, no additional text.`;
     );
   }
 
+  // Validate required fields in parsed response
+  if (!parsed.definition || typeof parsed.definition !== 'string') {
+    throw new Error('AI response missing required "definition" field');
+  }
+  if (!parsed.humor || typeof parsed.humor !== 'string') {
+    throw new Error('AI response missing required "humor" field');
+  }
+  if (!Array.isArray(parsed.tags)) {
+    throw new Error('AI response missing required "tags" array field');
+  }
+
   return {
     slug: generateSlug(term),
     term,
