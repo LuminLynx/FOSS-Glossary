@@ -40,7 +40,10 @@ jobs:
         run: npm ci --no-audit --no-fund
 
       - name: Generate landing page
-        run: node scripts/generateLandingPage.js
+        run: |
+          echo "--- Starting landing page generation ---"
+          node scripts/generateLandingPage.js
+          echo "--- Finished landing page generation ---"
 
       - name: Validate landing page is in sync
         run: node scripts/validateLandingPage.js
