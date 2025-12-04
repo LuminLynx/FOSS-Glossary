@@ -62,10 +62,15 @@ function generateSlug(term) {
  * @returns {Promise<Object>} Generated term object
  */
 async function generateTermContent(term) {
+  // GITHUB_TOKEN is valid for GitHub Models API (models.inference.ai.azure.com)
+  // See: https://docs.github.com/en/github-models/prototyping-with-ai-models
   const client = new OpenAI({
     baseURL: 'https://models.inference.ai.azure.com',
     apiKey: process.env.GITHUB_TOKEN || process.env.OPENAI_API_KEY,
   });
+
+  // Model can be configured via environment variable
+  const model = process.env.TREND_WATCHER_MODEL || 'gpt-4o';
 
   const prompt = `You are helping to create a glossary entry for FOSS (Free and Open Source Software) terms.
 
@@ -86,7 +91,7 @@ Example format:
 Respond ONLY with the JSON object, no additional text.`;
 
   const response = await client.chat.completions.create({
-    model: 'gpt-4o',
+    model,
     messages: [{ role: 'user', content: prompt }],
     temperature: 0.7,
     max_tokens: 500,
@@ -98,8 +103,10 @@ Respond ONLY with the JSON object, no additional text.`;
   let parsed;
   try {
     parsed = JSON.parse(content);
-  } catch {
-    throw new Error(`Failed to parse AI response as JSON: ${content}`);
+  } catch (parseError) {
+    throw new Error(
+      `Failed to parse AI response as JSON: ${parseError.message}. Response was: ${content}`
+    );
   }
 
   return {

@@ -23,7 +23,7 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        run: npm ci --include=dev --no-audit --no-fund
+        run: npm ci --no-audit --no-fund
 
       - name: Run Trend Watcher
         env:
