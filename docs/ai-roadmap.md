@@ -37,7 +37,7 @@ This document outlines potential strategies for integrating Artificial Intellige
 ### 5. Content Enrichment (Scenario Generator)
 
 - **Goal:** Generate concrete examples or scenarios for abstract terms (e.g., a story about "Bus Factor").
-- **Status:** Completed (PR #278).
+- **Status:** Completed (PR #277).
 - **Value:** Improves educational value.
 - **Tech:** Generative AI, parallel file structure (e.g., `examples/`).
 
