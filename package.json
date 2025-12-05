@@ -21,6 +21,7 @@
     "suggest-links": "node scripts/suggestLinks.js",
     "translate": "node scripts/translateTerms.js",
     "draft-term": "node scripts/draftTerm.js",
+    "ask": "node scripts/askGlossary.js",
     "test": "npm run validate && npm run score && node --test",
     "lint": "npm run lint:prettier && npm run lint:markdown && npm run lint:spell",
     "lint:prettier": "prettier --config config/prettierrc.json --ignore-path config/prettierignore --check .",
