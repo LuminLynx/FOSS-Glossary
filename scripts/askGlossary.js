@@ -10,6 +10,19 @@ const DEFAULT_MAX_TOKENS = 1500;
 const DEFAULT_TIMEOUT = 120000;
 const DEFAULT_TOP_K = 5;
 
+// Relevance scoring weights for different field matches
+// Higher weights indicate more important matches
+const SCORE_WEIGHT = {
+  TERM_EXACT: 10, // Exact match of full term name
+  ALIAS_EXACT: 8, // Exact match of an alias
+  TERM_WORD: 3, // Word from question found in term name
+  ALIAS_WORD: 2, // Word from question found in alias
+  SLUG_WORD: 2, // Word from question found in slug
+  TAG_MATCH: 2, // Tag matches question
+  DEFINITION_WORD: 1, // Word from question found in definition
+  EXPLANATION_WORD: 0.5, // Word from question found in explanation
+};
+
 /**
  * Truncate a string for safe logging (avoid exposing sensitive data)
  *
@@ -68,11 +81,11 @@ function calculateRelevance(question, term) {
   // Check term name (highest weight)
   const termLower = term.term.toLowerCase();
   if (questionLower.includes(termLower)) {
-    score += 10;
+    score += SCORE_WEIGHT.TERM_EXACT;
   }
   for (const word of questionWords) {
     if (word.length > 2 && termLower.includes(word)) {
-      score += 3;
+      score += SCORE_WEIGHT.TERM_WORD;
     }
   }
 
@@ -81,11 +94,11 @@ function calculateRelevance(question, term) {
     for (const alias of term.aliases) {
       const aliasLower = alias.toLowerCase();
       if (questionLower.includes(aliasLower)) {
-        score += 8;
+        score += SCORE_WEIGHT.ALIAS_EXACT;
       }
       for (const word of questionWords) {
         if (word.length > 2 && aliasLower.includes(word)) {
-          score += 2;
+          score += SCORE_WEIGHT.ALIAS_WORD;
         }
       }
     }
@@ -95,7 +108,7 @@ function calculateRelevance(question, term) {
   const slugWords = term.slug.split('-');
   for (const slugWord of slugWords) {
     if (questionLower.includes(slugWord)) {
-      score += 2;
+      score += SCORE_WEIGHT.SLUG_WORD;
     }
   }
 
@@ -103,7 +116,7 @@ function calculateRelevance(question, term) {
   const defLower = (term.definition || '').toLowerCase();
   for (const word of questionWords) {
     if (word.length > 3 && defLower.includes(word)) {
-      score += 1;
+      score += SCORE_WEIGHT.DEFINITION_WORD;
     }
   }
 
@@ -111,7 +124,7 @@ function calculateRelevance(question, term) {
   const explanationLower = (term.explanation || '').toLowerCase();
   for (const word of questionWords) {
     if (word.length > 3 && explanationLower.includes(word)) {
-      score += 0.5;
+      score += SCORE_WEIGHT.EXPLANATION_WORD;
     }
   }
 
@@ -119,7 +132,7 @@ function calculateRelevance(question, term) {
   if (term.tags) {
     for (const tag of term.tags) {
       if (questionLower.includes(tag)) {
-        score += 2;
+        score += SCORE_WEIGHT.TAG_MATCH;
       }
     }
   }
@@ -217,15 +230,37 @@ ${context}`;
 
 Please answer based on the glossary content above. If applicable, mention which terms you're referencing.`;
 
-  const response = await client.chat.completions.create({
-    model,
-    messages: [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: userPrompt },
-    ],
-    temperature: DEFAULT_TEMPERATURE,
-    max_tokens: DEFAULT_MAX_TOKENS,
-  });
+  let response;
+  try {
+    response = await client.chat.completions.create({
+      model,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt },
+      ],
+      temperature: DEFAULT_TEMPERATURE,
+      max_tokens: DEFAULT_MAX_TOKENS,
+    });
+  } catch (error) {
+    // Handle specific API errors with informative messages
+    if (error.status === 401) {
+      throw new Error('Authentication failed. Please check your GITHUB_TOKEN is valid.');
+    }
+    if (error.status === 429) {
+      throw new Error('Rate limit exceeded. Please wait a moment and try again.');
+    }
+    if (error.status === 503 || error.status === 502) {
+      throw new Error('AI service temporarily unavailable. Please try again later.');
+    }
+    if (error.code === 'ECONNREFUSED' || error.code === 'ENOTFOUND') {
+      throw new Error('Network error. Please check your internet connection.');
+    }
+    if (error.code === 'ETIMEDOUT') {
+      throw new Error('Request timed out. The AI service may be busy, please try again.');
+    }
+    // Re-throw with original message for other errors
+    throw new Error(`AI API error: ${error.message}`);
+  }
 
   // Validate response structure
   if (!response.choices || response.choices.length === 0) {
@@ -354,4 +389,5 @@ module.exports = {
   DEFAULT_MAX_TOKENS,
   DEFAULT_TIMEOUT,
   DEFAULT_TOP_K,
+  SCORE_WEIGHT,
 };
