@@ -9,7 +9,47 @@ const {
   applySuggestions,
   displaySuggestions,
   truncateForLogging,
+  DEFAULT_BASE_URL,
+  DEFAULT_MODEL,
+  DEFAULT_TEMPERATURE,
+  DEFAULT_MAX_TOKENS,
+  DEFAULT_TIMEOUT,
+  DEFINITION_PREVIEW_LENGTH,
+  MAX_SUGGESTIONS,
 } = require('../scripts/suggestLinks');
+
+test('constants: DEFAULT_BASE_URL is set correctly', () => {
+  assert.equal(DEFAULT_BASE_URL, 'https://models.inference.ai.azure.com');
+});
+
+test('constants: DEFAULT_MODEL is set correctly', () => {
+  assert.equal(DEFAULT_MODEL, 'gpt-4o');
+});
+
+test('constants: DEFAULT_TEMPERATURE is a valid number', () => {
+  assert.equal(typeof DEFAULT_TEMPERATURE, 'number');
+  assert.ok(DEFAULT_TEMPERATURE >= 0 && DEFAULT_TEMPERATURE <= 1);
+});
+
+test('constants: DEFAULT_MAX_TOKENS is a positive integer', () => {
+  assert.equal(typeof DEFAULT_MAX_TOKENS, 'number');
+  assert.ok(DEFAULT_MAX_TOKENS > 0);
+});
+
+test('constants: DEFAULT_TIMEOUT is a positive integer', () => {
+  assert.equal(typeof DEFAULT_TIMEOUT, 'number');
+  assert.ok(DEFAULT_TIMEOUT > 0);
+});
+
+test('constants: DEFINITION_PREVIEW_LENGTH is a positive integer', () => {
+  assert.equal(typeof DEFINITION_PREVIEW_LENGTH, 'number');
+  assert.ok(DEFINITION_PREVIEW_LENGTH > 0);
+});
+
+test('constants: MAX_SUGGESTIONS is a positive integer', () => {
+  assert.equal(typeof MAX_SUGGESTIONS, 'number');
+  assert.ok(MAX_SUGGESTIONS > 0);
+});
 
 test('parseArgs: returns fix false by default', () => {
   const options = parseArgs([]);

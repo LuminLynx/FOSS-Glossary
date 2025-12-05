@@ -4,6 +4,15 @@ const yaml = require('js-yaml');
 const { OpenAI } = require('openai');
 const { loadTermsYaml } = require('../utils/fileSystem');
 
+// Configuration constants
+const DEFAULT_BASE_URL = 'https://models.inference.ai.azure.com';
+const DEFAULT_MODEL = 'gpt-4o';
+const DEFAULT_TEMPERATURE = 0.3;
+const DEFAULT_MAX_TOKENS = 2000;
+const DEFAULT_TIMEOUT = 120000;
+const DEFINITION_PREVIEW_LENGTH = 150;
+const MAX_SUGGESTIONS = 15;
+
 /**
  * Truncate a string for safe logging (avoid exposing sensitive data)
  *
@@ -92,20 +101,25 @@ async function analyzeSuggestedLinks(terms) {
     throw new Error('GITHUB_TOKEN environment variable is required for GitHub Models API access');
   }
 
-  const client = new OpenAI({
-    baseURL: 'https://models.inference.ai.azure.com',
-    apiKey,
-    timeout: 120000, // 120 second timeout for API calls
-  });
+  // Configuration via environment variables with sensible defaults
+  const baseURL = process.env.SUGGEST_LINKS_BASE_URL || DEFAULT_BASE_URL;
+  const model = process.env.SUGGEST_LINKS_MODEL || DEFAULT_MODEL;
+  const temperature = parseFloat(process.env.SUGGEST_LINKS_TEMPERATURE) || DEFAULT_TEMPERATURE;
+  const maxTokens = parseInt(process.env.SUGGEST_LINKS_MAX_TOKENS, 10) || DEFAULT_MAX_TOKENS;
+  const timeout = parseInt(process.env.SUGGEST_LINKS_TIMEOUT, 10) || DEFAULT_TIMEOUT;
 
-  // Model can be configured via environment variable
-  const model = process.env.SUGGEST_LINKS_MODEL || 'gpt-4o';
+  const client = new OpenAI({
+    baseURL,
+    apiKey,
+    timeout,
+  });
 
   // Build a summary of all terms for context
   const termsSummary = terms
     .map((t) => {
       const existingLinks = Array.isArray(t.see_also) ? t.see_also.join(', ') : 'none';
-      return `- ${t.term} (slug: ${t.slug}): ${t.definition.slice(0, 150)}... [Current see_also: ${existingLinks}]`;
+      const definitionPreview = t.definition.slice(0, DEFINITION_PREVIEW_LENGTH);
+      return `- ${t.term} (slug: ${t.slug}): ${definitionPreview}... [Current see_also: ${existingLinks}]`;
     })
     .join('\n');
 
@@ -139,14 +153,14 @@ Example format:
   ]
 }
 
-Be selective - only suggest the most valuable missing connections (up to 15 suggestions max).
+Be selective - only suggest the most valuable missing connections (up to ${MAX_SUGGESTIONS} suggestions max).
 Respond ONLY with the JSON object, no additional text.`;
 
   const response = await client.chat.completions.create({
     model,
     messages: [{ role: 'user', content: prompt }],
-    temperature: 0.3, // Lower temperature for more consistent suggestions
-    max_tokens: 2000,
+    temperature,
+    max_tokens: maxTokens,
   });
 
   // Validate response structure
@@ -369,4 +383,12 @@ module.exports = {
   applySuggestions,
   displaySuggestions,
   truncateForLogging,
+  // Export constants for testing
+  DEFAULT_BASE_URL,
+  DEFAULT_MODEL,
+  DEFAULT_TEMPERATURE,
+  DEFAULT_MAX_TOKENS,
+  DEFAULT_TIMEOUT,
+  DEFINITION_PREVIEW_LENGTH,
+  MAX_SUGGESTIONS,
 };
