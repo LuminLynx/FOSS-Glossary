@@ -7,7 +7,7 @@ This document outlines potential strategies for integrating Artificial Intellige
 ### 1. AI Term Drafter (CLI Tool)
 
 - **Goal:** Instantly generate new glossary entries (definition, explanation, humor, tags).
-- **Status:** In Progress (PR #3).
+- **Status:** Completed (PR #3).
 - **Value:** Reduces friction for adding new terms; ensures consistent tone.
 - **Tech:** GitHub Models (GPT-4o), Node.js scripts.
 
@@ -37,6 +37,7 @@ This document outlines potential strategies for integrating Artificial Intellige
 ### 5. Content Enrichment (Scenario Generator)
 
 - **Goal:** Generate concrete examples or scenarios for abstract terms (e.g., a story about "Bus Factor").
+- **Status:** Completed (PR #277).
 - **Value:** Improves educational value.
 - **Tech:** Generative AI, parallel file structure (e.g., `examples/`).
 
