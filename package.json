@@ -16,6 +16,7 @@
     "fix:tags": "node scripts/fixTags.js",
     "release:create": "node scripts/createRelease.js",
     "trend": "node scripts/trendWatcher.js",
+    "generate:challenge": "node scripts/generateChallenge.js",
     "test": "npm run validate && npm run score && node --test",
     "lint": "npm run lint:prettier && npm run lint:markdown && npm run lint:spell",
     "lint:prettier": "prettier --config config/prettierrc.json --ignore-path config/prettierignore --check .",
