@@ -157,34 +157,22 @@ Respond ONLY with the translated JSON object, no additional text.`;
     definition: parsed.definition || term.definition,
   };
 
-  // Add optional fields if they exist
-  if (parsed.explanation) {
-    translatedTerm.explanation = parsed.explanation;
-  } else if (term.explanation) {
-    translatedTerm.explanation = term.explanation;
+  // Add optional translatable fields (prefer translated, fallback to original)
+  const optionalTranslatableFields = ['explanation', 'humor'];
+  for (const field of optionalTranslatableFields) {
+    if (parsed[field]) {
+      translatedTerm[field] = parsed[field];
+    } else if (term[field]) {
+      translatedTerm[field] = term[field];
+    }
   }
 
-  if (parsed.humor) {
-    translatedTerm.humor = parsed.humor;
-  } else if (term.humor) {
-    translatedTerm.humor = term.humor;
-  }
-
-  // Preserve other fields as-is (tags, see_also, aliases, controversy_level)
-  if (term.see_also) {
-    translatedTerm.see_also = term.see_also;
-  }
-
-  if (term.tags) {
-    translatedTerm.tags = term.tags;
-  }
-
-  if (term.aliases) {
-    translatedTerm.aliases = term.aliases;
-  }
-
-  if (term.controversy_level) {
-    translatedTerm.controversy_level = term.controversy_level;
+  // Preserve non-translatable fields as-is
+  const preservedFields = ['see_also', 'tags', 'aliases', 'controversy_level'];
+  for (const field of preservedFields) {
+    if (term[field] !== undefined) {
+      translatedTerm[field] = term[field];
+    }
   }
 
   return translatedTerm;
@@ -195,7 +183,7 @@ Respond ONLY with the translated JSON object, no additional text.`;
  *
  * @param {Object[]} terms - Array of term objects
  * @param {string} targetLang - Target language code
- * @returns {Promise<Object[]>} Array of translated term objects
+ * @returns {Promise<Object>} Object with translatedTerms array and failedTerms array
  */
 async function translateAllTerms(terms, targetLang) {
   // GITHUB_TOKEN is used for GitHub Models API (models.inference.ai.azure.com)
@@ -217,6 +205,7 @@ async function translateAllTerms(terms, targetLang) {
   });
 
   const translatedTerms = [];
+  const failedTerms = [];
   const languageName = getLanguageName(targetLang);
 
   console.log(`\nTranslating ${terms.length} terms to ${languageName}...\n`);
@@ -233,12 +222,13 @@ async function translateAllTerms(terms, targetLang) {
     } catch (error) {
       console.log(` ✗`);
       console.error(`   Error: ${error.message}`);
-      // Continue with the original term if translation fails
+      // Continue with the original term if translation fails, but track the failure
       translatedTerms.push(term);
+      failedTerms.push({ slug: term.slug, term: term.term, error: error.message });
     }
   }
 
-  return translatedTerms;
+  return { translatedTerms, failedTerms };
 }
 
 /**
@@ -282,14 +272,25 @@ async function main(argv = process.argv.slice(2)) {
   console.log(`Loaded ${terms.length} terms from glossary.`);
 
   // Translate all terms
-  const translatedTerms = await translateAllTerms(terms, language);
+  const { translatedTerms, failedTerms } = await translateAllTerms(terms, language);
 
   // Write to output file
   const outputPath = writeTranslatedTerms(translatedTerms, language);
 
   console.log(`\n✅ Translation complete!`);
   console.log(`   Output: ${outputPath}`);
-  console.log(`   Terms translated: ${translatedTerms.length}`);
+  console.log(
+    `   Terms translated: ${translatedTerms.length - failedTerms.length}/${terms.length}`
+  );
+
+  // Report failed translations if any
+  if (failedTerms.length > 0) {
+    console.log(`\n⚠️  Warning: ${failedTerms.length} term(s) could not be translated:`);
+    for (const failed of failedTerms) {
+      console.log(`   - ${failed.term} (${failed.slug})`);
+    }
+    console.log(`   These terms were kept in their original English form.`);
+  }
 }
 
 if (require.main === module) {
