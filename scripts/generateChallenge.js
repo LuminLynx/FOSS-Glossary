@@ -7,6 +7,33 @@ const { loadTermsYaml, ensureDirectoryForFile } = require('../utils/fileSystem')
 const CHALLENGES_DIR = 'challenges';
 
 /**
+ * Validate that a required string field exists in the parsed response
+ *
+ * @param {Object} obj - The parsed response object
+ * @param {string} fieldName - The name of the field to validate
+ * @throws {Error} If the field is missing or not a string
+ */
+function validateRequiredStringField(obj, fieldName) {
+  if (!obj[fieldName] || typeof obj[fieldName] !== 'string') {
+    throw new Error(`AI response missing required "${fieldName}" field`);
+  }
+}
+
+/**
+ * Truncate a string for safe logging (avoid exposing sensitive data)
+ *
+ * @param {string} str - The string to truncate
+ * @param {number} maxLength - Maximum length before truncation
+ * @returns {string} Truncated string with ellipsis if needed
+ */
+function truncateForLogging(str, maxLength = 100) {
+  if (str.length <= maxLength) {
+    return str;
+  }
+  return `${str.slice(0, maxLength)}...`;
+}
+
+/**
  * Parse command line arguments for generateChallenge script
  * Expects a term slug as the first positional argument
  *
@@ -64,6 +91,7 @@ async function generateChallengeContent(term) {
   const client = new OpenAI({
     baseURL: 'https://models.inference.ai.azure.com',
     apiKey,
+    timeout: 60000, // 60 second timeout for API calls
   });
 
   // Model can be configured via environment variable
@@ -127,23 +155,15 @@ Respond ONLY with the JSON object, no additional text.`;
     parsed = JSON.parse(content);
   } catch (parseError) {
     throw new Error(
-      `Failed to parse AI response as JSON: ${parseError.message}. Response was: ${content}`
+      `Failed to parse AI response as JSON: ${parseError.message}. Response preview: ${truncateForLogging(content)}`
     );
   }
 
   // Validate required fields in parsed response
-  if (!parsed.conceptExplanation || typeof parsed.conceptExplanation !== 'string') {
-    throw new Error('AI response missing required "conceptExplanation" field');
-  }
-  if (!parsed.buggyCode || typeof parsed.buggyCode !== 'string') {
-    throw new Error('AI response missing required "buggyCode" field');
-  }
-  if (!parsed.goal || typeof parsed.goal !== 'string') {
-    throw new Error('AI response missing required "goal" field');
-  }
-  if (!parsed.solutionCode || typeof parsed.solutionCode !== 'string') {
-    throw new Error('AI response missing required "solutionCode" field');
-  }
+  validateRequiredStringField(parsed, 'conceptExplanation');
+  validateRequiredStringField(parsed, 'buggyCode');
+  validateRequiredStringField(parsed, 'goal');
+  validateRequiredStringField(parsed, 'solutionCode');
 
   return parsed;
 }
@@ -246,5 +266,7 @@ module.exports = {
   findTermBySlug,
   generateChallengeContent,
   generateMarkdownContent,
+  validateRequiredStringField,
+  truncateForLogging,
   CHALLENGES_DIR,
 };

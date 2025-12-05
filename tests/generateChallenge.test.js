@@ -6,6 +6,8 @@ const {
   parseArgs,
   findTermBySlug,
   generateMarkdownContent,
+  validateRequiredStringField,
+  truncateForLogging,
   CHALLENGES_DIR,
 } = require('../scripts/generateChallenge');
 
@@ -117,4 +119,49 @@ test('generateMarkdownContent: uses javascript code blocks', () => {
 
 test('CHALLENGES_DIR: is set to challenges', () => {
   assert.equal(CHALLENGES_DIR, 'challenges');
+});
+
+test('validateRequiredStringField: passes for valid string field', () => {
+  const obj = { name: 'test value' };
+  // Should not throw
+  assert.doesNotThrow(() => validateRequiredStringField(obj, 'name'));
+});
+
+test('validateRequiredStringField: throws for missing field', () => {
+  const obj = { other: 'value' };
+  assert.throws(() => validateRequiredStringField(obj, 'name'), {
+    message: /AI response missing required "name" field/,
+  });
+});
+
+test('validateRequiredStringField: throws for non-string field', () => {
+  const obj = { name: 123 };
+  assert.throws(() => validateRequiredStringField(obj, 'name'), {
+    message: /AI response missing required "name" field/,
+  });
+});
+
+test('validateRequiredStringField: throws for empty string field', () => {
+  const obj = { name: '' };
+  assert.throws(() => validateRequiredStringField(obj, 'name'), {
+    message: /AI response missing required "name" field/,
+  });
+});
+
+test('truncateForLogging: returns string unchanged if under max length', () => {
+  const result = truncateForLogging('short string', 100);
+  assert.equal(result, 'short string');
+});
+
+test('truncateForLogging: truncates string over max length with ellipsis', () => {
+  const result = truncateForLogging('this is a long string', 10);
+  assert.equal(result, 'this is a ...');
+});
+
+test('truncateForLogging: uses default max length of 100', () => {
+  const shortString = 'x'.repeat(100);
+  const longString = 'x'.repeat(101);
+
+  assert.equal(truncateForLogging(shortString), shortString);
+  assert.equal(truncateForLogging(longString), 'x'.repeat(100) + '...');
 });
