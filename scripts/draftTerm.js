@@ -3,7 +3,6 @@ const fs = require('fs');
 const { execSync } = require('child_process');
 const yaml = require('js-yaml');
 const { OpenAI } = require('openai');
-const { loadTermsYaml } = require('../utils/fileSystem');
 
 // Configuration constants
 const DEFAULT_BASE_URL = 'https://models.inference.ai.azure.com';
@@ -13,17 +12,26 @@ const DEFAULT_MAX_TOKENS = 2000;
 const DEFAULT_TIMEOUT = 120000;
 
 /**
- * Convert a term name to a slug (kebab-case)
- * @param {string} termName - The term name to convert
- * @returns {string} The slug in kebab-case
+ * Normalize a string to kebab-case (lowercase with hyphens)
+ * @param {string} str - The string to normalize
+ * @returns {string} The normalized kebab-case string
  */
-function toSlug(termName) {
-  return termName
+function toKebabCase(str) {
+  return str
     .toLowerCase()
     .replace(/[^a-z0-9\s-]/g, '')
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '');
+}
+
+/**
+ * Convert a term name to a slug (kebab-case)
+ * @param {string} termName - The term name to convert
+ * @returns {string} The slug in kebab-case
+ */
+function toSlug(termName) {
+  return toKebabCase(termName);
 }
 
 /**
@@ -141,12 +149,7 @@ Respond ONLY with the JSON object, no additional text or markdown formatting.`;
 
   // Ensure tags are in kebab-case
   if (parsed.tags && Array.isArray(parsed.tags)) {
-    parsed.tags = parsed.tags.map((tag) =>
-      tag
-        .toLowerCase()
-        .replace(/[^a-z0-9\s-]/g, '')
-        .replace(/\s+/g, '-')
-    );
+    parsed.tags = parsed.tags.map((tag) => toKebabCase(tag));
   }
 
   return parsed;
@@ -176,8 +179,7 @@ function appendToTermsYaml(newTerm) {
   const yamlContent = yaml.dump(data, {
     indent: 2,
     lineWidth: -1,
-    quotingType: "'",
-    forceQuotes: false,
+    noRefs: true,
   });
 
   fs.writeFileSync(termsPath, yamlContent, 'utf8');
@@ -274,6 +276,7 @@ if (require.main === module) {
 module.exports = {
   parseArgs,
   toSlug,
+  toKebabCase,
   generateTerm,
   appendToTermsYaml,
   runFormat,
