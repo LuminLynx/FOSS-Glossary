@@ -17,6 +17,7 @@
     "release:create": "node scripts/createRelease.js",
     "trend": "node scripts/trendWatcher.js",
     "generate:challenge": "node scripts/generateChallenge.js",
+    "generate:scenario": "node scripts/generateScenario.js",
     "suggest-links": "node scripts/suggestLinks.js",
     "translate": "node scripts/translateTerms.js",
     "draft-term": "node scripts/draftTerm.js",
