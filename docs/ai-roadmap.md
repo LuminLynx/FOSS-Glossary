@@ -14,6 +14,7 @@ This document outlines potential strategies for integrating Artificial Intellige
 ### 2. Smart Cross-Linking ("See Also" Suggester)
 
 - **Goal:** Analyze existing terms to suggest missing links in the `see_also` field.
+- **Status:** Completed (PR #273)
 - **Value:** Keeps the glossary tightly interconnected as it scales.
 - **Tech:** AI analysis of term relationships; runs as a manual maintenance script.
 
@@ -22,12 +23,14 @@ This document outlines potential strategies for integrating Artificial Intellige
 ### 3. The "Living" Repository (Trend Watcher)
 
 - **Goal:** Proactively identify trending FOSS terms from external sources (e.g., Hacker News, GitHub Trending) and draft PRs.
+- **Status:** Completed (PR #271)
 - **Value:** Keeps the glossary relevant with minimal human intervention.
 - **Tech:** Scheduled GitHub Actions, Search APIs, Drafting Tool.
 
 ### 4. Automated Translation (Localization)
 
 - **Goal:** Automatically generate `terms.es.yaml`, `terms.fr.yaml`, etc.
+- **Status:** Completed (PR #274)
 - **Value:** Expands global reach instantly.
 - **Tech:** AI Translation with tone preservation.
 
@@ -42,6 +45,7 @@ This document outlines potential strategies for integrating Artificial Intellige
 ### 6. The "FOSS Dojo" (AI-Generated Challenges)
 
 - **Goal:** Transform the glossary into a training platform. AI generates code snippets with bugs (e.g., "Race Condition") for users to fix.
+- **Status:** Completed (PR #272)
 - **Value:** High user engagement and gamification.
 - **Tech:** AI Code Generation, Frontend Code Editor.
 
