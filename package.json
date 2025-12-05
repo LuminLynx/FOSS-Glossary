@@ -18,6 +18,7 @@
     "trend": "node scripts/trendWatcher.js",
     "generate:challenge": "node scripts/generateChallenge.js",
     "suggest-links": "node scripts/suggestLinks.js",
+    "translate": "node scripts/translateTerms.js",
     "test": "npm run validate && npm run score && node --test",
     "lint": "npm run lint:prettier && npm run lint:markdown && npm run lint:spell",
     "lint:prettier": "prettier --config config/prettierrc.json --ignore-path config/prettierignore --check .",
