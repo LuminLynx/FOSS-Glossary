@@ -118,6 +118,14 @@
           </div>
           <div class="header-controls">
             <button
+              id="drafter-toggle"
+              class="drafter-toggle"
+              aria-label="Create new term"
+              title="Create new term with AI"
+            >
+              ✏️ Create Term
+            </button>
+            <button
               id="theme-toggle"
               class="theme-toggle"
               aria-label="Toggle theme"
@@ -200,6 +208,96 @@
       </footer>
     </main>
 
+    <!-- Term Drafter Modal -->
+    <div
+      id="drafter-modal"
+      class="drafter-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="drafter-modal-title"
+      aria-hidden="true"
+    >
+      <div class="drafter-modal-content">
+        <div class="drafter-header">
+          <h2 id="drafter-modal-title">✨ AI Term Drafter</h2>
+          <button id="close-drafter" class="close-drafter-btn" aria-label="Close term drafter">
+            ✕
+          </button>
+        </div>
+
+        <div class="drafter-steps">
+          <!-- Step 1: Input -->
+          <div class="drafter-step active" data-step="1">
+            <div class="drafter-api-key-section">
+              <label for="api-key-input">GitHub Models API Key</label>
+              <div class="api-key-input-wrapper">
+                <input
+                  type="password"
+                  id="api-key-input"
+                  placeholder="Enter your GitHub Models API key"
+                  autocomplete="off"
+                />
+                <button
+                  id="toggle-api-key"
+                  class="toggle-key-btn"
+                  aria-label="Toggle key visibility"
+                >
+                  👁️
+                </button>
+              </div>
+              <p class="api-key-hint">
+                Your key is stored locally and never sent to our servers.
+                <a
+                  href="https://github.com/settings/tokens"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Get an API key</a
+                >
+              </p>
+            </div>
+
+            <label for="term-input">Term Name</label>
+            <input
+              type="text"
+              id="term-input"
+              placeholder="e.g., 'Technical Debt'"
+              autocomplete="off"
+            />
+
+            <label for="context-input">Additional Context (optional)</label>
+            <textarea
+              id="context-input"
+              placeholder="Any specific angle or details you want the definition to focus on..."
+              rows="3"
+            ></textarea>
+
+            <button id="generate-btn" class="primary-btn">🤖 Generate with AI</button>
+          </div>
+
+          <!-- Step 2: Preview & Edit -->
+          <div class="drafter-step" data-step="2">
+            <div id="term-preview" class="term-preview"></div>
+            <div class="drafter-actions">
+              <button id="edit-btn" class="secondary-btn">✏️ Edit YAML</button>
+              <button id="copy-yaml-btn" class="secondary-btn">📋 Copy YAML</button>
+              <button id="submit-btn" class="primary-btn">📤 Create PR</button>
+            </div>
+            <button id="back-to-input" class="back-btn">← Back to Input</button>
+          </div>
+
+          <!-- Step 3: Edit YAML -->
+          <div class="drafter-step" data-step="3">
+            <label for="yaml-editor">Edit YAML</label>
+            <textarea id="yaml-editor" class="yaml-editor" rows="15"></textarea>
+            <div class="drafter-actions">
+              <button id="save-edit-btn" class="primary-btn">💾 Save Changes</button>
+              <button id="cancel-edit-btn" class="secondary-btn">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Share Modal -->
     <div
       id="share-modal"
@@ -240,6 +338,9 @@
         <button id="update-dismiss-btn" class="update-dismiss-btn" aria-label="Dismiss">✕</button>
       </div>
     </div>
+
+    <!-- API Handler for Term Drafter -->
+    <script src="./api-handler.js"></script>
 
     <!-- App Script -->
     <script src="./app.js"></script>

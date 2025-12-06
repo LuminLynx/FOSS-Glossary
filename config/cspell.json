@@ -98,7 +98,9 @@
     "WCAG",
     "aren",
     "jank",
-    "Agentic"
+    "Agentic",
+    "noopener",
+    "noreferrer"
   ],
   "ignorePaths": [
     "node_modules/**",
