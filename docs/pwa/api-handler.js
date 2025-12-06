@@ -11,34 +11,130 @@ const MIN_DEFINITION_LENGTH = 80;
 class TermDrafterAPI {
   constructor() {
     this.apiKeyStorageKey = 'github-models-key';
+    this.apiKeySaltKey = 'github-models-key-salt';
     this.apiEndpoint = 'https://models.inference.ai.azure.com/chat/completions';
     this.model = 'gpt-4o-mini';
+  }
+
+  // --- Encryption/Decryption helpers using Web Crypto API ---
+  async _getKeyFromPassphrase(passphrase, saltBase64) {
+    const enc = new TextEncoder();
+    const salt = saltBase64 ? this._base64ToBytes(saltBase64) : crypto.getRandomValues(new Uint8Array(16));
+    const keyMaterial = await window.crypto.subtle.importKey(
+      "raw", enc.encode(passphrase), "PBKDF2", false, ["deriveKey"]
+    );
+    const key = await window.crypto.subtle.deriveKey(
+      {
+        name: "PBKDF2",
+        salt: salt,
+        iterations: 100000,
+        hash: "SHA-256"
+      },
+      keyMaterial,
+      { name: "AES-GCM", length: 256 },
+      false,
+      ["encrypt", "decrypt"]
+    );
+    return { key, salt: this._bytesToBase64(salt) };
+  }
+
+  async _encryptAPIKey(apiKey, passphrase) {
+    const enc = new TextEncoder();
+    const { key, salt } = await this._getKeyFromPassphrase(passphrase, null);
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const ciphertext = await window.crypto.subtle.encrypt(
+      { name: "AES-GCM", iv: iv },
+      key,
+      enc.encode(apiKey)
+    );
+    return {
+      ciphertext: this._bytesToBase64(new Uint8Array(ciphertext)),
+      iv: this._bytesToBase64(iv),
+      salt: salt
+    };
+  }
+
+  async _decryptAPIKey(storageObj, passphrase) {
+    try {
+      const dec = new TextDecoder();
+      const { key } = await this._getKeyFromPassphrase(passphrase, storageObj.salt);
+      const iv = this._base64ToBytes(storageObj.iv);
+      const ciphertext = this._base64ToBytes(storageObj.ciphertext);
+      const plaintext = await window.crypto.subtle.decrypt(
+        { name: "AES-GCM", iv: iv },
+        key,
+        ciphertext
+      );
+      return dec.decode(plaintext);
+    } catch (err) {
+      throw new Error("Incorrect passphrase or corrupted data.");
+    }
+  }
+
+  _bytesToBase64(buf) {
+    let bin = '';
+    buf.forEach((b) => { bin += String.fromCharCode(b); });
+    return btoa(bin);
+  }
+  _base64ToBytes(b64) {
+    const bin = atob(b64);
+    const arr = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; ++i) {
+      arr[i] = bin.charCodeAt(i);
+    }
+    return arr;
   }
 
   /**
    * Get the stored API key
    * @returns {string|null} The API key or null if not set
    */
-  getApiKey() {
-    return localStorage.getItem(this.apiKeyStorageKey);
+  async getApiKey() {
+    const storage = localStorage.getItem(this.apiKeyStorageKey);
+    if (!storage) return null;
+    let obj;
+    try {
+      obj = JSON.parse(storage);
+    } catch (e) { return null; }
+    const passphrase = await this._promptPassphrase("Enter passphrase to unlock API key:");
+    if (!passphrase) return null;
+    try {
+      return await this._decryptAPIKey(obj, passphrase);
+    } catch (err) {
+      alert("Decryption failed: " + err.message);
+      return null;
+    }
   }
 
   /**
    * Set the API key
-   * @param {string} key - The API key to store
+   * @param {string} apiKey - The API key to encrypt and store
    */
-  setApiKey(key) {
-    if (key && key.trim()) {
-      localStorage.setItem(this.apiKeyStorageKey, key.trim());
+  async setApiKey(apiKey) {
+    if (apiKey && apiKey.trim()) {
+      const passphrase = await this._promptPassphrase("Set a passphrase for your API key:");
+      if (!passphrase) {
+        alert("API key not saved: no passphrase provided.");
+        return;
+      }
+      const encrypted = await this._encryptAPIKey(apiKey.trim(), passphrase);
+      localStorage.setItem(this.apiKeyStorageKey, JSON.stringify(encrypted));
     }
+  }
+
+  /**
+   * Util: Prompt user for a passphrase (customize as needed)
+   */
+  async _promptPassphrase(msg) {
+    return window.prompt(msg);
   }
 
   /**
    * Check if API key is configured
    * @returns {boolean} True if API key exists
    */
-  hasApiKey() {
-    const key = this.getApiKey();
+  async hasApiKey() {
+    const key = await this.getApiKey();
     return key !== null && key.trim() !== '';
   }
 

@@ -874,8 +874,13 @@ function initializeDrafter() {
   const toggleApiKeyBtn = document.getElementById('toggle-api-key');
 
   // Load stored API key
-  if (apiKeyInput && drafterAPI.hasApiKey()) {
-    apiKeyInput.value = drafterAPI.getApiKey();
+  if (apiKeyInput) {
+    drafterAPI.hasApiKey().then(async hasKey => {
+      if (hasKey) {
+        const val = await drafterAPI.getApiKey();
+        apiKeyInput.value = val || '';
+      }
+    });
   }
 
   // Open modal
@@ -912,8 +917,8 @@ function initializeDrafter() {
 
   // Save API key on input change
   if (apiKeyInput) {
-    apiKeyInput.addEventListener('change', () => {
-      drafterAPI.setApiKey(apiKeyInput.value);
+    apiKeyInput.addEventListener('change', async () => {
+      await drafterAPI.setApiKey(apiKeyInput.value);
     });
   }
 
@@ -1032,10 +1037,10 @@ async function handleGenerateTerm() {
 
   // Check API key
   if (apiKeyInput && apiKeyInput.value.trim()) {
-    drafterAPI.setApiKey(apiKeyInput.value.trim());
+    await drafterAPI.setApiKey(apiKeyInput.value.trim());
   }
 
-  if (!drafterAPI.hasApiKey()) {
+  if (!(await drafterAPI.hasApiKey())) {
     showToast('❌ Please enter your GitHub Models API key');
     if (apiKeyInput) apiKeyInput.focus();
     return;
