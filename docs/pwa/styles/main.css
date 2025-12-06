@@ -887,3 +887,407 @@ body {
     padding: 1.5rem 1rem;
   }
 }
+
+/* ========================= */
+/* Term Drafter Modal Styles */
+/* ========================= */
+
+/* Drafter toggle button in header */
+.drafter-toggle {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition:
+    background 0.2s,
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+
+.drafter-toggle:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+}
+
+.drafter-toggle:active {
+  transform: translateY(0);
+}
+
+/* Drafter Modal */
+.drafter-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 1001;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.drafter-modal.show {
+  display: flex;
+}
+
+.drafter-modal-content {
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 600px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.drafter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.drafter-header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.close-drafter-btn {
+  background: transparent;
+  border: 2px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 1.25rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s,
+    color 0.2s;
+}
+
+.close-drafter-btn:hover {
+  background: var(--bg-secondary);
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
+/* Drafter Steps */
+.drafter-steps {
+  position: relative;
+}
+
+.drafter-step {
+  display: none;
+}
+
+.drafter-step.active {
+  display: block;
+}
+
+/* API Key Section */
+.drafter-api-key-section {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.api-key-input-wrapper {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.api-key-input-wrapper input {
+  flex: 1;
+}
+
+.toggle-key-btn {
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s;
+}
+
+.toggle-key-btn:hover {
+  background: var(--border-color);
+  border-color: var(--accent-color);
+}
+
+.api-key-hint {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-top: 0.5rem;
+}
+
+.api-key-hint a {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+.api-key-hint a:hover {
+  text-decoration: underline;
+}
+
+/* Form Labels */
+.drafter-step label {
+  display: block;
+  margin: 1rem 0 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.drafter-step label:first-child {
+  margin-top: 0;
+}
+
+/* Form Inputs */
+.drafter-step input,
+.drafter-step textarea {
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.drafter-step input:focus,
+.drafter-step textarea:focus {
+  border-color: var(--accent-color);
+  outline: none;
+}
+
+.drafter-step input::placeholder,
+.drafter-step textarea::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+/* YAML Editor */
+.yaml-editor {
+  font-family: 'Courier New', Consolas, Monaco, monospace;
+  min-height: 350px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  white-space: pre;
+  resize: vertical;
+}
+
+/* Term Preview */
+.term-preview {
+  background: var(--bg-secondary);
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  border-left: 4px solid var(--accent-color);
+}
+
+.term-preview h3 {
+  color: var(--accent-color);
+  font-size: 1.25rem;
+  margin: 0 0 0.75rem 0;
+}
+
+.term-preview p {
+  color: var(--text-primary);
+  margin: 0.5rem 0;
+  line-height: 1.6;
+}
+
+.term-preview .preview-label {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.term-preview .preview-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.term-preview .preview-tag {
+  background: var(--tag-bg);
+  color: var(--tag-text);
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Drafter Buttons */
+.drafter-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.primary-btn {
+  flex: 1;
+  min-width: 140px;
+  padding: 0.875rem 1.5rem;
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+
+.primary-btn:hover:not(:disabled) {
+  background: var(--accent-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--shadow);
+}
+
+.primary-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.primary-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.secondary-btn {
+  flex: 1;
+  min-width: 120px;
+  padding: 0.875rem 1.5rem;
+  background: transparent;
+  color: var(--accent-color);
+  border: 2px solid var(--accent-color);
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    color 0.2s,
+    transform 0.2s;
+}
+
+.secondary-btn:hover:not(:disabled) {
+  background: var(--accent-color);
+  color: white;
+  transform: translateY(-2px);
+}
+
+.secondary-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.back-btn {
+  display: block;
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: transparent;
+  color: var(--text-secondary);
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+}
+
+.back-btn:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+/* Generating State */
+.generating {
+  position: relative;
+}
+
+.generating::after {
+  content: '...';
+  animation: dots 1.5s steps(4, end) infinite;
+}
+
+/* Mobile Responsiveness for Drafter */
+@media (max-width: 640px) {
+  .drafter-modal-content {
+    padding: 1.5rem;
+    max-height: 90vh;
+  }
+
+  .drafter-header h2 {
+    font-size: 1.25rem;
+  }
+
+  .drafter-actions {
+    flex-direction: column;
+  }
+
+  .primary-btn,
+  .secondary-btn {
+    min-width: unset;
+  }
+
+  .yaml-editor {
+    min-height: 250px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .drafter-toggle {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .drafter-modal {
+    padding: 0.5rem;
+  }
+
+  .drafter-modal-content {
+    padding: 1rem;
+  }
+
+  .drafter-step input,
+  .drafter-step textarea {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+}

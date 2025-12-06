@@ -9,6 +9,7 @@ const MAX_RETRY_ATTEMPTS = 3;
 const RETRY_DELAY_MS = 2000;
 const SEARCH_DEBOUNCE_MS = 200; // Debounce delay in milliseconds (150-250ms range)
 const FUZZY_MATCH_BONUS_MULTIPLIER = 3.5; // Max score multiplier accounting for bonuses
+const GITHUB_REPO_TERMS_URL = 'https://github.com/LuminLynx/FOSS-Glossary/edit/main/terms.yaml';
 
 // State
 let allTerms = [];
@@ -20,6 +21,11 @@ let termsVersion = null; // Store the version from terms.json
 let searchDebounceTimer = null;
 let appVersion = '1.0.0'; // Default version
 let serviceWorkerRegistration = null;
+
+// Term Drafter State
+let drafterAPI = null;
+let currentDraftedTerm = null;
+let currentDrafterStep = 1;
 
 // DOM Elements
 let searchInput;
@@ -41,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadTerms();
   setupEventListeners();
   setupUpdateNotification();
+  initializeDrafter();
 });
 
 // Initialize DOM references
@@ -814,11 +821,15 @@ document.addEventListener('keydown', (e) => {
     searchInput.focus();
   }
 
-  // Escape to clear search or close modal
+  // Escape to close modals or clear search
   if (e.key === 'Escape') {
-    const modal = document.getElementById('share-modal');
-    if (modal.classList.contains('show')) {
-      modal.classList.remove('show');
+    const drafterModal = document.getElementById('drafter-modal');
+    const shareModal = document.getElementById('share-modal');
+
+    if (drafterModal && drafterModal.classList.contains('show')) {
+      closeDrafterModal();
+    } else if (shareModal && shareModal.classList.contains('show')) {
+      shareModal.classList.remove('show');
     } else if (searchInput.value) {
       searchInput.value = '';
       // Clear debounce timer and search immediately
@@ -831,6 +842,325 @@ document.addEventListener('keydown', (e) => {
     }
   }
 });
+
+// ========================
+// Term Drafter Functions
+// ========================
+
+/**
+ * Initialize the Term Drafter feature
+ */
+function initializeDrafter() {
+  // Initialize API handler
+  if (typeof window.TermDrafterAPI !== 'undefined') {
+    drafterAPI = new window.TermDrafterAPI();
+  } else {
+    console.warn('TermDrafterAPI not loaded');
+    return;
+  }
+
+  // Get DOM elements
+  const drafterToggle = document.getElementById('drafter-toggle');
+  const drafterModal = document.getElementById('drafter-modal');
+  const closeDrafter = document.getElementById('close-drafter');
+  const generateBtn = document.getElementById('generate-btn');
+  const editBtn = document.getElementById('edit-btn');
+  const copyYamlBtn = document.getElementById('copy-yaml-btn');
+  const submitBtn = document.getElementById('submit-btn');
+  const backToInputBtn = document.getElementById('back-to-input');
+  const saveEditBtn = document.getElementById('save-edit-btn');
+  const cancelEditBtn = document.getElementById('cancel-edit-btn');
+  const apiKeyInput = document.getElementById('api-key-input');
+  const toggleApiKeyBtn = document.getElementById('toggle-api-key');
+
+  // Load stored API key
+  if (apiKeyInput) {
+    drafterAPI.hasApiKey().then(async (hasKey) => {
+      if (hasKey) {
+        const val = await drafterAPI.getApiKey();
+        apiKeyInput.value = val || '';
+      }
+    });
+  }
+
+  // Open modal
+  if (drafterToggle) {
+    drafterToggle.addEventListener('click', () => {
+      openDrafterModal();
+    });
+  }
+
+  // Close modal
+  if (closeDrafter) {
+    closeDrafter.addEventListener('click', () => {
+      closeDrafterModal();
+    });
+  }
+
+  // Close on background click
+  if (drafterModal) {
+    drafterModal.addEventListener('click', (e) => {
+      if (e.target === drafterModal) {
+        closeDrafterModal();
+      }
+    });
+  }
+
+  // Toggle API key visibility
+  if (toggleApiKeyBtn && apiKeyInput) {
+    toggleApiKeyBtn.addEventListener('click', () => {
+      const isPassword = apiKeyInput.type === 'password';
+      apiKeyInput.type = isPassword ? 'text' : 'password';
+      toggleApiKeyBtn.textContent = isPassword ? '🙈' : '👁️';
+    });
+  }
+
+  // Save API key on input change
+  if (apiKeyInput) {
+    apiKeyInput.addEventListener('change', async () => {
+      await drafterAPI.setApiKey(apiKeyInput.value);
+    });
+  }
+
+  // Generate term
+  if (generateBtn) {
+    generateBtn.addEventListener('click', handleGenerateTerm);
+  }
+
+  // Edit YAML
+  if (editBtn) {
+    editBtn.addEventListener('click', () => {
+      if (currentDraftedTerm) {
+        const yamlEditor = document.getElementById('yaml-editor');
+        if (yamlEditor) {
+          yamlEditor.value = drafterAPI.termToYaml(currentDraftedTerm);
+        }
+        switchDrafterStep(3);
+      }
+    });
+  }
+
+  // Copy YAML
+  if (copyYamlBtn) {
+    copyYamlBtn.addEventListener('click', () => {
+      if (currentDraftedTerm) {
+        const yaml = drafterAPI.termToYaml(currentDraftedTerm);
+        copyToClipboard(yaml, 'YAML');
+      }
+    });
+  }
+
+  // Submit/Create PR
+  if (submitBtn) {
+    submitBtn.addEventListener('click', handleCreatePR);
+  }
+
+  // Back to input
+  if (backToInputBtn) {
+    backToInputBtn.addEventListener('click', () => {
+      switchDrafterStep(1);
+    });
+  }
+
+  // Save edit
+  if (saveEditBtn) {
+    saveEditBtn.addEventListener('click', handleSaveEdit);
+  }
+
+  // Cancel edit
+  if (cancelEditBtn) {
+    cancelEditBtn.addEventListener('click', () => {
+      switchDrafterStep(2);
+    });
+  }
+}
+
+/**
+ * Open the drafter modal
+ */
+function openDrafterModal() {
+  const drafterModal = document.getElementById('drafter-modal');
+  if (drafterModal) {
+    drafterModal.classList.add('show');
+    drafterModal.setAttribute('aria-hidden', 'false');
+
+    // Focus on term input
+    const termInput = document.getElementById('term-input');
+    if (termInput) {
+      setTimeout(() => termInput.focus(), 100);
+    }
+  }
+}
+
+/**
+ * Close the drafter modal
+ */
+function closeDrafterModal() {
+  const drafterModal = document.getElementById('drafter-modal');
+  if (drafterModal) {
+    drafterModal.classList.remove('show');
+    drafterModal.setAttribute('aria-hidden', 'true');
+  }
+}
+
+/**
+ * Switch between drafter steps
+ * @param {number} step - Step number (1, 2, or 3)
+ */
+function switchDrafterStep(step) {
+  currentDrafterStep = step;
+  const steps = document.querySelectorAll('.drafter-step');
+  steps.forEach((stepEl) => {
+    const stepNum = parseInt(stepEl.dataset.step, 10);
+    stepEl.classList.toggle('active', stepNum === step);
+  });
+}
+
+/**
+ * Handle term generation
+ */
+async function handleGenerateTerm() {
+  const termInput = document.getElementById('term-input');
+  const contextInput = document.getElementById('context-input');
+  const generateBtn = document.getElementById('generate-btn');
+  const apiKeyInput = document.getElementById('api-key-input');
+
+  const termName = termInput ? termInput.value.trim() : '';
+  const context = contextInput ? contextInput.value.trim() : '';
+
+  // Validate inputs
+  if (!termName) {
+    showToast('❌ Please enter a term name');
+    if (termInput) termInput.focus();
+    return;
+  }
+
+  // Check API key
+  if (apiKeyInput && apiKeyInput.value.trim()) {
+    await drafterAPI.setApiKey(apiKeyInput.value.trim());
+  }
+
+  if (!(await drafterAPI.hasApiKey())) {
+    showToast('❌ Please enter your GitHub Models API key');
+    if (apiKeyInput) apiKeyInput.focus();
+    return;
+  }
+
+  // Show loading state
+  if (generateBtn) {
+    generateBtn.textContent = '⏳ Generating...';
+    generateBtn.disabled = true;
+    generateBtn.classList.add('generating');
+  }
+
+  try {
+    const generated = await drafterAPI.generateTerm(termName, context);
+    currentDraftedTerm = generated;
+    showTermPreview(generated);
+    switchDrafterStep(2);
+    showToast('✅ Term generated successfully!');
+  } catch (error) {
+    console.error('Generation error:', error);
+    showToast(`❌ ${error.message}`);
+  } finally {
+    if (generateBtn) {
+      generateBtn.textContent = '🤖 Generate with AI';
+      generateBtn.disabled = false;
+      generateBtn.classList.remove('generating');
+    }
+  }
+}
+
+/**
+ * Show term preview in the modal
+ * @param {Object} term - The generated term object
+ */
+function showTermPreview(term) {
+  const previewEl = document.getElementById('term-preview');
+  if (!previewEl) return;
+
+  let html = `
+    <h3>${escapeHtml(term.term)}</h3>
+    <p class="preview-label">Slug</p>
+    <p><code>${escapeHtml(term.slug)}</code></p>
+    <p class="preview-label">Definition</p>
+    <p>${escapeHtml(term.definition)}</p>
+  `;
+
+  if (term.explanation) {
+    html += `
+      <p class="preview-label">Explanation</p>
+      <p>${escapeHtml(term.explanation)}</p>
+    `;
+  }
+
+  if (term.humor) {
+    html += `
+      <p class="preview-label">Humor</p>
+      <p><em>💡 ${escapeHtml(term.humor)}</em></p>
+    `;
+  }
+
+  if (term.tags && term.tags.length > 0) {
+    html += `
+      <p class="preview-label">Tags</p>
+      <div class="preview-tags">
+        ${term.tags.map((tag) => `<span class="preview-tag">#${escapeHtml(tag)}</span>`).join('')}
+      </div>
+    `;
+  }
+
+  if (term.see_also && term.see_also.length > 0) {
+    html += `
+      <p class="preview-label">See Also</p>
+      <p>${term.see_also.map((t) => escapeHtml(t)).join(', ')}</p>
+    `;
+  }
+
+  previewEl.innerHTML = html;
+}
+
+/**
+ * Handle save edit from YAML editor
+ */
+function handleSaveEdit() {
+  const yamlEditor = document.getElementById('yaml-editor');
+  if (!yamlEditor) return;
+
+  try {
+    const editedTerm = drafterAPI.yamlToTerm(yamlEditor.value);
+    currentDraftedTerm = editedTerm;
+    showTermPreview(editedTerm);
+    switchDrafterStep(2);
+    showToast('✅ Changes saved!');
+  } catch (error) {
+    console.error('Parse error:', error);
+    showToast(`❌ Invalid YAML: ${error.message}`);
+  }
+}
+
+/**
+ * Handle PR creation - copy YAML and open GitHub
+ */
+function handleCreatePR() {
+  if (!currentDraftedTerm) {
+    showToast('❌ No term to submit');
+    return;
+  }
+
+  const yaml = drafterAPI.termToYaml(currentDraftedTerm);
+
+  // Copy YAML to clipboard
+  copyToClipboard(yaml, 'YAML');
+
+  // Show instructions
+  showToast('📋 YAML copied! Opening GitHub...');
+
+  // Open GitHub to create a new file or edit terms.yaml
+  setTimeout(() => {
+    window.open(GITHUB_REPO_TERMS_URL, '_blank', 'noopener,noreferrer');
+  }, 500);
+}
 
 // Expose for debugging
 if (typeof window !== 'undefined') {
