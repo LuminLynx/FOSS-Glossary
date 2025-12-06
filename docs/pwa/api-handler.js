@@ -1,6 +1,9 @@
 // API Handler for Term Generation
 // Uses GitHub Models API for AI-powered term drafting
 
+// Constants
+const MIN_DEFINITION_LENGTH = 80;
+
 /**
  * TermDrafterAPI - Handles AI-powered term generation
  * Stores API key in localStorage for client-side use on GitHub Pages
@@ -66,14 +69,14 @@ class TermDrafterAPI {
 The entry must follow this exact structure:
 - slug: kebab-case identifier (lowercase, hyphens only, 3-48 chars)
 - term: The term name (capitalize appropriately)
-- definition: A clear, accurate definition (minimum 80 characters)
+- definition: A clear, accurate definition (minimum ${MIN_DEFINITION_LENGTH} characters)
 - explanation: An optional deeper explanation
 - humor: A witty, humorous take on the term (be creative but appropriate)
 - tags: 1-4 relevant lowercase tags
 - see_also: Related terms (optional, 0-3 items)
 
 Important:
-- The definition must be at least 80 characters long
+- The definition must be at least ${MIN_DEFINITION_LENGTH} characters long
 - Use proper YAML formatting
 - Be accurate, educational, and add personality/humor
 - Tags should be lowercase, single words
@@ -231,9 +234,9 @@ Respond ONLY with valid YAML, no markdown code blocks, no explanation.`;
     }
 
     // Ensure definition meets minimum length
-    if (result.definition.length < 80) {
+    if (result.definition.length < MIN_DEFINITION_LENGTH) {
       throw new Error(
-        `Definition is too short (${result.definition.length} chars). Minimum 80 characters required.`
+        `Definition is too short (${result.definition.length} chars). Minimum ${MIN_DEFINITION_LENGTH} characters required.`
       );
     }
 
@@ -274,18 +277,29 @@ Respond ONLY with valid YAML, no markdown code blocks, no explanation.`;
   termToYaml(term) {
     let yaml = '';
 
+    /**
+     * Escape a string value for YAML double-quoted format
+     * @param {string} str - String to escape
+     * @returns {string} Escaped string
+     */
+    const escapeYamlValue = (str) => {
+      if (!str) return '';
+      // Escape backslashes first, then double quotes
+      return str.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+    };
+
     // Required fields
     yaml += `slug: ${term.slug}\n`;
     yaml += `term: ${term.term}\n`;
-    yaml += `definition: "${term.definition.replace(/"/g, '\\"')}"\n`;
+    yaml += `definition: "${escapeYamlValue(term.definition)}"\n`;
 
     // Optional fields
     if (term.explanation) {
-      yaml += `explanation: "${term.explanation.replace(/"/g, '\\"')}"\n`;
+      yaml += `explanation: "${escapeYamlValue(term.explanation)}"\n`;
     }
 
     if (term.humor) {
-      yaml += `humor: "${term.humor.replace(/"/g, '\\"')}"\n`;
+      yaml += `humor: "${escapeYamlValue(term.humor)}"\n`;
     }
 
     if (term.tags && term.tags.length > 0) {

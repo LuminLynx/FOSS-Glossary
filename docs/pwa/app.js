@@ -9,6 +9,7 @@ const MAX_RETRY_ATTEMPTS = 3;
 const RETRY_DELAY_MS = 2000;
 const SEARCH_DEBOUNCE_MS = 200; // Debounce delay in milliseconds (150-250ms range)
 const FUZZY_MATCH_BONUS_MULTIPLIER = 3.5; // Max score multiplier accounting for bonuses
+const GITHUB_REPO_TERMS_URL = 'https://github.com/LuminLynx/FOSS-Glossary/edit/main/terms.yaml';
 
 // State
 let allTerms = [];
@@ -1152,11 +1153,7 @@ function handleCreatePR() {
 
   // Open GitHub to create a new file or edit terms.yaml
   setTimeout(() => {
-    window.open(
-      'https://github.com/LuminLynx/FOSS-Glossary/edit/main/terms.yaml',
-      '_blank',
-      'noopener,noreferrer'
-    );
+    window.open(GITHUB_REPO_TERMS_URL, '_blank', 'noopener,noreferrer');
   }, 500);
 }
 
