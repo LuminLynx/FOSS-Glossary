@@ -875,7 +875,7 @@ function initializeDrafter() {
 
   // Load stored API key
   if (apiKeyInput) {
-    drafterAPI.hasApiKey().then(async hasKey => {
+    drafterAPI.hasApiKey().then(async (hasKey) => {
       if (hasKey) {
         const val = await drafterAPI.getApiKey();
         apiKeyInput.value = val || '';

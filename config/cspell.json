@@ -100,7 +100,8 @@
     "jank",
     "Agentic",
     "noopener",
-    "noreferrer"
+    "noreferrer",
+    "ciphertext"
   ],
   "ignorePaths": [
     "node_modules/**",
