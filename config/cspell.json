@@ -101,10 +101,14 @@
     "Agentic",
     "noopener",
     "noreferrer",
-    "ciphertext"
+    "ciphertext",
+    "evenodd"
   ],
   "ignorePaths": [
     "node_modules/**",
+    "**/node_modules/**",
+    "foss-glossary-app/node_modules/**",
+    "foss-glossary-app/.next/**",
     "package-lock.json",
     "dist/**",
     "build/**",

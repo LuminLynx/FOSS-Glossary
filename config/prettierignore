@@ -1,12 +1,16 @@
 # Dependencies
 node_modules/
+**/node_modules/
 package-lock.json
+foss-glossary-app/package-lock.json
 
 # Build outputs
 dist/
 build/
 *.min.js
 *.min.css
+foss-glossary-app/.next/
+foss-glossary-app/out/
 
 # Generated files
 docs/index.html

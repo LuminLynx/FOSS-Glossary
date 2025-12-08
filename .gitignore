@@ -38,3 +38,9 @@ File Structure
 
 # post-merge generated
 docs/index.html
+
+# Next.js
+foss-glossary-app/.next/
+foss-glossary-app/out/
+foss-glossary-app/.env*.local
+*.tsbuildinfo
