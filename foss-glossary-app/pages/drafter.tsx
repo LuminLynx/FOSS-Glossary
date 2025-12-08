@@ -16,20 +16,24 @@ export default function DrafterPage() {
     setError(null);
     setGeneratedContent('');
 
-    const response = await fetch('/api/generate-term', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ termName, context }),
-    });
+    try {
+      const response = await fetch('/api/generate-term', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ termName, context }),
+      });
 
-    setIsLoading(false);
-
-    if (!response.ok) {
-      const err = await response.json();
-      setError(err.error || 'An unexpected error occurred.');
-    } else {
-      const data = await response.json();
-      setGeneratedContent(data.content);
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({ error: 'An unexpected error occurred.' }));
+        setError(err.error || 'An unexpected error occurred.');
+      } else {
+        const data = await response.json();
+        setGeneratedContent(data.content);
+      }
+    } catch {
+      setError('Network error: Unable to connect to the server. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -62,7 +66,7 @@ export default function DrafterPage() {
       <nav className="bg-white shadow-sm p-4 flex justify-between items-center">
         <h1 className="text-xl font-bold">AI Term Drafter</h1>
         <div>
-          <span>Signed in as {session.user?.name}</span>
+          <span>Signed in as {session.user?.email || session.user?.name}</span>
           <Link href="/" className="ml-4 text-blue-500 hover:underline">
             Home
           </Link>
