@@ -26,7 +26,7 @@
     "lint": "npm run lint:prettier && npm run lint:markdown && npm run lint:spell",
     "lint:prettier": "prettier --config config/prettierrc.json --ignore-path config/prettierignore --check .",
     "lint:markdown": "markdownlint --config config/markdownlint.json --ignore-path .markdownlintignore '**/*.md'",
-    "lint:spell": "cspell --config config/cspell.json '**/*' '!**/node_modules/**' '!**/.next/**' --no-progress",
+    "lint:spell": "cspell --config config/cspell.json '**/*' --no-progress",
     "format": "prettier --config config/prettierrc.json --ignore-path config/prettierignore --write .",
     "format:check": "prettier --config config/prettierrc.json --ignore-path config/prettierignore --check .",
     "prepare": "husky"

@@ -16,6 +16,7 @@ foss-glossary-app/out/
 docs/index.html
 docs/terms.json
 docs/.terms-slugs.txt
+next-env.d.ts
 
 # Templates (Handlebars templates should not be formatted as HTML)
 templates/
