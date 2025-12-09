@@ -93,7 +93,7 @@ Example format:
   "tags": ["methodology", "testing", "devops"]
 }
 
-Respond ONLY with the JSON object, no additional text.`;
+Respond ONLY with the JSON object, no additional text. Return ONLY the JSON object with no markdown code fences, no surrounding text, and nothing else.`;
 
   const response = await client.chat.completions.create({
     model,
@@ -112,15 +112,22 @@ Respond ONLY with the JSON object, no additional text.`;
     throw new Error('AI response did not contain message content');
   }
 
-  const content = messageContent.trim();
+  // Sanitize model output to tolerate fenced code blocks and stray text
+  const raw = messageContent || '';
+  let content = raw
+    .trim()
+    .replace(/^```(?:json)?\s*/i, '') // remove opening ``` or ```json
+    .replace(/\s*```$/i, ''); // remove trailing ```
+  const m = content.match(/\{[\s\S]*\}/); // extract first {...} block if present
+  if (m) content = m[0];
 
-  // Parse the JSON response
   let parsed;
   try {
     parsed = JSON.parse(content);
   } catch (parseError) {
+    const snippet = content.length > 500 ? content.slice(0, 500) + '...' : content;
     throw new Error(
-      `Failed to parse AI response as JSON: ${parseError.message}. Response was: ${content}`
+      `Failed to parse AI response as JSON: ${parseError.message}. Response snippet: ${snippet}`
     );
   }
 
