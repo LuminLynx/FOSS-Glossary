@@ -27,5 +27,5 @@ jobs:
 
       - name: Run Trend Watcher
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.modeltoken }}
         run: npm run trend
