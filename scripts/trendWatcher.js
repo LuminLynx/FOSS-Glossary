@@ -113,8 +113,7 @@ Respond ONLY with the JSON object, no additional text. Return ONLY the JSON obje
   }
 
   // Sanitize model output to tolerate fenced code blocks and stray text
-  const raw = messageContent || '';
-  let content = raw
+  let content = messageContent
     .trim()
     .replace(/^```(?:json)?\s*/i, '') // remove opening ``` or ```json
     .replace(/\s*```$/i, ''); // remove trailing ```

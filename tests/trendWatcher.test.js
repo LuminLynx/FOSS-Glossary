@@ -8,8 +8,7 @@ const assert = require('node:assert/strict');
 
 // Test helper function that mimics the sanitization logic in trendWatcher.js
 function sanitizeAndParse(messageContent) {
-  const raw = messageContent || '';
-  let content = raw
+  let content = messageContent
     .trim()
     .replace(/^```(?:json)?\s*/i, '') // remove opening ``` or ```json
     .replace(/\s*```$/i, ''); // remove trailing ```
